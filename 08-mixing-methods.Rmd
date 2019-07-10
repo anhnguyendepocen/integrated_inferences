@@ -13,7 +13,7 @@ source("_packages_used.R")
 
 <!-- Lots of this likely to change with integration with DAGs. -->
 
-The main goal of this chapter is to  generalize the model developed in Chapter 6 to problems with data on many cases.  In doing so we generalize the model in @humphreys2015mixing to one that  in which rather than the probative value of clues being  *assumed*, they are  derived from a causal structure. 
+The main goal of this chapter is to  generalize the model developed in Chapter \@ref(pt) to research situations in which we have data on multiple cases. In doing so we generalize the model in @humphreys2015mixing to one that in which rather than the probative value of clues being  *assumed*, they are  derived from a causal structure. 
 
 We start however  with a conceptual point: the exact structure introduced in Chapter 6 for single case analysis can be used *as is* for multi-case analysis. To see this  you should think of the the nodes as vector-valued, and the estimands as just a particular summary of the vector-valued case level causal effects. Thought of this way the  conceptual work for mixed methods inference from models has been done already and our goal here is more technical---how to exploit assumptions on independence across cases to generate simpler theories of repeated phenomena.
 
@@ -37,9 +37,27 @@ Represented in this way we can use the tools of Chapters 6 and 7 to fully examin
 
 In practice however thinking of nodes as capturing the outcomes on all units leads to enormous complexity. For example an exogeneous variable $X$ which takes on values of 0 or 1 at random for 10 units has $2^10$ types in this conceptualization, rather than just two when thought of at the case level. 
 
-We reduce complexity however by thinking of models as operating on units and learning about models by observing *multiple* realizations of processes covered by the model, rather than just one. Thinking about it this way is not free however as it requires invoking some kind of independence assumptions --- that outcomes in two units do not depend on each other. If we cannot stand by that assumption then we have to build independence failures into our models
+We reduce complexity however by thinking of models as operating on units and learning about models by observing *multiple* realizations of processes covered by the model, rather than just one. Thinking about it this way is not free however as it requires invoking some kind of independence assumptions --- that outcomes in two units do not depend on each other. If we cannot stand by that assumption, then we have to build independence failures into our models.
 
 With multiple cases we...
+
+**A DAG**. As for process tracing, we begin with a graphical causal model specifying possible causal linkages between nodes.
+
+**Nodal types**. Just as in process tracing, the DAG and variable ranges define the set of possible nodal types in the model---the possible ways in which each variable is assigned (if exogenous) or determined by its parents (if endogenous).
+
+**Causal types**. And, again, a full set of nodal types gives rise to a full set of causal types, encompassing all possible combinations of nodal types across all nodes in the model.
+
+**Priors**. The first difference between single- and multiple-case inference lies in how we set priors on causal types. In process tracing, we set parameter values for each nodal type (or conditional nodal type, for unobserved confounding). Our parameters---e.g., $\lambda^X_0$, $\lambda^Y_{01}$---representing our beliefs about the proportions of these types in the population. When we only observe a single data type---data on a single case---we do not have sufficient information to learn about the distribution of types in the population. And so we treat these population-level beliefs as fixed parameters, rather than priors that we update on. (What we update on, in process tracing, is our priors on whether a *given case* is of a particular type or set of types.) Likewise, uncertainty about those population-level parameters has no effect on our inferences for a single case.
+
+When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. 
+
+While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). As will be recalled, the parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
+
+To first examine a situation with no observed confounding, we need to specify a prior distribution for each set of nodal types. For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. For $X$'s types, we specify $\alpha^X_0$ and $\alpha^X_1$, corresponding to the nodal types $\theta^X_0$ and $\theta^X_1$, respectively. For $Y$'s types, we specify $\alpha^Y_{00}$, $\alpha^Y_{10}$, $\alpha^Y_{01}$, and $\alpha^Y_{11}$, corresponding to the nodal types $\theta^Y_{00}$, etc. So, for instance, setting $\alpha^Y_{00}=1$, $\alpha^Y_{10}=1$, $\alpha^Y_{01}=1$, and $\alpha^Y_{11}=1$ yields a uniform distribution in which all share allocations of types in the population are equally likely. Setting $\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, and $\alpha^Y_{11}=3$ yields a distribution puts more weight on share allocations in which the shares are relatively equal than on those that are relatively unequal. And setting $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, and $\alpha^Y_{11}=5$ puts greater weight on allocations in which positive causal effects are more common than the other three types. 
+
+Each parameter set then implies a probability for any particular distribution of nodal types---that is for any given, $\lambda^j$. 
+
+
 
 ### The parameter matrix
 ### The ambiguity matrix
