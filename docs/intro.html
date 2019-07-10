@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Integrands | Integrated Inferences</title>
+  <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Integrands | Integrated Inferences" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="dnieperriver.png" />
+  <meta property="og:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="github-repo" content="rstudio/ii" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Integrands | Integrated Inferences" />
+  
+  <meta name="twitter:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="twitter:image" content="dnieperriver.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html">
+<link rel="next" href="models.html">
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="headers\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Model based causal inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Integrands</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-centrality-of-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Centrality of Causal Models</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.1</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.2</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.2</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a><ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#the-counterfactual-model"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#features-of-causal-models"><i class="fa fa-check"></i><b>2.2.1</b> Features of causal models</a></li>
+<li class="chapter" data-level="2.2.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.2.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.2.3" data-path="models.html"><a href="models.html#a-simple-running-example"><i class="fa fa-check"></i><b>2.2.3</b> A simple running example</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#causal-models-from-the-literature"><i class="fa fa-check"></i><b>2.3</b> Causal models from the literature</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#pierson-on-dismantling-the-welfare-state"><i class="fa fa-check"></i><b>2.3.1</b> Pierson on dismantling the welfare state</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#saunders-2011"><i class="fa fa-check"></i><b>2.3.2</b> Saunders (2011)</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#przeworski-and-limongi-1997"><i class="fa fa-check"></i><b>2.3.3</b> Przeworski and Limongi (1997)</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.4</b> Steps for constructing causal models</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="models.html"><a href="models.html#abstract-procedure"><i class="fa fa-check"></i><b>2.4.1</b> Abstract procedure</a></li>
+<li class="chapter" data-level="2.4.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.4.2</b> Model construction in code</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>3</b> Theories as causal models</a><ul>
+<li class="chapter" data-level="3.1" data-path="theory.html"><a href="theory.html#inequalitytheory"><i class="fa fa-check"></i><b>3.1</b> Two theories of inequality’s effects on democratization</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="theory.html"><a href="theory.html#theory-as-causal-functions"><i class="fa fa-check"></i><b>3.1.1</b> Theory as causal functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="theory.html"><a href="theory.html#theory-as-a-lower-level-model"><i class="fa fa-check"></i><b>3.2</b> Theory as a “lower-level” model</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="theory.html"><a href="theory.html#disggregating-nodes"><i class="fa fa-check"></i><b>3.2.1</b> Disggregating nodes</a></li>
+<li class="chapter" data-level="3.2.2" data-path="theory.html"><a href="theory.html#generalizing-a-model"><i class="fa fa-check"></i><b>3.2.2</b> Generalizing a model</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="theory.html"><a href="theory.html#moving-between-higher--and-lower-level-models"><i class="fa fa-check"></i><b>3.3</b> Moving between higher- and lower-level models</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="theory.html"><a href="theory.html#mappings-are-not-one-to-one"><i class="fa fa-check"></i><b>3.3.1</b> Mappings are not one-to-one</a></li>
+<li class="chapter" data-level="3.3.2" data-path="theory.html"><a href="theory.html#permissible-moves-across-levels"><i class="fa fa-check"></i><b>3.3.2</b> Permissible moves across levels</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="theory.html"><a href="theory.html#beneath-the-graph-causal-types-in-lower-level-models"><i class="fa fa-check"></i><b>3.4</b> Beneath the Graph: Causal Types in Lower-Level Models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="theory.html"><a href="theory.html#medtheory"><i class="fa fa-check"></i><b>3.4.1</b> Mediation as Theory</a></li>
+<li class="chapter" data-level="3.4.2" data-path="theory.html"><a href="theory.html#modtheory"><i class="fa fa-check"></i><b>3.4.2</b> Moderation as Theory</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>3.5</b> Conclusion</a></li>
+<li class="chapter" data-level="3.6" data-path="theory.html"><a href="theory.html#appendix-illustration-of-a-mapping-from-a-game-to-a-dag"><i class="fa fa-check"></i><b>3.6</b> Appendix: Illustration of a Mapping from a Game to a DAG</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Questions</a><ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#causal-queries"><i class="fa fa-check"></i><b>4.1</b> Causal queries</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.1.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.1.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.1.3" data-path="questions.html"><a href="questions.html#case-level-explanation"><i class="fa fa-check"></i><b>4.1.3</b> Case-level explanation</a></li>
+<li class="chapter" data-level="4.1.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.1.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.1.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.1.5</b> Causal Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#illustration-with-the-running-example"><i class="fa fa-check"></i><b>4.2</b> Illustration with the Running Example</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a><ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> Bayes’ Rule for Continuous Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.1</b> Bayesian Inference on Queries</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayesian-correlational-inference"><i class="fa fa-check"></i><b>5.2.2</b> Bayesian correlational inference</a></li>
+<li class="chapter" data-level="5.2.3" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.3</b> Simple Bayesian Process Tracing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#three-principles-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Three principles of Bayesian updating</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneoues-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneoues, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="6" data-path="clues.html"><a href="clues.html"><i class="fa fa-check"></i><b>6</b> Process Tracing with Causal Models</a><ul>
+<li class="chapter" data-level="6.1" data-path="clues.html"><a href="clues.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>6.1</b> Process tracing and causal models</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="clues.html"><a href="clues.html#the-intuition"><i class="fa fa-check"></i><b>6.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="6.1.2" data-path="clues.html"><a href="clues.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>6.1.2</b> A formalization of the general approach</a></li>
+<li class="chapter" data-level="6.1.3" data-path="clues.html"><a href="clues.html#illustration-with-code"><i class="fa fa-check"></i><b>6.1.3</b> Illustration with code</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="clues.html"><a href="clues.html#five-principles"><i class="fa fa-check"></i><b>6.2</b> Five principles</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="clues.html"><a href="clues.html#conditional-independence-alone-does-not-provide-probative-value"><i class="fa fa-check"></i><b>6.2.1</b> Conditional independence alone does not provide probative value</a></li>
+<li class="chapter" data-level="6.2.2" data-path="clues.html"><a href="clues.html#uncertainty-does-not-alter-inference-for-single-case-causal-inference"><i class="fa fa-check"></i><b>6.2.2</b> Uncertainty does not alter inference for single case causal inference</a></li>
+<li class="chapter" data-level="6.2.3" data-path="clues.html"><a href="clues.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>6.2.3</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+<li class="chapter" data-level="6.2.4" data-path="clues.html"><a href="clues.html#probative-value"><i class="fa fa-check"></i><b>6.2.4</b> Probative value</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html"><i class="fa fa-check"></i><b>7</b> Application: Process Tracing with a Causal Model</a><ul>
+<li class="chapter" data-level="7.1" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>7.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="7.2" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#a-structural-causal-model"><i class="fa fa-check"></i><b>7.2</b> A Structural Causal Model</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#forming-priors"><i class="fa fa-check"></i><b>7.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#results"><i class="fa fa-check"></i><b>7.3</b> Results</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>7.3.1</b> Cases with incomplete data</a></li>
+<li class="chapter" data-level="7.3.2" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>7.3.2</b> Inferences for cases with observed democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#model-definition-and-inference-in-code"><i class="fa fa-check"></i><b>7.4</b> Model definition and inference in code</a></li>
+<li class="chapter" data-level="7.5" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#concluding-thoughts"><i class="fa fa-check"></i><b>7.5</b> Concluding thoughts</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>8</b> Integrated inferences</a><ul>
+<li class="chapter" data-level="8.1" data-path="mixing.html"><a href="mixing.html#theres-only-ever-one-case"><i class="fa fa-check"></i><b>8.1</b> There’s only ever one case</a></li>
+<li class="chapter" data-level="8.2" data-path="mixing.html"><a href="mixing.html#general-procedure"><i class="fa fa-check"></i><b>8.2</b> General procedure</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="mixing.html"><a href="mixing.html#the-parameter-matrix"><i class="fa fa-check"></i><b>8.2.1</b> The parameter matrix</a></li>
+<li class="chapter" data-level="8.2.2" data-path="mixing.html"><a href="mixing.html#the-ambiguity-matrix"><i class="fa fa-check"></i><b>8.2.2</b> The ambiguity matrix</a></li>
+<li class="chapter" data-level="8.2.3" data-path="mixing.html"><a href="mixing.html#likelihood"><i class="fa fa-check"></i><b>8.2.3</b> Likelihood</a></li>
+<li class="chapter" data-level="8.2.4" data-path="mixing.html"><a href="mixing.html#estimation"><i class="fa fa-check"></i><b>8.2.4</b> Estimation</a></li>
+<li class="chapter" data-level="8.2.5" data-path="mixing.html"><a href="mixing.html#mixed-data"><i class="fa fa-check"></i><b>8.2.5</b> Mixed data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="mixing.html"><a href="mixing.html#illustration"><i class="fa fa-check"></i><b>8.3</b> Illustration</a></li>
+<li class="chapter" data-level="8.4" data-path="mixing.html"><a href="mixing.html#illustrated-inferences"><i class="fa fa-check"></i><b>8.4</b> Illustrated inferences</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="mixing.html"><a href="mixing.html#xy-model"><i class="fa fa-check"></i><b>8.4.1</b> XY model</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>8.5</b> Considerations</a><ul>
+<li class="chapter" data-level="8.5.1" data-path="mixing.html"><a href="mixing.html#the-identification-problem"><i class="fa fa-check"></i><b>8.5.1</b> The identification problem</a></li>
+<li class="chapter" data-level="8.5.2" data-path="mixing.html"><a href="mixing.html#continuous-data"><i class="fa fa-check"></i><b>8.5.2</b> Continuous data</a></li>
+<li class="chapter" data-level="8.5.3" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>8.5.3</b> Measurement error</a></li>
+<li class="chapter" data-level="8.5.4" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>8.5.4</b> Spillovers</a></li>
+<li class="chapter" data-level="8.5.5" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>8.5.5</b> Parameteric models</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="mixing.html"><a href="mixing.html#conclusion-1"><i class="fa fa-check"></i><b>8.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>9</b> Mixed-Method Application: Inequality and Democracy Revisited</a><ul>
+<li class="chapter" data-level="9.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>9.1</b> A trained model</a></li>
+<li class="chapter" data-level="9.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>9.2</b> Data</a></li>
+<li class="chapter" data-level="9.3" data-path="mixingapp.html"><a href="mixingapp.html#inference"><i class="fa fa-check"></i><b>9.3</b> Inference</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democracy"><i class="fa fa-check"></i><b>9.3.1</b> Did inequality <em>cause</em> democracy?</a></li>
+<li class="chapter" data-level="9.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>9.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="mixingapp.html"><a href="mixingapp.html#prior-posterior-comparison-for-multiple-estimands"><i class="fa fa-check"></i><b>9.4</b> Prior / posterior comparison for multiple estimands</a></li>
+<li class="chapter" data-level="9.5" data-path="mixingapp.html"><a href="mixingapp.html#discussion"><i class="fa fa-check"></i><b>9.5</b> Discussion</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="10" data-path="elements-of-design.html"><a href="elements-of-design.html"><i class="fa fa-check"></i><b>10</b> Elements of Design</a><ul>
+<li class="chapter" data-level="10.1" data-path="elements-of-design.html"><a href="elements-of-design.html#declaring-a-process-tracing-design"><i class="fa fa-check"></i><b>10.1</b> Declaring a process tracing design</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="elements-of-design.html"><a href="elements-of-design.html#steps"><i class="fa fa-check"></i><b>10.1.1</b> Steps</a></li>
+<li class="chapter" data-level="10.1.2" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-in-code"><i class="fa fa-check"></i><b>10.1.2</b> Illustration in code</a></li>
+<li class="chapter" data-level="10.1.3" data-path="elements-of-design.html"><a href="elements-of-design.html#diagnosands-evaluating-a-model"><i class="fa fa-check"></i><b>10.1.3</b> Diagnosands: Evaluating a model</a></li>
+<li class="chapter" data-level="10.1.4" data-path="elements-of-design.html"><a href="elements-of-design.html#other-measures-of-a-gain-from-a-theory"><i class="fa fa-check"></i><b>10.1.4</b> Other measures of a gain from a theory</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="elements-of-design.html"><a href="elements-of-design.html#declaring-a-mixed-methods-design"><i class="fa fa-check"></i><b>10.2</b> Declaring a mixed methods design</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="elements-of-design.html"><a href="elements-of-design.html#model"><i class="fa fa-check"></i><b>10.2.1</b> Model</a></li>
+<li class="chapter" data-level="10.2.2" data-path="elements-of-design.html"><a href="elements-of-design.html#data-strategies"><i class="fa fa-check"></i><b>10.2.2</b> Data strategies</a></li>
+<li class="chapter" data-level="10.2.3" data-path="elements-of-design.html"><a href="elements-of-design.html#estimands"><i class="fa fa-check"></i><b>10.2.3</b> Estimands</a></li>
+<li class="chapter" data-level="10.2.4" data-path="elements-of-design.html"><a href="elements-of-design.html#answer-strategies"><i class="fa fa-check"></i><b>10.2.4</b> Answer Strategies</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html"><i class="fa fa-check"></i><b>11</b> Clue Selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="11.1" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#a-strategic-approach"><i class="fa fa-check"></i><b>11.1</b> A strategic approach</a></li>
+<li class="chapter" data-level="11.2" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-running-example"><i class="fa fa-check"></i><b>11.2</b> Clue selection for the running example</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#dynamic-strategies"><i class="fa fa-check"></i><b>11.2.1</b> Dynamic Strategies</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-democracy-model"><i class="fa fa-check"></i><b>11.3</b> Clue selection for the Democracy model</a></li>
+<li class="chapter" data-level="11.4" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#conclusion-2"><i class="fa fa-check"></i><b>11.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="wide.html"><a href="wide.html"><i class="fa fa-check"></i><b>12</b> Going wide and going deep</a><ul>
+<li class="chapter" data-level="12.1" data-path="wide.html"><a href="wide.html#intuitions-does-a-sufficiently-large-n-always-trump-k"><i class="fa fa-check"></i><b>12.1</b> Intuitions: Does a sufficiently large <span class="math inline">\(N\)</span> always trump <span class="math inline">\(K\)</span>?</a></li>
+<li class="chapter" data-level="12.2" data-path="wide.html"><a href="wide.html#evaluating-strategies"><i class="fa fa-check"></i><b>12.2</b> Evaluating strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="wide.html"><a href="wide.html#varieties"><i class="fa fa-check"></i><b>12.3</b> Varieties of mixing</a></li>
+<li class="chapter" data-level="12.4" data-path="wide.html"><a href="wide.html#AppSimNotes"><i class="fa fa-check"></i><b>12.4</b> Notes on Simulations</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="wide.html"><a href="wide.html#AppE1"><i class="fa fa-check"></i><b>12.4.1</b> Probative values</a></li>
+<li class="chapter" data-level="12.4.2" data-path="wide.html"><a href="wide.html#AppE2"><i class="fa fa-check"></i><b>12.4.2</b> Effect heterogeneity</a></li>
+<li class="chapter" data-level="12.4.3" data-path="wide.html"><a href="wide.html#AppE3"><i class="fa fa-check"></i><b>12.4.3</b> Uncertainty about assignment processes</a></li>
+<li class="chapter" data-level="12.4.4" data-path="wide.html"><a href="wide.html#AppE4"><i class="fa fa-check"></i><b>12.4.4</b> Uncertainty regarding the probative value of clues</a></li>
+<li class="chapter" data-level="12.4.5" data-path="wide.html"><a href="wide.html#details-on-simulation-experiments"><i class="fa fa-check"></i><b>12.4.5</b> Details on simulation experiments</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#explorations"><i class="fa fa-check"></i><b>13.1</b> Explorations</a><ul>
+<li class="chapter" data-level="13.1.1" data-path="caseselection.html"><a href="caseselection.html#procedure"><i class="fa fa-check"></i><b>13.1.1</b> Procedure</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#in-code"><i class="fa fa-check"></i><b>13.2</b> In code</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#compare-multiple-data-strategies"><i class="fa fa-check"></i><b>13.3</b> Compare multiple data strategies</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#experiments"><i class="fa fa-check"></i><b>13.4</b> Experiments</a></li>
+<li class="chapter" data-level="13.5" data-path="caseselection.html"><a href="caseselection.html#chapter-appendix-accounting-for-case-selection"><i class="fa fa-check"></i><b>13.5</b> Chapter Appendix: Accounting for case selection</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="caseselection.html"><a href="caseselection.html#independent-case-selection-strategy"><i class="fa fa-check"></i><b>13.5.1</b> Independent case selection strategy</a></li>
+<li class="chapter" data-level="13.5.2" data-path="caseselection.html"><a href="caseselection.html#conditional-random-case-selection"><i class="fa fa-check"></i><b>13.5.2</b> Conditional random case selection</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="14" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html"><i class="fa fa-check"></i><b>14</b> Where does probative value come from?</a><ul>
+<li class="chapter" data-level="14.1" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#causal-discovery"><i class="fa fa-check"></i><b>14.1</b> Causal discovery</a></li>
+<li class="chapter" data-level="14.2" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#the-possibility-of-identification-of-probative-value-from-experimental-data"><i class="fa fa-check"></i><b>14.2</b> The possibility of identification of probative value from experimental data</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#moderator"><i class="fa fa-check"></i><b>14.2.1</b> Moderator</a></li>
+<li class="chapter" data-level="14.2.2" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#mediator"><i class="fa fa-check"></i><b>14.2.2</b> Mediator</a></li>
+<li class="chapter" data-level="14.2.3" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#generally-not-so-easy"><i class="fa fa-check"></i><b>14.2.3</b> Generally not so easy</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#bounds-on-causes-of-effects"><i class="fa fa-check"></i><b>14.3</b> Bounds on causes of effects</a></li>
+<li class="chapter" data-level="14.4" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#qualitative-beliefs-and-sensitivity-analyses"><i class="fa fa-check"></i><b>14.4</b> Qualitative beliefs and Sensitivity Analyses</a></li>
+<li class="chapter" data-level="14.5" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#conditional-claims"><i class="fa fa-check"></i><b>14.5</b> Conditional claims</a></li>
+<li class="chapter" data-level="14.6" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#learning-about-parameters-within-a-model"><i class="fa fa-check"></i><b>14.6</b> Learning about parameters within a model</a></li>
+<li class="chapter" data-level="14.7" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#learning-from-observational-and-experimental-mixtures"><i class="fa fa-check"></i><b>14.7</b> Learning from observational and experimental mixtures</a></li>
+<li class="chapter" data-level="14.8" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#learning-across-populations"><i class="fa fa-check"></i><b>14.8</b> Learning across populations</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>15</b> Robustness and Model-Evaluation</a><ul>
+<li class="chapter" data-level="15.1" data-path="evaluation.html"><a href="evaluation.html#tools-for-evaluating-models"><i class="fa fa-check"></i><b>15.1</b> Tools for evaluating models</a></li>
+<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.2</b> Evaluating the Democracy-Inequality model</a></li>
+<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.3</b> Prior check</a></li>
+<li class="chapter" data-level="15.4" data-path="evaluation.html"><a href="evaluation.html#monotonic-restrictions"><i class="fa fa-check"></i><b>15.4</b> Monotonic restrictions</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>16</b> Final Words</a><ul>
+<li class="chapter" data-level="16.1" data-path="final-words.html"><a href="final-words.html#some-conclusions"><i class="fa fa-check"></i><b>16.1</b> Some conclusions</a></li>
+<li class="chapter" data-level="16.2" data-path="final-words.html"><a href="final-words.html#words-of-warning"><i class="fa fa-check"></i><b>16.2</b> Words of warning</a></li>
+<li class="chapter" data-level="16.3" data-path="final-words.html"><a href="final-words.html#general-and-specific-knowledge"><i class="fa fa-check"></i><b>16.3</b> General and specific knowledge</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="17" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>17</b> Analysis of canonical models with <code>gbiqq</code></a><ul>
+<li class="chapter" data-level="17.1" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-no-confounding"><i class="fa fa-check"></i><b>17.1</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, no confounding</a></li>
+<li class="chapter" data-level="17.2" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-with-unmodelled-confounding"><i class="fa fa-check"></i><b>17.2</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with unmodelled confounding</a></li>
+<li class="chapter" data-level="17.3" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-with-confounding-modelled"><i class="fa fa-check"></i><b>17.3</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modelled</a></li>
+<li class="chapter" data-level="17.4" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-mediation-model"><i class="fa fa-check"></i><b>17.4</b> Simple mediation model</a></li>
+<li class="chapter" data-level="17.5" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-moderator-model"><i class="fa fa-check"></i><b>17.5</b> Simple moderator model</a></li>
+<li class="chapter" data-level="17.6" data-path="examplesappendix.html"><a href="examplesappendix.html#an-iv-model"><i class="fa fa-check"></i><b>17.6</b> An IV model</a></li>
+<li class="chapter" data-level="17.7" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-that-allows-application-of-the-frontdoor-criterion"><i class="fa fa-check"></i><b>17.7</b> A model that allows application of the frontdoor criterion</a></li>
+<li class="chapter" data-level="17.8" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-with-a-violation-of-sequential-ignorability"><i class="fa fa-check"></i><b>17.8</b> A model with a violation of sequential ignorability</a></li>
+<li class="chapter" data-level="17.9" data-path="examplesappendix.html"><a href="examplesappendix.html#learning-from-a-collider"><i class="fa fa-check"></i><b>17.9</b> Learning from a collider</a></li>
+<li class="chapter" data-level="17.10" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-mixing-observational-and-experimental-data"><i class="fa fa-check"></i><b>17.10</b> A model mixing observational and experimental data</a></li>
+<li class="chapter" data-level="17.11" data-path="examplesappendix.html"><a href="examplesappendix.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>17.11</b> Transportation of findings across contexts</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/gbiqq/" target="blank">Uses gbiqq</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Integrated Inferences</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="intro" class="section level1">
+<h1><span class="header-section-number">Chapter 1</span> Integrands</h1>
+<hr />
+<p>We introduce the project, describe the book’s general approach, and explain how it differs from current approaches in the social sciences. We preview our argument for the utility of causal models as a framework for choosing research strategies and drawing causal inferences from evidence.</p>
+<hr />
+<p>The engineer pressed the button, but the light didn’t turn on.</p>
+<p>“Maybe the bulb is blown,” she thought.</p>
+<p>She replaced the bulb, pressed the button and, sure enough, the light turned on.</p>
+<p>“What just happened?” asked her philosopher friend.</p>
+<p>“The light wouldn’t turn on because the bulb was busted, but I replaced the bulb and fixed the problem.”</p>
+<p>“Such hubris!” remarked her friend. “If I understand you, you are saying that pressing the button <em>would have</em> caused a change in the light <em>if the bulb had not been busted</em>.”</p>
+<p>“That’s right.”</p>
+<p>“But hold on a second. That’s a causal claim about counterfactual events in counterfactual conditions that you couldn’t have observed. I don’t know where to begin. For one thing, you seem to be inferring from the fact that the light did not go on when you pressed the button the first time that pressing the button the first time had no effect at all. What a remarkable conclusion. Did it never occur to you that the light might have about to turn on anyway—and that your pressing that button at just that moment is what <em>stopped</em> the light going on?”</p>
+<p>“What’s more,” the philosopher went on, “you seem also to be saying that pressing the button the second time <em>did</em> have an effect because you saw the light go on that second time. That’s rather incredible. That light could be controlled by a different circuit that was timed to turn it on at just the moment that you pressed the button the second time. Did you think about that possibility?”</p>
+<p>“On top of those two unsubstantiated causal claims,” the philosopher continued, “you are <em>also</em> saying, I think, that the difference between what you <em>believe</em> to be a non-cause on the first pressing and a cause on the second pressing is itself due to the bulb. But, of course, countless other things could have changed! Maybe there was a power outage for a few minutes.”</p>
+<p>“That hardly ever happens.”</p>
+<p>“Well, maybe the light only comes on the second time the button is pressed.”</p>
+<p>“It’s not that kind of button.”</p>
+<p>“So you say. But even if that’s true, there are still so many other possible factors that could have mattered here—including things that neither of us can even imagine!”</p>
+<p>The philosopher paused to ponder her friend’s chutzpah.</p>
+<p>“Come to think of it,” the philosopher went on, “how do you even know the bulb was busted?”</p>
+<p>“Because the light worked when I replaced the bulb.”</p>
+<p>“But that means,” the philosopher responded, “that your measurement of the state of the bulb depends on your causal inference about the effects of the button. And we know where that leads. Really, my friend, you are lost.”</p>
+<p>“So do you want me to put the old bulb back in?”</p>
+<div id="the-centrality-of-causal-models" class="section level2">
+<h2><span class="header-section-number">1.1</span> The Centrality of Causal Models</h2>
+<p>In the conversation between the philosopher and the engineer, the philosopher disputes what seems a simple inference. Some of her arguments suggest a skepticism bordering on paranoia and seem easily dismissed. Others seem closer to hitting a mark: perhaps there was nothing wrong with the bulb and the button was just the kind that has to be pressed twice. For an objection like this, we have to rely on the engineer’s knowledge of how the button works.</p>
+<p>While the philosopher’s skepticism guards against false inferences, it is also potentially paralyzing.</p>
+<p>Social scientists have been shifting between the poles staked out by the philosopher and the engineer for many years. The engineers bring background knowledge to bear on a question and deploy models of broad processes to make inferences about particular cases. The philosophers bring a skeptical lense and ask for justifications that depend as little as possible on imported knowledge.</p>
+<p>This book is written for would-be engineers. It is a book about how we can mobilize our background knowledge about how the world works to learn more about the world. It is, more specifically, a study in how we can use causal models of the world to design and implement empirical strategies of causal inferences. But we will try to imagine throughout that the engineers have philosophers looking over their shoulders and will try to figure out ways to equip the engineers with plausible answers to the the philosophers’ worries.</p>
+<p>By causal models, we mean systems of statements reflecting background knowledge of and uncertainty about possible causal linkages in a domain of interest. There are three closely related motivations for our move to examine the important role that models can play in empirical social inquiry. One is an interest in integrating qualitative knowledge with quantitative approaches, and a view—possibly a controversial one—that process tracing is a model-dependent endeavor. A second is concern over the limits of design-based inference. A third and related motive is an interest in better connecting empirical strategies to theory.</p>
+<div id="qualitative-and-mixed-method-inference" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Qualitative and mixed-method inference</h3>
+<p>Recent years have seen the elucidation of the inferential logic behind “process tracing” procedures used in qualitative political science and other disciplines. In our read, the logic provided in these accounts depends on a particular form of model-based inference.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>While process tracing as a method has been around for more than three decades (e.g., <span class="citation">George and McKeown (<a href="#ref-george1985case">1985</a>)</span>), its logic has been most fully laid out by qualitative methodologists over the last 15 years (e.g., <span class="citation">A. Bennett and Checkel (<a href="#ref-bennett2014process">2015</a>)</span>, <span class="citation">George and Bennett (<a href="#ref-george2005case">2005</a>)</span>, <span class="citation">Brady and Collier (<a href="#ref-brady2010rethinking">2010</a>)</span>, <span class="citation">Hall (<a href="#ref-Hall2003aligning">2003</a>)</span>, <span class="citation">Mahoney (<a href="#ref-mahoney2010after">2010</a>)</span>). Whereas <span class="citation">King, Keohane, and Verba (<a href="#ref-king1994designing">1994</a>)</span> sought to derive qualitative principles of causal inference within a correlational framework, qualitative methodologists writing in the wake of “KKV” have emphasized and clarified process-tracing’s “within-case” inferential logic: in process tracing, explanatory hypotheses are tested based on observations of what happened within a case, rather than on covariation between causes and effects across cases. The process tracing literature has also advanced increasingly elaborate conceptualizations of the different kinds of probative value that within-case evidence can yield.</p>
+<p>For instance, qualitative methodologists have explicated the logic of different test types (“hoop”, “smoking gun”, etc.) involving varying degree of specificity and sensitivity (<span class="citation">Collier (<a href="#ref-collier2011understanding">2011</a>)</span>, <span class="citation">Mahoney (<a href="#ref-Mahony:Logic:2012">2012</a>)</span>). A smoking-gun test is a test that seeks information that is only plausibly present if a hypothesis is true (thus, generating strong evidence for the hypothesis if passed), a hoop test seeks data that should certainly be present if a proposition is true (thus generating strong evidence against the hypothesis if failed), and a doubly decisive test is both smoking-gun and hoop (for an expanded typology, see also <span class="citation">Rohlfing (<a href="#ref-rohlfing2013comparative">2013</a>)</span>). Other scholars have expressed the leverage provided by process-tracing evidence in Bayesian terms, moving from a set of discrete test types to a more continuous notion of probative value (<span class="citation">Fairfield and Charman (<a href="#ref-fairfield2017explicit">n.d.</a>)</span>, <span class="citation">A. Bennett (<a href="#ref-BennettAppendix">2015</a>)</span>, <span class="citation">Humphreys and Jacobs (<a href="#ref-humphreys2015mixing">2015</a>)</span>).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<!-- ^[Note that these statements are statements about likelihood functions and do not require a specifically Bayesian mode of inference.] -->
+<p>Yet, conceptualizing the different ways in which probative value might operate leaves a fundamental question unanswered: what gives within-case evidence its probative value with respect to causal relations? We believe that, fundamentally, the answer lies in researcher beliefs that lies outside of the analysis in question. We enter a research situation with a model of how the world works, and we use this model to make inferences given observed patterns in the data—while at the same time updating those models based on the data. A key aim of this book is to demonstrate how models can — and, in our view, must — play in drawing case-level causal inferences.</p>
+<p>As we will also argue, along with clarifying the logic of qualitative inference, causal models can also enable the systematic integration of qualitative and quantitative forms of evidence. Social scientists are increasingly pursuing mixed-method research designs. It is becoming increasingly common for scholars to pursue research strategies that combine quantitative with qualitative forms of evidence. A typical mixed-methods study includes the estimation of causal effects using data from many cases as well as a detailed examination of the processes taking place in a few. Prominent examples include Lieberman’s study of racial and regional dynamics in tax policy (<span class="citation">Lieberman (<a href="#ref-lieberman2003race">2003</a>)</span>); Swank’s analysis of globalization and the welfare state (<span class="citation">Swank (<a href="#ref-swank2002global">2002</a>)</span>); and Stokes’ study of neoliberal reform in Latin America (<span class="citation">Stokes (<a href="#ref-stokes2001mandates">2001</a>)</span>). Major recent methodological texts provide intellectual justification of this trend toward mixing, characterizing small-<span class="math inline">\(n\)</span> and large-<span class="math inline">\(n\)</span> analysis as drawing on a single logic of inference and/or as serving complementary functions (King, Keohane, and Verba, 1994; Brady and Collier, 2004). The American Political Science Association now has an organized section devoted in part to the promotion of multi-method investigations, and the emphasis on multiple strategies of inference research is now embedded in guidelines from many research funding agencies (Creswell and Garrett, 2008).</p>
+<p>However, while scholars frequently point to the benefits of mixing correlational and process-based inquiry (e.g., <span class="citation">Collier, Brady, and Seawright (<a href="#ref-collier2010sources">2010</a>)</span>, p.~181), and have sometimes mapped out broad strategies of multi-method research design (<span class="citation">Lieberman (<a href="#ref-Lieberman2005nested">2005</a>)</span>, <span class="citation">Seawright and Gerring (<a href="#ref-SeawrightGerring2008">2008</a>)</span>), they have rarely provided specific guidance on how the integration of inferential leverage should unfold. In particular, the literature does has not supplied specific principles for aggregating findings—whether mutually reinforcing or contradictory—across different modes of analysis.A small number of exceptions stand out. In the approach suggested by <span class="citation">Gordon and Smith (<a href="#ref-gordon2004quantitative">2004</a>)</span>, for instance, available expert (possibly imperfect) knowledge regarding the operative causal mechanisms for a small number of cases can be used to anchor the statistical estimation procedure in a large-N study. <span class="citation">Western and Jackman (<a href="#ref-WesternJackman1994">1994</a>)</span> propose a Bayesian approach in which qualitative information shapes subjective priors which in turn affect inferences from quantitative data. Relatedly, in <span class="citation">Glynn and Quinn (<a href="#ref-GlynnQuinn2011">2011</a>)</span>, researchers use knowledge about the empirical joint distribution of the treatment variable, the outcome variable, and a post-treatment variable, alongside assumptions about how causal processes operate, to tighten estimated bounds on causal effects. <span class="citation">Seawright (<a href="#ref-seawrightbook">2016</a>)</span> presents an informal framework in which case studies are used to test the assumptions underlying statistical inferences, such as the assumption of no-confounding or the stable-unit treatment value assumption (SUTVA).</p>
+<p>Yet we still lack a comprehensive framework that allows us to enter qualitative and quantitative form of information into an integrated analysis for the purposes of answering the wide range of causal questions that are of interests to social scientists, including questions about case-level explanations and causal effects, average causal effects, and causal pathways. As we aim to demonstrate in this book, grounding inference in causal models provides a very natural way of combining information of the <span class="math inline">\(X,Y\)</span> variety with information about the causal processes connecting <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. The approach can be readily addressed to both the case-oriented questions that tend to be of interest to qualitative scholars and the population-oriented questions that tend to motivate quantitative inquiry. As will become clear, in fact, when we structure our inquiry in terms of causal models, the conceptual distinction between qualitative and quantitative inference becomes hard to sustain. Notably, this is not for the reason that “KKV”’s framework suggests, i.e., that all causal inference is fundamentally about correlating causes and effects. To the contrary, it is that in a causal-model-based inference, what matters for the informativeness of a piece of evidence is how that evidence is connected to our query, given how we think the world works. While the apparatus that we present is formal, the approach—in asking how pieces of evidence drawn from different parts of a process map on to a base of theoretical knowledge—is arguably most closely connected to process tracing in its core logic.</p>
+<!-- We see each of these three developments as being of great importance to the development of empirical social science. Collectively, they have generated far greater clarity and sophistication about, and diversified social scientists approaches to, the empirical assessment of causation. At the same time, we see each of these developments as, to date, limited in important ways.  -->
+</div>
+<div id="the-limits-to-design-based-inference" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> The limits to design-based inference</h3>
+<p>The engineer in our story tackles the problem of causal inference using models: theories of how the world works, generated from past experiences and applied to the situation at hand. The philosopher maintains a critical position, resisting models and the importation of beliefs not supported by evidence in the case at hand.</p>
+<p>The engineer’s approach recalls the dominant orientation among social scientists until rather recently. At the turn of the current century, multivariate regression had become a nearly indispensable tool of quantitative social science, with a large family of statistical models serving as political scientists’ and economists’ analytic workhorses for the estimation of causal effects.</p>
+<p>Over the last two decades, however, the philosophers have raised a set of compelling concerns about the assumption-laden nature of standard regression analysis, while also clarifying how valid inferences can be made with limited resort to models in certain research situations. The result has been a growth in the use of design-based inference techniques that, in principle, allow for model-free estimation of causal effects (see <span class="citation">Dunning (<a href="#ref-dunning2012natural">2012</a>)</span>, <span class="citation">Gerber, Green, and Kaplan (<a href="#ref-GerGreKap04">2004</a>)</span>, <span class="citation">Druckman et al. (<a href="#ref-druckman2011experimentation">2011</a>)</span>, <span class="citation">Palfrey (<a href="#ref-palfrey2009laboratory">2009</a>)</span> among others). These include lab, survey, and field experiments and natural-experimental methods exploiting either true or “as-if” randomization by nature. With the turn to experimental and natural-experimental methods has come a broader conceptual shift, with a growing reliance on the “potential outcomes” framework as a model for thinking about causation (see <span class="citation">Rubin (<a href="#ref-Rubin1974">1974</a>)</span>, <span class="citation">Splawa-Neyman et al. (<a href="#ref-splawa1990application">1990</a>)</span> among others) and a reduced reliance on models of data-generating processes.</p>
+<p>The ability to estimate average effects and to calculate <span class="math inline">\(p\)</span>-values and standard errors without resort to models is an extraordinary development. In Fisher’s terms, with these tools, randomization processes provide a “reasoned basis for inference,” placing empirical claims on a powerful footing.</p>
+<p>While acknowledging the strengths of these approaches, we also take seriously two points of concern.</p>
+<p>The first concern—raised by many in recent years (e.g., <span class="citation">Thelen and Mahoney (<a href="#ref-thelen2015comparative">2015</a>)</span>)—is about design-based inference’s scope of application. While experimentation and natural experiments represent powerful tools, the range of research situations in which model-free inference is possible is inevitably limited. For a wide range of causal conditions of interest to social scientists and to society, controlled experimentation is impossible, and true or “as-if” randomization is absent. Moreover, limiting our focus to those questions for, or situations in which, exogeneity can be established “by design” would represent a dramatic narrowing of social science’s ken. It would be a recipe for, at best, learning more and more about less and less. To be clear, this is not an argument against experimentation or design based inference; yet it is an argument for why social science needs a broader set of tools.</p>
+<p>The second concern is more subtle. The great advantage of design-based inference is that it liberates researchers from the need to rely on models to make claims about causal effects. The risk is that, in operating model-free, researchers end up learning about effect sizes but not about models. But models are what we want to learn about. Our goal as social scientists is to have a useful model for how the world works, not simply a collection of claims about the effects different causes have had in different times and places. It is through models that we derive an understanding of how things might work in contexts and for processes and variables that we have not yet studied. Thus, our interest in models is intrinsic, not instrumental. By taking models, as it were, out of the equation, we dramatically limit the potential for learning about the world.</p>
+</div>
+<div id="connecting-theory-and-empirics" class="section level3">
+<h3><span class="header-section-number">1.1.3</span> Connecting theory and empirics</h3>
+<p>Theory and empirics have had a surprisingly uncomfortable relationship in political science. In a major recent intervention, for instance, <span class="citation">Clarke and Primo (<a href="#ref-clarke2012model">2012</a>)</span> draw attention to and critique political scientists’ extremely widespread reliance on the “hypothetico-deductive” (H-D) framework, in which a theory or model is elaborated, empirical predictions derived, and data sought to test these predictions and the model from which they derive.Clarke and Primo draw on decades of scholarship in the philosophy of science pointing to deep problems with the HD framework, including with the idea that the truth of a model logically derived from first principles can be <em>tested</em> against evidence.</p>
+<p>This book is also motivated by a concern with the relationship between theory and evidence in social inquiry. In particular, we are struck by the frequent lack of a clear link between theory, on the one hand, and empirical strategy and inference, on the other. We see this ambiguity as relatively common in both qualitative and quantitative work. We can perhaps illustrate it best, however, by reference to qualitative work, where the centrality of theory to inference has been most emphasized. In process tracing, theory is what justifies inferences. In their classic text on case study approaches, <span class="citation">George and Bennett (<a href="#ref-george2005case">2005</a>)</span> describe process tracing as the search for evidence of “the causal process that a theory hypothesizes or implies” (6). Similarly, <span class="citation">Hall (<a href="#ref-Hall2003aligning">2003</a>)</span> conceptualizes the approach as testing for the causal-process-related observable implications of a theory, <span class="citation">Mahoney (<a href="#ref-mahoney2010after">2010</a>)</span> indicates that the events for which process tracers go looking are those posited by theory (128), and <span class="citation">Gerring (<a href="#ref-gerring2006case">2006</a>)</span> describes theory as a source of predictions that the case-study analyst tests (116). Theory, in these accounts, is supposed to help us figure out where to look for discriminating evidence.</p>
+<p>What we do not yet have, however, is a systematic account of how researchers can derive within-case empirical predictions from theory and how exactly doing so provides leverage on a causal question. From what elements of a theory can scholars derive informative within-case observations? Given a set of possible things to be observed in a case, how can theory help us distinguish more from less informative observations? Of the many possible observations suggested by a theory, how can we determine which would add probative value to the evidence already at hand? How do the evidentiary requisites for drawing a causal inference, given a theory, depend on the particular causal question of interest—on whether, for instance, we are interested in identifying the cause of an outcome, estimating an average causal effect, or identifying the pathway through which an effect is generated? In short, how exactly can we ground causal inferences from within-case evidence in background knowledge about how the world works?</p>
+<p>Most quantitative work in political science features a similarly weak integration between theory and research design. The modal inferential approach in quantitative work, both observational and experimental, involves looking for correlations between causes and outcomes, with minimal regard for intervening or surrounding causal relationships.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>In this book, we seek to show how scholars can make much fuller and more explicit use of theoretical knowledge in designing their research projects and analyzing their observations. Like Clarke and Primo, we treat models not as maps of sort: maps, based on prior theoretical knowledge, about causal relations in a domain of interest. Also as in Clarke and Primo’s approach, we do not write down a model in order to test its veracity. Rather, we show how we can systematically use causal models with particular characteristics to guide our empirical strategies and inform our inferences. Grounding our empirical strategy in a model allows us, in turn, to learn about the model itself as we encounter the data.</p>
+<p>##Key contributions</p>
+<p>This book draws on methods developed in the study of Bayesian networks, a field pioneered by scholars in computer science, statistics, and philosophy. Bayesian networks, a form of causal model, have had limited traction to date in political science. Yet the literature on Bayesian networks and their graphical counterparts, directed acyclic graphs (DAGs), is a body of work that addresses very directly the kinds of problems that qualitative and quantitative scholars routinely grapple with.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<p>Drawing on this work, we show in the chapters that follow how a theory can be formalized as a causal model represented by a causal graph and a set of structural equations. Engaging in this modest degree of formalization, we seek to demonstrate, yields enormous benefits. It allows us, for a wide range of causal questions, to identify a.) a set of variables (or nodes) in the model, including unobservable factors, that represent the causal query and b.) a set of observable variables that are potentially informative about the nodes in the query. The payoffs of this approach are that it enables us to:</p>
+<ul>
+<li><p>make systematic use of theory to figure out what kinds of evidence have probative value for our causal queries and, in turn, to design maximally informative empirical strategies;</p></li>
+<li><p>draw inferences from the evidence in a manner disciplined by our theoretical knowledge of how the world works;</p></li>
+<li><p>integrate in this analysis information conventionally considered “qualitative” (e.g., evidence about causal mechanisms) with information conventionally considered “quantitative” (e.g., evidence about causal and outcome variables); and</p></li>
+<li><p>learn about the models that we bring to the table, which allows for the cumulation of knowledge through the updating of the theoretical knowledge base on which future inferences can draw.</p></li>
+</ul>
+<p>As we will show, using causal models has substantial implications for common methodological advice and practice. To touch on just a few of these: Our elaboration and application of model-based process tracing shows that, given plausible causal models, process tracing’s common focus on intervening causal chains may be much less productive than other empirical strategies, such as examining moderating conditions. Our examination of model-based case-selection indicates that for many common purposes there is nothing particularly especially informative about “on the regression line” cases or those in which the outcome occurred, and that case selection should often be driven by factors that have to date received little attention, such as the population distribution of cases and the probative value of the available evidence. And an analysis of clue-selection as a decision problem shows that the probative value of a piece evidence cannot be assessed in isolation, but hinges critically on what we have already observed.</p>
+<p><strong>MORE TO COME HERE ELABORATING IMPLICATIONS, COMPARING TO ADVICE AND PRACTICE IN LITERATURE</strong></p>
+<p>We emphasize that the basic analytical apparatus that we employ in this book is not new, and the book’s aim is not to generate fundamentally novel approaches to study causality in the world. Rather, we see the book’s goals as being of three kinds. First, the book aims to import insight: to introduce political scientists to an approach that has received little attention in the discipline but that can be useful for addressing the sorts of causal causal questions with which political scientists are commonly preoccupied. As a model-based approach, it is a framework especially well suited to a field of inquiry in which exogeneity frequently cannot be assumed by design—that is, in which we often have no choice but to be engineers. Second, the book draws connections between the Bayesian networks approach and key concerns and challenges with which methodologists in our discipline routinely grapple. Working with causal models and DAGs most naturally connects to concerns about confounding and identification that have been central to much quantitative methodological development. Yet we also show how causal models can address issues central to process tracing, such as how to select cases for examination, how to think about the probative value of causal process observations, and how to structure our search for evidence, given finite resources. Third, the book provides a set of usable tools for implementing the approach. We provide intuition and software that researchers can use to make research design choices and draw inferences from the data.</p>
+</div>
+</div>
+<div id="the-road-ahead" class="section level2">
+<h2><span class="header-section-number">1.2</span> The Road Ahead</h2>
+<p>The book is divided into four main parts.</p>
+<p>The first part is about the basics. We start off by describing the kinds of causal estimands of interest. The main goal here is to introduce the key ideas in the study of Bayesian nets and to argue for a focus of interest away from average treatment effects as go-to estimands of interest and towards a focus on causal nets, or causal structures, as the key quantity of interest. The next chapter introduces key Bayesian ideas; what Bayes’ rule is and how to use it. The third chapter connects the study of Bayesian networks to theoretical claims. The key argument here is that nets should be thought of as theories which are themselves supportable by lower level networks (theories). Lower level theories are useful insofar as they provide leverage to learn about processes on higher level networks.</p>
+<p>The second part applies these ideas to process tracing. Rather than conceptualizing process tracing as has been done in recent work as seeking process level data that is known to be informative about a causal claim, the approach suggested here is one in which the probative value of a clue is derived from its position in a causal network connecting variables of interest. Chapter 5 lays out the key logic of inference from clues and provides general criteria for assessing when it is and is not possible. Chapter 6 provides specific tools for assessing which collections of clues are most informative for a given estimand of interest and outlines a strategy for assessing which clues to gather when in a research process. Chapter 7 applies these tools to the problem of assessing the effects of economic inequality on democratization.</p>
+<p>The third part moves to mixed data problems — situations in which a researcher contains “quantitative” (<span class="math inline">\(X,Y\)</span>) data on a set of cases and is considering gathering within case (“qualitative”) data on some of these. In chapter 8 we argue that this situation is formally no different to the single case process tracing problem since a collection of cases can always be conceptualized as a single case with vector valued variables. The computational complexity is however greater in these cases and so in this chapter we describe a set of models that may be useful for addressing these problems. In this framework the problem of case selection is equivalent to the kind of problem of clue selection discussed in Chapter 6. For a canonical multicase model however we use simulation approaches to provide guidance for how cases should be selected. The broad conclusion here is that researchers should go where the probative value lies, and all else equal, should select cases approximately proportional to the size of <span class="math inline">\(XY\)</span> strata—whether or not these are “on the regression line.” We conclude this part by revisiting the problem of inequality and democracy introduced in Chapter 7.</p>
+<p>The fourth part steps back and puts the model-based approach into question. We have been advocating an embrace of models to aid inference. But the dangers of doing this are demonstrably large. The key problem is that with model-based inference, the inferences are only as good as the model. In the end, while we are supporting the efforts of engineers, we know that the philosopher is right. This final part provides four responses to this (serious) concern. The first is that the dependence on models can sound more extreme than it is. Seemingly fixed parameters of models can themselves become quantities of interest in lower-level models, and there can be learning about these when higher-level models are studied. Thus models are both put to use and objects of interest. The second is that different types of conditional statements are possible; in particular as shown in work qualitative graphs. The third response points to the sort of arguments that can be made to support models, most importantly the importation of knowledge from one study to another. The last argument, presented in the last substantive chapter, highlights the tools to <em>evaluate</em> models, using tools that are increasingly standard in Bayesian analysis.</p>
+<p>Here we go.</p>
+
+</div>
+</div>
+
+
+
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-BennettAppendix">
+<p>Bennett, Andrew. 2015. “Appendix.” In <em>Process Tracing: From Metaphor to Analytic Tool</em>, edited by Andrew Bennett and Jeffrey Checkel. New York: Cambridge University Press.</p>
+</div>
+<div id="ref-bennett2014process">
+<p>Bennett, Andrew, and Jeffrey T Checkel. 2015. <em>Process Tracing</em>. New York: Cambridge University Press.</p>
+</div>
+<div id="ref-brady2010rethinking">
+<p>Brady, H.E., and D. Collier. 2010. <em>Rethinking Social Inquiriy: Diverse Tools, Shared Standards</em>. Lanham, MD: Rowman &amp; Littlefield. <a href="http://books.google.ca/books?id=djovjEXZYccC">http://books.google.ca/books?id=djovjEXZYccC</a>.</p>
+</div>
+<div id="ref-clarke2012model">
+<p>Clarke, Kevin A, and David M Primo. 2012. <em>A Model Discipline: Political Science and the Logic of Representations</em>. New York: Oxford University Press.</p>
+</div>
+<div id="ref-collier2011understanding">
+<p>Collier, David. 2011. “Understanding Process Tracing.” <em>PS: Political Science &amp; Politics</em> 44 (04): 823–30.</p>
+</div>
+<div id="ref-collier2010sources">
+<p>Collier, David, Henry E Brady, and Jason Seawright. 2010. “Sources of Leverage in Causal Inference: Toward an Alternative View of Methodology.” In <em>Rethinking Social Inquiry: Diverse Tools, Shared Standards</em>, edited by David Collier and Henry E Brady, 161–99. Lanham MD: Rowman; Littlefield.</p>
+</div>
+<div id="ref-druckman2011experimentation">
+<p>Druckman, James N, Donald P Green, James H Kuklinski, and Arthur Lupia. 2011. “Experimentation in Political Science.” In <em>Handbook of Experimental Political Science</em>, edited by James N Druckman, Donald P Green, James H Kuklinski, and Arthur Lupia, 3–14. New York: Cambridge University Press.</p>
+</div>
+<div id="ref-dunning2012natural">
+<p>Dunning, T. 2012. <em>Natural Experiments in the Social Sciences: A Design-Based Approach</em>. Strategies for Social Inquiry. Cambridge University Press. <a href="http://books.google.de/books?id=ThxVBFZJp0UC">http://books.google.de/books?id=ThxVBFZJp0UC</a>.</p>
+</div>
+<div id="ref-fairfield2017explicit">
+<p>Fairfield, Tasha, and Andrew Charman. n.d. “Explicit Bayesian Analysis for Process Tracing: Guidelines, Opportunities, and Caveats.” <em>Political Analysis</em>.</p>
+</div>
+<div id="ref-george2005case">
+<p>George, A.L.A., and A.A. Bennett. 2005. <em>Case Studies and Theory Development in the Social Sciences</em>. A Bcsia Book. MIT Press. <a href="http://books.google.ch/books?id=JEGzE6ExN-gC">http://books.google.ch/books?id=JEGzE6ExN-gC</a>.</p>
+</div>
+<div id="ref-george1985case">
+<p>George, Alexander L, and Timothy J McKeown. 1985. “Case Studies and Theories of Organizational Decision Making.” <em>Advances in Information Processing in Organizations</em> 2 (1): 21–58.</p>
+</div>
+<div id="ref-GerGreKap04">
+<p>Gerber, Alan S., Donald P. Green, and Edward H. Kaplan. 2004. “The Illusion of Learning from Observational Research.” In <em>Problems and Methods in the Study of Politics</em>, edited by Ian Shapiro, Rogers M. Smith, and Tarek E. Masoud, 251–73. Cambridge, UK: Cambridge University Press.</p>
+</div>
+<div id="ref-gerring2006case">
+<p>Gerring, John. 2006. <em>Case Study Research: Principles and Practices</em>. New York: Cambridge University Press.</p>
+</div>
+<div id="ref-GlynnQuinn2011">
+<p>Glynn, Adam N., and Kevin M. Quinn. 2011. “Why Process Matters for Causal Inference.” <em>Political Analysis</em> 19: 273–86.</p>
+</div>
+<div id="ref-gordon2004quantitative">
+<p>Gordon, Sanford C, and Alastair Smith. 2004. “Quantitative Leverage Through Qualitative Knowledge: Augmenting the Statistical Analysis of Complex Causes.” <em>Political Analysis</em> 12 (3): 233–55.</p>
+</div>
+<div id="ref-Hall2003aligning">
+<p>Hall, Peter A. 2003. “Aligning Ontology and Methodology in Comparative Research.” In <em>Comparative Historical Analysis in the Social Sciences</em>, edited by James Mahoney and Dietrich Rueschemeyer, 373–404. Cambridge, UK; New York: Cambridge University Press; Cambridge University Press.</p>
+</div>
+<div id="ref-humphreys2015mixing">
+<p>Humphreys, Macartan, and Alan M Jacobs. 2015. “Mixing Methods: A Bayesian Approach.” <em>American Political Science Review</em> 109 (04): 653–73.</p>
+</div>
+<div id="ref-king1994designing">
+<p>King, G., R.O. Keohane, and S. Verba. 1994. <em>Designing Social Inquiry: Scientific Inference in Qualitative Research</em>. Princeton University Press. <a href="http://books.google.de/books?id=A7VFF-JR3b8C">http://books.google.de/books?id=A7VFF-JR3b8C</a>.</p>
+</div>
+<div id="ref-lieberman2003race">
+<p>Lieberman, E.S. 2003. <em>Race and Regionalism in the Politics of Taxation in Brazil and South Africa</em>. Cambridge Studies in Comparative Politics. Cambridge University Press. <a href="http://books.google.de/books?id=S6BOgyL-KYQC">http://books.google.de/books?id=S6BOgyL-KYQC</a>.</p>
+</div>
+<div id="ref-Lieberman2005nested">
+<p>Lieberman, Evan S. 2005. “Nested Analysis as a Mixed-Method Strategy for Comparative Research.” <em>American Political Science Review</em> 99 (03): 435–52. <a href="https://doi.org/10.1017/S0003055405051762">https://doi.org/10.1017/S0003055405051762</a>.</p>
+</div>
+<div id="ref-mahoney2010after">
+<p>Mahoney, James. 2010. “After Kkv: The New Methodology of Qualitative Research.” <em>World Politics</em> 62 (01): 120–47.</p>
+</div>
+<div id="ref-Mahony:Logic:2012">
+<p>Mahoney, James. 2012. “The Logic of Process Tracing Tests in the Social Sciences.” <em>Sociological Methods and Research</em> 41 (4): 570–97. <a href="http://EconPapers.repec.org/RePEc:sae:somere:v:41:y:2012:i:4:p:570-597">http://EconPapers.repec.org/RePEc:sae:somere:v:41:y:2012:i:4:p:570-597</a>.</p>
+</div>
+<div id="ref-palfrey2009laboratory">
+<p>Palfrey, Thomas R. 2009. “Laboratory Experiments in Political Economy.” <em>Annual Review of Political Science</em> 12: 379–88.</p>
+</div>
+<div id="ref-rohlfing2013comparative">
+<p>Rohlfing, Ingo. 2013. “Comparative Hypothesis Testing via Process Tracing.” <em>Sociological Methods &amp; Research</em> 43 (04): 606–42.</p>
+</div>
+<div id="ref-Rubin1974">
+<p>Rubin, Donald B. 1974. “Estimating Causal Effects of Treatments in Randomized and Nonrandomized Studies.” <em>Journal of Educational Psychology</em> 66 (5): 688–701.</p>
+</div>
+<div id="ref-seawrightbook">
+<p>Seawright, Jason. 2016. <em>Multi-Method Social Science: Combining Qualitative and Quantitative Tools</em>. New York: Cambridge University Press.</p>
+</div>
+<div id="ref-SeawrightGerring2008">
+<p>Seawright, Jason, and John Gerring. 2008. “Case Selection Techniques in Case Study Research: A Menu of Qualitative and Quantitative Options.” <em>Political Research Quarterly</em> 61 (2): 294–308. <a href="https://doi.org/10.1177/1065912907313077">https://doi.org/10.1177/1065912907313077</a>.</p>
+</div>
+<div id="ref-splawa1990application">
+<p>Splawa-Neyman, Jerzy, DM Dabrowska, TP Speed, and others. 1990. “On the Application of Probability Theory to Agricultural Experiments. Essay on Principles. Section 9.” <em>Statistical Science</em> 5 (4): 465–72.</p>
+</div>
+<div id="ref-stokes2001mandates">
+<p>Stokes, S.C. 2001. <em>Mandates and Democracy: Neoliberalism by Surprise in Latin America</em>. Cambridge Studies in Comparative Politics. Cambridge University Press. <a href="http://books.google.de/books?id=-cdcSVFZRU8C">http://books.google.de/books?id=-cdcSVFZRU8C</a>.</p>
+</div>
+<div id="ref-swank2002global">
+<p>Swank, D. 2002. <em>Global Capital, Political Institutions, and Policy Change in Developed Welfare States</em>. Cambridge Studies in Comparative Politics. Cambridge University Press. <a href="http://books.google.de/books?id=p3F-agj4CXcC">http://books.google.de/books?id=p3F-agj4CXcC</a>.</p>
+</div>
+<div id="ref-thelen2015comparative">
+<p>Thelen, Kathleen, and James Mahoney. 2015. “Comparative-Historical Analysis in Contemporary Political Science.” In <em>Advances in Comparative-Historical Analysis</em>, 1–36. New York: Cambridge University Press.</p>
+</div>
+<div id="ref-WesternJackman1994">
+<p>Western, Bruce, and Simon Jackman. 1994. “Bayesian Inference for Comparative Research.” <em>American Political Science Review</em> 88 (02): 412–23.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>As we describe in <span class="citation">Humphreys and Jacobs (<a href="#ref-humphreys2015mixing">2015</a>)</span>, the term “qualitative research” means many different things to different scholars, and there are multiple approaches to mixing qualitative and quantitative methods. There we distinguish between approaches that suggest that qualitative and quantitative approaches address distinct, if complementary, questions; those that suggest that they involve distinct measurement strategies; and those that suggest that they employ distinct inferential logics. The approach that we employ in <span class="citation">Humphreys and Jacobs (<a href="#ref-humphreys2015mixing">2015</a>)</span> connects most with the third family of approaches. Most closely related, in political science, is work in <span class="citation">Glynn and Quinn (<a href="#ref-GlynnQuinn2011">2011</a>)</span>, in which researchers use knowledge about the empirical joint distribution of the treatment variable, the outcome variable, and a post-treatment variable, alongside assumptions about how causal processes operate, to tighten estimated bounds on causal effects. In the present book, however, we move toward a position in which fundamental differences between qualitative and quantitative inference tend to dissolve, with all inference drawing on what might be considered a “qualitative” logic in which the researcher’s task is to confront a pattern of evidence with a theoretical logic.<a href="intro.html#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>In <span class="citation">Humphreys and Jacobs (<a href="#ref-humphreys2015mixing">2015</a>)</span>, we use a fully Bayesian structure to generalize Van Evera’s four test types in two ways: first, by allowing the probative values of clues to be continuous; and, second, by allowing for researcher uncertainty (and, in turn, updating) over these values. In the Bayesian formulation, use of process-tracing information is not formally used to conduct tests that are either “passed” or “failed”, but rather to update beliefs about different propositions.<a href="intro.html#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>One exception is structural equation modeling, which bears a close affinity to the approach that we present in this book, but has gained minimal traction in political science.<a href="intro.html#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>For application to quantitative analysis strategies in political science, <span class="citation">Glynn and Quinn (<a href="#ref-glynn2007non">2007</a>)</span> give a clear introduction to how these methods can be used to motivate strategies for conditioning and adjusting for causal inference; <span class="citation">Garcı́a and Wantchekon (<a href="#ref-garcia2015graphical">2015</a>)</span> demonstrate how these methods can be used to assess claims of external validity. With a focus on qualitative methods, <span class="citation">Waldner (<a href="#ref-Waldner2015completeness">2015</a>)</span> uses causal diagrams to lay out a ‘’completeness standard’’ for good process tracing. <span class="citation">Weller and Barnes (<a href="#ref-weller2014finding">2014</a>)</span> employ graphs to conceptualize the different possible pathways between causal and outcome variables among which qualitative researchers may want to distinguish. Generally, in discussions of qualitative methodology, graphs are used to capture core features of theoretical accounts, but are not developed specifically to ensure a representation of the kind of independence relations implied by structural causal models (notably what is called in the literature the “Markov condition”). Moreover, efforts to tie these causal graphs to probative observations, as in <span class="citation">Waldner (<a href="#ref-Waldner2015completeness">2015</a>)</span>, are generally limited to identifying steps in a causal chain that the researcher should seek to observe.<a href="intro.html#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="models.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["ii.pdf"],
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

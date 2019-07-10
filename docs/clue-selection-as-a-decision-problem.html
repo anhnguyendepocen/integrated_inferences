@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 11 Clue Selection as a Decision Problem | Integrated Inferences</title>
+  <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 11 Clue Selection as a Decision Problem | Integrated Inferences" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="dnieperriver.png" />
+  <meta property="og:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="github-repo" content="rstudio/ii" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 11 Clue Selection as a Decision Problem | Integrated Inferences" />
+  
+  <meta name="twitter:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="twitter:image" content="dnieperriver.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="elements-of-design.html">
+<link rel="next" href="wide.html">
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="headers\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Model based causal inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Integrands</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-centrality-of-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Centrality of Causal Models</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.1</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.2</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.2</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a><ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#the-counterfactual-model"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#features-of-causal-models"><i class="fa fa-check"></i><b>2.2.1</b> Features of causal models</a></li>
+<li class="chapter" data-level="2.2.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.2.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.2.3" data-path="models.html"><a href="models.html#a-simple-running-example"><i class="fa fa-check"></i><b>2.2.3</b> A simple running example</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#causal-models-from-the-literature"><i class="fa fa-check"></i><b>2.3</b> Causal models from the literature</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#pierson-on-dismantling-the-welfare-state"><i class="fa fa-check"></i><b>2.3.1</b> Pierson on dismantling the welfare state</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#saunders-2011"><i class="fa fa-check"></i><b>2.3.2</b> Saunders (2011)</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#przeworski-and-limongi-1997"><i class="fa fa-check"></i><b>2.3.3</b> Przeworski and Limongi (1997)</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.4</b> Steps for constructing causal models</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="models.html"><a href="models.html#abstract-procedure"><i class="fa fa-check"></i><b>2.4.1</b> Abstract procedure</a></li>
+<li class="chapter" data-level="2.4.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.4.2</b> Model construction in code</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>3</b> Theories as causal models</a><ul>
+<li class="chapter" data-level="3.1" data-path="theory.html"><a href="theory.html#inequalitytheory"><i class="fa fa-check"></i><b>3.1</b> Two theories of inequality’s effects on democratization</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="theory.html"><a href="theory.html#theory-as-causal-functions"><i class="fa fa-check"></i><b>3.1.1</b> Theory as causal functions</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="theory.html"><a href="theory.html#theory-as-a-lower-level-model"><i class="fa fa-check"></i><b>3.2</b> Theory as a “lower-level” model</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="theory.html"><a href="theory.html#disggregating-nodes"><i class="fa fa-check"></i><b>3.2.1</b> Disggregating nodes</a></li>
+<li class="chapter" data-level="3.2.2" data-path="theory.html"><a href="theory.html#generalizing-a-model"><i class="fa fa-check"></i><b>3.2.2</b> Generalizing a model</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="theory.html"><a href="theory.html#moving-between-higher--and-lower-level-models"><i class="fa fa-check"></i><b>3.3</b> Moving between higher- and lower-level models</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="theory.html"><a href="theory.html#mappings-are-not-one-to-one"><i class="fa fa-check"></i><b>3.3.1</b> Mappings are not one-to-one</a></li>
+<li class="chapter" data-level="3.3.2" data-path="theory.html"><a href="theory.html#permissible-moves-across-levels"><i class="fa fa-check"></i><b>3.3.2</b> Permissible moves across levels</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="theory.html"><a href="theory.html#beneath-the-graph-causal-types-in-lower-level-models"><i class="fa fa-check"></i><b>3.4</b> Beneath the Graph: Causal Types in Lower-Level Models</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="theory.html"><a href="theory.html#medtheory"><i class="fa fa-check"></i><b>3.4.1</b> Mediation as Theory</a></li>
+<li class="chapter" data-level="3.4.2" data-path="theory.html"><a href="theory.html#modtheory"><i class="fa fa-check"></i><b>3.4.2</b> Moderation as Theory</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>3.5</b> Conclusion</a></li>
+<li class="chapter" data-level="3.6" data-path="theory.html"><a href="theory.html#appendix-illustration-of-a-mapping-from-a-game-to-a-dag"><i class="fa fa-check"></i><b>3.6</b> Appendix: Illustration of a Mapping from a Game to a DAG</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Questions</a><ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#causal-queries"><i class="fa fa-check"></i><b>4.1</b> Causal queries</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.1.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.1.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.1.3" data-path="questions.html"><a href="questions.html#case-level-explanation"><i class="fa fa-check"></i><b>4.1.3</b> Case-level explanation</a></li>
+<li class="chapter" data-level="4.1.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.1.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.1.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.1.5</b> Causal Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#illustration-with-the-running-example"><i class="fa fa-check"></i><b>4.2</b> Illustration with the Running Example</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a><ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> Bayes’ Rule for Continuous Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.1</b> Bayesian Inference on Queries</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayesian-correlational-inference"><i class="fa fa-check"></i><b>5.2.2</b> Bayesian correlational inference</a></li>
+<li class="chapter" data-level="5.2.3" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.3</b> Simple Bayesian Process Tracing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#three-principles-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Three principles of Bayesian updating</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneoues-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneoues, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="6" data-path="clues.html"><a href="clues.html"><i class="fa fa-check"></i><b>6</b> Process Tracing with Causal Models</a><ul>
+<li class="chapter" data-level="6.1" data-path="clues.html"><a href="clues.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>6.1</b> Process tracing and causal models</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="clues.html"><a href="clues.html#the-intuition"><i class="fa fa-check"></i><b>6.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="6.1.2" data-path="clues.html"><a href="clues.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>6.1.2</b> A formalization of the general approach</a></li>
+<li class="chapter" data-level="6.1.3" data-path="clues.html"><a href="clues.html#illustration-with-code"><i class="fa fa-check"></i><b>6.1.3</b> Illustration with code</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="clues.html"><a href="clues.html#five-principles"><i class="fa fa-check"></i><b>6.2</b> Five principles</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="clues.html"><a href="clues.html#conditional-independence-alone-does-not-provide-probative-value"><i class="fa fa-check"></i><b>6.2.1</b> Conditional independence alone does not provide probative value</a></li>
+<li class="chapter" data-level="6.2.2" data-path="clues.html"><a href="clues.html#uncertainty-does-not-alter-inference-for-single-case-causal-inference"><i class="fa fa-check"></i><b>6.2.2</b> Uncertainty does not alter inference for single case causal inference</a></li>
+<li class="chapter" data-level="6.2.3" data-path="clues.html"><a href="clues.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>6.2.3</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+<li class="chapter" data-level="6.2.4" data-path="clues.html"><a href="clues.html#probative-value"><i class="fa fa-check"></i><b>6.2.4</b> Probative value</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html"><i class="fa fa-check"></i><b>7</b> Application: Process Tracing with a Causal Model</a><ul>
+<li class="chapter" data-level="7.1" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>7.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="7.2" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#a-structural-causal-model"><i class="fa fa-check"></i><b>7.2</b> A Structural Causal Model</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#forming-priors"><i class="fa fa-check"></i><b>7.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#results"><i class="fa fa-check"></i><b>7.3</b> Results</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>7.3.1</b> Cases with incomplete data</a></li>
+<li class="chapter" data-level="7.3.2" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>7.3.2</b> Inferences for cases with observed democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#model-definition-and-inference-in-code"><i class="fa fa-check"></i><b>7.4</b> Model definition and inference in code</a></li>
+<li class="chapter" data-level="7.5" data-path="application-process-tracing-with-a-causal-model.html"><a href="application-process-tracing-with-a-causal-model.html#concluding-thoughts"><i class="fa fa-check"></i><b>7.5</b> Concluding thoughts</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>8</b> Integrated inferences</a><ul>
+<li class="chapter" data-level="8.1" data-path="mixing.html"><a href="mixing.html#theres-only-ever-one-case"><i class="fa fa-check"></i><b>8.1</b> There’s only ever one case</a></li>
+<li class="chapter" data-level="8.2" data-path="mixing.html"><a href="mixing.html#general-procedure"><i class="fa fa-check"></i><b>8.2</b> General procedure</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="mixing.html"><a href="mixing.html#the-parameter-matrix"><i class="fa fa-check"></i><b>8.2.1</b> The parameter matrix</a></li>
+<li class="chapter" data-level="8.2.2" data-path="mixing.html"><a href="mixing.html#the-ambiguity-matrix"><i class="fa fa-check"></i><b>8.2.2</b> The ambiguity matrix</a></li>
+<li class="chapter" data-level="8.2.3" data-path="mixing.html"><a href="mixing.html#likelihood"><i class="fa fa-check"></i><b>8.2.3</b> Likelihood</a></li>
+<li class="chapter" data-level="8.2.4" data-path="mixing.html"><a href="mixing.html#estimation"><i class="fa fa-check"></i><b>8.2.4</b> Estimation</a></li>
+<li class="chapter" data-level="8.2.5" data-path="mixing.html"><a href="mixing.html#mixed-data"><i class="fa fa-check"></i><b>8.2.5</b> Mixed data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="mixing.html"><a href="mixing.html#illustration"><i class="fa fa-check"></i><b>8.3</b> Illustration</a></li>
+<li class="chapter" data-level="8.4" data-path="mixing.html"><a href="mixing.html#illustrated-inferences"><i class="fa fa-check"></i><b>8.4</b> Illustrated inferences</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="mixing.html"><a href="mixing.html#xy-model"><i class="fa fa-check"></i><b>8.4.1</b> XY model</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>8.5</b> Considerations</a><ul>
+<li class="chapter" data-level="8.5.1" data-path="mixing.html"><a href="mixing.html#the-identification-problem"><i class="fa fa-check"></i><b>8.5.1</b> The identification problem</a></li>
+<li class="chapter" data-level="8.5.2" data-path="mixing.html"><a href="mixing.html#continuous-data"><i class="fa fa-check"></i><b>8.5.2</b> Continuous data</a></li>
+<li class="chapter" data-level="8.5.3" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>8.5.3</b> Measurement error</a></li>
+<li class="chapter" data-level="8.5.4" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>8.5.4</b> Spillovers</a></li>
+<li class="chapter" data-level="8.5.5" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>8.5.5</b> Parameteric models</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="mixing.html"><a href="mixing.html#conclusion-1"><i class="fa fa-check"></i><b>8.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>9</b> Mixed-Method Application: Inequality and Democracy Revisited</a><ul>
+<li class="chapter" data-level="9.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>9.1</b> A trained model</a></li>
+<li class="chapter" data-level="9.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>9.2</b> Data</a></li>
+<li class="chapter" data-level="9.3" data-path="mixingapp.html"><a href="mixingapp.html#inference"><i class="fa fa-check"></i><b>9.3</b> Inference</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democracy"><i class="fa fa-check"></i><b>9.3.1</b> Did inequality <em>cause</em> democracy?</a></li>
+<li class="chapter" data-level="9.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>9.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="mixingapp.html"><a href="mixingapp.html#prior-posterior-comparison-for-multiple-estimands"><i class="fa fa-check"></i><b>9.4</b> Prior / posterior comparison for multiple estimands</a></li>
+<li class="chapter" data-level="9.5" data-path="mixingapp.html"><a href="mixingapp.html#discussion"><i class="fa fa-check"></i><b>9.5</b> Discussion</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="10" data-path="elements-of-design.html"><a href="elements-of-design.html"><i class="fa fa-check"></i><b>10</b> Elements of Design</a><ul>
+<li class="chapter" data-level="10.1" data-path="elements-of-design.html"><a href="elements-of-design.html#declaring-a-process-tracing-design"><i class="fa fa-check"></i><b>10.1</b> Declaring a process tracing design</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="elements-of-design.html"><a href="elements-of-design.html#steps"><i class="fa fa-check"></i><b>10.1.1</b> Steps</a></li>
+<li class="chapter" data-level="10.1.2" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-in-code"><i class="fa fa-check"></i><b>10.1.2</b> Illustration in code</a></li>
+<li class="chapter" data-level="10.1.3" data-path="elements-of-design.html"><a href="elements-of-design.html#diagnosands-evaluating-a-model"><i class="fa fa-check"></i><b>10.1.3</b> Diagnosands: Evaluating a model</a></li>
+<li class="chapter" data-level="10.1.4" data-path="elements-of-design.html"><a href="elements-of-design.html#other-measures-of-a-gain-from-a-theory"><i class="fa fa-check"></i><b>10.1.4</b> Other measures of a gain from a theory</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="elements-of-design.html"><a href="elements-of-design.html#declaring-a-mixed-methods-design"><i class="fa fa-check"></i><b>10.2</b> Declaring a mixed methods design</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="elements-of-design.html"><a href="elements-of-design.html#model"><i class="fa fa-check"></i><b>10.2.1</b> Model</a></li>
+<li class="chapter" data-level="10.2.2" data-path="elements-of-design.html"><a href="elements-of-design.html#data-strategies"><i class="fa fa-check"></i><b>10.2.2</b> Data strategies</a></li>
+<li class="chapter" data-level="10.2.3" data-path="elements-of-design.html"><a href="elements-of-design.html#estimands"><i class="fa fa-check"></i><b>10.2.3</b> Estimands</a></li>
+<li class="chapter" data-level="10.2.4" data-path="elements-of-design.html"><a href="elements-of-design.html#answer-strategies"><i class="fa fa-check"></i><b>10.2.4</b> Answer Strategies</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html"><i class="fa fa-check"></i><b>11</b> Clue Selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="11.1" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#a-strategic-approach"><i class="fa fa-check"></i><b>11.1</b> A strategic approach</a></li>
+<li class="chapter" data-level="11.2" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-running-example"><i class="fa fa-check"></i><b>11.2</b> Clue selection for the running example</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#dynamic-strategies"><i class="fa fa-check"></i><b>11.2.1</b> Dynamic Strategies</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-democracy-model"><i class="fa fa-check"></i><b>11.3</b> Clue selection for the Democracy model</a></li>
+<li class="chapter" data-level="11.4" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#conclusion-2"><i class="fa fa-check"></i><b>11.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="wide.html"><a href="wide.html"><i class="fa fa-check"></i><b>12</b> Going wide and going deep</a><ul>
+<li class="chapter" data-level="12.1" data-path="wide.html"><a href="wide.html#intuitions-does-a-sufficiently-large-n-always-trump-k"><i class="fa fa-check"></i><b>12.1</b> Intuitions: Does a sufficiently large <span class="math inline">\(N\)</span> always trump <span class="math inline">\(K\)</span>?</a></li>
+<li class="chapter" data-level="12.2" data-path="wide.html"><a href="wide.html#evaluating-strategies"><i class="fa fa-check"></i><b>12.2</b> Evaluating strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="wide.html"><a href="wide.html#varieties"><i class="fa fa-check"></i><b>12.3</b> Varieties of mixing</a></li>
+<li class="chapter" data-level="12.4" data-path="wide.html"><a href="wide.html#AppSimNotes"><i class="fa fa-check"></i><b>12.4</b> Notes on Simulations</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="wide.html"><a href="wide.html#AppE1"><i class="fa fa-check"></i><b>12.4.1</b> Probative values</a></li>
+<li class="chapter" data-level="12.4.2" data-path="wide.html"><a href="wide.html#AppE2"><i class="fa fa-check"></i><b>12.4.2</b> Effect heterogeneity</a></li>
+<li class="chapter" data-level="12.4.3" data-path="wide.html"><a href="wide.html#AppE3"><i class="fa fa-check"></i><b>12.4.3</b> Uncertainty about assignment processes</a></li>
+<li class="chapter" data-level="12.4.4" data-path="wide.html"><a href="wide.html#AppE4"><i class="fa fa-check"></i><b>12.4.4</b> Uncertainty regarding the probative value of clues</a></li>
+<li class="chapter" data-level="12.4.5" data-path="wide.html"><a href="wide.html#details-on-simulation-experiments"><i class="fa fa-check"></i><b>12.4.5</b> Details on simulation experiments</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#explorations"><i class="fa fa-check"></i><b>13.1</b> Explorations</a><ul>
+<li class="chapter" data-level="13.1.1" data-path="caseselection.html"><a href="caseselection.html#procedure"><i class="fa fa-check"></i><b>13.1.1</b> Procedure</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#in-code"><i class="fa fa-check"></i><b>13.2</b> In code</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#compare-multiple-data-strategies"><i class="fa fa-check"></i><b>13.3</b> Compare multiple data strategies</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#experiments"><i class="fa fa-check"></i><b>13.4</b> Experiments</a></li>
+<li class="chapter" data-level="13.5" data-path="caseselection.html"><a href="caseselection.html#chapter-appendix-accounting-for-case-selection"><i class="fa fa-check"></i><b>13.5</b> Chapter Appendix: Accounting for case selection</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="caseselection.html"><a href="caseselection.html#independent-case-selection-strategy"><i class="fa fa-check"></i><b>13.5.1</b> Independent case selection strategy</a></li>
+<li class="chapter" data-level="13.5.2" data-path="caseselection.html"><a href="caseselection.html#conditional-random-case-selection"><i class="fa fa-check"></i><b>13.5.2</b> Conditional random case selection</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="14" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html"><i class="fa fa-check"></i><b>14</b> Where does probative value come from?</a><ul>
+<li class="chapter" data-level="14.1" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#causal-discovery"><i class="fa fa-check"></i><b>14.1</b> Causal discovery</a></li>
+<li class="chapter" data-level="14.2" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#the-possibility-of-identification-of-probative-value-from-experimental-data"><i class="fa fa-check"></i><b>14.2</b> The possibility of identification of probative value from experimental data</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#moderator"><i class="fa fa-check"></i><b>14.2.1</b> Moderator</a></li>
+<li class="chapter" data-level="14.2.2" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#mediator"><i class="fa fa-check"></i><b>14.2.2</b> Mediator</a></li>
+<li class="chapter" data-level="14.2.3" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#generally-not-so-easy"><i class="fa fa-check"></i><b>14.2.3</b> Generally not so easy</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#bounds-on-causes-of-effects"><i class="fa fa-check"></i><b>14.3</b> Bounds on causes of effects</a></li>
+<li class="chapter" data-level="14.4" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#qualitative-beliefs-and-sensitivity-analyses"><i class="fa fa-check"></i><b>14.4</b> Qualitative beliefs and Sensitivity Analyses</a></li>
+<li class="chapter" data-level="14.5" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#conditional-claims"><i class="fa fa-check"></i><b>14.5</b> Conditional claims</a></li>
+<li class="chapter" data-level="14.6" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#learning-about-parameters-within-a-model"><i class="fa fa-check"></i><b>14.6</b> Learning about parameters within a model</a></li>
+<li class="chapter" data-level="14.7" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#learning-from-observational-and-experimental-mixtures"><i class="fa fa-check"></i><b>14.7</b> Learning from observational and experimental mixtures</a></li>
+<li class="chapter" data-level="14.8" data-path="where-does-probative-value-come-from.html"><a href="where-does-probative-value-come-from.html#learning-across-populations"><i class="fa fa-check"></i><b>14.8</b> Learning across populations</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>15</b> Robustness and Model-Evaluation</a><ul>
+<li class="chapter" data-level="15.1" data-path="evaluation.html"><a href="evaluation.html#tools-for-evaluating-models"><i class="fa fa-check"></i><b>15.1</b> Tools for evaluating models</a></li>
+<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.2</b> Evaluating the Democracy-Inequality model</a></li>
+<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.3</b> Prior check</a></li>
+<li class="chapter" data-level="15.4" data-path="evaluation.html"><a href="evaluation.html#monotonic-restrictions"><i class="fa fa-check"></i><b>15.4</b> Monotonic restrictions</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>16</b> Final Words</a><ul>
+<li class="chapter" data-level="16.1" data-path="final-words.html"><a href="final-words.html#some-conclusions"><i class="fa fa-check"></i><b>16.1</b> Some conclusions</a></li>
+<li class="chapter" data-level="16.2" data-path="final-words.html"><a href="final-words.html#words-of-warning"><i class="fa fa-check"></i><b>16.2</b> Words of warning</a></li>
+<li class="chapter" data-level="16.3" data-path="final-words.html"><a href="final-words.html#general-and-specific-knowledge"><i class="fa fa-check"></i><b>16.3</b> General and specific knowledge</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="17" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>17</b> Analysis of canonical models with <code>gbiqq</code></a><ul>
+<li class="chapter" data-level="17.1" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-no-confounding"><i class="fa fa-check"></i><b>17.1</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, no confounding</a></li>
+<li class="chapter" data-level="17.2" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-with-unmodelled-confounding"><i class="fa fa-check"></i><b>17.2</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with unmodelled confounding</a></li>
+<li class="chapter" data-level="17.3" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-with-confounding-modelled"><i class="fa fa-check"></i><b>17.3</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modelled</a></li>
+<li class="chapter" data-level="17.4" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-mediation-model"><i class="fa fa-check"></i><b>17.4</b> Simple mediation model</a></li>
+<li class="chapter" data-level="17.5" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-moderator-model"><i class="fa fa-check"></i><b>17.5</b> Simple moderator model</a></li>
+<li class="chapter" data-level="17.6" data-path="examplesappendix.html"><a href="examplesappendix.html#an-iv-model"><i class="fa fa-check"></i><b>17.6</b> An IV model</a></li>
+<li class="chapter" data-level="17.7" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-that-allows-application-of-the-frontdoor-criterion"><i class="fa fa-check"></i><b>17.7</b> A model that allows application of the frontdoor criterion</a></li>
+<li class="chapter" data-level="17.8" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-with-a-violation-of-sequential-ignorability"><i class="fa fa-check"></i><b>17.8</b> A model with a violation of sequential ignorability</a></li>
+<li class="chapter" data-level="17.9" data-path="examplesappendix.html"><a href="examplesappendix.html#learning-from-a-collider"><i class="fa fa-check"></i><b>17.9</b> Learning from a collider</a></li>
+<li class="chapter" data-level="17.10" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-mixing-observational-and-experimental-data"><i class="fa fa-check"></i><b>17.10</b> A model mixing observational and experimental data</a></li>
+<li class="chapter" data-level="17.11" data-path="examplesappendix.html"><a href="examplesappendix.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>17.11</b> Transportation of findings across contexts</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/gbiqq/" target="blank">Uses gbiqq</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Integrated Inferences</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="clue-selection-as-a-decision-problem" class="section level1">
+<h1><span class="header-section-number">Chapter 11</span> Clue Selection as a Decision Problem</h1>
+<hr />
+<p>We draw out the implications of the causal model approach for clue selection strategies. We introduce a tool for generating an optimal decision tree for clue selection given.</p>
+<hr />
+<p>Consider now the problem of determining what qualitative data to gather on a case. Evidently it makes sense to gather information on clues that have large probative value, but whether or not clues have probative value can depend on what clues have already been collected: Finding out that the Butler had no motive may be informative for the claim that he is innocent, but it may not be useful if you already know he had no opportunity.</p>
+<p>In our running example, we can see many situations where researchers have a choice of observations that could be informative, and situations in which the informativeness of an observation can depend on what is already known. In Figure , we showed how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the root nodes <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span>. Each of these plots graphs a particular context. We can thus readily see which collection of root nodes constitutes a given query, or estimand. Turning things around, we can see, given a query, which nodes are informative of the probability that the query is true.<a href="#fn78" class="footnote-ref" id="fnref78"><sup>78</sup></a></p>
+<p>For example, suppose one can see that <span class="math inline">\(X=0\)</span> and <span class="math inline">\(Y=0\)</span> but does not know the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> This is equivalent to saying that we know that we are in either panel <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span> but we do not know which one. Defining the query in terms of root nodes, the question becomes <span class="math inline">\(S \stackrel{?}{=} 1\)</span>, or <span class="math inline">\(P(S=1|X=0,Y=0)\)</span>; the difference between the contexts in the two panels is that <span class="math inline">\(S=0\)</span> when, and only when, <span class="math inline">\(X=0\)</span> causes <span class="math inline">\(Y=0\)</span> . Given the structural equation for <span class="math inline">\(S\)</span>, <span class="math inline">\(P(S|X=0,Y=0) = P(S|X=0)\)</span>, and given independence of <span class="math inline">\(X\)</span> and <span class="math inline">\(S\)</span>, <span class="math inline">\(P(S=1|X=0)= \pi^S\)</span>. Figuring out <span class="math inline">\(S\)</span> fully answers the query: that is, given what we know already, <span class="math inline">\(S\)</span> is doubly decisive for the proposition.<a href="#fn79" class="footnote-ref" id="fnref79"><sup>79</sup></a></p>
+<p>We can also see instances in this example of how existing data can make clues uninformative. Say one wanted to know if <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> in a case. As we can see from inspection of the panels, this query is equivalent to asking whether <span class="math inline">\(S=1\)</span> (as <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> only in those two panels (<span class="math inline">\(B\)</span> and <span class="math inline">\(D\)</span>) where <span class="math inline">\(S=1\)</span>. Data on <span class="math inline">\(R\)</span> is unconditionally informative about this query as <span class="math inline">\(R\)</span> is not <span class="math inline">\(d-\)</span>separated from <span class="math inline">\(S\)</span>. For example, <span class="math inline">\(R=1\)</span> implies <span class="math inline">\(S=0\)</span>. However, if <span class="math inline">\(C\)</span> and <span class="math inline">\(X\)</span> are already known, then <span class="math inline">\(R\)</span> is no longer informative because <span class="math inline">\(C\)</span> and <span class="math inline">\(X\)</span> together <em>d</em>-separate <span class="math inline">\(R\)</span> from <span class="math inline">\(S\)</span>.<a href="#fn80" class="footnote-ref" id="fnref80"><sup>80</sup></a></p>
+<p>The running example also lets us demonstrate how informative clues can be found in many different places in a graph.</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Informative spouses</strong> Spouses—parents of the same child—can inform on one another. As we have seen in other examples, when an outcome has multiple causes, knowing the value of one of those causes helps assess the effect(s) of the other(s). For example, here, <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span> are both parents of <span class="math inline">\(C\)</span>; <span class="math inline">\(S\)</span> is thus informative for assessing whether <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span>. Indeed this query, written in terms of roots, is simply <span class="math inline">\(P(S)\)</span>: <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> if and only if <span class="math inline">\(S=1\)</span>. Likewise, <span class="math inline">\(S\)</span> causes <span class="math inline">\(C\)</span> (negatively) if and only if <span class="math inline">\(X=1\)</span>.</p></li>
+<li><p><strong>Pre-treatment clues.</strong> Did the absence of media reports on corruption (<span class="math inline">\(R=0\)</span>) cause government survival (<span class="math inline">\(Y=0\)</span>)? Look to the pre-treatment clue, <span class="math inline">\(X\)</span>: <span class="math inline">\(X=0\)</span> is a smoking gun establishing that the absence of a report produced government survival. Or, substantively, if there were a free press, then a missing report would never be a cause of survival since it would occur only in the absence of corruption, which would itself be sufficient for survival. More broadly, this example illustrates how knowledge of selection into treatment can be informative about treatment effects.</p></li>
+<li><p><strong>Post-outcome clues.</strong> Suppose we observe the presence of a free press (<span class="math inline">\(X=1\)</span>) and want to know if it caused a lack of corruption (<span class="math inline">\(C=0\)</span>), but cannot observe the level of corruption directly. Observing <span class="math inline">\(Y\)</span>—which occurs after the outcome—is informative here: if <span class="math inline">\(X=1\)</span>, then <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> (negatively) if and only if <span class="math inline">\(Y=0\)</span>. When an outcome is not observed, a consequence of that outcome can be informative about its value and, thus, about the effect of an observed suspected cause.</p></li>
+<li><p><strong>Mediators as clues</strong>: We see a politically sensitive government (<span class="math inline">\(S=1\)</span>) and its survival (<span class="math inline">\(S=0\)</span>). Did the government survive because of its sensitivity to public opinion? Here, the mediation clue <span class="math inline">\(C\)</span> is helpful: a lack of corruption, <span class="math inline">\(C=0\)</span>, is evidence of <span class="math inline">\(S\)</span>’s negative effect on <span class="math inline">\(Y\)</span>. –&gt;</p></li>
+</ol>
+<p>And of course, different clues can be informative in different ways for different types of estimand.</p>
+<p>Needed then is a systematic way for identifying what clues to look for, and perhaps, in what order to look for them.</p>
+<div id="a-strategic-approach" class="section level2">
+<h2><span class="header-section-number">11.1</span> A strategic approach</h2>
+<p>The representation of inference problems as one of querying a Bayesian model points to a relatively simple method for answering this question, at least for small problems. Consider first a situation where one has access to data <span class="math inline">\(W\)</span> and wants to know the expected probative value of all possible collections of data one could gather.</p>
+<p>This can be done as follows:</p>
+<ol style="list-style-type: decimal">
+<li>First define a model, including a signature <span class="math inline">\(S = (\mathcal{U}, \mathcal{V}, \mathcal{R})\)</span>, structural equations <span class="math inline">\(\mathcal{F}\)</span>, and beliefs on <span class="math inline">\(\mathcal{U}\)</span>, <span class="math inline">\(P()\)</span>.</li>
+<li>Second, define a query on the model, as a statement about values of <span class="math inline">\(\mathcal{V}\)</span> given different <span class="math inline">\(\mathbb{do}\)</span> operations.</li>
+<li>Third, use <span class="math inline">\(P\)</span> to draw a vector of <span class="math inline">\(U\)</span> values and assess whether the query is true or not given <span class="math inline">\(U\)</span> and whether <span class="math inline">\(W\)</span> obtains. Then, over many repeated draws from <span class="math inline">\(P\)</span> calculate the <em>share</em> of times that the query is true among those cases in which <span class="math inline">\(W\)</span> is true. This gives posterior probability on <span class="math inline">\(Q\)</span>, <span class="math inline">\(P(Q|W)\)</span>.</li>
+<li>Fourth, given posterior <span class="math inline">\(P(Q|W)\)</span> calculate the probability of observing any realization of values <span class="math inline">\(K&#39;\)</span> given the set of clues sought. For each possible realization calculate posterior variance using <span class="math inline">\(P(Q|W, K&#39;)\)</span>, itself calculated as the share of draws in which the query is true given both <span class="math inline">\(W\)</span> and the particular set of findings <span class="math inline">\(K&#39;\)</span> obtains. Calculate the <em>expected</em> posterior variance by taking an average of these variances with weights given by the probability of observing the clue pattern in question.</li>
+<li>Repeat step 4 for all possible collections of clues that one could search for.</li>
+</ol>
+<p>This procedure then returns expected posterior variance associated with a planned search for a collection of clues. A more sophisticated strategy would determine which clues to search for later given findings from clues that are sought first. This reflects the possibility that a given clues <span class="math inline">\(K_2\)</span> may be informative if another clue <span class="math inline">\(K_1\)</span> turns up positive but not if it comes out negative.</p>
+<p>We provide some tools for both of these approaches and illustrate them below.</p>
+</div>
+<div id="clue-selection-for-the-running-example" class="section level2">
+<h2><span class="header-section-number">11.2</span> Clue selection for the running example</h2>
+<p>Lets return to the running example and assess the informativeness of different clue strategies.</p>
+<p>Recall that a model consists of an ordered set of variables <span class="math inline">\(V\)</span>, a set of exogenous variables <span class="math inline">\(U\)</span>, with a distribution over these, given by <span class="math inline">\(P(u)\)</span> and a set of functions, one for each <span class="math inline">\(V\in\mathcal{V}\)</span>, <span class="math inline">\(f_v(v&#39;,u_v)\)</span> which takes as arguments a subset of variables in <span class="math inline">\(\mathcal{V}\)</span> that must be prior to <span class="math inline">\(V\)</span> in the ordering plus an element of <span class="math inline">\(U\)</span> associated with <span class="math inline">\(V\)</span>.</p>
+<p>TRANSITIONAL TEXT LINKING FROM LAST CHAPTER</p>
+<p>In the same way we can figure out outcomes for all possible profiles of data one might have on <span class="math inline">\(m\)</span> binary variables. With five variables there are 243 (<span class="math inline">\(3^5\)</span>) combinations of 0s, 1s and unknowns. We provide a function which allows specific examines or else examinations of the form “all strategies that seek up to <span class="math inline">\(m_k\)</span> clues when up to <span class="math inline">\(m_w\)</span> variables are already observed.”</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">make_model</span>(<span class="st">&quot;S -&gt; C -&gt; Y &lt;- R &lt;- X; X -&gt; C -&gt; R&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">set_restrictions</span>(<span class="dt">node_restrict =</span> <span class="kw">list</span>(<span class="dt">C =</span> <span class="st">&quot;C1110&quot;</span>, <span class="dt">R =</span> <span class="st">&quot;R0001&quot;</span>, <span class="dt">Y =</span> <span class="st">&quot;Y0001&quot;</span>), <span class="dt">action =</span> <span class="st">&quot;keep&quot;</span>)
+
+<span class="kw">plot_dag</span>(model)</code></pre>
+<p><img src="ii_files/figure-html/ch11strategies_chunk_slowxx-1.png" width="672" /></p>
+<p>This produces a matrix shown here as table <a href="clue-selection-as-a-decision-problem.html#tab:showstrats5xx">11.1</a> for a situation in which <span class="math inline">\(S=0\)</span> and <span class="math inline">\(Y=0\)</span> is already observed.</p>
+<table>
+<caption><span id="tab:showstrats5xx">Table 11.1: </span>A fragment of the table of expected posterior variance for all two clue strategies given observations on two nodes. Firs column gives prior variance, second gives variance condition on data pattern <span class="math inline">\(W\)</span>, as indicated by row labels; subsequent columns give expected variance when different clues are sought.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">S</th>
+<th align="right">X</th>
+<th align="right">C</th>
+<th align="right">R</th>
+<th align="right">Y</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="even">
+<td>9</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="even">
+<td>21</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="odd">
+<td>25</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+<tr class="even">
+<td>27</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.25</td>
+</tr>
+</tbody>
+</table>
+<p>From there it is easy to assess the <em>expected</em> gains from seeking any kind of clue. See Table <a href="#tab:scxrylearning"><strong>??</strong></a></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Strategy</th>
+<th align="left">Given</th>
+<th align="left">Prior belief</th>
+<th align="left">Prior Uncertainty</th>
+<th align="left">Posterior Uncertainty</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">S</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0.25</td>
+</tr>
+<tr class="odd">
+<td align="left">R</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0.25</td>
+</tr>
+<tr class="even">
+<td align="left">C, R</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0.25</td>
+</tr>
+<tr class="odd">
+<td align="left">C, S</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">S, R</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">C, S, R</td>
+<td align="left">X==0 &amp; Y==0</td>
+<td align="left">0.5</td>
+<td align="left">0.25</td>
+<td align="left">0</td>
+</tr>
+</tbody>
+</table>
+<p>In this case if we know <span class="math inline">\(X=0\)</span> and <span class="math inline">\(Y=0\)</span> and we are interested in finding out whether<span class="math inline">\(X=0\)</span> <em>because</em> <span class="math inline">\(Y\)</span> is 0 we should look for evidence on <span class="math inline">\(S\)</span>. Given this simple model, knowledge of <span class="math inline">\(S\)</span> is enough to answer teh question at hand and no othe information is useful at all.</p>
+<div id="dynamic-strategies" class="section level3">
+<h3><span class="header-section-number">11.2.1</span> Dynamic Strategies</h3>
+<p>The clue collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their in Given <span class="math inline">\(n\)</span> nodes, a data collection strategy will be of the form:
+<span class="math display">\[\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}\]</span></p>
+<p>where each <span class="math inline">\(K_j\)</span> is en element of the nodes on the graph, or is the empty set. Each of these strategies has an associated expected reduction in variance as well as an associated expected cost. Such a strategy vector specifies the first clue, and then subsequent clues condition on what was found from previous searches. We restrict strategies to those in which each clue is sought at most once (though possibly sought at times that depends on findings), and in which if a clue is sought it is sought immediately. For a risk neutral decision maker, this may be sufficient to choose among them.</p>
+<p>In the running example with five binary nodes the strategies needs to specify up to <span class="math inline">\(2^4\)</span> decision points, reflecting the initial choice and the decisions made after learning about four nodes. An example of a strategy, summarizing contingent plans is the below:</p>
+<pre class="sourceCode r"><code class="sourceCode r">prices &lt;-<span class="st"> </span><span class="fl">.5+.5</span><span class="op">*</span><span class="kw">runif</span>(<span class="dv">5</span>)
+
+strategy &lt;-<span class="st"> </span><span class="kw">random_list_strategy</span>(<span class="dv">5</span>)
+
+<span class="kw">strategy_cost_benefit</span>(  model,  my_operations, my_query, <span class="dt">sims=</span><span class="dv">100</span>,   <span class="dt">U=</span><span class="ot">NULL</span>,   <span class="dt">cost =</span> prices,   <span class="dt">strategy =</span> strategy  <span class="co"># Or a matrix with one column per node indicating whether to be sought or not</span>
+  )</code></pre>
+<p>Note that strategies cannot use information unavailable ex ante. To ensure the right structure we specify the strategy as <span class="math inline">\(n\)</span> vectors, of length <span class="math inline">\(1, 2, 4, \dots\)</span>. For example of the form <span class="math inline">\(\{\{1\}, \{2,3\}, \{3, 4, \emptyset, \emptyset\}\}\)</span></p>
+<p>This has the interpretation: seek evidence on node 1 first, if one finds <span class="math inline">\(V_1=1\)</span> seek evidence on node 2, otherwise seek evidence on node 3, if <span class="math inline">\(V_1=1\)</span> and <span class="math inline">\(V_2=1\)</span> seek evidence on node 3, but if <span class="math inline">\(V_1=1\)</span> and <span class="math inline">\(V_2=0\)</span> seek <span class="math inline">\(V_4\)</span>, if <span class="math inline">\(V_3\)</span> is positive stop seeking.</p>
+<p>For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs—but collection depends on past findings—then we can also calculated the expected costs of each strategy.</p>
+<p>NEED TO REDO STRATEGIES CALCULATIONS</p>
+<p>Figure below plots a collection of strategies based on two criteria—the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other.</p>
+<p>Below we graph one of these strategies on the frontier (the median strategy on the frontier) as a decision tree. The interpretation is to seek the first clue first; it will be revealed to be present (1) or not(0), a subsequent branch is then chosen depending on what is found and the indicated clue then sought, and so on. (Note currently the strategy sets we examine include ones in which the same clue is sought multiple times)</p>
+</div>
+</div>
+<div id="clue-selection-for-the-democracy-model" class="section level2">
+<h2><span class="header-section-number">11.3</span> Clue selection for the Democracy model</h2>
+<p>With a model in hand we are also in a position to assess what we <em>could</em> learn from different data stratgies and what we would infer upon discovery of different data.</p>
+<pre><code>## Generated expanded expression:
+## (M[I=1] &lt; M[I=0]) |
+##             (D[I=1, M=0, P=0] &gt; D[I=0, M=0, P=0] | D[I=1, M=1, P=0] &gt; D[I=0, M=1, P=0] | D[I=1, M=0, P=1] &gt; D[I=0, M=0, P=1] | D[I=1, M=1, P=1] &gt; D[I=0, M=1, P=1]) |
+##             (D[M=1, I=0, P=0] &lt; D[M=0, I=0, P=0] | D[M=1, I=1, P=0] &lt; D[M=0, I=1, P=0] | D[M=1, I=0, P=1] &lt; D[M=0, I=0, P=1] | D[M=1, I=1, P=1] &lt; D[M=0, I=1, P=1]) | 
+##             (D[P=1, M=0, I=0] &lt; D[P=0, M=0, I=0] | D[P=1, M=1, I=0] &lt; D[P=0, M=1, I=0] | D[P=1, M=0, I=1] &lt; D[P=0, M=0, I=1] | D[P=1, M=1, I=1] &lt; D[P=0, M=1, I=1])</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-73">Table 11.2: </span> Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.</caption>
+<thead>
+<tr class="header">
+<th align="right">I</th>
+<th align="right">P</th>
+<th align="right">M</th>
+<th align="right">D</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.128</td>
+<td align="right">0.011</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.231</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.088</td>
+<td align="right">0.008</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.002</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.001</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.150</td>
+<td align="right">0.010</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.250</td>
+<td align="right">0.003</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.107</td>
+<td align="right">0.007</td>
+</tr>
+</tbody>
+</table>
+<p>We show in Table  how uncertainty is likely to be reduced with different research designs. We show these reductions here for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect if <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span> before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, <span class="math inline">\(I\)</span> and <span class="math inline">\(D\)</span>. The next four rows show the results for four possible choices in regard to process tracing: looking for neither <span class="math inline">\(M\)</span> nor <span class="math inline">\(P\)</span> (which is identical to doing no process tracing at all); looking for <span class="math inline">\(P\)</span>; looking for <span class="math inline">\(M\)</span>; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe <span class="math inline">\(P\)</span>: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that <em>could</em> have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause’s direct effects.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-74">Table 11.3: </span>Variances and expected variances given different clue seeking stratgies for cases in which we have observed inequality and democratization.</caption>
+<thead>
+<tr class="header">
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.112</td>
+<td align="right">0.112</td>
+</tr>
+<tr class="even">
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.111</td>
+<td align="right">0.107</td>
+</tr>
+<tr class="odd">
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.111</td>
+<td align="right">0.109</td>
+</tr>
+<tr class="even">
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.111</td>
+<td align="right">0.105</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-75">Table 11.4: </span>Variances and expected variances given different clue seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
+<thead>
+<tr class="header">
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.246</td>
+</tr>
+<tr class="even">
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.229</td>
+</tr>
+<tr class="odd">
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.245</td>
+</tr>
+<tr class="even">
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.225</td>
+</tr>
+</tbody>
+</table>
+<p><strong>To come</strong>: applied case-level analyses involving causal pathways, actual causes, and notable causes.</p>
+<!-- ## More complex problems -->
+<!-- Illustration of clue inference for a continuous problem. -->
+</div>
+<div id="conclusion-2" class="section level2">
+<h2><span class="header-section-number">11.4</span> Conclusion</h2>
+<p>Explicit statement of a causal model—including prior beliefs over roots—allows one to assess what will be inferred from all possible observations. This opens the way for simple strategies for assessing what data is most valuable, and in what order it should be gathered.</p>
+<p>We are conscious that here we are pushing the basic logic to the limits. In practice researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts; the claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data is most useful to gather.</p>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="78">
+<li id="fn78"><p>With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.<a href="clue-selection-as-a-decision-problem.html#fnref78" class="footnote-back">↩</a></p></li>
+<li id="fn79"><p>Graphically what is important is that <span class="math inline">\(S\)</span> is informative not because it is <span class="math inline">\(d-\)</span>connected with <span class="math inline">\(Y\)</span>, but because it is <span class="math inline">\(d-\)</span>connected to the query variable—here, simply, to itself.<a href="clue-selection-as-a-decision-problem.html#fnref79" class="footnote-back">↩</a></p></li>
+<li id="fn80"><p>We can come to the same conclusion by reasoning with the graphs: if <span class="math inline">\(X=0\)</span> and <span class="math inline">\(C=1\)</span>, we know we are in subfigure <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span>, and <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> only in panel <span class="math inline">\(B\)</span>. However, <span class="math inline">\(R\)</span> is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.<a href="clue-selection-as-a-decision-problem.html#fnref80" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="elements-of-design.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="wide.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": ["ii.pdf"],
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
