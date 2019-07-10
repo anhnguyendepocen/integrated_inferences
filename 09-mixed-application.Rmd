@@ -1,0 +1,246 @@
+# Mixed-Method Application: Inequality and Democracy Revisited {#mixingapp}
+
+
+
+```{r, include = FALSE}
+source("_packages_used.R")
+```
+
+```{r, include=FALSE}
+# do_diagnosis = FALSE
+```
+
+***
+
+In chapter 7 we drew inferences from a 'theory based' democracy and inequality model on data. Here we train the  model on data before making case level inferences, allowing for the possibility of confounding in the assignment of inequality. In this case we update our beliefs over the population parameters and not just over the case level parameters. Thus we simultaneously learn about our thoery and use our theory to learn about cases. The data informed inferences are, on the whole, weaker than the theory based inferences of Chapter 7.
+
+***
+
+
+## A trained model
+
+We now apply these ideas on mixed method research to our model of democracy and inequality. The key difference to the exercise in in Chapter 7 is that whereas there we took the model as given, and sought to draw inferences to case given the model, the model now becomes an object that we both learn from and learn about. In essence we use the data on many cases to update our beliefs about the general model and then use this "trained' model to then make inferences about cases. 
+
+Along with this change in goals come some changes in the structure of the model:
+
+
+* Instead of specifying beliefs about causal types, $\theta$,  we now need to specify a belief over the *distribution* of causal types, $\lambda$. Concretely whereas in the simple process tracing model we *specified* that inequality has a positive effect on mobilization for some share of units, we now specify a distribution over the share of units for which inequality could have a positive effect, ranging anywhere from 0 to 100%  
+
+* As we train the model we allow now for the possibility that there is unobserved confounding -- in particular the possibility that inequality is less (or more!) likely in places in which inequality would induce mobilization. We do not impose confounding in one direction of another, but we do allow for the **possibility** of confounding. As a result we may have correlations in our posteriors over beliefs regarding confounding and beliefs about effects. 
+
+
+***
+
+**Model definition in code**
+
+We can now define the model compactly using `gbiqq` as follows.
+
+```{r, message = FALSE}
+model <- make_model("I -> M -> D <- P; I -> D") %>%
+  
+         set_restrictions(causal_type_restrict =  
+           "(M[I=1] < M[I=0]) |
+            (D[I=1, M=., P=.] > D[I=0, M=., P=.]) |
+            (D[M=1, I=., P=.] < D[M=0, I=., P=.]) | 
+            (D[P=1, M=., I=.] < D[P=0, M=., I=.])") %>%
+
+          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 1)")) %>%
+  
+          set_priors()
+  
+```
+
+***
+
+This model, with confounding, is represented graphically as in Figure \@ref(fig:pimdgraph)
+
+
+```{r pimdgraph, echo = FALSE}
+plot_dag(model)
+```
+
+
+
+## Data
+
+We use the same  data as before, based on the analysis in @haggard2012inequality, but now rather than implementing analysis case by case, the joint distribution of the data will become important for training the model. Here is a snapshot of the data:
+
+
+```{r, eval = FALSE, echo = FALSE}
+data <- gbiqq::democracy_data 
+```
+
+
+```{r, echo = FALSE, warning = FALSE}
+data <- gbiqq::democracy_data 
+kable(head(data))
+
+```
+
+Note that although data is gathered on $D$ and $I$ in all cases, data on mobilization, $M$, and external pressure, $P$, was only gathered for some (in fact, for those cases in which there was democratization). $M$ in particular derives from qualitative research that assessed whether mobilization took place in those cases that democratized. 
+
+The raw correlations berween variables is as shown in Table \@ref(pimdcorr). Note that some of these correlations are missing because data was only gathered on some variables conditional on the values of others. For those quantities where do see correlations they are not especially strong. There is a weak relation between inequality and democratization -- though this is consistent with inequality having different types of effect. the strongest correlation here is between $P$ and $M$, which are assumed to be uncorrelated in the model, though this correlation is also quite weak.   
+
+```{r pimdcorr, echo = FALSE}
+kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
+```
+
+
+
+## Inference
+
+With data and model in hand we can update our model to get posteriors on the distribution of all admissible causal types. In practice this is done by constructing a `stan` model that maps from a set of parameters to a distribution on causal types which in turn provide a likelihood function for observable data. (Using the `gbiqq` package the posterior is calculated by `gbiqq(model, data)`)
+
+The parameters 
+
+```{r}
+param_mat <- get_parameter_matrix(model)
+dim(param_mat)
+```
+
+
+```{r, include = FALSE}
+
+if(do_diagnosis){
+  updated <- gbiqq(model, data)
+  write_rds(updated, "saved/PIMD_updated.rds")}
+
+updated <- read_rds("saved/PIMD_updated.rds")
+
+```
+
+
+
+### Did inequality *cause* democracy?
+
+
+```{r, include = FALSE}
+prob_b <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=1] > D[I=0]")
+
+PC <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=1] > D[I=0]",
+                   subset = "D==1 & I==1")
+
+
+PC2 <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=1] > D[I=0]",
+                   subset = "D==1 & I==1 & M==1")
+
+PC3 <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=1] > D[I=0]",
+                   subset = "D==1 & I==1 & M==0")
+
+```
+
+
+```{r mixedhet, echo =FALSE}
+par(mfrow = c(2,2))
+hist(prob_b, main = "I=1 causes D=1", xlim = c(0,1))
+hist(PC,     main = "D=1 caused by I=1", xlim = c(0,1))
+hist(PC2,    main = "D=1 caused by I=1 | M = 1", xlim = c(0,1))
+hist(PC3,    main = "D=1 caused by I=1 | M = 0", xlim = c(0,1))
+
+```
+
+
+### Did inequality *prevent* democracy?
+
+```{r, include = FALSE}
+prob_b <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=0] > D[I=1]")
+
+PC <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=0] > D[I=1]",
+                   subset = "D==0 & I==1")
+
+PC2 <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=0] > D[I=1]",
+                   subset = "D==0 & I==1 & M==1")
+
+PC3 <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=0] > D[I=1]",
+                   subset = "D==0 & I==1 & M==0")
+```
+
+```{r, mixedhist2, echo = FALSE}
+par(mfrow = c(2,2))
+hist(prob_b, main = "I=1 causes D=0", xlim = c(0,1))
+hist(PC,     main = "D=0 caused by I=1", xlim = c(0,1))
+hist(PC2,    main = "D=0 caused by I=1 | M = 1", xlim = c(0,1))
+hist(PC3,    main = "D=0 caused by I=1 | M = 0", xlim = c(0,1))
+
+```
+
+We see that inequality appears more likely to prevent democratization than to cause it. We are most confident that inequality played a preventative role in those cases in which there was mobilization but still no democratization. We are most confident that inequality had a positive effect in those cases in which we observe mobilization---but even then the probability that inequality made the difference is small. 
+
+## Prior / posterior comparison for multiple estimands
+
+Estimands can be calculated for both the prior and posterior distributions.
+
+```{r, include = FALSE}
+updated <- set_prior_distribution(updated)
+
+subsets <- list(TRUE, "D==1 & I==1", "D==1 & I==1 & M ==1", "D==1 & I==1 & M==0")
+
+result_priors <- gbiqq::query_model(
+                   model = updated, 
+                   using = "priors",
+                   queries =  list("D[I=1] > D[I=0]"),
+                   subset = subsets)
+
+result_posteriors <- gbiqq::query_model(
+                   model = updated, 
+                   using = "posteriors",
+                   queries =  list("D[I=1] > D[I=0]"),
+                   subsets = subsets)
+
+subsets <- list(TRUE, "D==0 & I==1", "D==0 & I==1 & M ==1", "D==0 & I==1 & M==0")
+
+prevent_priors <- gbiqq::query_model(
+                   model = updated, 
+                   using = "priors",
+                   queries =  list("D[I=0] > D[I=1]"),
+                   subsets = subsets)
+
+prevent_posteriors <- gbiqq::query_model(
+                   model = updated, 
+                   using = "posteriors",
+                   queries =  list("D[I=0] > D[I=1]"),
+                   subsets = subsets)
+```
+
+Inequality causes democratization:
+
+```{r, echo = FALSE}
+kable(result_priors, caption = "Prior", digits = 3)
+kable(result_posteriors, caption = "Posterior", digits = 3)
+```
+
+
+Inequality prevents democratization:
+
+```{r, echo  = FALSE}
+kable(prevent_priors, caption = "Prior", digits = 3)
+kable(prevent_posteriors, caption = "Posterior", digits = 3)
+```
+
+
+## Discussion
+

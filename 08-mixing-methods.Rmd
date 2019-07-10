@@ -1,0 +1,273 @@
+# Integrated inferences {#mixing}
+
+***
+
+We argue that mixed methods can be thought of as the analysis of single cases with vector valued variables. Reconceptualizing as large n is useful prmarily for computation reasons and often comes with hidden independence assumptions. We illustrate the single case approach and provide a set of models for the many case approach.
+
+***
+
+
+```{r, include = FALSE}
+source("_packages_used.R")
+```
+
+<!-- Lots of this likely to change with integration with DAGs. -->
+
+The main goal of this chapter is to  generalize the model developed in Chapter 6 to problems with data on many cases.  In doing so we generalize the model in @humphreys2015mixing to one that  in which rather than the probative value of clues being  *assumed*, they are  derived from a causal structure. 
+
+We start however  with a conceptual point: the exact structure introduced in Chapter 6 for single case analysis can be used *as is* for multi-case analysis. To see this  you should think of the the nodes as vector-valued, and the estimands as just a particular summary of the vector-valued case level causal effects. Thought of this way the  conceptual work for mixed methods inference from models has been done already and our goal here is more technical---how to exploit assumptions on independence across cases to generate simpler theories of repeated phenomena.
+
+
+## There's only ever one case
+
+Conceptualized correctly, there is no difference at all between the data types or the inference used in within-case and cross-case inference. The reason is not, as @king1994designing suggest, that all causal inference is fundamentally correlational, even in seemingly single case studies. Nor is the point that, looked at carefully, single "case studies" can be disaggregated into many cases. The intuition runs in the opposite direction: fundamentally, model-based inference always involves comparing *a* pattern of data with the logic of the model. Looked at carefully, studies with multiple cases can be conceptualized of as single-case studies: the drawing of inferences from a single collection of clues.
+
+The key insight is that, when we move from a causal model with one observation to a causal model with multiple observations, all that we are doing is replacing nodes with a single value (i.e., scalars) with nodes containing multiple values (i.e., vectors). 
+
+To illustrate the idea that multi-case studies are really single-case studies with vector valued variables, consider the following situation. There are two units studied, drawn from some population, a binary treatment $X$ is assigned independently with probability .5 to each case; an outcome $Y$ along with clue variable $K$ is observable.  We suppose  $X$ can affect $Y$ and in addition there is a background, unobserved, variable $\theta$ (causal type) that takes on values in $\{a,b,c,d\}$, that affects both $K$ and $Y$.  We will assume that $\theta$ is not independently assigned and that the two units are more likely to have the same values of $\theta$ than different values. For simplicity, we will suppose that for any given case $K=1$ whenever $X$ causes $Y$, and $K=1$ with a 50% probability otherwise. Thus, $K$ is informative about a unit's causal type.
+
+Note that we have described the problem at the unit level. We can redescribe it at the population level however as a situation in which a treatment vector $X$ can take on one of four values, $(0,0), (0,1), (1,0), (1,1)$ with equal probability (or more strictly: as determined by $\theta$). $\theta$ is also a vector with two elements that can take on one of 16 values $(a,a), (a,b),\dots (d,d)$ as determined by $U_\theta$. In this case we will assume that the 16 possibilities are not equally likely, which captures the failure of independence in the unit level assignments.  $Y$ is a vector that reflects the elements of $\theta$ and $X$ in the obvious way (e.g $X=(0,0), \theta=(a,b)$ generates outcomes $Y=(1,0)$; though it is immediately obvious that representing nodes in vector forms allows for more general vector-level mappings to allow for SUTVA violations. $K$ has the same domain as $X$ and $Y$, and element $K[j]=1$ if $\theta[j]=b$.
+
+Note that to describe the estimand, the Sample Average Treatment Effect, we also need to consider operations and queries defined at the vector level. In practice we consider three operations, one in which both units have $X$ forced to 0 and two in which one nit has $X$ set to 0 and the other has $X$ set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary---of the form: is it a $b$ type?--and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, etc...)
+
+Represented in this way we can use the tools of Chapters 6 and 7 to fully examine this seemingly multi-case study. In the below we examine a situation in which we consider the value of observing $K$ on one case --- in this set up this is equivalent to observing part of the vector $K$ and making inferences on the full vector $\theta$.
+
+
+## General procedure 
+
+In practice however thinking of nodes as capturing the outcomes on all units leads to enormous complexity. For example an exogeneous variable $X$ which takes on values of 0 or 1 at random for 10 units has $2^10$ types in this conceptualization, rather than just two when thought of at the case level. 
+
+We reduce complexity however by thinking of models as operating on units and learning about models by observing *multiple* realizations of processes covered by the model, rather than just one. Thinking about it this way is not free however as it requires invoking some kind of independence assumptions --- that outcomes in two units do not depend on each other. If we cannot stand by that assumption then we have to build independence failures into our models
+
+With multiple cases we...
+
+### The parameter matrix
+### The ambiguity matrix
+### Likelihood
+### Estimation
+### Mixed data
+
+
+Say a data strategy seeks data on $X$ and $Y$ in 2 cases and seeks data on $K$ if ever $X=Y=1$.
+
+The probability of each data type is as given in table below:
+
+
+|type:     |prob:                        |
+|----------|-----------------------------|
+|$X0Y0$    |$\lambda^X_0(\lambda^Y_{00}+\lambda^Y_{01}))$                               |
+|$X0Y1$    |$\lambda^X_0(\lambda^Y_{11}+\lambda^Y_{10}))$                               |
+|$X1Y0$    |$\lambda^X_1(\lambda^Y_{00}+\lambda^Y_{10}))$                               |
+|$X1M0Y1$  |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{11}+\lambda^Y_{10}))$|
+|$X1M1Y1$  |$\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01}))$|
+
+The two observations can be thought of as a multinomal draw from these five event types.
+
+Alternatively they can also be thought of as the product of a draw from a strategy in which a set of units is drawn with observations on $X,Y$ only and another set is drawn with observations on $X, M,Y$.
+
+In the single multinomial view we have the probability of seeing data with $X=Y=0$ in one case and $X=1, M=0, Y=1$ in another is:
+
+* $2P(X=0, Y=0)P(X=1, M=0, Y=1)$
+
+In the conditional strategy view we have
+
+* $2P(X=0, Y=0)P(X=1, Y=1)P(M=0 | X=1, Y=1)$
+
+In the two strategy view we have
+
+* $P(X=0, Y=0)P(X=1, M=0, Y=1)$
+
+which is the same up to a constant.
+
+Say rather than conditioning $X=Y=1$ to examine $M$ one of the two cases were chosen at random to observe $M$ and it just so happend to be be a case with $X=Y=1$:
+
+| type:    | prob:                                                                         |
+|----------|-------------------------------------------------------------------------------|
+|$X0Y0$    |$.5\lambda^X_0(\lambda^Y_{00}+\lambda^Y_{01}))$                                |
+|$X0Y1$    |$.5\lambda^X_0(\lambda^Y_{11}+\lambda^Y_{10}))$                                |
+|$X1Y0$    |$.5\lambda^X_1(\lambda^Y_{00}+\lambda^Y_{10}))$                                |
+|$X1Y1$    |$.5\lambda^X_1(\lambda^Y_{11}+\lambda^Y_{01}))$                                |
+|$X0M0Y0$  |$.5\lambda^X_0(\lambda^M_{00}+\lambda^M_{01}))(\lambda^Y_{00}+\lambda^Y_{01}))$|
+|$X0M1Y0$  |$.5\lambda^X_0(\lambda^M_{11}+\lambda^M_{10}))(\lambda^Y_{00}+\lambda^Y_{10}))$|
+|...       |                                                                               |
+|$X1M0Y1$  |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{11}+\lambda^Y_{10}))$   |
+|$X1M1Y1$  |$\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01}))$   |
+
+
+In the single multinomial view we have the probability of seeing data with $X=Y=0$ in one case and $X=1, M=0, Y=1$ in another is now:
+
+* $2P(X=0, Y=0)P(X=1, M=0, Y=1)$
+
+In the conditional strategy view we have
+
+* $2P(X=0, Y=0)P(X=1, Y=1)P(M=0 | X=1, Y=1)$
+
+In the two strategy view we have
+
+* $P(X=0, Y=0)P(X=1, M=0, Y=1)$
+
+which is the same up to a constant.
+
+
+## Illustration 
+
+Consider a generalization of the models introduced in Chapter 6 in which a treatment $X$ is a cause of both $K$ and $Y$, and outcome $Y$ is a product of both $X$ and $K$. Though $K$ is both a mediator and a moderator for the effect of $X$. There are now 16 nodal types for $Y$, 4 for $K$ and 2 for $X$, yielding 32 causal types.
+
+To allow for the possibility of non-random selection of $X$ we will assume that the assignment probability for $X$ depends on $U^Y$. This is a feature shared also in the baseline model when we specify $\pi$ as a function of types $a$,$b$,$c$,$d$.
+
+Our piors requires specifying:
+
+1. A distribution over the 15-dimensional simplex representing possible values of $\lambda^Y$--which in turn determine types $u^Y$.
+2. A distribution over the 3-dimensional vector representing possible values of $\lambda^K$,  which in turn determine types $u^K$.
+
+
+The model is restricted in various ways. We assume now confounding in the assignemnt of $X$. Less obviously we implicitly assume that $K$ is independent of $\theta^Y$ conditional on $X$.
+
+With these elements in hand, however, all we need now is to provide a mapping from these fundamental parameters to the parameters used in the baseline model to form the likelihood. 
+
+
+The key transformation is the identification of causal types resulting from the 64 combinations of $\lambda^Y$ and $\lambda^K$. These are shown below.
+
+TABLE TO SHOW CAUSAL TYPES
+
+Consider the following matrices of values for $u_Y$ and $u_K$, where $\lambda_{pq}^{rs}$ is the probability that $u^Y = t_{pq}^{rs}$, meaning that $Y$ would take the value $p$ when $X=0, K=0$,  $q$ when $X=0, K=1$,  $r$ when $X=1, K=0$,  and $s$ when $X=1, K=1$. Similarly $\lambda_{w}^{z}$ is the probability that $u^K$ takes value  $t_{w}^{z}$  meaning that $K$ takes the value $w$ when $X=0$ and $z$ when $X=1$.
+
+
+TABLE TO SHOW CONDITIONAL PROBABILITIES OF K GIVEN X=1 AND TYPE
+
+These types are the *transformed parameters*; the probability of a type is just the sum of the probabilities of the fundamental types that compose it, formed by taking the product of the $\lambda^Y$ and $\lambda^K$ values marked in the rows and columns of  table \ref{tab:types}. 
+
+Similarly $\phi_{tx}$ can be constructed as the probability of observing $K$ conditional on this type (again, sums of products of probabilities associated with cells in table  \ref{tab:types}). For instance, using the row and column indices in exponents (GIVE FULL LABELS) from table \ref{tab:types}:
+
+$$\phi_{b1}=\frac{\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}{
+\lambda_K^1(\lambda_Y^3+\lambda_Y^4+\lambda_Y^7+\lambda_Y^8)+\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^3(\lambda_Y^3+\lambda_Y^4+\lambda_Y^11+\lambda_Y^{12})+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}$$
+
+
+
+With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model.
+
+## Illustrated inferences
+
+
+### XY model
+
+Consider the simple model in which $X$ causes $Y$ without confounding. 
+
+Assuming flat priors on types, what inferences do we draw from different sorts of (small) datasets. Do we learn more about effects from two cases that are the same, two cases that differ on X and Y only or two cases that differ on both.
+
+The results are given in table \@ref(tab:XYresultstable).
+
+```{r XYresultstable, echo = FALSE}
+
+model <- make_model("X->Y") %>% set_parameter_matrix()
+
+if(!exists("fit")) fit <- fitted_model()
+
+if(do_diagnosis){
+types_inferences <- function(model, data = data.frame(X = 0, Y = 1), stan_model, label){
+
+  M <- gbiqq::gbiqq(model, data = data, stan_model = stan_model)
+
+  a <- get_estimands(M, using = "posteriors", queries = "Y[X=1]<Y[X=0]")
+  b <- get_estimands(M, using = "posteriors", queries = "Y[X=1]>Y[X=0]")
+  c <- get_estimands(M, using = "posteriors", queries = "(Y[X=.]==0)", join_by = "&")
+  d <- get_estimands(M, using = "posteriors", queries = "(Y[X=.]==1)", join_by = "&")
+  data.frame(data = label, a = a$mean, b = b$mean, c = c$mean, d = d$mean, ate = b$mean - a$mean, bd = b$mean/d$mean, bc = b$mean/c$mean)
+ }
+
+
+M_1_0 <- types_inferences(model, data = data.frame(X = 0, Y = 0),stan_model = fit, label = "00")
+M_1_1 <- types_inferences(model, data = data.frame(X = 0, Y = 1),stan_model = fit, label = "01")
+M_1_2 <- types_inferences(model, data = data.frame(X = 1, Y = 1),stan_model = fit, label = "11")
+M_2_1 <- types_inferences(model, data = data.frame(X = c(0,0), Y = c(1,1)),stan_model = fit, label = "01, 01")
+M_2_2 <- types_inferences(model, data = data.frame(X = c(1,1), Y = c(1,1)),stan_model = fit, label = "11, 11")
+M_2_3 <- types_inferences(model, data = data.frame(X = c(0,1), Y = c(1,1)),stan_model = fit, label = "01, 11")
+M_2_4 <- types_inferences(model, data = data.frame(X = c(1,1), Y = c(0,1)),stan_model = fit, label = "10, 11")
+M_2_5 <- types_inferences(model, data = data.frame(X = c(0,1), Y = c(0,1)),stan_model = fit, label = "00, 11")
+M_3_1 <- types_inferences(model, data = data.frame(X = c(1,1, 1), Y = c(1,1,1)),stan_model = fit, label = "11, 11, 11")
+
+xy_results_table <- rbind(M_1_0, M_1_1, M_1_2, M_2_1, M_2_2, M_2_3, M_2_4, M_2_5, M_3_1)
+write_rds(xy_results_table, "saved/xy_results_table.rds")
+}
+xy_results_table <- read_rds("saved/xy_results_table.rds")
+
+kable(xy_results_table, digits = 2, caption = "Inferences for different data observations in a simple X->Y model")
+```
+
+We note a number of features:
+
+* $X=1, Y=1$ data does not discriminate between $\theta^Y_{01}$ and $\theta^Y_{11}$ and so while more of this data puts greater weight on both   $\lambda^Y_{01}$ and $\lambda^Y_{11}$, it does nothing to discriminate between them.
+* Similarly $X=0, Y=0$ data does not discriminate between $\theta^Y_{01}$ and $\theta^Y_{00}$ though it puts greater weight (uniformly) on $\lambda^Y_{01}$ and $\lambda^Y_{00}$,
+* For this reason, greatest weight is placed on  $\theta^Y_{01}$ when data on both $X=Y=0$ and $X=Y=1$ cases are found. 
+* The fractions suggest a common formula:
+
+$$\lambda^Y|n_{xy} \sim Dirichlet\left(1+\frac{n_{01} + n_{10}}2, 1+\frac{n_{00} + n_{11}}2, 1+\frac{n_{00} + n_{10}}2, 1+\frac{n_{01} + n_{11}}2\right)$$
+
+Posterior mean on ATE is then $\frac{n_{00} + n_{11} - n_{01} - n_{10}}n$.
+
+```{r XMYresultstable, echo = FALSE}
+if(do_diagnosis){
+XMY_model <- make_model("X ->M -> Y")
+med_1 <- types_inferences(XMY_model, data = data.frame(
+  X = c(1),
+  M = c(1),
+  Y = c(1)),
+  stan_model = fit, label = "111")
+med_2 <- types_inferences(XMY_model, data = data.frame(
+  X = c(1,1),
+  M = c(1,1),
+  Y = c(1,1)),
+  stan_model = fit, label = "111, 111")
+med_3 <- types_inferences(XMY_model, data = data.frame(
+  X = c(0,1),
+  M = c(0,1),
+  Y = c(0,1)),
+  stan_model = fit, label = "000, 111")
+med_4 <- types_inferences(XMY_model, data = data.frame(
+  X = c(1,1, 1),
+  M = c(1,1, 1),
+  Y = c(1,1, 1)),
+  stan_model = fit, label = "111, 111, 111")
+xmy_results_table <- rbind(med_1, med_2, med_3, med_4)
+
+write_rds(xmy_results_table, "saved/xmy_results_table.rds")
+}
+
+xmy_results_table <- read_rds("saved/xmy_results_table.rds")
+
+kable(xmy_results_table, digits = 2)
+```
+
+## Considerations 
+### The identification problem
+
+```{r}
+model <- make_model("X1 -> M1 -> Y <- M2 <- X2")
+
+# restrict such that *only* M1 OR M2 could cause Y -- can we create a DD test? / achieve identification
+
+```
+
+
+### Continuous data
+
+We can similarly shift from binary to continuous variable values through an expansion of the causal types. Suppose that $Y$ can take on $m$ possible values. With $k$ explanatory variables, each taking on $r$ possible values, we then have $m^{r^k}$ causal types and, correspondingly, very many more elements in $\phi$. Naturally, in such situations, researchers might want to reduce complexity by placing structure onto the possible patterns of causal effects and clue probabilities, such as assuming a monotonic function linking effect sizes and clue probabilities.
+
+
+### Measurement error
+
+We have assumed no measurement error; in applications there could be considerable interest in measurement error. On one hand clue information may contain information about possible mismeasurement on $X$ and $Y$; on the other hand there might interest in whether measured clues adequately capture those features of a causal process that is thought to be measureable.  
+
+The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$. 
+Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it.
+
+### Spillovers
+
+Spillovers may also be addressed through an appropriate definition of causal types. For example a unit $i$ that is affected either by receiving treatment or via the treatment of a neighbor, $j$, might have potential outcomes $Y_i(X_i,X_j)=\max(X_i,X_j)$ while another type that is not influenced by neighbor treatment status has  $Y_i(X_i,X_j)=\max(X_i)$. With such a set-up, relevant clue information might discriminate between units affected by spillovers and those unaffected.   
+
+### Parameteric models
+
+## Conclusion
+
+ADD REFERENCE TO TABLE 1 OF FOR MIXED DATA "Ability and Achievement" Otis Duncan
+
