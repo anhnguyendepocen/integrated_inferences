@@ -16,15 +16,211 @@ source("_packages_used.R")
 ```
 
 
-Everything we have talked about so far assume that researchers are able to state priors on all the primitives entering into the analysis. 
+The approach we have  described to inference always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters.  
 
 But what if they cannot?
 
-As we have noted, learning in the framework we have described can occur even with "flat" priors over causal effects and assignment probabilities. However priors on the probative value of clues have to be informative. We also suspect, however, that researchers usually have---or could readily formulate---a rough idea of where they believe the parameter values lie. They have approximate prior beliefs about whether a causal effect is very common or not very common; whether confounding is likely or unlikely; and whether a given feature of a process is highly likely to be observed, moderately likely to be observed or very unlikely to observed under a given causal theory. Indeed, beliefs about these last two parameters already play a central role in standard approaches to correlational analysis and process tracing. This means that researchers should be in a position to specify a limited range of plausible values for each of the model's primitives.  They can then use the model to explore the consequences of different values in this plausible range either for their findings (given a set of collected data) or for their research design choices (prior to collecting data). And they can express their conclusions explicitly as *conditional* on their priors, or report findings for a range of prior values. Even where researchers are reluctant to quantify their beliefs, we believe that the principles underlying the BIQQ approach can nonetheless offer valuable, heuristic guidance on how to interpret mixes of qualitative and quantitative evidence in ways that are internally consistent and make more complete use of the available information.
+In the process tracing applications we saw no updating on the causal models---updating was only with respect to case level causal types. 
 
-At the same time, it is consequential where researchers' priors---in particular, their priors on the probabilities of clues---come from: whether they reflect some form of empirical knowledge or derive purely from theory. If a theory $T$ suggests that clue $K$ will be observed if and only if $X$ causes $Y$, then the presence of $K$ provides evidence that $X$ causes $Y$ *only to the extent that $T$ provides a true account of the causal logic through which $X$ affects $Y$*. If $T$ captures the wrong mechanism of causation, for instance, then clue probabilities that derive from the theory may be wrong and causal inferences that are based on the observation of these clues will be wrong. To use process data to make claims about causal effects that are *not* conditional on theories, researchers need empirical support for claims on the probative value of clues. This may often be difficult to obtain. In particular, it requires that {knowledge travel}: whereas in traditional Bayesian analysis researchers often employ uninformative (flat) priors, the use of clue-based data contributes to analysis *only if* priors are informative. 
 
-Finally, we believe that the model is useful in part *because* it places such high demands on scholars' beliefs about the probative value of within case data: that is, because it clearly identifies the required inputs into the process of drawing integrated causal inferences. Put differently, to the extent that scholars are unable to specify even approximate ranges on these parameters, this is a problem for causal inference, not a problem for the model. The framework thus has implications for research agendas in identifying the kinds of knowledge that scholars need to generate if they are to use mixed methods to provide causal accounts of the world. 
+## Bounds on probative value
+
+Classic treatments of process tracing made use of quantities such as $\phi_{b1}, \phi_{d1}$---the probability that $K=1$ given $X$ caused $Y$ and $X=Y=1$ in a model with mediation. 
+
+These accounts do not guide much guidance however regarding where these quantities come from --- given that causal types are unobservable how can one justify a belief about the probability of some observation *given* a causal type. Is it even possible to justify such beliefs?
+
+The grounded approach we described provides an answer to this puzzle. In short, knowledge of the structure of a causal model, together with data on exchageable units, can be enough to place bounds on possible values of $\phi_{b1}, \phi_{d1}$. 
+
+We illustrate the basic idea and then review some results in this area.
+
+Imagine a fortunate situation in which (a) it is known that the true causal model has the form $X \rightarrow M \rightarrow Y$ and (b) we have a lot of experimental data on the conditional distribution of $M$ given $X$ and of $Y$ given $M$. 
+
+Let us define:
+
+* $\tau_1 = \Pr(M=1 | X=1) - \Pr(M=1 | X=0)$
+* $\rho_1 = \Pr(M=1 | X=1) - \Pr(M=0 | X=0)$
+* $\tau_2 = \Pr(Y=1 | X=1) - \Pr(Y=1 | M=0)$
+* $\rho_2 = \Pr(Y=1 | M=1) - \Pr(Y=0 | M=0)$
+
+These are all quantities taht can be calculated from teh data. The $\tau$s are average treatment effects and the $\rho$s are indicators for how common the $Y=1$ outcome is.
+
+We are interested in:
+
+$$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + \lambda_{a}^K\lambda_{a}^Y}$$
+
+
+Noting that $\tau_j = \lambda_{b_j} - \lambda_{a_j}$, and $\tau$ is known.
+
+$$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + (\lambda_{b}^K-\tau_1)(\lambda_{b}^Y - \tau_2)}$$
+which we can see is decreasing in $\lambda_{b_j}$ (this may seem counterintuitive, but the reason is that with $\tau_j$ fixed, lower $\lambda_{b_j}$ also means lower $\lambda_{a_j}$ which means less ambiguity about *how* $X$ affects $Y$ (ie through positive or negative effects on $K$).
+
+ <!-- $$\phi_{1} = \frac{\lambda_{b}^Y}{2\lambda_{b}^Y -\tau_2 - \tau_1(\lambda_{b}^Y - \tau_2)/\lambda_{b}}^K$$ -->
+
+The lowest permissible value of  $\lambda_{b_j}$  is $\tau_j$, yielding $\phi_{b1} = 1$. 
+
+The highest value obtainable by $\lambda_{b_j}$ is when $\lambda_{a_j} = \frac{1-\tau_j+\rho_j}2$ and so $\lambda_{b_j} = \frac{1+\tau_j+\rho_j}2$. 
+
+In this case:
+$$\phi_{b1} = \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2) + (1-\tau_1+\rho_1)(1-\tau_2+\rho_2)}= \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau}$$
+
+And so:
+
+$$\frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau_2} \leq \phi_{b1} \leq 1$$
+
+These are the bounds on $\phi_{b1}$. We can calculate bounds on $\phi_{d1}$ in a similar way---though of course these are not independent. 
+
+
+$$\phi_{d1} = \frac{\lambda_{b}^K\lambda_{d}^Y}{(\lambda_{a}^K + \lambda_{b}^K + \lambda_{c}^K)\lambda_{d}^Y+ \lambda_{c}^K\lambda_{a}^Y}$$
+
+Figure \@ref(fig:probval1) illustrates how smoking gun and hoop tests might each be justified with knowlede of $\tau_j, \rho_j$.
+
+
+```{r probval1, echo = FALSE, fig.width = 8, fig.cap = "Bounds on probative value"}
+markov  <- function(t, r) matrix(c(t-r+1, 1-t-r, 1-t+r, 1+t+r)/2, 2, 2)
+
+divide <- function(t, r, t1, r1) {
+   if((abs(r1) > 1-t1) | (t1 < t)) return(NA)
+   c(t2 = t/t1,
+   r2 = r - r1*t/t1)}
+
+types_given_matrix <- function(t=.25, r=.25, fine = 5) {
+  maxa <- (1-t-abs(r))/2
+  data.frame(a = seq(0, maxa, length = fine)) %>%
+    mutate(b = a + t, c = (1-t-r)/2  - a, d = (1-t+r)/2  - a) 
+}
+
+types_given_matrices <- function(t1,r1,t2,r2,fine){
+  
+  maxa1 <- (1-t1-abs(r1))/2
+  mina1 <- -min(0, t1)
+  maxa2 <- (1-t2-abs(r2))/2
+  mina2 <- -min(0, t2)
+
+  data.frame(a1 = rep(seq(mina1, maxa1, length = fine), fine)) %>%
+    mutate(b1 = a1 + t1, c1 = (1-t1-r1)/2  - a1, d1 = (1-t1+r1)/2  - a1,
+           a2 = rep(seq(mina1, maxa2, length = fine), each = fine),
+           b2 = a2 + t2, c2 = (1-t2-r2)/2  - a2, d2 = (1-t2+r2)/2  - a2,
+          )
+  }
+
+bounds_given_matrices <- function(t1,r1,t2,r2,fine){
+  types_given_matrices(t1,r1,t2,r2,fine) %>% 
+    mutate(
+  phi_b = (b1 * b2)/(a1*a2 + b1*b2),
+  phi_d = (d2 * (b1 + d1) + d1*b2)/(d2 + c1*a2 + d1*b2))
+ }
+
+plot_bounds <-  function(t1,r1,t2,r2,fine, main = "bounds"){
+  bounds <- bounds_given_matrices(t1,r1,t2,r2,fine)
+  plot(bounds$phi_d, bounds$phi_b, xlim = c(0,1), ylim = c(0,1), cex = .5, main = main, 
+       xlab = expression(phi[d]), ylab = expression(phi[b]))
+  abline(0,1)
+  }
+
+par(mfrow = c(1,2))
+# plot_bounds(.2, -.6, .2, .6, 20, main = expression(paste("Doubly decisive: ", tau[1], "= .2, ",
+#                                                             rho[1], "= -.6, ",
+#                                                             tau[2], "= .2, ",
+#                                                             rho[2], "= .6")))
+
+plot_bounds(.6, -.2, .6, .2, 20, main = expression(paste("Hoop: ", tau[1], "= .6, ",
+                                                            rho[1], "= -.2, ",
+                                                            tau[2], "= .6, ",
+                                                            rho[2], "= .2")))
+
+plot_bounds(0.0, -.9, .0, -.9, 100, main = expression(paste("Smoking gun: ", tau[1], "= 0, ",
+                                                            rho[1], "= -.9, ",
+                                                            tau[2], "= 0, ",
+                                                            rho[2], "= -.9, ")))
+
+```
+
+
+```{r, eval = FALSE, echo = FALSE}
+# An odd one!
+plot_bounds(.02, -.5, -.10, -.5,600)
+```
+
+For the smoking gun,  $\phi_{b1}$ is .5 because $\lambda_a^j = \lambda_b^j$  exactly;  $\phi_{d1}$ might be low as $d$ types mostly arise because of $c$ types in the first step and $a$ types in the second. This is achived with a low value of $\lambda_{d}^Y$
+
+Whether the bounds map into useful probabitve value depends in part on whether causal effects are better identified in the first or the second stage. We can see this in Figure \@ref(fig:probval2).
+
+```{r probval2, echo = FALSE, fig.width = 10, fig.cap = "Probative value with different first and second stage relations"}
+
+par(mfrow = c(1,2))
+
+plot_bounds(0, 0, .25, .25, 20, main = expression(paste("Weak first stage: ", tau[1], "= 0, ",
+                                                            rho[1], "= 0, ",
+                                                            tau[2], "= .25 ",
+                                                            rho[2], "= .25")))
+
+plot_bounds(.25, .25, 0, 0, 20, main = expression(paste("Weak second stage: ", tau[1], "= .25, ",
+                                                            rho[1], "= .25, ",
+                                                            tau[2], "= 0, ",
+                                                            rho[2], "= 0")))
+
+```
+
+
+
+## The possibility of identification of probative value from experimental data
+
+Imagine we had access to infinite experimental data on the effect of $X$ on $Y$ and we want to know for a case (exchangeable with any other in this population) with $X=Y=1$, whether $X=1$ caused $Y=1$--- PC. Our experimental data can be written as a transition matrix as follows: 
+
+$$P^{u}=\left( \begin{array}{cc} 0.50 & 0.50 \\ 0.25 & 0.75 \end{array}\right)$$
+If we have prior beliefs about the distribution of causal types, then PC would be simply $\frac{\lambda^u_b}{\lambda^u_b + \lambda^u_d}$. 
+
+But let's assume we cannot justify such beliefs. In this case, from results in MURTAS REF, we can still place bounds on PC:
+
+$$\frac13 \leq PC \leq \frac23 $$
+For intuition note that  $P^{xy}$ implies a causal effect of .25 and so the lowest  value of $\lambda_b^u$ consistent with $P^{xy}$ arises when $\lambda_b^u =  .25$ and $\lambda_a^u = 0$, in which case  $\lambda_c^u = .25$ and $\lambda_d^u = .5$.    In this case  $\lambda_b^u/(\lambda_b^u+ \lambda_d^u)=\frac{1}{3}$.  The highest consistent   value of $\lambda_b^u$ arises when $\lambda_b^u =  .5$ and $\lambda_a^u = .25$, in which case  $\lambda_c^u = 0$ and $\lambda_d^u = .25$. In this case  $\lambda_b^u/(\lambda_b^u+ \lambda_d^u)=\frac{2}{3}$.
+
+Say now we have access to auxiliary data $K$ and plan to make inferences based on $K$. 
+
+We will suppose  first that $K$ is a moderator and second that $K$ is a mediator.
+
+### Moderator
+Consider first a situation  in which our case is drawn from a set of cases for which $X$ adn $K$ were each randomly assigned. Say then that the transition matrices, conditionl on $K$ look as follows:
+
+$$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$
+In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$ --- before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$. 
+
+How about $\phi_{b1}$ and $\phi_{d1}$?
+
+Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue.
+
+
+### Mediator
+
+Consider now a case with mediation. Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$. The transition matrices from $X$ to $K$ and $K$ to $Y$ are:
+
+$$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$ 
+Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$. 
+
+To see this, note that we can calculate:
+
+* $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$
+* $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$
+
+and so:
+
+* $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$
+* $\lambda_d^u = \lambda_d^Y$ 
+* $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$.
+
+whence:
+
+* $\phi_{b1} = 1$
+* $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$
+
+### Generally not so easy
+
+Thus we can *in principle* calculate the $\phi$s from experimental data given a mediation process. In this case we get a strong hoop test. 
+
+Note that this agrees with the calculation of $PC|K$ in MURTAS REF, which does not make use of a calculation  of $\phi$s.
+
+$$PC | K = 1 = \frac{\phi_b p}{\phi_b p + \phi_d (1-p)} = \frac{1 \times\frac13}{1 \times\frac13 + \frac{1}{2} \times \frac23}  = \frac{1}{2}$$
+
 
 
 ## Causal discovery
@@ -100,190 +296,6 @@ plot_dag(model3); title("True model")
 recover_model(model3)
 ```
 
-## The possibility of identification of probative value from experimental data
-
-Imagine we had access to infinite experimental data on the effect of $X$ on $Y$ and we want to know for a case (exchangeable with any other in this population) with $X=Y=1$, whether $X=1$ caused $Y=1$--- PC. Our experimental data can be written as a transition matrix as follows: 
-
-$$P^{u}=\left( \begin{array}{cc} 0.50 & 0.50 \\ 0.25 & 0.75 \end{array}\right)$$
-If we have prior beliefs about the distribution of causal types, then PC would be simply $\frac{\lambda^u_b}{\lambda^u_b + \lambda^u_d}$. 
-
-But let's assume we cannot justify such beliefs. In this case, from results in MURTAS REF, we can still place bounds on PC:
-
-$$\frac13 \leq PC \leq \frac23 $$
-For intuition note that  $P^{xy}$ implies a causal effect of .25 and so the lowest  value of $\lambda_b^u$ consistent with $P^{xy}$ arises when $\lambda_b^u =  .25$ and $\lambda_a^u = 0$, in which case  $\lambda_c^u = .25$ and $\lambda_d^u = .5$.    In this case  $\lambda_b^u/(\lambda_b^u+ \lambda_d^u)=\frac{1}{3}$.  The highest consistent   value of $\lambda_b^u$ arises when $\lambda_b^u =  .5$ and $\lambda_a^u = .25$, in which case  $\lambda_c^u = 0$ and $\lambda_d^u = .25$. In this case  $\lambda_b^u/(\lambda_b^u+ \lambda_d^u)=\frac{2}{3}$.
-
-Say now we have access to auxiliary data $K$ and plan to make inferences based on $K$. 
-
-We will suppose  first that $K$ is a moderator and second that $K$ is a mediator.
-
-### Moderator
-Consider first a situation  in which our case is drawn from a set of cases for which $X$ adn $K$ were each randomly assigned. Say then that the transition matrices, conditionl on $K$ look as follows:
-
-$$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$
-In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$ --- before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$. 
-
-How about $\phi_{b1}$ and $\phi_{d1}$?
-
-Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue.
-
-
-### Mediator
-
-Consider now a case with mediation. Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$. The transition matrices from $X$ to $K$ and $K$ to $Y$ are:
-
-$$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$ 
-Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$. 
-
-To see this, note that we can calculate:
-
-* $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$
-* $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$
-
-and so:
-
-* $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$
-* $\lambda_d^u = \lambda_d^Y$ 
-* $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$.
-
-whence:
-
-* $\phi_{b1} = 1$
-* $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$
-
-### Generally not so easy
-
-Thus we can *in principle* calculate the $\phi$s from experimental data given a mediation process. In this case we get a strong hoop test. 
-
-Note that this agrees with the calculation of $PC|K$ in MURTAS REF, which does not make use of a calculation  of $\phi$s.
-
-$$PC | K = 1 = \frac{\phi_b p}{\phi_b p + \phi_d (1-p)} = \frac{1 \times\frac13}{1 \times\frac13 + \frac{1}{2} \times \frac23}  = \frac{1}{2}$$
-
-
-## Bounds on causes of effects
-
-We are interested in quantities such as $\phi_{b1}, \phi_{d1}$---the probability that $K=1$ given $X$ caused $Y$ and $X=Y=1$ in a model with mediation.  [Equation](#eq:phis_from_lambdas) gave expressions for this when the $\lambda$s were known. 
-
-What if they are not?
-
-In this case it can be possible to calculate the bounds on $\phi_{b1}, \phi_{d1}$. Consider a chain with transition matrices $P(\tau_1, \sigma_1), P(\tau_2, \sigma_2)$.  We are interested in:
-
-$$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + \lambda_{a}^K\lambda_{a}^Y}$$
-
-
-Noting that $\tau_j = \lambda_{b_j} - \lambda_{a_j}$, and $\tau$ is known.
-
-$$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + (\lambda_{b}^K-\tau_1)(\lambda_{b}^Y - \tau_2)}$$
-which we can see is decreasing in $\lambda_{b_j}$ (this may seem counterintuitive, but hte reason is that with $\tau_j$ fixed, lower $\lambda_{b_j}$ also means lower $\lambda_{a_j}$ which means less ambiguity about *how* $X$ affects $Y$ (ie through positive or negative effects on $K$).
-
- <!-- $$\phi_{1} = \frac{\lambda_{b}^Y}{2\lambda_{b}^Y -\tau_2 - \tau_1(\lambda_{b}^Y - \tau_2)/\lambda_{b}}^K$$ -->
-
-The lowest permissible value of  $\lambda_{b_j}$  is $\tau_j$, yielding $\phi_1 = 1$. 
-
-The highest value obtainable by $\lambda_{b_j}$ is when $\lambda_{a_j} = \frac{1-\tau_j+\rho_j}2$ and so $\lambda_{b_j} = \frac{1+\tau_j+\rho_j}2$. 
-
-In this case:
-$$\phi_{b1} = \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2) + (1-\tau_1+\rho_1)(1-\tau_2+\rho_2)}= \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau}$$
-
-And so:
-
-$$\frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau_2} \leq \phi_{b1} \leq 1$$
-These are the bounds on $\phi_{b1}$. We can calculate bounds on $\phi_{d1}$ in a similar way---though of course these are not independent. 
-
-```{r, echo = FALSE, fig.width = 8}
-markov  <- function(t, r) matrix(c(t-r+1, 1-t-r, 1-t+r, 1+t+r)/2, 2, 2)
-
-divide <- function(t, r, t1, r1) {
-   if((abs(r1) > 1-t1) | (t1 < t)) return(NA)
-   c(t2 = t/t1,
-   r2 = r - r1*t/t1)}
-
-types_given_matrix <- function(t=.25, r=.25, fine = 5) {
-  maxa <- (1-t-abs(r))/2
-  data.frame(a = seq(0, maxa, length = fine)) %>%
-    mutate(b = a + t, c = (1-t-r)/2  - a, d = (1-t+r)/2  - a) 
-}
-
-types_given_matrices <- function(t1,r1,t2,r2,fine){
-  
-  maxa1 <- (1-t1-abs(r1))/2
-  mina1 <- -min(0, t1)
-  maxa2 <- (1-t2-abs(r2))/2
-  mina2 <- -min(0, t2)
-
-  data.frame(a1 = rep(seq(mina1, maxa1, length = fine), fine)) %>%
-    mutate(b1 = a1 + t1, c1 = (1-t1-r1)/2  - a1, d1 = (1-t1+r1)/2  - a1,
-           a2 = rep(seq(mina1, maxa2, length = fine), each = fine),
-           b2 = a2 + t2, c2 = (1-t2-r2)/2  - a2, d2 = (1-t2+r2)/2  - a2,
-          )
-  }
-
-bounds_given_matrices <- function(t1,r1,t2,r2,fine){
-  types_given_matrices(t1,r1,t2,r2,fine) %>% 
-    mutate(
-  phi_b = (b1 * b2)/(a1*a2 + b1*b2),
-  phi_d = (d2 * (b1 + d1) + d1*b2)/(d2 + c1*a2 + d1*b2))
- }
-
-plot_bounds <-  function(t1,r1,t2,r2,fine, main = "bounds"){
-  bounds <- bounds_given_matrices(t1,r1,t2,r2,fine)
-  plot(bounds$phi_d, bounds$phi_b, xlim = c(0,1), ylim = c(0,1), cex = .5, main = main, 
-       xlab = expression(phi[d]), ylab = expression(phi[b]))
-  abline(0,1)
-  }
-
-par(mfrow = c(1,2))
-plot_bounds(.2, -.6, .2, .6, 20, main = expression(paste("Doubly decisive: ", tau[1], "= .2, ",
-                                                            rho[1], "= -.6, ",
-                                                            tau[2], "= .2, ",
-                                                            rho[2], "= .6")))
-
-plot_bounds(.6, -.2, .6, .2, 20, main = expression(paste("Hoop: ", tau[1], "= .6, ",
-                                                            rho[1], "= -.2, ",
-                                                            tau[2], "= .6, ",
-                                                            rho[2], "= .2")))
-
-plot_bounds(0.0, -.9, .0, -.9, 100, main = expression(paste("Smoking gun: ", tau[1], "= 0, ",
-                                                            rho[1], "= -.9, ",
-                                                            tau[2], "= 0, ",
-                                                            rho[2], "= -.9, ")))
-
-```
-
-
-```{r, eval = FALSE, echo = FALSE}
-# An odd one!
-plot_bounds(.02, -.5, -.10, -.5,600)
-```
-
-
-$$\phi_{d1} = \frac{\lambda_{b}^K\lambda_{d}^Y}{(\lambda_{a}^K + \lambda_{b}^K + \lambda_{c}^K)\lambda_{d}^Y+ \lambda_{c}^K\lambda_{a}^Y}$$
-
-
-For the smoking gun,  $\phi_{b1}$ is .5 because $\lambda_a^j = \lambda_b^j$  exactly;  $\phi_{d1}$ might be low as $d$ types mostly arise because of $c$ types in the first step and $a$ types in the second.
-.
-
-
-this is achived with a low value of $\lambda_{d}^Y$
-
-Whether the bounds map into useful probabitve value depends in part on whether causal effects are better identified in the first or the second stage.
-
-```{r, echo = FALSE, fig.width = 7}
-
-par(mfrow = c(1,2))
-
-plot_bounds(0, 0, .25, .25, 20, main = expression(paste("Weak first stage: ", tau[1], "= 0, ",
-                                                            rho[1], "= 0, ",
-                                                            tau[2], "= .25 ",
-                                                            rho[2], "= .25")))
-
-plot_bounds(.25, .25, 0, 0, 20, main = expression(paste("Weak second stage: ", tau[1], "= .25, ",
-                                                            rho[1], "= .25, ",
-                                                            tau[2], "= 0, ",
-                                                            rho[2], "= 0")))
-
-```
-
-
 ## Qualitative beliefs and Sensitivity Analyses
 
 A first strategy to address concerns around weak foundations for claims on probative value---even after attempting to introduce information on uncertainty around probative value, is to assess the extent to which conclusions depend on the details of information provided. In some cases conclusions may be very sensitive to details provided; in other cases not so much. 
@@ -310,9 +322,8 @@ We are interested in whether data on clues, $K$ can be used to make estimates of
 We find that when priors over clue probabilities do not discriminate between causal types, then learning clue values does not affect learning over other parameters when $n=1$. 
 
 
-## Learning from observational and experimental mixtures
-
 ## Learning across populations
+
 Now consider strategies to learn about clues from observing patterns in different populations under an assumption that clue patterns travel across cases even if causal types differ. We consider a  population independence assumption ("population invariant probative values"") on the $\phi$ values, we show that data from multiple populations can allow for both tighter assessment of $\phi$ values and identification of fundamental causal parameters.
 
 A consideration of heterogeneous treatment effects communicates the basic idea. Consider a large randomized trial in some population where it is found that a treatment is effective in  subgroup $K$ of subjects but not among others. Then we might think that $K$ is a marker for a $B$ type.
