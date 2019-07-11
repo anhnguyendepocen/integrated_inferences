@@ -59,6 +59,52 @@ A specified parameter set for node $j$, then, allows for a range of possible all
 
 Thus, under the parameter set for $Y$ ($\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, $\alpha^Y_{11}=3$), a relatively equal allocation like $\lambda^Y_{00}=0.26$, $\lambda^Y_{10}=0.24$, $\lambda^Y_{01}=0.2$, $\lambda^Y_{11}=0.3$ will have a higher probability than a highly skewed allocation like $\lambda^Y_{00}=0.1$, $\lambda^Y_{10}=0.1$, $\lambda^Y_{01}=0.7$, $\lambda^Y_{11}=0.1$. Likewise, $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, $\alpha^Y_{11}=5$ puts more prior weight on any $\lambda^Y$ with relatively more positive effects and an even distributon among other types than on a $\lambda^Y$ with an even spread across all types or than one skewed towards negative effects. Meanwhile, the tigher distribution given by ($\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$) implies even steeper differences in those probabilities.
 
+For a model with any number of nodes, we can then imagine a draw of one $\lambda^j$ from its prior distribution for each node, giving a full $\lambda$ vector.  Any particular $\lambda$ vector, in turn, implies a probability distribution over *causal* types ($\theta$). With the help of a parameter matrix (mapping from parameters to causal types), we can then, just as with process tracing, calculate the prior probability that a case is of any particular causal type, given the parameter ($\lambda$) values we have drawn. Implicitly, then, our prior distribution over $\lambda$ gives rise in turn to a prior distribution over the causal type shares in the population.
+
+Where there is unobserved confounding, we now need parameter sets corresponding to the correlated types, as with the setup for process tracing. Thus, if we believe the likelihood of $X=1$ is correlated with whether or not $X$ has a positive effect on $Y$, we will need two parameter sets (rather than one) for $X$: one for $X$'s value when $\theta^Y = \theta^Y_{01}$ and one for $X$'s value when $\theta^Y \neq \theta^Y_{01}$. For each of these parameter sets, we specify two $\alpha$ parameters representing our beliefs about $X$'s assignment. We can draw $\lambda$ values for these conditional nodal types from the resulting Dirichlet distributions, as above, and can then calculate causal type probabilities in the usual way.
+
+**Event probabilities**. We now need to build a likelihood function that can map from beliefs about the world to data: i.e., that can tell us how likely we are to see a given data pattern---across multiple cases---under a given distribution of causal types in the population. The first step in building the likelihood function is to calculate event probabilities: the probability of observing a case of a particular data type given a particular population-level distribution of causal type shares (that is, given a $\lambda$ draw). We assume, for now, that we deploy the same data strategy for each case, collecting data on all nodes.
+
+We denote an event probability for a given data pattern for variables $X, Y, \dots$ as $w_{x, y, \dots}$. For instance, the probability of observing $X=0, Y=1$ in a case (given $\lambda$) is $w_{01}$. An ambiguity matrix, just as for process tracing, tells us which causal types are consistent with a particular data type, as observed for a single case. To calculate the probability of the data given a distribution of causal types, we simply add together the probabilities of all of the causal types with which it is consistent. 
+
+See, for instance, the parameter matrix and the ambiguity matrix in Tables \@ref(tab:parammmatrixmix) and \@ref(tab:ambigmatrixmix). We have indicated a single draw of $\lambda$ values (population type shares) in the parameter matrix, and these have been used to calculate the priors on causal types provided in the ambiguity matrix. Let's now calculate the event probability for each data type. Starting with $X=0, Y=0$, we can read off the ambiguity matrix that the consistent causal types are ($\theta^X_0, \theta^Y_{00}$) and ($\theta^X_0, \theta^Y_{01}$). The event probability, $w_{00}$, is then given by adding together the probabilities of these two causal types, $0.1 + 0.2 = 0.3$. All four event probabilities, for the four data types, are then calculated in the same way:
+
+* $w_{00} = 0.1 + 0.2 = 0.3$
+* $w_{10} = 0.1 + 0.1 = 0.2$
+* $w_{01} = 0.1 + 0.2 = 0.2$
+* $w_{11} = 0.2 + 0.1 = 0.3$
+
+As any case must be of one and only one data type, the full set of event probabilities for a single $\lambda$ draw must naturally sum to $1$.
+
+```{r parammmatrixmix, echo = FALSE}
+XY <- make_model("X -> Y") %>% set_parameters(c(.4, .6, .3, .2, .2, .3))
+paramXY <- get_parameter_matrix(XY) 
+paramXY_with_params <-cbind(paramXY, Shares = XY$parameters)
+kable(paramXY_with_params, caption = "A parameter matrix for a simple $X \rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.")
+```
+
+
+```{r ambigmatrixmix, echo = FALSE}
+ambiguityXY  <- get_ambiguities_matrix(XY)
+ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = draw_type_prob(XY, using = "parameters")))
+kable(ambXY_with_priors, caption = "An ambiguity matrix for a simple $X \rightarrow Y$ model (with no unobserved confounding), showing the priors over causal types arising from a single draw of $\\lambda$ from its prior distribution.")
+```
+
+For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we woudl retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
+
+
+**Multinomial distribution**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern thus has a multinomial distribution.
+
+<!-- |     **Causal types** $\rightarrow$     | $\theta^X_0,\theta^Y_{00}$ | $\theta^X_1,\theta^Y_{00}$ | $\theta^X_0,\theta^Y_{10}$ | $\theta^X_1,\theta^Y_{10}$ | $\theta^X_0,\theta^Y_{01}$ | $\theta^X_1,\theta^Y_{01}$ | $\theta^X_0,\theta^Y_{11}$ | $\theta^X_1,\theta^Y_{11}$ | Parameter values (a draw from the prior) | -->
+<!-- |:--------------------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:-----------------------------------------:| -->
+<!-- | **Population parameters** $\downarrow$ |                            |                            |                            |                            |                            |                            |                            |                            |                                           | -->
+<!-- |              $\lambda^X_0$             |              0             |              1             |              0             |              1             |              0             |              1             |              0             |              1             |                    0.4                    | -->
+<!-- |              $\lambda^X_1$             |              1             |              0             |              1             |              0             |              1             |              0             |              1             |              0             |                    0.6                    | -->
+<!-- |            $\lambda^Y_{00}$            |              1             |              1             |              0             |              0             |              0             |              0             |              0             |              0             |                    0.3                    | -->
+<!-- |            $\lambda^Y_{10}$            |              0             |              0             |              1             |              1             |              0             |              0             |              0             |              0             |                    0.2                    | -->
+<!-- |            $\lambda^Y_{01}$            |              0             |              0             |              0             |              0             |              1             |              1             |              0             |              0             |                    0.2                    | -->
+<!-- |            $\lambda^Y_{11}$            |              0             |              0             |              0             |              0             |              0             |              0             |              1             |              1             |                    0.3                    | -->
+<!-- Table: (\#tab:parammmatrixmix). A parameter matrix for a simple $X \rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\lambda$ values from the prior distribution. -->
 
 
 

@@ -178,12 +178,12 @@ The relationship between causal types, nodal types, and the correlation among no
 |     **Causal types** $\rightarrow$     | $\theta^X_0,\theta^Y_{00}$ | $\theta^X_1,\theta^Y_{00}$ | $\theta^X_0,\theta^Y_{10}$ | $\theta^X_1,\theta^Y_{10}$ | $\theta^X_0,\theta^Y_{01}$ | $\theta^X_1,\theta^Y_{01}$ | $\theta^X_0,\theta^Y_{11}$ | $\theta^X_1,\theta^Y_{11}$ | Parameter values (population proportions) |
 |:--------------------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:-----------------------------------------:|
 | **Population parameters** $\downarrow$ |                            |                            |                            |                            |                            |                            |                            |                            |                                           |
-|              $\lambda^X_1$             |              0             |              1             |              0             |              1             |              0             |              1             |              0             |              1             |                    0.5                    |
-|              $\lambda^X_0$             |              1             |              0             |              1             |              0             |              1             |              0             |              1             |              0             |                    0.5                    |
+|              $\lambda^X_0$             |              0             |              1             |              0             |              1             |              0             |              1             |              0             |              1             |                    0.5                    |
+|              $\lambda^X_1$             |              1             |              0             |              1             |              0             |              1             |              0             |              1             |              0             |                    0.5                    |
 |            $\lambda^Y_{00}$            |              1             |              1             |              0             |              0             |              0             |              0             |              0             |              0             |                    0.2                    |
 |            $\lambda^Y_{10}$            |              0             |              0             |              1             |              1             |              0             |              0             |              0             |              0             |                    0.2                    |
 |            $\lambda^Y_{01}$            |              0             |              0             |              0             |              0             |              1             |              1             |              0             |              0             |                    0.4                    |
-|            $\lambda^Y_{11}$            |              0             |              0             |              0             |              0             |              0             |              0             |              1             |              1             |                                           |
+|            $\lambda^Y_{11}$            |              0             |              0             |              0             |              0             |              0             |              0             |              1             |              1             |                    0.2                    |                                           |
 Table: (\#tab:parammmatrix). A mapping between nodal types and causal types for a simple $X \rightarrow Y$ model (with no unobserved confounding).
 
 To start with the first two rows, these represent the population proportions of each of $X$'s nodal types. For instance, $\lambda^X_{0}$ is our belief about the proportion of cases in the population that are of nodal type $\theta^X_{0}$. The next row, $\lambda^X_{1}$, represents our belief about the inverse: the proportion of cases in the population of type $\theta^X_{1}$. We posit beliefs about these parameters in the final column, indicating that we think that half of cases in the population are "assigned" to $X=0$ and half to $X=1$. Note that, since there are only two possible nodal types for $X$, and their proportions must sum to 1, there is actually just one degree of freedom here: once we've specified one of these parameter values, the other is defined as well.
@@ -301,7 +301,12 @@ ambiguityXMY  <- get_ambiguities_matrix(XMY)
 <!-- ``` -->
 
 
-<!-- For an $X \rightarrow M \rightarrow Y$ model: -->
+```{r, echo = FALSE}
+
+ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = draw_type_prob(XY, using = "parameters")))
+
+<!-- For an $X \rightarrow Y$ model: -->
+```
 
 ```{r, echo = FALSE}
 
@@ -336,7 +341,7 @@ Table: (\#tab:ambigupdate). An updated version of the ambiguity matrix in Table 
 <!--    kable() -->
 <!-- ``` -->
 
-We can also see how this works for our $X \rightarrow M \rightarrow Y$ model, and the ambiguity matrix (partially represented) in Table \@ref(tab:ambigmatrixmed). If we observe the data $X=1, M=0, Y=0$, for instance, this exercise would yield the updated ambiguity matrix in Table \ref@(tab:ambigmedupdate). , we have eliminated all rows (causal types) with a $0$ in the relevant data-type column ($X1M0Y0$) and formed the posteriors by scaling up the priors in the retained rows. 
+We can also see how this works for our $X \rightarrow M \rightarrow Y$ model, and the ambiguity matrix in Table \@ref(tab:ambigmatrixmed). If we observe the data $X=1, M=0, Y=0$, for instance, this exercise would yield the updated ambiguity matrix in Table \ref@(tab:ambigmedupdate). Here we have eliminated all rows (causal types) with a $0$ in the relevant data-type column ($X1M0Y0$) and formed the posteriors by scaling up the priors in the retained rows. 
 
 
 |       **Data types** $\rightarrow$      | X1M0Y0 | Priors on causal types | Posteriors on causal types |
