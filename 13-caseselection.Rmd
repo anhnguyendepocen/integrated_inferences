@@ -290,11 +290,10 @@ diagnosis_X0Y1_X1Y1 <- diagnose_strategy(
                       analysis_model  = model,
                       given = given, 
                       queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = list("M", "M"),
+    									possible_data_args = list(vars = "M",
     																						within = TRUE, 
-    																						N = list(1, 1),
-    																						condition = list("X==0 & Y==1", 
-    																						                 "X==1 & Y==1") ))	
+    																						N = 2,
+    																						condition = "(X==0 & Y==1) | (X==1 & Y==1)"))
  write_rds(diagnosis_X0Y1_X1Y1, "saved/diagnosis_n2_X0Y1_X1Y1.rds")
 	
 } 
@@ -310,11 +309,10 @@ diagnosis_X1Y0_X1Y1 <- diagnose_strategy(
                       analysis_model  = model,
                       given = given, 
                       queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = list("M", "M"),
+    									possible_data_args = list(vars = "M",
     																						within = TRUE, 
-    																						N = list(1, 1),
-    																						condition = list("X==1 & Y==0", 
-    																						                 "X==1 & Y==1") ))	
+    																						N = 2,
+    																						condition = "(X==1 & Y==0) | (X==1 & Y==1)" ))	
  write_rds(diagnosis_X1Y0_X1Y1, "saved/diagnosis_n2_X1Y0_X1Y1.rds")
 	
 }
@@ -328,11 +326,10 @@ diagnosis_X0Y1_X1Y0 <- diagnose_strategy(
                       analysis_model  = model,
                       given = given, 
                       queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = list("M", "M"),
+    									possible_data_args = list(vars = "M",
     																						within = TRUE, 
-    																						N = list(1, 1),
-    																						condition = list("X==0 & Y==1", 
-    																						                 "X==1 & Y==0") ))	
+    																						N = 2,
+    																						condition = "(X==1 & Y==0) | (X==0 & Y==1)" ) )	
  write_rds(diagnosis_X0Y1_X1Y0, "saved/diagnosis_n2_X0Y1_X1Y0.rds")
 	
 } 
@@ -346,15 +343,14 @@ diagnosis_X0Y1_X0Y0 <- diagnose_strategy(
                       analysis_model  = model,
                       given = given, 
                       queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = list("M", "M"),
+    									possible_data_args =  list(vars = "M",
     																						within = TRUE, 
-    																						N = list(1, 1),
-    																						condition = list("X==0 & Y==1", 
-    																						                 "X==0 & Y==0") ))	
+    																						N = 2,
+    																						condition = "(X==0 & Y==1) | (X==0 & Y==0)"  ))	
  write_rds(diagnosis_X0Y1_X0Y0, "saved/diagnosis_n2_X0Y1_X0Y0.rds")
 	
 } 
-diagnosis_X0Y1_X0Y0 <- read_rds("saved/diagnosis_n2_X1Y0_X0Y0.rds")
+diagnosis_X0Y1_X0Y0 <- read_rds("saved/diagnosis_n2_X0Y1_X0Y0.rds")
 ```
 
 
@@ -366,11 +362,10 @@ diagnosis_X1Y0_X0Y0 <- diagnose_strategy(
                       analysis_model  = model,
                       given = given, 
                       queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = list("M", "M"),
+    									possible_data_args = list(vars = "M",
     																						within = TRUE, 
-    																						N = list(1, 1),
-    																						condition = list("X==1 & Y==0", 
-    																						                 "X==0 & Y==0") ))	
+    																						N = 2,
+    																						condition = "(X==0 & Y==1) | (X==0 & Y==0)"  ))	
  write_rds(diagnosis_X1Y0_X0Y0, "saved/diagnosis_n2_X1Y0_X0Y0.rds")
 	
 }
@@ -406,18 +401,11 @@ diagnoses_n2 <- do.call(rbind,
                                  diagnosis_X0Y1_X0Y0, 
                                  diagnosis_X0Y0_n2), 
                             function(x) x$diagnosis ))
-```
-
-
-```{r, echo=FALSE}
-diagnoses_n2 <- do.call(rbind, 
-                     lapply(list(diagnosis_X1Y1, 
-                                 diagnosis_X1Y0_n1, 
-                                 diagnosis_X0Y1_n1,
-                                 diagnosis_X0Y0_n1), 
-                            function(x) x$diagnosis ))
 kable(diagnoses_n2, digits = 3)
 ```
+
+
+
 * \@all here is where we need most backup help right now --- these examples show the basic analysis --- interest is in understanding how posterior variance differs for difference data strategies given difference `givens` and different background models.
 
 * Steps -- 
