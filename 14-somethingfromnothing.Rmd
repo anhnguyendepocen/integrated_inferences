@@ -16,11 +16,15 @@ source("_packages_used.R")
 ```
 
 
-The approach we have  described to inference always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters.  
+The approach we have  described to inference always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters. The problem of stating priors is more fundamental than for many Bayesian applications for two reasos. First the  beliefs are beliefs over the distribution of individual level effects and not just the beliefs over average effects. Second the belifs can do a lot of work---especially in small $n$ applications.    
 
-Where do these come from?
+We see two broad responses to this problem.
 
+One is emphasize the contingent nature of claims. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise. But if held, then the simple DAG in chapter 4 (REF) can be taken to represents beliefs about the world rather than a model of the world, in the sense of a simplified representation. But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is truly a model and not a faithful summary of beliefs. 
 
+Owning the model in this way results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful [@clarke2012model]. That is the subject of Chapter 15.
+
+Here we focus on more positive steps that might be taken to underpin a model.
 
 ## Bounds on probative value
 
@@ -243,113 +247,7 @@ How about $\phi_{b1}$ and $\phi_{d1}$?
 Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue.
 
 
-### Generally not so easy
-
-Thus we can *in principle* calculate the $\phi$s from experimental data given a mediation process. In this case we get a strong hoop test. 
-
-Note that this agrees with the calculation of $PC|K$ in MURTAS REF, which does not make use of a calculation  of $\phi$s.
-
-$$PC | K = 1 = \frac{\phi_b p}{\phi_b p + \phi_d (1-p)} = \frac{1 \times\frac13}{1 \times\frac13 + \frac{1}{2} \times \frac23}  = \frac{1}{2}$$
-
-
-
-## Causal discovery
-
-```{r, include = FALSE}
-# source("http://bioconductor.org/biocLite.R")
-# biocLite("RBGL")
-# if (!requireNamespace("BiocManager", quietly = TRUE))
-#     install.packages("BiocManager")
-# BiocManager::install("Rgraphviz")
-# library(Rgraphviz)
-
-library(gbiqq)
-library(dplyr)
-library(Rgraphviz)
-library(pcalg)
-
-recover_model <- function(model) {
-    
-  df <- simulate_data(model, n = 1000)
-  V  <- colnames(df)
-  
-  suffStat <- list(dm = df, nlev = c(2,2,2), adaptDF = FALSE)
-  skel.fit <- skeleton(suffStat,
-                       indepTest = disCItest, 
-                       alpha = 0.01, labels = V, 
-                       verbose = TRUE)
-  plot(skel.fit, main = "Estimated Skeleton")
-  }
-```
-
-We start with a model with three variables, $X,M,Y$ where $X$ affects $Y$ directly and indirectly through $M$. We simulate data from this model -- assuming monotonicity but otherwise a flat distribution on types, and then try to recover the structure from this model.
-
-
-
-```{r, include = FALSE}
-model1 <- make_model("X -> M -> Y <- X") %>% 
-  set_restrictions(causal_type_restrict = "(M[X=1]<M[X=0]) | (Y[M=1, X=.]<Y[M=0, X=.]) | (Y[X=1, M=.]<Y[X=0, M=.])")
-```
-
-
-
-In this case the data structure did not impse restrictions on the skeleton. The true graph can however be recovered with knowledge of the temporal ordering of variables. 
-
-Next we consider the model in which X causes Y through M but not directly. In this case we have a restriction --- specifically there is no arrow pointing directly from $X$ to $Y$. Again we impose monotonicity, draw data, and try to recover the model:
-
-
-```{r, include = FALSE}
-model2 <- make_model("X -> M -> Y") %>% 
-  set_restrictions(
-    causal_type_restrict = "(M[X=1]<M[X=0]) | Y[M=1]<Y[M=0]")
-```
-
-Again we have the correct skeleton and knowldge of timing is enough to recover the graph.
-
-Finally we consider the model in which $Y$ has two causes that do not influence each other. Again we impose monotonicity, draw data, and try to recover the model:
-
-
-```{r, include = FALSE}
-model3 <- make_model("X1 -> Y <- X2") %>% 
-  set_restrictions(causal_type_restrict = "(Y[X1=1, X2=.]<Y[X1=0, X2=.]) | (Y[X2=1, X1=.]<Y[X2=0, X1=.])")
-```
-
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "DAGs from Data", fig.width = 5, fig.height = 10,results='hide',fig.keep='all'}
-par(mfrow = c(3,2))
-par(mar = rep(3, 4))
-plot_dag(model1); title("True model")
-recover_model(model1)
-plot_dag(model2); title("True model")
-recover_model(model2)
-plot_dag(model3); title("True model")
-recover_model(model3)
-```
-
-## Qualitative beliefs and Sensitivity Analyses
-
-A first strategy to address concerns around weak foundations for claims on probative value---even after attempting to introduce information on uncertainty around probative value, is to assess the extent to which conclusions depend on the details of information provided. In some cases conclusions may be very sensitive to details provided; in other cases not so much. 
-
-For a simple illustration, say one's prior is that it is equally likely that a case is a $B$ or $D$ type. Say one thinks that $\phi_D=0$ and so seeing a clue provides a smoking gun test. Then conditional on seeing the clue, the conclusion is the same no matter what the actual value of $\phi_B$---as long as $\phi_B>0$. The details do not matter in this (albeit extreme case).  In this case if a clue is not see then the conclusions can depend quite strongly on the value of $\phi_B$ however: the posterior could range from $0.5$ in the case where $\phi_B=0$ (and so the clue is not informative at all) to $0$ in the case where $\phi_B = 1$ (and so the clue is double decisive). Thus how sensitive conclusions are to beliefs depend very much on the  data at hand.
-
-For a larger $n$ illustration, refer back to our example of large $n$ data  in chapter 9 where we saw that when there is confidence around assignment probabilities (as for example in an RCT) then, with large $N$, conclusions do not depend strongly on clue information about a handful of cases, no matter what the probative value.  
-
-More generally there is a literature on probabilistic causal models that assess the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see @parsons2001qualitative. Applied to the example above we might imagine a researcher willing to say that they think $\phi_B$ is not plausibly  greater than .5,  but unwilling to make a statement about their beliefs about where in the $0$ to $0.5$ range it lies. In this case, with the other parameter values outlined above the conclusions will lie in $0.5$ and $0.33$---ruling out half the possible ranges on the parameter results in a ruling out of a two thirds of the possible range of the conclusion. 
-
-## Conditional claims
-A second response is to clearly communicate the contingent nature of claims. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise. But if help, then the simple DAG in chapter 4 (REF) can be taken to represents beliefs about the world rather than a model of the world, in the sense of a simplified representation. But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is truly a model and not a faithful summary of beliefs. 
-
-Owning the model in this way results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful [@clarke2012model]. That is the subject of Chapter 13.
-
-## Learning about parameters within a model
-
-The general approach outlined in the literature on probabilistic graph allows for considerable flexibility on what is fixed and what is not. As we described in Chapter 2, any seemingly fixed feature of a structural equation can become a quantity of interest in a lower level model. In our baseline model^[Some individuals are observed to have received a treatment ($X$) while others have not. Assume that, subsequently, a researcher observes outcomes ($Y$) for all units. Assume that each unit belongs to one of four unobserved ''types,'' $A$ (adverse), $B$ (beneficial), $C$ (chronic), $D$ (destined) with potential outcomes $Y(0)=1, Y(1)=0$ for type $A$; $Y(0)=0, Y(1)=1$ for type $B$; $Y(0)=0, Y(1)=0$ for type $C$; and $Y(0)=1, Y(1)=1$ for type $D$.  As in the canonical model,  researchers have access to data on a third variable, $K$ and we let $\phi_{tx}$ denote the probability of observing $K$ for type $t$ given $X=x$.] for instance the probative value of clues, as captured by terms $\phi_{tx}$, are parameters over which researchers update; they do not uniquely derive from external information.  
-
-How much external information has to be brought in to learn from clues? Does any external information need to be brought in? We address the question by considering  situations where researcher have *uninformative* priors about treatment effects *and* over the probative value of clues. We simplify the problem by assuming that assignment probabilities are known (specifically we set these at 0.5 for all units) and we assume that there is infinite data available for analysis. Note that under these conditions the average treatment effect ($b-a$) can be estimated with certainty using information about $X$ and $Y$ only. 
-
-We are interested in whether data on clues, $K$ can be used to make estimates of the size of the causal types, $a,b,c,d$ and whether the data allows us to estimate the probative value of clues. Let $\theta$ denote our parameter vector containing causal types, $(\lambda)$ and probative values $\phi_{tx}$.   
-
-We find that when priors over clue probabilities do not discriminate between causal types, then learning clue values does not affect learning over other parameters when $n=1$. 
+### Case level bounds from mixed data
 
 
 ## Learning across populations
@@ -459,5 +357,86 @@ From the bottom right figure we learn two things: first, although we have now gr
 The intuition for this result is the following. From population 2 we learn that $\phi$ cannot be high for both $b$ and $d$ types, it must be low for one or the other or both. From  population 3 we learn that $\phi$ cannot be low for both types; it must high for one or the other or both. Together these imply that $\phi$ must be high for either $b$ or $d$ and low for the other. However since in population 1 there is a middling level of $K$ then there must be a middling frequency of $b$s and $d$s.
 
 Note finally that in this example, our learning on the level of $b$ in populations 2 and 3 is less precise:  we learn only that $b$ is either very high or very low, and that it is *not* middling in these populations.
+
+
+
+## Causal discovery
+
+```{r, include = FALSE}
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("RBGL")
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install("Rgraphviz")
+# library(Rgraphviz)
+
+library(gbiqq)
+library(dplyr)
+library(Rgraphviz)
+library(pcalg)
+
+recover_model <- function(model) {
+    
+  df <- simulate_data(model, n = 1000)
+  V  <- colnames(df)
+  
+  suffStat <- list(dm = df, nlev = c(2,2,2), adaptDF = FALSE)
+  skel.fit <- skeleton(suffStat,
+                       indepTest = disCItest, 
+                       alpha = 0.01, labels = V, 
+                       verbose = TRUE)
+  plot(skel.fit, main = "Estimated Skeleton")
+  }
+```
+
+We start with a model with three variables, $X,M,Y$ where $X$ affects $Y$ directly and indirectly through $M$. We simulate data from this model -- assuming monotonicity but otherwise a flat distribution on types, and then try to recover the structure from this model.
+
+
+
+```{r, include = FALSE}
+model1 <- make_model("X -> M -> Y <- X") %>% 
+  set_restrictions(causal_type_restrict = "(M[X=1]<M[X=0]) | (Y[M=1, X=.]<Y[M=0, X=.]) | (Y[X=1, M=.]<Y[X=0, M=.])")
+```
+
+
+
+In this case the data structure did not impse restrictions on the skeleton. The true graph can however be recovered with knowledge of the temporal ordering of variables. 
+
+Next we consider the model in which X causes Y through M but not directly. In this case we have a restriction --- specifically there is no arrow pointing directly from $X$ to $Y$. Again we impose monotonicity, draw data, and try to recover the model:
+
+
+```{r, include = FALSE}
+model2 <- make_model("X -> M -> Y") %>% 
+  set_restrictions(
+    causal_type_restrict = "(M[X=1]<M[X=0]) | Y[M=1]<Y[M=0]")
+```
+
+Again we have the correct skeleton and knowldge of timing is enough to recover the graph.
+
+Finally we consider the model in which $Y$ has two causes that do not influence each other. Again we impose monotonicity, draw data, and try to recover the model:
+
+
+```{r, include = FALSE}
+model3 <- make_model("X1 -> Y <- X2") %>% 
+  set_restrictions(causal_type_restrict = "(Y[X1=1, X2=.]<Y[X1=0, X2=.]) | (Y[X2=1, X1=.]<Y[X2=0, X1=.])")
+```
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "DAGs from Data", fig.width = 5, fig.height = 10,results='hide',fig.keep='all'}
+par(mfrow = c(3,2))
+par(mar = rep(3, 4))
+plot_dag(model1); title("True model")
+recover_model(model1)
+plot_dag(model2); title("True model")
+recover_model(model2)
+plot_dag(model3); title("True model")
+recover_model(model3)
+```
+
+
+
+
+
+
 
 
