@@ -55,6 +55,8 @@ While different distributions may be appropriate to the task in general, uncerta
 
 To first examine a situation with no observed confounding, we need to specify a prior distribution for each set of nodal types. For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. For $X$'s types, we specify $\alpha^X_0$ and $\alpha^X_1$, corresponding to the nodal types $\theta^X_0$ and $\theta^X_1$, respectively. For $Y$'s types, we specify $\alpha^Y_{00}$, $\alpha^Y_{10}$, $\alpha^Y_{01}$, and $\alpha^Y_{11}$, corresponding to the nodal types $\theta^Y_{00}$, etc. So, for instance, setting $\alpha^Y_{00}=1$, $\alpha^Y_{10}=1$, $\alpha^Y_{01}=1$, and $\alpha^Y_{11}=1$ yields a uniform distribution in which all share allocations of types in the population are equally likely. Setting $\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, and $\alpha^Y_{11}=3$ puts more weight on share allocations in which the shares are relatively equal. Setting $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, and $\alpha^Y_{11}=5$ puts greater weight positive causal effects than the other three types. And we can express greater certainty about that weighting by setting higher absolute alpha values, such as $\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$.
 
+**NEED A DISCUSSION OF RESTRICTIONS APPROACH TO SETTING PRIORS**
+
 A specified parameter set for node $j$, then, allows for a range of possible allocations of nodal types in the population, or $\lambda^j$'s while making some $\lambda^j$'s more likely than others. A set of $\alpha^j$'s, in other words, gives us a prior distribution over nodal types at node $j$. 
 
 Thus, under the parameter set for $Y$ ($\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, $\alpha^Y_{11}=3$), a relatively equal allocation like $\lambda^Y_{00}=0.26$, $\lambda^Y_{10}=0.24$, $\lambda^Y_{01}=0.2$, $\lambda^Y_{11}=0.3$ will have a higher probability than a highly skewed allocation like $\lambda^Y_{00}=0.1$, $\lambda^Y_{10}=0.1$, $\lambda^Y_{01}=0.7$, $\lambda^Y_{11}=0.1$. Likewise, $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, $\alpha^Y_{11}=5$ puts more prior weight on any $\lambda^Y$ with relatively more positive effects and an even distributon among other types than on a $\lambda^Y$ with an even spread across all types or than one skewed towards negative effects. Meanwhile, the tigher distribution given by ($\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$) implies even steeper differences in those probabilities.
@@ -93,7 +95,31 @@ kable(ambXY_with_priors, caption = "An ambiguity matrix for a simple $X \rightar
 For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we woudl retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
 
 
-**Multinomial distribution**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern thus has a multinomial distribution.
+**Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed and the event probabilities for each data type, given a $\lambda$ draw.
+
+Let us assume now that we have a 3-node model, with $X, Y$, and $M$ all binary. Let $n_{XYK}$ denote an 8-element vector recording the number of cases in a sample displaying each possible combination of $X,Y,K$ data, thus: $n_{XYM}=(n_{000},n_{001},n_{100},\dots ,n_{111})$. The elements of $n_{XYK}$ sum to $n$, the total number of cases studied. Likewise, let the event probabilities for data types given $\lambda$ be registered in a vector, $w_{XYK}=(w_{000},w_{001},w_{100},\dots ,w_{111})$. The likelihood of a data pattern, $\mathcal D$ is then:
+
+$$
+\Pr(\mathcal{D}|\lambda) = 
+  \text{Multinom}\left(n_{XYK}|n, w_{XYK}\right)  \\
+$$
+In other words, the likelihood of observing a particular data pattern given $\lambda$ is given by the corresponding value of the multinomial distribution given the event probabilities. 
+
+What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $K$.
+
+Now, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions: 
+
+
+$$
+\Pr(\mathcal{D}|\theta) = 
+  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYK}|k, w_{XYK}\right)  \\
+$$
+
+
+
+
+
+
 
 <!-- |     **Causal types** $\rightarrow$     | $\theta^X_0,\theta^Y_{00}$ | $\theta^X_1,\theta^Y_{00}$ | $\theta^X_0,\theta^Y_{10}$ | $\theta^X_1,\theta^Y_{10}$ | $\theta^X_0,\theta^Y_{01}$ | $\theta^X_1,\theta^Y_{01}$ | $\theta^X_0,\theta^Y_{11}$ | $\theta^X_1,\theta^Y_{11}$ | Parameter values (a draw from the prior) | -->
 <!-- |:--------------------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:-----------------------------------------:| -->
@@ -114,6 +140,14 @@ For a case in which only partial data are observed, we follow the same basic log
 ### Estimation
 ### Mixed data
 
+Thus, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions. For instance, for a model with 
+
+
+$$
+\Pr(\mathcal{D}|\theta) = 
+  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYK}|k, w_{XYK}\right)  \\
+$$
+
 
 Say a data strategy seeks data on $X$ and $Y$ in 2 cases and seeks data on $K$ if ever $X=Y=1$.
 
@@ -128,7 +162,7 @@ The probability of each data type is as given in table below:
 |$X1M0Y1$  |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{11}+\lambda^Y_{10}))$|
 |$X1M1Y1$  |$\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01}))$|
 
-The two observations can be thought of as a multinomal draw from these five event types.
+The two observations can be thought of as a multinomial draw from these five event types.
 
 Alternatively they can also be thought of as the product of a draw from a strategy in which a set of units is drawn with observations on $X,Y$ only and another set is drawn with observations on $X, M,Y$.
 
