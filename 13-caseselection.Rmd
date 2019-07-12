@@ -119,15 +119,24 @@ possible_data <-
 if(do_diagnosis){
 	
 	estimates_database_n1_X1Y1 <- make_estimates_database(
-  model, given, possible_data = possible_data, queries = "Y[X=1]>Y[X=0]")
+                  model, 
+                  given, 
+                  possible_data = possible_data, 
+                  queries = "Y[X=1]>Y[X=0]")
   
   reference_model <- gbiqq(model, data)
   
+  diagnosis_X1Y1 <- diagnose_strategy(
+                  reference_model = reference_model, 
+                  analysis_model  = model,
+                  given = given, 
+                  queries = "Y[X=1]>Y[X=0]",
+                  estimates_database = estimates_database_n1_X1Y1,
+                  possible_data = possible_data)
  
 	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
-	write_rds(estimates_database, "saved/estimates_database_n1_X1Y1.rds")
-
-	
+	write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1_X1Y1.rds")
+	write_rds(diagnosis_X1Y1, "saved/diagnosis_n1_X1Y1.rds")
 }
 
 estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1_X1Y1.rds")
@@ -217,8 +226,8 @@ diagnoses_n2 <- diagnose_strategies(reference_model = reference_model,
 																									 "(X==0 & Y==1) | (X==0 & Y==0)" ,
 																									 "X==0 & Y==0"))
 
- write_rds(diagnoses_n2, "saved/diagnoses_n2.rds")
  write_rds(diagnoses_n1, "saved/diagnoses_n1.rds")
+ write_rds(diagnoses_n2, "saved/diagnoses_n2.rds")
 	
 } 
 diagnoses_n1 <- read_rds("saved/diagnoses_n1.rds")
@@ -299,7 +308,7 @@ comp_diagnoses_n2 <- read_rds("saved/comp_diagnoses_n2.rds")
 
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = FALSE}
 
 c_diagnoses_df_n1 <- lapply(comp_diagnoses_n1, function(x) x$diagnosis )
 c_diagnoses_df_n2 <- lapply(comp_diagnoses_n2, function(x) x$diagnosis )
