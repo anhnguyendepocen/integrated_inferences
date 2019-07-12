@@ -48,69 +48,6 @@
 
 
 
-<style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
 
 <link rel="stylesheet" href="headers\style.css" type="text/css" />
 </head>
@@ -486,55 +423,54 @@ In this case we can now identify PC, even before observing <span class="math inl
 </div>
 <div id="learning-across-populations" class="section level2">
 <h2><span class="header-section-number">14.3</span> Learning across populations</h2>
-<p>Now consider strategies to learn about clues from observing patterns in different populations under an assumption that clue patterns travel across cases even if causal types differ. We consider a population independence assumption (“population invariant probative values”") on the <span class="math inline">\(\phi\)</span> values, we show that data from multiple populations can allow for both tighter assessment of <span class="math inline">\(\phi\)</span> values and identification of fundamental causal parameters.</p>
-<pre><code>## Generated expanded expression:
-## (K[Y=0] == 1 | K[Y=1] == 1)</code></pre>
+<p>Now consider strategies to learn about clues from observing patterns in different populations.</p>
+<p>WE first consider a situation in which we believe the same model holds in multiple sites but learnig about the model requires combining data about different parts of the model from different sutes.</p>
 <p><img src="ii_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>A consideration of heterogeneous treatment effects communicates the basic idea. Consider a large randomized trial in some population where it is found that a treatment is effective in subgroup <span class="math inline">\(K\)</span> of subjects but not among others. Then we might think that <span class="math inline">\(K\)</span> is a marker for a <span class="math inline">\(B\)</span> type.</p>
-<p>As a more concrete illustration consider first the data from “Population 1”, given in table . From this population we see that treatment is assigned in half of all cases and that outcomes are equally likely to be positive or negative, independent of treatment status.</p>
-<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K &lt;- X&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">set_parameters</span>(<span class="dt">type =</span> <span class="st">&#39;define&#39;</span>,
-    <span class="dt">alphas =</span> <span class="kw">list</span>(
-             <span class="dt">Y =</span> <span class="kw">c</span>(<span class="st">`</span><span class="dt">(Y[X=1, K=1]==1)</span><span class="st">`</span> =<span class="st"> </span><span class="dv">100</span>),
-             <span class="dt">K =</span> <span class="kw">c</span>(<span class="st">`</span><span class="dt">(K[X=1]&gt;K[X=0])</span><span class="st">`</span> =<span class="st"> </span><span class="dv">100</span>))
-  )
-
-df &lt;-<span class="st"> </span><span class="kw">simulate_data</span>(model, <span class="dt">using =</span> <span class="st">&quot;parameters&quot;</span>, <span class="dt">n =</span> <span class="dv">1000</span>)
-
-<span class="kw">with</span>(df, <span class="kw">table</span>(X, Y, K))
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">X =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>, <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">K =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>))
-
-<span class="kw">kable</span>(df)</code></pre>
-
-<p>Note that for or any <span class="math inline">\(b\)</span> in <span class="math inline">\([0,0.5]\)</span> the observed <span class="math inline">\(X,Y\)</span> data are consistent with <span class="math inline">\(a = b\)</span>, <span class="math inline">\(c = d = .5 - b\)</span>. Thus although the average treatment effect is 0, the share of units for which there is a positive treatment effect could range anywhere between 0 and .5.</p>
-<p>Note that <span class="math inline">\(K\)</span> is only observed when <span class="math inline">\(X = Y = 1\)</span>. This fact provides a lot of information on <span class="math inline">\(\phi\)</span>; in particular:
-<span class="math inline">\(\phi_{j0} = 0\)</span> for all <span class="math inline">\(j\)</span>. Moreover <span class="math inline">\(\phi_{a1} = 0\)</span> and <span class="math inline">\(\phi_{c1} = 0\)</span>. The only positive possibilities are <span class="math inline">\(\phi_{b1}\)</span> and <span class="math inline">\(\phi_{d1}\)</span>.</p>
-<p>Unfortunately however, constraining <span class="math inline">\(\phi\)</span> in this way does nothing to better estimate causal quantities.</p>
-<p>Since the share of cases for which <span class="math inline">\(K\)</span> is observed in <span class="math inline">\(1/8\)</span>, the observed data impose the following constraint on <span class="math inline">\(b\)</span>, <span class="math inline">\(\phi_{b1}\)</span>, <span class="math inline">\(\phi_{d1}\)</span>:
-<span class="math display">\[\begin{equation}
-.5b q_{b1}  + .5d q_{d1}  = 1/8 \label{C1}
-\end{equation}\]</span>
-Substituting for <span class="math inline">\(d\)</span> we have:
-<span class="math display">\[2b \phi_{b1} +(1-2b) q\phi_{d1} = 1/2\]</span> </p>
-<p><span class="math display">\[b = \frac{.25 - .5\phi_{d1}}{\phi_{b1} - \phi_{d1}}\]</span> </p>
-<p>Note that from this condition, that if we knew <span class="math inline">\(\phi_{b1}\)</span> and <span class="math inline">\(\phi_{d1}\)</span> then we could figure out <span class="math inline">\(b\)</span> exactly.
-If only one of these is known then we can figure <span class="math inline">\(b\)</span> only up to some range. If neither is known then <em>any</em> value of <span class="math inline">\(b\)</span> in <span class="math inline">\((0,.5)\)</span> is consistent with the data.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<p>That is the bad news: what we learn about <span class="math inline">\(\phi\)</span> does nothing to pin down causal effects of interest: for any stipulated causal effect there is a belief about the probative value of clues that is consistent with it.</p>
-<p>Nevertheless although the learning on <span class="math inline">\(\phi\)</span> does not rule out any values on <span class="math inline">\(a,b,c,d\)</span> for any given population, learning is possible across populations, at least under the assumption that <span class="math inline">\(\phi\)</span> is invariant to population. Assume specifically that the distribution of types varies across populations but that the values of <span class="math inline">\(\phi\)</span> conditional on type is constant. Thus for this illustration, the data table for Population 2, Table  is identical to that for population 1 except for the observations on <span class="math inline">\(K\)</span>.</p>
-
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-6"></span>
-<img src="ii_files/figure-html/unnamed-chunk-6-1.png" alt="\label{fig:somethingfig} Combinations of $\phi_{b1}$, $\phi_{d1}$ and $b$ values consistent with data from three populations. Populations are assumed to differ in the sizes of groups $A,B,C,D$ but not in the $\phi$ values. Furthermore it is assumed in this illustration that observed data is identical across populations with respect to $X$ and $Y$ but differs with respect to $K$." width="768" />
-<p class="caption">
-Figure 14.2:  Combinations of <span class="math inline">\(\phi_{b1}\)</span>, <span class="math inline">\(\phi_{d1}\)</span> and <span class="math inline">\(b\)</span> values consistent with data from three populations. Populations are assumed to differ in the sizes of groups <span class="math inline">\(A,B,C,D\)</span> but not in the <span class="math inline">\(\phi\)</span> values. Furthermore it is assumed in this illustration that observed data is identical across populations with respect to <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> but differs with respect to <span class="math inline">\(K\)</span>.
-</p>
-</div>
-<p>The top left panel of figure  summarizes the learning that is possible from the first population. The axes indicate possible values of <span class="math inline">\(\phi_{b1}\)</span> and <span class="math inline">\(\phi_{d1}\)</span>; the numbers marked inside the figure are the possible values of <span class="math inline">\(a\)</span> implied by these values. Note that values are marked only when they collectively satisfy the constraint given in Equation .</p>
-<p>Key features of the graph are that both <span class="math inline">\(\phi_{d1}\)</span> and <span class="math inline">\(\phi_{b1}\)</span> span the whole range between 0 and 1: that is, the constraint does not limit the range of either of these on their own. Second, values of <span class="math inline">\(b\)</span> range from 0 to 0.5: thus the constraint does not rule out any value for <span class="math inline">\(b\)</span> not already determined by <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span> data alone.</p>
-<p>However the combinations of possible values are clearly strongly constrained and these combinations depend on the data.</p>
-<p>The second and third figures show the analogous set of constraints for two more populations that are identical to the first except that <span class="math inline">\(K\)</span> is observed in very few of the <span class="math inline">\(X=Y=1\)</span> cases in the second population and in very many of the <span class="math inline">\(X=Y=1\)</span> cases in the third. Under the assumption that <span class="math inline">\(\phi\)</span> is invariant to population, the feasible values of <span class="math inline">\(\phi\)</span> consists of those values that are admissible in <em>all</em> populations. These values are shown in the bottom right figure (they can in fact be identified by considering the intersection of the admissible values from any two of the populations).</p>
-<p>From the bottom right figure we learn two things: first, although we have now greatly constrained the set of possible values of <span class="math inline">\(\phi\)</span>, quite distinct values remain possible. Secondly, whatever the true values of <span class="math inline">\(\phi\)</span> we have in the final figure, we have tightly limited the possible values of <span class="math inline">\(b\)</span>, which we now believe to be approximately 0.25.</p>
-<p>The intuition for this result is the following. From population 2 we learn that <span class="math inline">\(\phi\)</span> cannot be high for both <span class="math inline">\(b\)</span> and <span class="math inline">\(d\)</span> types, it must be low for one or the other or both. From population 3 we learn that <span class="math inline">\(\phi\)</span> cannot be low for both types; it must high for one or the other or both. Together these imply that <span class="math inline">\(\phi\)</span> must be high for either <span class="math inline">\(b\)</span> or <span class="math inline">\(d\)</span> and low for the other. However since in population 1 there is a middling level of <span class="math inline">\(K\)</span> then there must be a middling frequency of <span class="math inline">\(b\)</span>s and <span class="math inline">\(d\)</span>s.</p>
-<p>Note finally that in this example, our learning on the level of <span class="math inline">\(b\)</span> in populations 2 and 3 is less precise: we learn only that <span class="math inline">\(b\)</span> is either very high or very low, and that it is <em>not</em> middling in these populations.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-5">Table 14.1: </span>Learning from single site does not yield and informative clue</caption>
+<thead>
+<tr class="header">
+<th align="left">Subset</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X == 1 &amp; Y == 1 &amp; K == 1</td>
+<td align="right">0.501</td>
+<td align="right">0.148</td>
+</tr>
+<tr class="even">
+<td align="left">X == 1 &amp; Y == 1 &amp; K == 0</td>
+<td align="right">0.501</td>
+<td align="right">0.145</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-5">Table 14.1: </span>Clue is informative after combining studies linking <span class="math inline">\(K\)</span> to <span class="math inline">\(Z\)</span> and <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span></caption>
+<thead>
+<tr class="header">
+<th align="left">Subset</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X == 1 &amp; Y == 1 &amp; K == 1</td>
+<td align="right">0.672</td>
+<td align="right">0.104</td>
+</tr>
+<tr class="even">
+<td align="left">X == 1 &amp; Y == 1 &amp; K == 0</td>
+<td align="right">0.518</td>
+<td align="right">0.085</td>
+</tr>
+</tbody>
+</table>
+<p>Consider next a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the. As a simple example we might imagine that <span class="math inline">\(X\)</span> is differentially likely to produce <span class="math inline">\(M\)</span> in two sites, but if it does the relation between <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span> is common across sites.</p>
 </div>
 <div id="causal-discovery" class="section level2">
 <h2><span class="header-section-number">14.4</span> Causal discovery</h2>
@@ -543,10 +479,10 @@ Figure 14.2:  Combinations of <span class="math inline">\(\phi_{b1}\)</span>, <s
 <p>Next we consider the model in which X causes Y through M but not directly. In this case we have a restriction — specifically there is no arrow pointing directly from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>. Again we impose monotonicity, draw data, and try to recover the model:</p>
 <p>Again we have the correct skeleton and knowldge of timing is enough to recover the graph.</p>
 <p>Finally we consider the model in which <span class="math inline">\(Y\)</span> has two causes that do not influence each other. Again we impose monotonicity, draw data, and try to recover the model:</p>
-<div class="figure"><span id="fig:unnamed-chunk-11"></span>
-<img src="ii_files/figure-html/unnamed-chunk-11-1.png" alt="DAGs from Data" width="480" />
+<div class="figure"><span id="fig:unnamed-chunk-10"></span>
+<img src="ii_files/figure-html/unnamed-chunk-10-1.png" alt="DAGs from Data" width="480" />
 <p class="caption">
-Figure 14.3: DAGs from Data
+Figure 14.2: DAGs from Data
 </p>
 </div>
 
@@ -563,12 +499,6 @@ Figure 14.3: DAGs from Data
 <div id="ref-dawid2019bounding">
 <p>Dawid, Philip, Macartan Humphreys, and Monica Musio. 2019. “Bounding Causes of Effects with Mediators.” <em>arXiv Preprint arXiv:1907.00399</em>.</p>
 </div>
-</div>
-<div class="footnotes">
-<hr />
-<ol start="1">
-<li id="fn1"><p>For example, for <span class="math inline">\(b \in [1/4,1]\)</span> set <span class="math inline">\(\phi_{d1}=0\)</span> and <span class="math inline">\(\phi_{b1} = 1/(4b)\)</span> otherwise set <span class="math inline">\(\phi_{b1}=0\)</span> and <span class="math inline">\(\phi_{d1} = 1/(2(1-2b))\)</span><a href="where-does-probative-value-come-from.html#fnref1" class="footnote-back">↩</a></p></li>
-</ol>
 </div>
             </section>
 

@@ -134,7 +134,9 @@ if(do_diagnosis){
   write_rds(phis2, "saved/phis_2.rds")
 
 }
+```
 
+```{r, echo = FALSE}
 phis1 <- read_rds("saved/phis_1.rds")
 phis2 <- read_rds("saved/phis_2.rds")
 
@@ -184,7 +186,7 @@ The key difference between the paels is that $\phi_d$ is constrained to be low i
 
 For intuition note that a higher level $d$ type will exhibit $M=1$ if it is formed via $db$, $bd$,or $dd$ and it will exhibit $M=0$ if it is formed via $ca$, $cd$, $ad$. The weak second stage makes it possible that there are no second stage d types, only a and b types. The stronger first stage makes it possible that there are no first stage $c$ types. In that case the higher level d types are formed uniquely of $db$ types -- which always exhibit $M=1$ if $X=1$.
 
-This is not possible however for the data assume in the first panel. In the first panel the the higher value on $eho_2$ means that there must be at least .25 d types. And the weak first stage means that there must at least .5 a and c types combined. Thus there *must* be a set of cases in which $M$ is not observed even though we have an upper level d type.
+This is not possible however for the data assume in the first panel. In the first panel the the higher value on $\rho_2$ means that there must be at least .25 d types. And the weak first stage means that there must at least .5 a and c types combined. Thus there *must* be a set of cases in which $M$ is not observed even though we have an upper level d type.
 
 ```{r probval2, echo = FALSE, fig.width = 10, fig.cap = "Probative value with different first and second stage relations"}
 
@@ -322,8 +324,9 @@ Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ withou
 
 ## Learning across populations
 
-Now consider strategies to learn about clues from observing patterns in different populations under an assumption that clue patterns travel across cases even if causal types differ. We consider a  population independence assumption ("population invariant probative values"") on the $\phi$ values, we show that data from multiple populations can allow for both tighter assessment of $\phi$ values and identification of fundamental causal parameters.
+Now consider strategies to learn about clues from observing patterns in different populations.
 
+WE first consider a situation in which we believe the same model holds in multiple sites but learnig about the model requires combining data about different parts of the model from different sutes. 
 
 
 ```{r, echo = FALSE}
@@ -372,137 +375,18 @@ write_rds(list(result1, result2, updated1, updated2), "saved/frankenstein.rds")
 
 ```
 
-```{r}
+```{r, echo = FALSE}
+
 frank <- read_rds("saved/frankenstein.rds")
 
-kable(frank[[1]])
+kable(frank[[1]][,-c(1,3)], caption = "Learning from single site does not yield and informative clue")
 
-kable(frank[[2]])
-
-```
-
-A consideration of heterogeneous treatment effects communicates the basic idea. Consider a large randomized trial in some population where it is found that a treatment is effective in  subgroup $K$ of subjects but not among others. Then we might think that $K$ is a marker for a $B$ type.
-
-As a more concrete illustration consider  first the data from "Population  1", given in table \ref{S1}. From this population we see that treatment is assigned in half of all cases and that outcomes are equally likely to be positive or negative, independent of treatment status.
-
-```{r, eval = FALSE}
-model <- make_model("X -> Y <- K <- X") %>% 
-  set_parameters(type = 'define',
-    alphas = list(
-             Y = c(`(Y[X=1, K=1]==1)` = 100),
-             K = c(`(K[X=1]>K[X=0])` = 100))
-  )
-
-df <- simulate_data(model, using = "parameters", n = 1000)
-
-with(df, table(X, Y, K))
-df <- data.frame(X = c(0,0,1,1, 0,0,1,1), Y = c(0,1,0,1, 0,1,0,1), K = c(0,0,0,0,0,0,0,1))
-
-kable(df)
+kable(frank[[2]][,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$")
 
 ```
 
-\begin{table}[h!]
-\centering
-\begin{tabular}{c|cc}
-           &        $Y=0$ &        $Y=1$ \\ \hline
-       $X=0$ &     25\% of cases &     25\% of cases  \\
-			 & No clues & No clues \\ \\
-       $X=1$ &     25\% of cases &     25\% of cases  \\
-			 & No clues & $K=1$ in 50\% \\
-			 &  & of these cases\\
-\end{tabular}  
-\caption{Population 1}
-\label{S1} 
-\end{table}
 
-Note that for or any $b$ in $[0,0.5]$ the observed $X,Y$ data are consistent with $a = b$, $c = d = .5 - b$. Thus although the average treatment effect is 0, the share of units for which there is a positive treatment effect could range anywhere between 0 and .5.
-
-Note that $K$ is only observed when $X = Y = 1$. This fact provides a lot of information on $\phi$; in particular: 
-$\phi_{j0} = 0$ for all $j$. Moreover $\phi_{a1} = 0$ and $\phi_{c1} = 0$. The only positive possibilities are $\phi_{b1}$ and $\phi_{d1}$. 
-
-Unfortunately however, constraining $\phi$ in this way does nothing to better estimate causal quantities. 
-
-Since the share of cases for which $K$ is observed in $1/8$, the observed data impose the following constraint on $b$, $\phi_{b1}$, $\phi_{d1}$:
-\begin{equation}
-.5b q_{b1}  + .5d q_{d1}  = 1/8 \label{C1}
-\end{equation}
-Substituting for $d$ we have:
-$$2b \phi_{b1} +(1-2b) q\phi_{d1} = 1/2$$ \label{CC1}
-
-$$b = \frac{.25 - .5\phi_{d1}}{\phi_{b1} - \phi_{d1}}$$ \label{CC2}
-
-Note that from this condition, that if we knew $\phi_{b1}$ and $\phi_{d1}$ then we could figure out $b$ exactly.
-If only one of these is known then we can figure $b$ only up to some range. If neither is known then *any* value of $b$ in $(0,.5)$ is consistent with the data.^[For example, for $b \in [1/4,1]$ set $\phi_{d1}=0$ and $\phi_{b1} = 1/(4b)$ otherwise set $\phi_{b1}=0$ and $\phi_{d1} = 1/(2(1-2b))$] 
-
-That is the bad news: what we learn about $\phi$ does nothing to pin down causal effects of interest: for any stipulated causal effect there is a belief about the probative value of clues that is consistent with it. 
-
-Nevertheless although the learning on $\phi$ does not rule out any values on $a,b,c,d$ for any given population, learning is possible across populations, at least under the assumption that $\phi$ is invariant to population. Assume specifically that the distribution of types varies across populations but that the values of $\phi$ conditional on type is constant. Thus for this illustration, the data table for Population 2, Table \ref{S2} is identical to that for population 1 except for the observations on $K$.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{c|cc}
-           &        $Y=0$ &        $Y=1$ \\ \hline
-       $X=0$ &     25\% of cases &     25\% of cases  \\
-			 & No clues & No clues \\ \\
-       $X=1$ &     25\% of cases &     25\% of cases  \\
-			 & No clues & $K=1$ in 10\% \\
-			 &  & of these cases\\
-\end{tabular}  
-\caption{Population 2}
-\label{S2} 
-\end{table}
-
-
-
-```{r, fig.cap="\\label{fig:somethingfig} Combinations of $\\phi_{b1}$, $\\phi_{d1}$ and $b$ values consistent with data from three populations. Populations are assumed to differ in the sizes of groups $A,B,C,D$ but not in the $\\phi$ values. Furthermore it is assumed in this illustration that observed data is identical across populations with respect to $X$ and $Y$ but differs with respect to $K$.", echo=FALSE, fig.align='center', fig.width=8, fig.height=8}
-
-f = function(qb1, qd1, sb=.5)  (sb -qd1)/(qb1*2 - qd1*2)
-
-s 	= seq(0,1,.05)
-qd 	= as.vector(sapply(s, function(i) rep(i, length(s))))
-qb 	= rep(s, length(s))
-
-b = as.vector(sapply(s, function(i) f(s, i)))
-bleg = b>=0 & b<=.5 
-
-
-b2 = as.vector(sapply(s, function(i) f(s, i, sb = .1)))
-bleg2 = b2>=0 & b2<=.5 
-
-b3 = as.vector(sapply(s, function(i) f(s, i, sb = .9)))
-bleg3 = b3>=0 & b3<=.5 
-
-par(mfrow=c(2,2))
-plot(qd,qb, type = "n", main = "Possible values for b and q given data 1")
-text(qd[bleg],	qb[bleg], round(b,2)[bleg],cex=.8)
-
-plot(qd,qb, type = "n", main = "Possible values for b and q given data 2")
-text(qd[bleg2],	qb[bleg2], round(b2,2)[bleg2],cex=.8)
-
-plot(qd,qb, type = "n", main = "Possible values for b and q given data 3")
-text(qd[bleg3],	qb[bleg3], round(b3,2)[bleg3],cex=.8)
-
-plot(qd,qb, type = "n", main = "Possible values for b and q in population 1 given data 1,2,3")
-text(qd[bleg & bleg2 & bleg3],	qb[bleg & bleg2 & bleg3], round(b,2)[bleg & bleg2 & bleg3],cex=.8)
-```
-
-The top left panel of figure \ref{fig:somethingfig} summarizes the learning that is possible from the first population. The axes indicate possible values of $\phi_{b1}$ and $\phi_{d1}$; the numbers marked inside the figure are the possible values of $a$ implied by these values. Note that values are marked only when they collectively satisfy the constraint given in Equation \ref{CC1}. 
-
-
-Key features of the graph are that both $\phi_{d1}$ and $\phi_{b1}$ span the whole range between 0 and 1: that is, the constraint does not limit the  range of either of these on their own. Second, values of $b$ range from 0 to 0.5: thus the constraint does not rule out any value for $b$ not already determined by $X$, $Y$ data alone.
-
-However the combinations of possible values are clearly strongly constrained and these combinations depend on the data.
-
-The second and third figures show the analogous set of constraints for two more populations that are identical to the first except that $K$ is observed in very few of the $X=Y=1$ cases in the second population and in very many of the $X=Y=1$ cases in the third. Under the assumption that $\phi$ is invariant to population, the feasible values of $\phi$ consists of those values that are admissible in *all* populations. These values are shown in the bottom right figure (they can in fact be identified by considering the intersection of the admissible values from any two of the populations).
-
-From the bottom right figure we learn two things: first, although we have now greatly constrained the set of possible values of $\phi$, quite distinct values remain possible.  Secondly, whatever the true values of $\phi$ we have in the final figure, we have tightly limited the possible values of $b$, which we now believe to be approximately 0.25.
-
-The intuition for this result is the following. From population 2 we learn that $\phi$ cannot be high for both $b$ and $d$ types, it must be low for one or the other or both. From  population 3 we learn that $\phi$ cannot be low for both types; it must high for one or the other or both. Together these imply that $\phi$ must be high for either $b$ or $d$ and low for the other. However since in population 1 there is a middling level of $K$ then there must be a middling frequency of $b$s and $d$s.
-
-Note finally that in this example, our learning on the level of $b$ in populations 2 and 3 is less precise:  we learn only that $b$ is either very high or very low, and that it is *not* middling in these populations.
-
-
+Consider next a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the. As a simple example we might imagine that $X$ is differentially likely to produce $M$ in two sites, but if it does the relation between $M$ and $Y$ is common across sites.
 
 ## Causal discovery
 
