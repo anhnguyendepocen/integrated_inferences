@@ -123,19 +123,10 @@ if(do_diagnosis){
   
   reference_model <- gbiqq(model, data)
   
-  
-  
-	diagnosis_X1Y1 <- diagnose_strategy(
-                  reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-                  estimates_database = estimates_database_n1_X1Y1,
-                  possible_data = possible_data)
-	
+ 
 	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
 	write_rds(estimates_database, "saved/estimates_database_n1_X1Y1.rds")
-	write_rds(diagnosis_X1Y1, "saved/diagnosis_n1_X1Y1.rds")
+
 	
 }
 
@@ -199,212 +190,121 @@ kable(diagnosis_X1Y0, caption = "Expected value of a strategy in which one X=Y=0
 
 ```{r, echo=FALSE}
 if(do_diagnosis){
-diagnosis_X1Y0_n1 <- diagnose_strategy(
-									reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-									possible_data_args = list(vars = "M",
-																						within = TRUE, 
-																						N = 1,
-																						condition = "X==1 & Y==0" ))	
- write_rds(diagnosis_X1Y0_n1, "saved/diagnosis_n1_X1Y0.rds")
+diagnoses_n1 <- diagnose_strategies(reference_model = reference_model, 
+                                    analysis_model  = model,
+									                  given = given, 
+									                  queries = "Y[X=1]>Y[X=0]",
+																		vars = "M",
+																		within = TRUE, 
+																		N = 1,
+																		conditions = c("X==1 & Y==1", 
+																									 "X==1 & Y==0", 
+																									 "X==0 & Y==1", 
+																									 "X==0 & Y==0" ))
+
+diagnoses_n2 <- diagnose_strategies(reference_model = reference_model, 
+                                    analysis_model  = model,
+									                  given = given, 
+									                  queries = "Y[X=1]>Y[X=0]",
+																		vars = "M",
+																		within = TRUE, 
+																		N = 2,
+																		conditions = c("X==1 & Y==1", 
+																									 "(X==0 & Y==1) | (X==1 & Y==1)", 
+																									 "(X==1 & Y==0) | (X==1 & Y==1)", 
+																									 "(X==1 & Y==0) | (X==0 & Y==1)",
+																									 "(X==0 & Y==1) | (X==0 & Y==0)",
+																									 "(X==0 & Y==1) | (X==0 & Y==0)" ,
+																									 "X==0 & Y==0"))
+
+ write_rds(diagnoses_n2, "saved/diagnoses_n2.rds")
+ write_rds(diagnoses_n1, "saved/diagnoses_n1.rds")
 	
 } 
-diagnosis_X1Y0_n1 <- read_rds("saved/diagnosis_n1_X1Y0.rds")
+diagnoses_n1 <- read_rds("saved/diagnoses_n1.rds")
+diagnoses_n2 <- read_rds("saved/diagnoses_n2.rds")
 ```
 
 
 
 ```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X0Y1_n1 <- diagnose_strategy(
-									reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-									possible_data_args = list(vars = "M",
-																						within = TRUE, 
-																						N = 1,
-																						condition = "X==0 & Y==1" ))	
- write_rds(diagnosis_X0Y1_n1, "saved/diagnosis_n1_X0Y1.rds")
-	
-}
-diagnosis_X0Y1_n1 <- read_rds("saved/diagnosis_n1_X0Y1.rds")
+
+diagnoses_df_n1 <- lapply(diagnoses_n1, function(x) x$diagnosis )
+diagnoses_df_n2 <- lapply(diagnoses_n2, function(x) x$diagnosis )
+diagnoses_df_n1 <- do.call(rbind, diagnoses_df_n1)
+diagnoses_df_n2 <- do.call(rbind, diagnoses_df_n2)   
+
+kable(rbind(diagnoses_df_n1, diagnoses_df_n2), digits = 3)
 ```
 
 
-
 ```{r, echo=FALSE}
+# A model with complementarity of X and M 
+comp_model <- make_model("X->Y<-M")  %>%
+					 set_restrictions(causal_type_restrict = "(Y[M=1, X =0] == 1) |
+					 								 	                        (Y[M=0, X =1] == 1) | 
+					 								                          (Y[M=0, X =0] == 1) ") %>%
+					 set_parameter_matrix() %>%
+					 set_parameters(type = "flat")
+
 if(do_diagnosis){
-diagnosis_X0Y0_n1 <- diagnose_strategy(
-									reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-									possible_data_args = list(vars = "M",
-																						within = TRUE, 
-																						N = 1,
-																						condition = "X==0 & Y==0" ))	
- write_rds(diagnosis_X0Y0_n1, "saved/diagnosis_n1_X0Y0.rds")
+ comp_reference_model <- gbiqq(comp_model, data)
+ write_rds(comp_reference_model, "saved/ comp_reference_model.rds")
 }
 
-diagnosis_X0Y0_n1 <- read_rds("saved/diagnosis_n1_X0Y0.rds")
+
 ```
-
-
-```{r, echo=FALSE}
-diagnoses_n1 <- do.call(rbind, 
-                     lapply(list(diagnosis_X1Y1, 
-                                 diagnosis_X1Y0_n1, 
-                                 diagnosis_X0Y1_n1,
-                                 diagnosis_X0Y0_n1), 
-                            function(x) x$diagnosis ))
-kable(diagnoses_n1, digits = 3)
-```
-
-
 
 
 ```{r, echo=FALSE}
 if(do_diagnosis){
-diagnosis_X1Y1_n2 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "X==1 & Y==1" ))	
- write_rds(diagnosis_X1Y1_n2, "saved/diagnosis_n2_X1Y1.rds")
-	
-}
-diagnosis_X1Y1_n2 <- read_rds("saved/diagnosis_n2_X1Y1.rds")
-```
+comp_diagnoses_n1 <- diagnose_strategies(reference_model = comp_reference_model, 
+	                                    analysis_model  = comp_model,
+										                  given = given, 
+										                  queries = "Y[X=1]>Y[X=0]",
+																			vars = "M",
+																			within = TRUE, 
+																			N = 1,
+																			conditions = c("X==1 & Y==1", 
+																										 "X==1 & Y==0", 
+																										 "X==0 & Y==1", 
+																										 "X==0 & Y==0" ))
 
-```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X0Y1_X1Y1 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "(X==0 & Y==1) | (X==1 & Y==1)"))
- write_rds(diagnosis_X0Y1_X1Y1, "saved/diagnosis_n2_X0Y1_X1Y1.rds")
+comp_diagnoses_n2 <- diagnose_strategies(reference_model = comp_reference_model, 
+	                                    analysis_model  = comp_model,
+										                  given = given, 
+										                  queries = "Y[X=1]>Y[X=0]",
+																			vars = "M",
+																			within = TRUE, 
+																			N = 2,
+																			conditions = c("X==1 & Y==1", 
+																										 "(X==0 & Y==1) | (X==1 & Y==1)", 
+																										 "(X==1 & Y==0) | (X==1 & Y==1)", 
+																										 "(X==1 & Y==0) | (X==0 & Y==1)",
+																										 "(X==0 & Y==1) | (X==0 & Y==0)",
+																										 "(X==0 & Y==1) | (X==0 & Y==0)" ,
+																										 "X==0 & Y==0"))
+
+  write_rds(comp_diagnoses_n1, "saved/comp_diagnoses_n1.rds")
+  write_rds(comp_diagnoses_n2, "saved/comp_diagnoses_n1.rds")
 	
 } 
-diagnosis_X0Y1_X1Y1 <- read_rds("saved/diagnosis_n2_X1Y0_X1Y1.rds")
+comp_diagnoses_n1 <- read_rds("saved/comp_diagnoses_n1.rds")
+comp_diagnoses_n2 <- read_rds("saved/comp_diagnoses_n2.rds")
 ```
+
 
 
 
 ```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X1Y0_X1Y1 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "(X==1 & Y==0) | (X==1 & Y==1)" ))	
- write_rds(diagnosis_X1Y0_X1Y1, "saved/diagnosis_n2_X1Y0_X1Y1.rds")
-	
-}
-diagnosis_X1Y0_X1Y1  <- read_rds("saved/diagnosis_n2_X1Y0_X1Y1.rds")
+
+c_diagnoses_df_n1 <- lapply(comp_diagnoses_n1, function(x) x$diagnosis )
+c_diagnoses_df_n2 <- lapply(comp_diagnoses_n2, function(x) x$diagnosis )
+c_diagnoses_df_n1 <- do.call(rbind, c_diagnoses_df_n1)
+c_diagnoses_df_n2 <- do.call(rbind, c_diagnoses_df_n2)   
+
+kable(rbind(c_diagnoses_df_n1, c_diagnoses_df_n2), digits = 3)
 ```
-
-```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X0Y1_X1Y0 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "(X==1 & Y==0) | (X==0 & Y==1)" ) )	
- write_rds(diagnosis_X0Y1_X1Y0, "saved/diagnosis_n2_X0Y1_X1Y0.rds")
-	
-} 
-diagnosis_X0Y1_X1Y0<- read_rds("saved/diagnosis_n2_X1Y0_X1Y0.rds")
-```
-
-```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X0Y1_X0Y0 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args =  list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "(X==0 & Y==1) | (X==0 & Y==0)"  ))	
- write_rds(diagnosis_X0Y1_X0Y0, "saved/diagnosis_n2_X0Y1_X0Y0.rds")
-	
-} 
-diagnosis_X0Y1_X0Y0 <- read_rds("saved/diagnosis_n2_X0Y1_X0Y0.rds")
-```
-
-
-
-```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X1Y0_X0Y0 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "(X==0 & Y==1) | (X==0 & Y==0)"  ))	
- write_rds(diagnosis_X1Y0_X0Y0, "saved/diagnosis_n2_X1Y0_X0Y0.rds")
-	
-}
-diagnosis_X1Y0_X0Y0  <- read_rds("saved/diagnosis_n2_X1Y0_X0Y0.rds")
-```
-
-
-```{r, echo=FALSE}
-if(do_diagnosis){
-diagnosis_X0Y0_n2 <- diagnose_strategy(
-    									reference_model = reference_model, 
-                      analysis_model  = model,
-                      given = given, 
-                      queries = "Y[X=1]>Y[X=0]",
-    									possible_data_args = list(vars = "M",
-    																						within = TRUE, 
-    																						N = 2,
-    																						condition = "X==0 & Y==0" ))	
- write_rds(diagnosis_X0Y0_n2, "saved/diagnosis_n2_X0Y0.rds")
-}
-
-diagnosis_X0Y0_n2 <- read_rds("saved/diagnosis_n2_X0Y0.rds")
-```
-
-
-```{r, echo=FALSE}
-diagnoses_n2 <- do.call(rbind, 
-                     lapply(list(diagnosis_X1Y1_n2, 
-                                 diagnosis_X1Y0_X1Y1, 
-                                 diagnosis_X0Y1_X1Y1,
-                                 diagnosis_X0Y1_X1Y0,
-                                 diagnosis_X1Y0_X0Y0, 
-                                 diagnosis_X0Y1_X0Y0, 
-                                 diagnosis_X0Y0_n2), 
-                            function(x) x$diagnosis ))
-kable(diagnoses_n2, digits = 3)
-```
-
-
 
 * \@all here is where we need most backup help right now --- these examples show the basic analysis --- interest is in understanding how posterior variance differs for difference data strategies given difference `givens` and different background models.
 
@@ -412,7 +312,7 @@ kable(diagnoses_n2, digits = 3)
 
   * Do wrapper to make it a little faster to generate results from a new strategy / mode in one line (that uses saved results when possible)
   * Extend current example to all four "gather M for 1 case" strategies and all 8  "gather M for 2 cases" (could be two of the same sort or two different) 
-  * Then do the same for (a) a model with monotonicity of X to M and M to Y assumed and (b) a X -> Y <- M model with complementarity of X and M assumed
+  * Then do the same for (a) a model with monotonicity of X to M and M to Y assumed and (b) a X -> Y <- M model with complementarity of X and M assumed  --  (LM) I don't understand how model (a) is different from the model above.
   * Even better if possible to graph some of the results, even with confidnece intervals. You can see the previous graphs we had in K1.pdf - K4.pdf in "6 Book\ii\Figures"
   
 
