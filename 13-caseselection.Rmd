@@ -238,14 +238,16 @@ kable(rbind(diagnoses_df_n1, diagnoses_df_n2), digits = 3)
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 # A model with complementarity of X and M 
 comp_model <- make_model("X->Y<-M")  %>%
 					 set_restrictions(causal_type_restrict = "(Y[M=1, X =0] == 1) |
-					 								 	                        (Y[M=0, X =1] == 1) | 
-					 								                          (Y[M=0, X =0] == 1) ") %>%
+					 								 	                        (Y[M=0, X =1] == 1) ") %>%
 					 set_parameter_matrix() %>%
 					 set_parameters(type = "flat")
+
+data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1)) 
+given <-  collapse_data(data, comp_model)
 
 if(do_diagnosis){
  comp_reference_model <- gbiqq(comp_model, data)
@@ -256,7 +258,7 @@ if(do_diagnosis){
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 if(do_diagnosis){
 comp_diagnoses_n1 <- diagnose_strategies(reference_model = comp_reference_model, 
 	                                    analysis_model  = comp_model,
