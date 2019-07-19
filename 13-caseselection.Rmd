@@ -75,7 +75,7 @@ Despite these various differences, our results will agree in key ways with those
 
 We describe here the procedure through which we can use `gbiqq` to diagnose and compare case-selection strategies given a causal model, any data we have already observed, and the causal query we seek to answer. The general intuition is that we can use the causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
 
-To illustrate the procedure, suppose that we have initially observed $X$ and $Y$ data on 6 cases. The initial data are summarized in Table \@ref(tab:6xycases).
+To illustrate the procedure, suppose that we want to estimate the average treatment effect of $X$ on $Y$ in a population and have initially observed $X$ and $Y$ data on 6 cases. The initial data are summarized in Table \@ref(tab:6xycases).
 
 ``` {r 6xycases, echo = FALSE}
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
@@ -83,7 +83,7 @@ given <-  collapse_data(data, model)
 kable(given)
 ```
 
-As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells (where $X \neq Y$). Suppose that we are now considering gathering process-tracing evidence for 1 of these cases. We have many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
+As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells (where $X \neq Y$). Suppose that we are now considering gathering process-tracing evidence for 1 of these cases in order improve our estimate. We have many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
 
 **DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. Suppose that we are operating with a simple mediation model, $X \rightarrow M \rightarrow Y$. 
 
@@ -97,10 +97,13 @@ As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table,
 
 **Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus *either* $M=0$ *or* $M=1$ in the case that our strategy leads us to select for process tracing. We represent the data possibilities (showing just the possible $M$ values) in the second column in Table \@ref(tab:caseselect1). Thus, for instance, for a strategy in which we choose a random $X=1, Y=1$ case, we could end up observing the initial $X,Y$ pattern plus $M=0$ in one of the $X=1, Y=1$ cases, or the initial $X,Y$ pattern plus $M=1$ in one of the $X=1, Y=1$ cases. 
 
-**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data (the $X$'s and $Y$'s) that we have already observed. In practice, we do this in `gbiqq` via simulation. Starting with the model together with our priors, we update based on the initial $X,Y$ data. We then use this posterior---representing what we know about the world having seen the $X,Y$ data---to draw a series of $\lambda$'s: share allocations of causal types. And given that we have (from an ambiguity matrix) the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probabiltiy of each data possibility. 
+**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data (the $X$'s and $Y$'s) that we have already observed. In practice, we do this in `gbiqq` via simulation. Starting with the model together with our priors, we update based on the initial $X,Y$ data. This posterior in fact represents our *prior* for the purposes of the process tracing. We thus use this posterior---representing what we know about the world having seen the $X,Y$ data only---to draw a series of $\lambda$'s---share allocations of causal types. Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. (Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.)  We show the data probabilities in the third column of Table \@ref(tab:caseselect1): one probability for each data-possibility given each strategy.
 
+**Posterior variance on estimate given the data**. For each data possibility, we can then use `gibiqq` to ask what inference we would get from each data possibility, given whatever query we seek to answer. What we are in fact interested in for the purposes of case selection is the *variance* of the posterior. We indicate in the fourth column of Table \@ref(tab:caseselect1) the posterior variance for each possible data realization.
 
-FLAG: Make table to go with text. Columns are: Strategy, Possible Data [with row split into M=0, M=1], Probability of Data (for each M value), Posterior Variance (for each M value), Expected Posterior Variance (one value per strategy, weighted average over M values).
+**Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each *strategy*. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. The final column provides the expected posterior variances, one for each strategy.
+
+FLAG: Make table caseselect1 to go with text. Columns are: Strategy, Possible Data [with row split into M=0, M=1], Probability of Data (for each M value), Posterior Variance (for each M value), Expected Posterior Variance (one value per strategy, weighted average over M values).
 
 Suppose, now, that she is choosing between two strategies:
 
@@ -139,37 +142,37 @@ given <-  collapse_data(data, model)
 
 # We can then imagine what data we might observe if we examine M inside some subset of data
 possible_data <- 
-  make_possible_data(model, given = given, vars = "M", within = TRUE, N = 1, condition = "X==1 & Y==1")
+  make_possible_data(model, given = given, vars = list("M", "M", "M", "M"), within = TRUE, N = list(1,1,1,1), condition = list("X==0 & Y==0", "X==1 & Y==0", "X==0 & Y==1", "X==1 & Y==1"))
 ```
 
 ```{r, echo = FALSE}
 
 if(do_diagnosis){
 	
-	estimates_database_n1_X1Y1 <- make_estimates_database(
+	estimates_database_n1 <- make_estimates_database(
                   model, 
                   given, 
                   possible_data = possible_data, 
-                  queries = "Y[X=1]>Y[X=0]")
+                  queries = "Y[X=1]-Y[X=0]")
   
   reference_model <- gbiqq(model, data)
   
-  diagnosis_X1Y1 <- diagnose_strategy(
+  diagnosis_n1 <- diagnose_strategy(
                   reference_model = reference_model, 
                   analysis_model  = model,
                   given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-                  estimates_database = estimates_database_n1_X1Y1,
+                  queries = "Y[X=1]-Y[X=0]",
+                  estimates_database = estimates_database_n1,
                   possible_data = possible_data)
  
 	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
-	write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1_X1Y1.rds")
-	write_rds(diagnosis_X1Y1, "saved/diagnosis_n1_X1Y1.rds")
+	write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1.rds")
+	write_rds(diagnosis_X1Y1, "saved/diagnosis_n1.rds")
 }
 
-estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1_X1Y1.rds")
+estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1.rds")
 reference_model            <- read_rds("saved/reference_XMY_updated_model.rds")
-diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds")
+diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds.rds")
 
 
 ```
