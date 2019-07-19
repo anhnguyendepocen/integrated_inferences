@@ -326,7 +326,7 @@ Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ withou
 
 Now consider strategies to learn about clues from observing patterns in different populations.
 
-WE first consider a situation in which we believe the same model holds in multiple sites but learnig about the model requires combining data about different parts of the model from different sutes. 
+We first consider a situation in which we believe the same model holds in multiple sites but learnig about the model requires combining data about different parts of the model from different sutes. 
 
 
 ```{r, echo = FALSE}
@@ -349,28 +349,29 @@ if(!exists("fit")) fit <- fitted_model()
 
 N <- 300
 df <- simulate_data(model, n = N, using = "parameters") 
-df[1:(N/3), "K"] <- NA
-df[(1+N/3):(2*N/3), c("X", "Y")] <- NA
-df[(1+2*N/3):N, "Z"] <- NA
+A <- 1:(N/3)
+B <- (1+N/3):(2*N/3) 
+C <- (1+2*N/3):N
 
-updated1 <- gbiqq(model, df[(1+2*N/3):N, ], stan_model = fit)
-updated2 <- gbiqq(model, df, stan_model = fit)
+df[A, "K"] <- NA
+df[B, c("X", "Y")] <- NA
+df[C, "Z"] <- NA
+
+updated1 <- gbiqq(model, df[A, ], stan_model = fit)
+updated2 <- gbiqq(model, df[B, ], stan_model = fit)
+updated3 <- gbiqq(model, df[C, ], stan_model = fit)
+updated_all <- gbiqq(model, df, stan_model = fit)
+
+subs <- list(
+              "X == 1 & Y == 1 & K == 1",
+              "X == 1 & Y == 1 & K == 0")
 
 # If updating done using case data only
-result1 <- query_model(updated1, 
-            queries = "Y[X=0] == 0", 
-            subsets = list(
-              "X == 1 & Y == 1 & K == 1",
-              "X == 1 & Y == 1 & K == 0"), 
-            using = "posteriors")
-
-result2 <- query_model(updated2, 
-            queries = "Y[X=0] == 0", 
-            subsets = list(
-              "X == 1 & Y == 1 & K == 1",
-              "X == 1 & Y == 1 & K == 0"), 
-            using = "posteriors")
-write_rds(list(result1, result2, updated1, updated2), "saved/frankenstein.rds")
+result1 <- query_model(updated1, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result2 <- query_model(updated2, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result3 <- query_model(updated3, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result4 <- query_model(updated_all, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+write_rds(list(result1, result2, result3, result4), "saved/frankenstein.rds")
 }
 
 ```
@@ -379,14 +380,75 @@ write_rds(list(result1, result2, updated1, updated2), "saved/frankenstein.rds")
 
 frank <- read_rds("saved/frankenstein.rds")
 
-kable(frank[[1]][,-c(1,3)], caption = "Learning from single site does not yield and informative clue")
+kable(frank[[1]][,-c(1,3)], caption = "Clue is uninformative in Study 1")
 
-kable(frank[[2]][,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$")
+kable(frank[[2]][,-c(1,3)], caption = "Clue is also uninformative in Study 2 (factorial)")
 
+kable(frank[[3]][,-c(1,3)], caption = "Clue is also uninformative in Study 3 (experiment studying $K$)")
+
+kable(frank[[4]][,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$")
 ```
 
 
 Consider next a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the. As a simple example we might imagine that $X$ is differentially likely to produce $M$ in two sites, but if it does the relation between $M$ and $Y$ is common across sites.
+
+```{r}
+# In this model you are more likely to have an M=1 type regardless if Y = 1 regardless 
+# This produces a positive confound
+
+model_1 <- make_model("X->M->Y") %>%
+            set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
+            set_parameters(c(.1, 0, .2, .7, 
+                             .5, .5, 
+                             .7, 0, .2, .1,
+                               .2, .2, .4, .2))
+
+plot_dag(model_1)
+
+if(do_diagnosis){
+  
+  df_1 <- simulate_data(model_1, n = 20000, using = "parameters")
+  
+  posterior_1 <- gbiqq(model_1, df_1, stan_model = fit)
+  
+  
+  
+  # In this model you are more likely to have an M=1 regardless if Y = 1 regardless 
+  # This produces a negative confound
+  model_2 <- make_model("X->M->Y") %>%
+              set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
+              set_parameters(c(.7, .1, .2, 0, 
+                               .5, .5, 
+                                0, .1, .2, .7,
+                               .2, .2, .4, .2))
+  df_2 <- simulate_data(model_2, n = 20000, using = "parameters")
+  
+  posterior_2 <- gbiqq(model_2, df_2, stan_model = fit)
+  
+  out1 <- query_model(posterior_1, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
+  
+  out2 <- query_model(posterior_2, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
+  
+  write_rds(list(posterior_1, posterior_2, out1, out2), "saved/same_mechanism.rds")
+  
+  }
+
+same_mechanism <- read_rds("saved/same_mechanism.rds")
+
+kable(same_mechanism[[3]])
+kable(same_mechanism[[4]])
+
+# The marginal effect of X on M will be different in the two cases
+# The effect of M on Y is the same however, though it is confounded
+
+```
+
+Under the model there is possibly a difference in the effect of $X$ on $Y$ in the 
+
+
+### Observational and experimental
+
+Let us imagine a second case in which one wants to update based on 
 
 ## Causal discovery
 
