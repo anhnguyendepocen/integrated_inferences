@@ -1,4 +1,4 @@
-# Case selection as a Decision Problem {#caseselection}
+  # Case selection as a Decision Problem {#caseselection}
 
 ```{r, include = FALSE}
 source("_packages_used.R")
@@ -73,17 +73,17 @@ Despite these various differences, our results will agree in key ways with those
 
 ### Procedure
 
-We describe here the procedure through which we can use `gbiqq` to diagnose and compare case-selection strategies given a causal model, any data we have already observed, and the causal query we seek to answer. The general intuition is that we can use the causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
+We describe here the procedure through which we can use `gbiqq` to diagnose and compare case-selection strategies given (i) a causal model, (ii) any data we have already observed, and (iii) the causal query we seek to answer. The general intuition is that we can use the causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
 
 To illustrate the procedure, suppose that we want to estimate the average treatment effect of $X$ on $Y$ in a population and have initially observed $X$ and $Y$ data on 6 cases. The initial data are summarized in Table \@ref(tab:6xycases).
 
-``` {r 6xycases, echo = FALSE}
+```{r 6xycases, echo = FALSE}
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
 given <-  collapse_data(data, model)
 kable(given)
 ```
 
-As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells (where $X \neq Y$). Suppose that we are now considering gathering process-tracing evidence for 1 of these cases in order improve our estimate. We have many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
+As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells (where $X \neq Y$). Suppose that we are now considering gathering process-tracing evidence for 1 of these cases to inform our estimate of the ATE. We have many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
 
 **DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. Suppose that we are operating with a simple mediation model, $X \rightarrow M \rightarrow Y$. 
 
