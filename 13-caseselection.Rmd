@@ -71,7 +71,7 @@ Finally, we proceed somewhat differently in our identification of strategies fro
 Despite these various differences, our results will agree in key ways with those in @HerronQuinn.
 
 
-### Procedure
+## Diagnosing case-selection strategies: procedure
 
 We describe here the procedure through which we can use `gbiqq` to diagnose and compare case-selection strategies given (i) a causal model, (ii) any data we have already observed, and (iii) the causal query we seek to answer. The general intuition is that we can use the causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
 
@@ -83,48 +83,71 @@ given <-  collapse_data(data, model)
 kable(given)
 ```
 
-As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells (where $X \neq Y$). Suppose that we are now considering gathering process-tracing evidence for 1 of these cases to inform our estimate of the ATE. We have many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
+As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells, those where $X \neq Y$. Suppose that we are now considering gathering process-tracing evidence for 1 of these cases to inform our estimate of the ATE. There are many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
 
 **DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustration, suppose that we are operating with a simple mediation model, $X \rightarrow M \rightarrow Y$. 
 
-**Given data.** If we have already observed something in a set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed $Y$'s value in a set of cases, we might select cases for process tracing based on their value of $Y$. Further, what we have already observed in the cases may constrain what possible data we could end up with once we have collected the additional (process tracing) data. In the present example, we are assuming that we have already observed $X$ and $Y$ values for all cases.
+**Given data.** If we have already observed something in a set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed $X$'s and $Y$'s value in a set of cases, we might select cases for process tracing based on their values of $X$ and $Y$. Further, what we have already observed in the cases may constrain what possible data we could end up with once we have collected the additional (process tracing) data. 
 
-**Priors**. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model, and indicate our uncertainty over the latter, by setting the $\alpha$ parameters of the relevant Dirichlet distributions. For the current example, let us posit beliefs that $X$ never has a negative effect on $M$ and that $M$ never has a negative effect on $Y$, defining restrictions at both the $M$ and $Y$ nodes. Let us further assume that we have flat priors over the remaining nodal types and posit similar assignment propensities for all types (no unobserved confounding).
+**Priors**. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. And we can indicate our uncertainty over the latter, by setting the $\alpha$ parameters of the relevant Dirichlet distributions. For the current example, let us define restrictions at both the $M$ and $Y$ nodes, positing beliefs that $X$ never has a negative effect on $M$ and that $M$ never has a negative effect on $Y$. Let us further assume that we have flat priors over the remaining nodal types and posit similar assignment propensities for all types (no unobserved confounding).
 
-**Query**. We define our query. This might, for instance, be the share of cases in the population in which $X$ has a positive effect on $Y$ or $X$'s average effect on $Y$. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG.
+**Query**. We define our query. This might, for instance, be the share of cases in the population in which $X$ has a positive effect on $Y$; or it might be $X$'s average effect on $Y$. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. For instance, the best case-selection strategy for estimating the average causal effect of $X$ on $Y$ may not be the same as the best strategy for figuring out for what proportion of the population $X$ has a positive effect on $Y$.
 
-**Define one or more strategies**. A strategy is defined, generically, as the search for data on a given set of *nodes*, in a given *number* of cases randomly selected *conditional* on some information we already have about potential cases. Let us assume here that our strategy will involve uncovering $M$'s value in 1 case, but we are wondering how to choose this case. Consider four possible strategies, conditional on the $X$ and $Y$ values that we already know. We could do process tracing on a randomly selected $X=1, Y=1$ case, a randomly selected $X=0, Y=0$ case, the $X=1, Y=0$ case, or the $X=0, Y=1$ case. We itemize this set of possible strategies in the first column in Table \@ref(tab:caseselect1).
+**Define one or more strategies**. A strategy is defined, generically, as the search for data on a given set of *nodes*, in a given *number* of cases randomly selected *conditional* on some information we already have about potential cases. Let us assume here that our strategy will involve uncovering $M$'s value in 1 case---but we are wondering how to choose this case. Consider four possible strategies, conditional on the $X$ and $Y$ values that we already know. We could do process tracing on a randomly selected $X=1, Y=1$ case, a randomly selected $X=0, Y=0$ case, the $X=1, Y=0$ case, or the $X=0, Y=1$ case. We itemize this set of possible strategies in the first column in Table \@ref(tab:caseselect1).
 
 **Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus *either* $M=0$ *or* $M=1$ in the case that our strategy leads us to select for process tracing. We represent the data possibilities (showing just the possible $M$ values) in the second column in Table \@ref(tab:caseselect1). Thus, for instance, for a strategy in which we choose a random $X=1, Y=1$ case, we could end up observing the initial $X,Y$ pattern plus $M=0$ in one of the $X=1, Y=1$ cases, or the initial $X,Y$ pattern plus $M=1$ in one of the $X=1, Y=1$ cases. 
 
-**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data (the $X$'s and $Y$'s) that we have already observed. In practice, we do this in `gbiqq` via simulation. Starting with the model together with our priors, we update based on the initial $X,Y$ data. This posterior in fact represents our *prior* for the purposes of the process tracing. We thus use this posterior---representing what we know about the world having seen the $X,Y$ data only---to draw a series of $\lambda$'s---share allocations of causal types. Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. (Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.)  We show the data probabilities in the third column of Table \@ref(tab:caseselect1): one probability for each data-possibility given each strategy.
+**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data (the $X$'s and $Y$'s) that we have already observed. In practice, we do this in `gbiqq` via simulation. Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the initial $X,Y$ data. This posterior now represents our *prior* for the purposes of the process tracing; it represents what we believe about causal-type share allocations in the population, having seen the $X,Y$ data only. We then use this posterior to draw a series of $\lambda$ values. 
+
+Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that particular $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. (Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.)  We show the data probabilities in the third column of Table \@ref(tab:caseselect1): one probability for each data-possibility given each strategy.
 
 **Posterior variance on estimate given the data**. For each data possibility, we can then use `gibiqq` to ask what inference we would get from each data possibility, given whatever query we seek to answer. What we are in fact interested in for the purposes of case selection is the *variance* of the posterior. We indicate in the fourth column of Table \@ref(tab:caseselect1) the posterior variance for each possible data realization.
 
 **Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each *strategy*. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. The final column provides the expected posterior variances, one for each strategy.
 
-FLAG: Make table caseselect1 to go with text. Columns are: Strategy, Possible Data [with row split into M=0, M=1], Probability of Data (for each M value), Posterior Variance (for each M value), Expected Posterior Variance (one value per strategy, weighted average over M values).
+FLAG: Write code and generate results table, caseselect1. Columns are: Strategy, Possible Data [with row split into M=0, M=1], Probability of Data (for each M value), Posterior Variance (for each M value), Expected Posterior Variance (one value per strategy, weighted average over M values). Strategies are select an $X=0, Y=0$ case; select an $X=1, Y=1$ case; select an $X=1, Y=0$ case; select an $X=0, Y=1$ case.
 
-Suppose, now, that she is choosing between two strategies:
+We see that XXXXXXX 
 
-A. Select two $X=Y=1$ cases and one $X=Y=0$ case for investigation. She is thus choosing here cases "on the regression line" generated by the $X,Y$ data pattern. 
+We can similarly diagnose strategies for a plan to process-trace any number of the cases for which we have $X,Y$ data. In Table \@ref(tab:caseselect3), we show results for six of the possible strategies we might employ for collecting $M$ for 3 cases. We compare going deeper into two $X=Y=1$ cases and one $X=Y=0$ case; two $X=Y=1$ cases and an $X=0, Y=1$ case; two $X=Y=1$ cases and an $X=1, Y=0$ case; and an $X=0, Y=1$, an $X=1, Y=0$, and an $X=1, Y=1$ case; two $X=Y=0$ cases and one $X=Y=1$ case; two $X=Y=0$ cases and an $X=0, Y=1$ case; two $X=Y=0$ cases and an $X=1, Y=0$ case; and an $X=0, Y=1$, an $X=1, Y=0$, and an $X=1, Y=0$ case.
 
-B. Take one case from each of the diagonal cells and one from the off-diagonal $X=1, Y=0$ cell
+FLAG: Write code and generate results table, caseselect3. Same structure as caseselect1.
 
-From which strategy should she expect to learn more about the average, population-level causal effect of $X$ on $Y$, given her prior beliefs? We answer the question by considering each data pattern that she might see given a strategy and then calculating (a) the probability with which she expects to see such an outcome, given her priors (or more accurately, given her posterior after observing the $XY$ pattern only), and (b) the uncertainty (posterior variance) that she would have upon seeing that pattern. We then calculate the expected variance of the strategy by considering all possible data patterns that could emerge from that strategy. We ignore the fact that in principle the subjective probability of observing one pattern is correlated with the subjective probability of observing another pattern.^[For example, a researcher may be uncertain regarding $\phi_b$; if it is high then the probability of observing any profile of outcomes with many clues observed is higher than if $\phi_b$ is low; this introduces a correlation between outcomes that have similar clue observations. However only one of these patterns will be observed in fact. NOTE ON RISK-NEUTRALITY HERE?]
+We can now see that......
 
-Tables 11.1 and 11.2 present the results of our comparison of the researcher's two strategies. Table 11.1 examines strategy A, while Table 11.2 examines strategy B. In each table, the lefthand column lists all possible realizations of clue data that might be found under the strategy in question. In the notation that we use here, each place in the four-digit sequence refers to one cell in the 2-by-2 table implied by a binary $X$ and binary $Y$ variable. The ordering is: 
+## Evaluating types of strategies
 
-* $X=Y=0$
-* $X=0, Y=1$
-* $X=1, Y=0$
-* $X=Y=1$ 
+The qualitative case-selection literature has identified a range of possible strategies for choosing cases for in-depth analysis. These include, for instance, selecting for variation on $X$ (KKV), selecting for variation on $Y$ , selecting on the regression line, and selecting off the regression line (FLAG: insert proper citations). We might add With a larger initial set of $X,Y$ cases, we 
 
-As an easy mnemonic, the outside digits are "on-the-diagonal" (on the regression line consistent with a positive causal effect); the inside digits are off-the-diagonal. Thus, for instance, the sequence $1001$ means that we have seen the clue in two on-the-diagonal cases: an $X=Y=0$ case and a $X=Y=1$ case. The sequence 0200 means that we have seen the clue in two cases in the $X=0, Y=1$ cell.
 
-In each row, we see information about one possible clue pattern that we could potentially observe under the strategy. The second column indicates the probability that this clue pattern will arise, given the researcher's priors. The final column then indicates the uncertainty---the posterior variance---that we would be left with given the information provided by that clue pattern. In the "All" row, we have averaged across the posterior variances for all clue patterns, weighting each clue pattern by its probability of occurring. 
+## Different queries, different strategies
 
-REDO BIQQ LOSSES WITH NEW FUNCTIONS
+
+
+<!-- Suppose, now, that she is choosing between two strategies: -->
+
+<!-- A. Select two $X=Y=1$ cases and one $X=Y=0$ case for investigation. She is thus choosing here cases "on the regression line" generated by the $X,Y$ data pattern.  -->
+
+<!-- B. Take one case from each of the diagonal cells and one from the off-diagonal $X=1, Y=0$ cell -->
+
+
+
+<!-- From which strategy should she expect to learn more about the average, population-level causal effect of $X$ on $Y$, given her prior beliefs? We answer the question by considering each data pattern that she might see given a strategy and then calculating (a) the probability with which she expects to see such an outcome, given her priors (or more accurately, given her posterior after observing the $X,Y$ pattern only), and (b) the uncertainty (posterior variance) that she would have upon seeing that pattern. We then calculate the expected posterior variance of the strategy by considering all possible data patterns that could emerge from that strategy and their probabilities. We ignore the fact that in principle the subjective probability of observing one pattern is correlated with the subjective probability of observing another pattern. -->
+
+<!-- ^[For example, a researcher may be uncertain regarding $\phi_b$; if it is high then the probability of observing any profile of outcomes with many clues observed is higher than if $\phi_b$ is low; this introduces a correlation between outcomes that have similar clue observations. However only one of these patterns will be observed in fact. NOTE ON RISK-NEUTRALITY HERE?] -->
+
+<!-- Tables 11.1 and 11.2 present the results of our comparison of the researcher's two strategies. Table 11.1 examines strategy A, while Table 11.2 examines strategy B. In each table, the lefthand column lists all possible realizations of clue data that might be found under the strategy in question. In the notation that we use here, each place in the four-digit sequence refers to one cell in the 2-by-2 table implied by a binary $X$ and binary $Y$ variable. The ordering is:  -->
+
+<!-- * $X=Y=0$ -->
+<!-- * $X=0, Y=1$ -->
+<!-- * $X=1, Y=0$ -->
+<!-- * $X=Y=1$  -->
+
+<!-- As an easy mnemonic, the outside digits are "on-the-diagonal" (on the regression line consistent with a positive causal effect); the inside digits are off-the-diagonal. Thus, for instance, the sequence $1001$ means that we have seen the clue in two on-the-diagonal cases: an $X=Y=0$ case and a $X=Y=1$ case. The sequence 0200 means that we have seen the clue in two cases in the $X=0, Y=1$ cell. -->
+
+<!-- In each row, we see information about one possible data pattern that we could potentially observe under the strategy. The second column indicates the probability that this data pattern will arise, given the priors and the $X,Y$ data. The third column then indicates the uncertainty---the posterior variance---that we would be left with given the information provided by each clue pattern. In the final column, we provided the expected posterior variance for each strategy, given the posterior variances for each clue pattern, weighting each clue pattern by its probability of occurring.  -->
+
+
 
 ## In code
 
@@ -137,10 +160,11 @@ model <- make_model("X->M->Y")  %>%
  set_parameters(type = "flat")
 
 # We imagine some preexisting data we have observed
-data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1)) 
+data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
+# We make a matrix showing how many cases there are of each data typema
 given <-  collapse_data(data, model)
 
-# We can then imagine what data we might observe if we examine M inside some subset of data
+# We can then imagine what data we might observe if we examine M inside some subset of cases
 possible_data <- 
   make_possible_data(model, given = given, vars = list("M", "M", "M", "M"), within = TRUE, N = list(1,1,1,1), condition = list("X==0 & Y==0", "X==1 & Y==0", "X==0 & Y==1", "X==1 & Y==1"))
 ```
@@ -148,15 +172,18 @@ possible_data <-
 ```{r, echo = FALSE}
 
 if(do_diagnosis){
-	
+
+# Figure out the posterior variance on our query for each possible data type, given the model and the XY data	
 	estimates_database_n1 <- make_estimates_database(
                   model, 
                   given, 
                   possible_data = possible_data, 
                   queries = "Y[X=1]-Y[X=0]")
   
-  reference_model <- gbiqq(model, data)
-  
+# Set the reference model that we will use to calculate data probabiities. The reference model is the original model updated with the XY data we've already seen.
+	reference_model <- gbiqq(model, data)
+
+# Calculate the probabiity of each data type given the reference model.  
   diagnosis_n1 <- diagnose_strategy(
                   reference_model = reference_model, 
                   analysis_model  = model,
@@ -164,15 +191,16 @@ if(do_diagnosis){
                   queries = "Y[X=1]-Y[X=0]",
                   estimates_database = estimates_database_n1,
                   possible_data = possible_data)
- 
+
+  estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1.rds")
+  reference_model            <- read_rds("saved/reference_XMY_updated_model.rds")
+  diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds.rds")
+
 	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
 	write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1.rds")
 	write_rds(diagnosis_X1Y1, "saved/diagnosis_n1.rds")
 }
 
-estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1.rds")
-reference_model            <- read_rds("saved/reference_XMY_updated_model.rds")
-diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds.rds")
 
 
 ```
