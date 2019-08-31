@@ -61,9 +61,8 @@ In this framework, inferences about causation amount to inferences about the *co
 <!-- It is important to note a difference between this formulation and the conceptualization of causality typically employed in the potential outcomes framework. We characterize causal inference as learning about a unit *as it is*, conditional on a causal model, rather than learning about the unit as it is and as it could be. Suppose, for instance, that in a causal model a car will start if it has gas and if the key is turned.^[A version of this example is in @darwiche1994symbolic.] In a standard potential outcomes setup, the question "Does turning the key cause the car to start?" is equivalent to asking, "Would the car start if the key is turned?" and "Would the car start if the key is not turned?" In our model-based framework, the question of the key-turning's causal effect is somewhat differently framed as a question about an exogenous variable: "Does the car have gas?" In the model-based framework, then, our query becomes a question about the state of affairs in the case---about the case's *context*---rather than a pair of factual and counterfactual questions about outcomes with and without treatment. These two framings are fully consistent with one another, and counterfactual reasoning is no less important in the model-based framework; it has simply been displaced to the causal model, which encodes all counterfactual relations. -->
 <!-- <!-- moreover this can always be done formally, even if the causal model contains no additional assumptions about the causal process.      --> -->
 
-## Causal queries
 
-### Case-level causal effects
+## Case-level causal effects
 
 The simplest causal question is whether some causal effect operates in an individual case. Does $X$ have an effect on $Y$ in this case? For instance, is Yemen in 1995 a case in which a change in economic inequality would produce a change in whether or not the country democratizes? We could put the question more specifically as a query about a causal effect in a particular direction, for instance: Does inequality have a positive effect on democratization in the case of Yemen in 1995?
 
@@ -107,7 +106,7 @@ Of course, $\theta_Y$ is not directly observable: causal types are intrinsically
 <!-- More generally, work in graphical models defines the causal effect of $X$ on $Y$ in terms of the changes in $Y$ that arise from interventions on $X$. For example, using the notation for interventions given above we can describe the effect of a change in $X$ from $x'$ to $x''$ on the probability that $Y=1$ in unit $i$ as: -->
 
 
-### Case-level causal attribution
+## Case-level causal attribution
 
 A query about causal attribution is related to, but different from, a query about a case-level causal effect. When asking about $X$'s case-level effect, we are asking, "*Would* a change in $X$ cause a change in $Y$ in this case?" The question of causal attribution is slightly different: "*Did* $X$ cause $Y$ to take on the value it did in this case?" More precisely, we are asking, "Given the values that $X$ and $Y$ _in fact_ took on in this case, would $Y$'s value have been different if $X$'s value had been different?" 
 
@@ -130,7 +129,7 @@ hj_dag(x = c(0, 0, 1, 1),
                 expression(paste(theta^Y))),
        arcs = cbind( c(1, 4, 2),
                      c(3, 3, 3)),
-       title = "A DAG Capturing Causal Attribution",
+       title = "What caused Y = 1?",
        padding = .4, contraction = .15)
 
 ```
@@ -182,7 +181,7 @@ In all we have  four qualifying types: $\theta_{00}^{01}$, $\theta_{01}^{01}$, $
 Thus, a question about causal attribution is a question about the *joint* value of a set of nodes: about whether the _combination_ of context and causal type is such that changing $X$ would have changed the outcome.
 
 
-### Case-level explanation
+## Case-level explanation
 
 So far we have been dealing with causes in the standard counterfactual sense: antecedent conditions a change in which would have produced a different outcome. Sometimes, however, we are interested in identifying antecedent conditions that were not counterfactual difference-makers but that nonetheless _generated_ or _produced_ the outcome. Consider, for instance, a situation in which an outcome was overdetermined: multiple conditions were present, each of which on their own, _could_ have generated the outcome. Then none of these conditions caused the outcome in the counterfactual sense; yet one or more of them may have been distinctively important in *producing* the outcome. The concept of an *actual cause* may be useful in putting a finer point on this kind of causal question.  
 
@@ -262,7 +261,7 @@ Though not a focus of our applied examples we show formally how to estimate thes
 
 <!-- Also, we are not saying what the nodes in Q are, just that there are some. Could we say that they're the same nodes as for a plain actual cause PLUS nodes going into X (a possible notable cause) representing parameters of the distribution of X? -->
 
-### Average causal effects
+## Average causal effects
 
 A more general query asks about an average causal effect in some population. In counterfactual terms, a question about average causal effects is: if we manipulated the value of $X$ for all cases in the population---first setting $X$ to one value for all cases, then changing it to another value for all cases---by how much would the average value of $Y$ in the population change? Like other causal queries, a query about an average causal effect can be conceptualized as learning about a node in a causal model. 
 
@@ -322,7 +321,7 @@ We can, of course, likewise pose queries about other population-level causal qua
 <!-- MH: STRONLY THINK WE SHOULD -- I SEE A CONTRIBUTION HERE AS BEING AN EXPANSION OF THE QUESTIONS WE ASK -->
 
 
-### Causal Paths
+## Causal Paths
 
 To develop richer causal understandings, researchers often seek to describe the causal path or paths through which effects propagate. Consider the DAG in Figure \@ref(fig:DAGpaths), in which $X$ can affect $Y$ through two possible pathways: directly and via $M$. Assume again that all variables are binary, taking on values of $0$ or $1$. As we have seen in Chapter \@ref(theory), mediation models require causal-type nodes that point into any mediators as well as into the outcome variable. So here we have drawn in a causal-type variable defining $M$'s response to $X$, $\theta^M$, and a causal-type variable capturing $Y$'s response, $\theta^Y$. Importantly, $\theta^Y$ defines $Y$'s response to _two_ parent variables: $M$ and $X$. 
 
@@ -491,177 +490,177 @@ It is worth noting how different this formulation of the task of identifying cau
 
 
 
-## Illustration with the Running Example
+<!-- ## Illustration with the Running Example -->
 
-We can more fully illustrate the definition of causal queries in terms of exogenous nodes on a graph by thinking through their application to the simple causal model described in Chapter 2. 
+<!-- We can more fully illustrate the definition of causal queries in terms of exogenous nodes on a graph by thinking through their application to the simple causal model described in Chapter 2.  -->
 
-We illustrate the model again in figure \@ref(fig:running2).
-
-
-```{r, echo = FALSE}
-names = c("S", "X", "C", "R", "Y")
-M <- matrix(0, 5, 5)
-M[1, c(3)] <-1
-M[2, c(3,4)] <-1
-M[3, c(4,5)] <-1
-M[4, 5] <-1
-f_C <- function(V) 1- V[1]*V[2]
-f_R <- function(V) V[2]*V[3]
-f_Y <- function(V) V[3]*V[4]
-# Histories and effects:
-
-H <- function(do = c(0,0,NA,NA,NA)) {
-  do[3] <- ifelse(is.na(do[3]), f_C(do), do[3])
-  do[4] <- ifelse(is.na(do[4]), f_R(do), do[4])
-  do[5] <- ifelse(is.na(do[5]), f_Y(do), do[5])
-  do
-  }
-
-edges <- function(S,X) {
-  do0 <- c(S,X,NA, NA, NA)
-  H1   <- H(do0)
-  out <- sapply(1:5, function(i) {
-    do1 <- do0
-    do1[i] <- 1-H1[i]  # change value for i and put into do
-    1*(H1 != H(do1))
-  })
-  diag(out) <- 0
-  out}
-
-```
+<!-- We illustrate the model again in figure \@ref(fig:running2). -->
 
 
-```{r running2, echo = FALSE, fig.width = 11, fig.height = 11.5, fig.align="center", out.width='\\textwidth', fig.cap = "The main panel shows a simple causal model. $S$ and $X$ are stochastic, other variables determined by their parents, as shown in bottom right panel. Other panels show four possible histories that can arise depending on values taken by $S$ and $X$, along with causal relations in each case. The equations for $S$ and $X$ are written with indicator variables, which take a value of 1 whenever the $u$ value is less than the $\\lambda$ value.", fig.align="center", warning = FALSE}
+<!-- ```{r, echo = FALSE} -->
+<!-- names = c("S", "X", "C", "R", "Y") -->
+<!-- M <- matrix(0, 5, 5) -->
+<!-- M[1, c(3)] <-1 -->
+<!-- M[2, c(3,4)] <-1 -->
+<!-- M[3, c(4,5)] <-1 -->
+<!-- M[4, 5] <-1 -->
+<!-- f_C <- function(V) 1- V[1]*V[2] -->
+<!-- f_R <- function(V) V[2]*V[3] -->
+<!-- f_Y <- function(V) V[3]*V[4] -->
+<!-- # Histories and effects: -->
 
-layout(matrix(c(1,1,2,
-                1,1,3,
-                4, 5,6), 3, 3, byrow = TRUE))
-par(mar=c(1,1,3.5,1))
+<!-- H <- function(do = c(0,0,NA,NA,NA)) { -->
+<!--   do[3] <- ifelse(is.na(do[3]), f_C(do), do[3]) -->
+<!--   do[4] <- ifelse(is.na(do[4]), f_R(do), do[4]) -->
+<!--   do[5] <- ifelse(is.na(do[5]), f_Y(do), do[5]) -->
+<!--   do -->
+<!--   } -->
 
-x = c(0,0, 1, 1, 2)
-y = c(2,0, 2, 0, 1)
+<!-- edges <- function(S,X) { -->
+<!--   do0 <- c(S,X,NA, NA, NA) -->
+<!--   H1   <- H(do0) -->
+<!--   out <- sapply(1:5, function(i) { -->
+<!--     do1 <- do0 -->
+<!--     do1[i] <- 1-H1[i]  # change value for i and put into do -->
+<!--     1*(H1 != H(do1)) -->
+<!--   }) -->
+<!--   diag(out) <- 0 -->
+<!--   out} -->
 
-names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
-
-hj_dag(x =  c(x, 0, 0),
-       y = c(y, 0.25, 1.75),
-       names = c(names, " ", " "),
-       arcs = cbind( c(1,2,2, 3, 4, 3, 6, 7),
-                     c(3,3,4, 5, 5, 4, 2, 1)),
-       title = "Free Press and Government Survival",
-       add_functions = 0, 
-       contraction = .15,
-       add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
-       padding = .2)
-
-text(c(0,0), c(.25, 1.75), c(expression(paste(U[X])), expression(paste(U[S]))))
-
-names = c("S", "X", "C", "R", "Y")
-
-myarcs <- list(
-       which(t(edges(0,0))==1, arr.ind = TRUE),
-       which(t(edges(1,0))==1, arr.ind = TRUE),
-       which(t(edges(0,1))==1, arr.ind = TRUE),
-       which(t(edges(1,1))==1, arr.ind = TRUE))
-
-mysolids <- list(H(c(0,0,NA,NA,NA)), 
-                 H(c(1,0,NA,NA,NA)), 
-                 H(c(0,1,NA,NA,NA)), 
-                 H(c(1,1,NA,NA,NA)))
-
-names = c("S", "X", "C", "R", "Y")
+<!-- ``` -->
 
 
-titles = c("A: No free press causes Y = 0", 
-           "B: No free press is the actual cause\nBut neither S nor X counterfactually cause Y=0",
-           "C: Both S = 0 and X = 1 cause Y = 1.\n X = 1 is the notable cause.", 
-           "D: Government sensitivity\ncauses Y = 0")
-for(j in 1:4){
+<!-- ```{r running2, echo = FALSE, fig.width = 11, fig.height = 11.5, fig.align="center", out.width='\\textwidth', fig.cap = "The main panel shows a simple causal model. $S$ and $X$ are stochastic, other variables determined by their parents, as shown in bottom right panel. Other panels show four possible histories that can arise depending on values taken by $S$ and $X$, along with causal relations in each case. The equations for $S$ and $X$ are written with indicator variables, which take a value of 1 whenever the $u$ value is less than the $\\lambda$ value.", fig.align="center", warning = FALSE} -->
 
-    hj_dag(
-       x = x,
-       y = y,
-       names = names,
-       arcs = myarcs[[j]],
-       title = titles[[j]],
-       add_points = TRUE,
-       solids = c(mysolids[[j]]),
-       contraction = .15
-       )
-}
+<!-- layout(matrix(c(1,1,2, -->
+<!--                 1,1,3, -->
+<!--                 4, 5,6), 3, 3, byrow = TRUE)) -->
+<!-- par(mar=c(1,1,3.5,1)) -->
 
-frame(); box();
-text(.1,seq(.95, .05, -.1), 
-          c("Structural Equations:",
-            "  Y = CR",
-            "  C = 1 - XS",
-            "  R = CX", 
-            expression(paste("  S = 1(", u[S]<lambda^S[1],")")),
-            expression(paste("  X = 1(", u[X]<lambda^X[1],")")), "  ",
-            "P(U):",
-            expression(paste("  ", U[S], "~Unif[01]")), 
-            expression(paste("  ", U[X], "~Unif[01]")) 
-            ), cex = 1.5, adj = 0)
-title("Structural model")
-```
+<!-- x = c(0,0, 1, 1, 2) -->
+<!-- y = c(2,0, 2, 0, 1) -->
 
+<!-- names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced") -->
 
-THe main panel here is the same as in Chapter 2 but but now we add in a set of another four panels. In these panels we leave the $\lambda$ and $U$ terms implicit as they will not come into play in our analysis of these graphs. In these four panels, we show all possible ''realizations'' of the graph given the four possible contexts defined by the exogenous nodes, $S$ and $X$. We build each of the four possible by assessing outcomes and counterfactual relationships for each possible combination of $S$ and $X$ values. A hollow circle at a node indicates that the variable takes on a value of $0$ while a shaded circle indicates a value of $1$. The arrows indicate causal effects. More specifically, an arrow pointing from one variable to another indicates that a manipulation of the first variable would cause a change in the second variable, *given the values realized by all other variables that are not the first variable's descendants*. Unlike in a conventional DAG, we represent here both the direct effect of each variable on its child and each variable's indirect (mediated) causal effects on its descendants. As we can see from the various arrows in the panels, we can use a single, simple causal model to think through a wide range of causal relationships that might be of interest.^[Though similar, these graphs are not DAGS or natural beams (or submodels). The panels reflect outcomes conditional on the values of $S$ and $X$, but they are not themselves DAGs because they indicate the values taken by nodes and include arrows between two nodes when and only when one causes the other, directly or indirectly. To construct "natural beams" [@pearl2009causality 10.3], we fix a realization of root variables, $U$,  (here, $\mathcal U = (S, X)$); then for each variable, $V_i$ we  partition $pa(V_i)$ into a set of "engaged parents," $S$, and "disengaged parents," with the property that (a) $f_i(S(u), \overline{s}, u) = V_i(u)$ for *all* values of $\overline{s}$ and (b) $f_i(s', \overline{S}(u), u) \neq V_i(u)$ for *some*  $s'$. Thus a natural beam  would connect a parent to a child if, given the particular history, the parent mattered for the child's outcome.] Since the values of all variables in a model are determined by the values of the exogenous nodes, this is equivalent to saying that the arrows show the causal effects that are operating each *context.*
+<!-- hj_dag(x =  c(x, 0, 0), -->
+<!--        y = c(y, 0.25, 1.75), -->
+<!--        names = c(names, " ", " "), -->
+<!--        arcs = cbind( c(1,2,2, 3, 4, 3, 6, 7), -->
+<!--                      c(3,3,4, 5, 5, 4, 2, 1)), -->
+<!--        title = "Free Press and Government Survival", -->
+<!--        add_functions = 0,  -->
+<!--        contraction = .15, -->
+<!--        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS", -->
+<!--        padding = .2) -->
 
-One important feature of DAGs is immediately evident from a comparison of the DAG with subgraphs $A, B, C$, and $D$ in the figure. Consistent with the rules of DAG-construction, the DAG includes arrows between all variables that are under any circumstances directly causally related; but the inclusion of an arrow does not mean that two variables are *always* causally related. For instance, while the DAG (large graph) has an arrow running from $X$ to $R$, we can see from the subgraphs (where we deviate from the standard grammar of DAGs) that the causal effect is contingent on context: it is present only when $S=0$ (panels $A$ and $C$) but not when $S=1$. The arrows in a DAG represent dependencies that exist under *some*, but not necessarily under all, values of the exogenous variables.
+<!-- text(c(0,0), c(.25, 1.75), c(expression(paste(U[X])), expression(paste(U[S])))) -->
 
-These five graphs allow us to define all causal claims of interest. The graphs illustrate, in other words, how causal queries can be represented as the value of the exogenous nodes in a causal diagram. Let us consider each causal query in turn.
+<!-- names = c("S", "X", "C", "R", "Y") -->
 
-**Case-level causal effect.** Working with the four subgraphs, we can show that the query, "What is the effect of one variable on another in this case?" is equivalent to asking about the values of the model's exogenous variables, $X$ and $S$. Consider, for instance, the query: Do media reports of corruption, $R$, have a causal effect on government removal from office, $Y$, in this case? Turning to the subgraphs, we can simply ask in which of these four graphs---in which context---$R$ has a causal effect on $Y$: where is there an arrow running from $R$ to $Y$?^[The subgraphs are derived from application of Equation EQUATION REFERENCE. We can work through the $R \rightarrow Y$ relationship to demonstrate how this is done. Consider the effect of $R$ on $Y$ given $S=0, X=0$. This is the arrow between  $R$ and $Y$ in panel $A$. Removing the arrows pointing to $R$, the distribution over nodes when $R=r'$ is: $P(c,y | \hat{r}=r', s =0, x=0)$. We are interested in $P(y=1| \hat{r}=1,  s =0, x=0) - P(y=1 | \hat{r}= 0,  s =0, x=0)$. The second term is easy as for all cases in which $r=0$, $y=0$; and so  $P(y=1|| \hat{r}= 0)=0$. We focus then on  $P(y=1| \hat{r}=1, s= 0, x= 0)$. Taking the marginal distribution, this can be written $\sum_{c=0}^1P(y=1|r=1, c)P(c|s=0,x=0)$. From the structural equations, we know that $P(c=1|s=0,x=0)=1$ and that $P(y=1|r=1, c=1)=1$. So the marginal distribution is $P(y=1| \hat{r}=1, s= 0, x= 0) = 1$; and the treatment effect of $R$ on $Y$, conditional on the characteristics of this case, is then 1. This positive effect is represented with the arrow from the $R=0$ node to the $Y=0$ node in panel $A$.] We can readily see that $R$ has an effect---a positive effect---on $Y$ in all configurations of exogenous node values (i.e., in all subgraphs) except when $X=1$ and $S=1$ (panel $D$); the absence of an arrow in panel $D$ indicates that $R$'s effect on $Y$ is 0 in that context. Thus, given our model, asking whether there is a case-level causal effect of $X$ on $Y$ is equivalent to asking whether either $S$ or $X$ or both are equal to $0$ in the case.
+<!-- myarcs <- list( -->
+<!--        which(t(edges(0,0))==1, arr.ind = TRUE), -->
+<!--        which(t(edges(1,0))==1, arr.ind = TRUE), -->
+<!--        which(t(edges(0,1))==1, arr.ind = TRUE), -->
+<!--        which(t(edges(1,1))==1, arr.ind = TRUE)) -->
 
-Another way to put the point is that $S$ and $X$ jointly determine a case's causal type when it comes to the effect of $R$ on $Y$. Returning to our four causal types, the graphs tell us that a case is a $b$ type (positive effect) with respect to the $R \rightarrow Y$ relationship whenever at least one of $S$ or $X$ is $0$. If $S=X=1$, then a case is a $c$ type (no effect, with the outcome fixed at $Y=0$). 
+<!-- mysolids <- list(H(c(0,0,NA,NA,NA)),  -->
+<!--                  H(c(1,0,NA,NA,NA)),  -->
+<!--                  H(c(0,1,NA,NA,NA)),  -->
+<!--                  H(c(1,1,NA,NA,NA))) -->
 
-We can work through other relationships in the model similarly. For instance, does a free press have an effect on government removal in a case? See an $X$-to-$Y$ arrow only in panels $A$ and $C$, we can thus conclude that $X$ has a causal effect on $Y$ in (and only in) cases in which $S=0$. 
-
-For now, we are simply using the models to *define* a query about a case-level causal effect. This definition sets the stage for our discussion of research design---how one might go about empirically addressing this query---later in the book. We can point the way toward that discussion by noting making two broad points. If the presence of a free press and government's sensitivity to public opinion are observable, then estimating case-level causal effects will simply be a matter of measuring these two exogenous nodes (or, for some queries, just one of them). However, we will often be in a situation in which the nodes defining our causal query are not observable. Our models of the world often include concepts that are theoretically central to a causal logic but cannot be directly measured. Consider, for instance, government sensitivity to public opinion. When a model's exogenous variables are unobservable, then our research design may require using information from other, *observable* nodes to draw inferences about context. This is a key strategy of process tracing that we develop in later chapters.
+<!-- names = c("S", "X", "C", "R", "Y") -->
 
 
-<!-- We need to resolve the contradiction between the above footnote and the previous one: one says they're not submodels, the other says they are. -->
+<!-- titles = c("A: No free press causes Y = 0",  -->
+<!--            "B: No free press is the actual cause\nBut neither S nor X counterfactually cause Y=0", -->
+<!--            "C: Both S = 0 and X = 1 cause Y = 1.\n X = 1 is the notable cause.",  -->
+<!--            "D: Government sensitivity\ncauses Y = 0") -->
+<!-- for(j in 1:4){ -->
 
- 
+<!--     hj_dag( -->
+<!--        x = x, -->
+<!--        y = y, -->
+<!--        names = names, -->
+<!--        arcs = myarcs[[j]], -->
+<!--        title = titles[[j]], -->
+<!--        add_points = TRUE, -->
+<!--        solids = c(mysolids[[j]]), -->
+<!--        contraction = .15 -->
+<!--        ) -->
+<!-- } -->
+
+<!-- frame(); box(); -->
+<!-- text(.1,seq(.95, .05, -.1),  -->
+<!--           c("Structural Equations:", -->
+<!--             "  Y = CR", -->
+<!--             "  C = 1 - XS", -->
+<!--             "  R = CX",  -->
+<!--             expression(paste("  S = 1(", u[S]<lambda^S[1],")")), -->
+<!--             expression(paste("  X = 1(", u[X]<lambda^X[1],")")), "  ", -->
+<!--             "P(U):", -->
+<!--             expression(paste("  ", U[S], "~Unif[01]")),  -->
+<!--             expression(paste("  ", U[X], "~Unif[01]"))  -->
+<!--             ), cex = 1.5, adj = 0) -->
+<!-- title("Structural model") -->
+<!-- ``` -->
 
 
-<!-- In this causal beam with binary variables,  whenever a unique path connects one node to another then the ancestor's node's condition is a cause of the descendant's condition. These case level causal relations cannot be read directly from the graph however if there are multiple paths or non dichotomous variables. To see why multiple paths prevent this inference, return to the boulder example of non transitivity described above; to see why inferences cannot be made along paths with non binary outcomes notice that $A$ and $B$ may be connected because some change in $A$ produces a change in $B$, though not necessarily *all* changes in $A$.    -->
+<!-- THe main panel here is the same as in Chapter 2 but but now we add in a set of another four panels. In these panels we leave the $\lambda$ and $U$ terms implicit as they will not come into play in our analysis of these graphs. In these four panels, we show all possible ''realizations'' of the graph given the four possible contexts defined by the exogenous nodes, $S$ and $X$. We build each of the four possible by assessing outcomes and counterfactual relationships for each possible combination of $S$ and $X$ values. A hollow circle at a node indicates that the variable takes on a value of $0$ while a shaded circle indicates a value of $1$. The arrows indicate causal effects. More specifically, an arrow pointing from one variable to another indicates that a manipulation of the first variable would cause a change in the second variable, *given the values realized by all other variables that are not the first variable's descendants*. Unlike in a conventional DAG, we represent here both the direct effect of each variable on its child and each variable's indirect (mediated) causal effects on its descendants. As we can see from the various arrows in the panels, we can use a single, simple causal model to think through a wide range of causal relationships that might be of interest.^[Though similar, these graphs are not DAGS or natural beams (or submodels). The panels reflect outcomes conditional on the values of $S$ and $X$, but they are not themselves DAGs because they indicate the values taken by nodes and include arrows between two nodes when and only when one causes the other, directly or indirectly. To construct "natural beams" [@pearl2009causality 10.3], we fix a realization of root variables, $U$,  (here, $\mathcal U = (S, X)$); then for each variable, $V_i$ we  partition $pa(V_i)$ into a set of "engaged parents," $S$, and "disengaged parents," with the property that (a) $f_i(S(u), \overline{s}, u) = V_i(u)$ for *all* values of $\overline{s}$ and (b) $f_i(s', \overline{S}(u), u) \neq V_i(u)$ for *some*  $s'$. Thus a natural beam  would connect a parent to a child if, given the particular history, the parent mattered for the child's outcome.] Since the values of all variables in a model are determined by the values of the exogenous nodes, this is equivalent to saying that the arrows show the causal effects that are operating each *context.* -->
 
-**Average causal effects.** Average causal effects are simply averages of case-level causal effects for the population. Since case-level causal effects are determined by the values of the exogenous nodes in cases, we need to average over the distribution of case-level contexts in the population. Put differently, the average causal effect of any variable on another will depends on how commonly the relevant case-level conditions---those in which the causal effect is and is not present---occur. In our current example, we have seen that the free press makes a difference to government survival if and only if the government is *non-sensitive* (panels $A$ and $C$): the non-sensitive government gets exposed as corrupt if and only if there is a free press while the sensitive government never gets replaced because it adjusts to the presence of a free press by eliminating corruption. Similarly, the sensitivity of the government (and the resulting level of corruption) matters only if there *is* a free press (panels $C$ and $D$). Without a free press, non-sensitive and, thus, corrupt governments do not get exposed and so stay on; with a free press, non-sensitive (and, thus, corrupt) governments get replaced. 
+<!-- One important feature of DAGs is immediately evident from a comparison of the DAG with subgraphs $A, B, C$, and $D$ in the figure. Consistent with the rules of DAG-construction, the DAG includes arrows between all variables that are under any circumstances directly causally related; but the inclusion of an arrow does not mean that two variables are *always* causally related. For instance, while the DAG (large graph) has an arrow running from $X$ to $R$, we can see from the subgraphs (where we deviate from the standard grammar of DAGs) that the causal effect is contingent on context: it is present only when $S=0$ (panels $A$ and $C$) but not when $S=1$. The arrows in a DAG represent dependencies that exist under *some*, but not necessarily under all, values of the exogenous variables. -->
 
-Thus, the *average* effect of each of these initial causes on the outcome will depend on the probability with which the other cause is absent or present. To define a query about average causal effects, we need to examine the full probabilistic causal model as graphed in the large panel in Figure \@ref(fig:running2). What is the average causal effect of a free press ($X$) on government removal ($Y$)? As we have learned from the subgraphs, this effect is fully defined by the value of $S$. In particular, the effect of $X$ on $Y$ is equal to $1$ when $S=0$, and is equal to $0$ when $S=1$. As we've noted, we calculate the average causal effect by averaging causal effects over the distribution of the relevant exogenous variables -- which, here, is only $S$. In the probabilistic model, $S$ is a function of $\lambda^S$ and $U_S$. In particular, $S=1$ whenever $u_S < \lambda^S$. Since $U_S$ has a uniform distribution, this simply means that $S=1$ with probability $\lambda_1^S$; likewise, $S=0$ with probability $1-\lambda_1^S$.  Thus, we calculate $X$'s average causal effect on $Y$ by multiplying each causal effect by the probability of $S$'s taking on the value that generates that effect: $1 \times (1-\lambda_1^S) + 0 \times \lambda_1^S = 1-\lambda_1^S$. Put differently, the causal effect of a free press on government removal is equal to the commonness of insensitive governments in the relevant population of cases. 
+<!-- These five graphs allow us to define all causal claims of interest. The graphs illustrate, in other words, how causal queries can be represented as the value of the exogenous nodes in a causal diagram. Let us consider each causal query in turn. -->
 
-We have thus defined our causal query in terms of an exogenous variable, $\lambda_1^S$, in the probabilistic causal model. Note that, just as $S$ acts as a causal-type variable for $X$'s effect on $Y$, querying $\lambda_1^S$ is equivalent to asking about the distribution of causal types in the population. In our four-type framework, cases with $S=0$ are $b$ (positive effect) types with respect to the $X \rightarrow Y$ relationship; cases with $S=1$ are $c$ types (no effect, $Y=0$). (There are, here, no $a$ or $d$ types.) Thus, $\lambda_1^S$ represents the share of $c$ types and $1-\lambda_1^S$ the share of $b$ types in the population, vis-a-vis $X$'s effect on $Y$. 
+<!-- **Case-level causal effect.** Working with the four subgraphs, we can show that the query, "What is the effect of one variable on another in this case?" is equivalent to asking about the values of the model's exogenous variables, $X$ and $S$. Consider, for instance, the query: Do media reports of corruption, $R$, have a causal effect on government removal from office, $Y$, in this case? Turning to the subgraphs, we can simply ask in which of these four graphs---in which context---$R$ has a causal effect on $Y$: where is there an arrow running from $R$ to $Y$?^[The subgraphs are derived from application of Equation EQUATION REFERENCE. We can work through the $R \rightarrow Y$ relationship to demonstrate how this is done. Consider the effect of $R$ on $Y$ given $S=0, X=0$. This is the arrow between  $R$ and $Y$ in panel $A$. Removing the arrows pointing to $R$, the distribution over nodes when $R=r'$ is: $P(c,y | \hat{r}=r', s =0, x=0)$. We are interested in $P(y=1| \hat{r}=1,  s =0, x=0) - P(y=1 | \hat{r}= 0,  s =0, x=0)$. The second term is easy as for all cases in which $r=0$, $y=0$; and so  $P(y=1|| \hat{r}= 0)=0$. We focus then on  $P(y=1| \hat{r}=1, s= 0, x= 0)$. Taking the marginal distribution, this can be written $\sum_{c=0}^1P(y=1|r=1, c)P(c|s=0,x=0)$. From the structural equations, we know that $P(c=1|s=0,x=0)=1$ and that $P(y=1|r=1, c=1)=1$. So the marginal distribution is $P(y=1| \hat{r}=1, s= 0, x= 0) = 1$; and the treatment effect of $R$ on $Y$, conditional on the characteristics of this case, is then 1. This positive effect is represented with the arrow from the $R=0$ node to the $Y=0$ node in panel $A$.] We can readily see that $R$ has an effect---a positive effect---on $Y$ in all configurations of exogenous node values (i.e., in all subgraphs) except when $X=1$ and $S=1$ (panel $D$); the absence of an arrow in panel $D$ indicates that $R$'s effect on $Y$ is 0 in that context. Thus, given our model, asking whether there is a case-level causal effect of $X$ on $Y$ is equivalent to asking whether either $S$ or $X$ or both are equal to $0$ in the case. -->
 
-We can follow the same procedure for all causal relationships in the model. Returning, for instance, to the effect of $R$ on $Y$, we learned from the subgraphs that $R$ has a causal effect of $1$ in panels $A,B$ and $C$---that is, whenever it is not the case that $X=1$ and $S=1$---and otherwise of $0$. Thus, the $R$'s average causal effect is the weighted average $1 \times (1-\lambda_1^S \times \lambda_1^X) + 0 \times \lambda_1^S \times \lambda_1^X$ = $1-\lambda_1^S \times \lambda_1^X$. This is simply the probability of not having both $X=1$ and $S=1$. Here, then, we have defined the causal query in terms of two exogenous nodes in the probabilistic model, $\lambda_1^S$ and $\lambda_1^X$. ^[Likewise, the average causal effect of $R$ conditional on $S=1$ is $1-\lambda_1^X$ (the probability of ending up in panel B, rather than D); and the average causal effect of $R$ given $S=0$ is 1 (since it has an effect in both panels A and C).]
+<!-- Another way to put the point is that $S$ and $X$ jointly determine a case's causal type when it comes to the effect of $R$ on $Y$. Returning to our four causal types, the graphs tell us that a case is a $b$ type (positive effect) with respect to the $R \rightarrow Y$ relationship whenever at least one of $S$ or $X$ is $0$. If $S=X=1$, then a case is a $c$ type (no effect, with the outcome fixed at $Y=0$).  -->
 
-**TO BECOME A LONG FOOTNOTE...**
-These quantities can be calculated from the distributions in the same way as we calculated the case-level effects. Removing the arrows pointing to $R$, the distribution over nodes when $R=r'$---but this time not fixing $S$ and $X$---is $P(s,x,c,y | \hat{r}=r')$. Again the key part is $P(y=1| \hat{r}=1)$, which can be written $\sum_x\sum_s\sum_c P(x)P(s)P(c|x,s)P(y|c, r= 1)$. Using the structural equations, this simplifies to $\sum_x\sum_s P(x)P(s)P(c=1|x,s) = P(x=0)P(s=0) + P(x=0)P(s=1) + P(x=1)P(s=0)$, or, $1-\lambda_1^S\lambda_1^X$.
+<!-- We can work through other relationships in the model similarly. For instance, does a free press have an effect on government removal in a case? See an $X$-to-$Y$ arrow only in panels $A$ and $C$, we can thus conclude that $X$ has a causal effect on $Y$ in (and only in) cases in which $S=0$.  -->
 
-In the same way, we can construct the average treatment effect for each of the exogenous variables:
+<!-- For now, we are simply using the models to *define* a query about a case-level causal effect. This definition sets the stage for our discussion of research design---how one might go about empirically addressing this query---later in the book. We can point the way toward that discussion by noting making two broad points. If the presence of a free press and government's sensitivity to public opinion are observable, then estimating case-level causal effects will simply be a matter of measuring these two exogenous nodes (or, for some queries, just one of them). However, we will often be in a situation in which the nodes defining our causal query are not observable. Our models of the world often include concepts that are theoretically central to a causal logic but cannot be directly measured. Consider, for instance, government sensitivity to public opinion. When a model's exogenous variables are unobservable, then our research design may require using information from other, *observable* nodes to draw inferences about context. This is a key strategy of process tracing that we develop in later chapters. -->
 
-* $\tau_X = E_S(Y(X=1|S)-Y(X=0|S)) = -(1-\lambda_1^S)$
-* $\tau_S = E_X(Y(S=1|X)-Y(S=0|X)) = \lambda_1^X$]
-**LONG FOOTNOTE ENDING HERE**
 
-In general, then, we can define queries about average causal effects as queries about the exogenous nodes that represent a causal model's probabilistic components. In the present example, probabilistic components enter only as determinants of the initial substantive causal variables. In other models, variables further downstream might also have stochastic components, a query about average causal effects might include thus further exogenous terms representing population-level distributions. Estimating average causal effects thus amounts drawing inferences about these nodes.^[Given the model, data will be useful for estimating average effects only if one is uncertain about the distributions of $S$ and $X$, which are a function of $U_S$ and $\lambda_1^S$ and $U_X$ and $\lambda_1^X$, respectively. In this example $\lambda_1^S$ and $\lambda_1^X$ are fixed in the model and so we do not learn anything about them from data. If however $\lambda_1^S$ and $\lambda_1^X$ are represented as nodes that are themselves produced by some other distribution -- such as a Beta distribution --- then the question of understanding average effects is the question of making inferences about these nodes.]
+<!-- <!-- We need to resolve the contradiction between the above footnote and the previous one: one says they're not submodels, the other says they are. --> -->
 
-<!-- I find the previous paragraph quite confusing in terms of what all of this says about learning about nodes. I would think we would want to set up the example so that we *can* use data to learn about the ATE and so that this runs through learning about root nodes.  -->
 
-**Actual cause.** Returning to a case-level query, the concept of an actual cause becomes useful when outcomes are overdetermined. Suppose there is a case with a sensitive government ($S=1$) and no free press ($X=0$), as in panel B. Then the *survival* of the government is over-determined: neither government sensitivity nor the free press is a counterfactual cause. (A lack of a free press is enough for even a corrupt government to survive; and sensitivity ensures non-corruption and, thus, survival even in the presence of a free press.) 
 
-Nevertheless, we can distinguish between the causes in terms of which one was an actual cause. Conditioning on there being corruption, which there actually was, the lack of a free press *is* a counterfactual cause of government survival: if there had been a free press, holding corruption constant, then the government would have been removed. This makes the lack of a free press an actual cause---that is, a counterfactual cause when some (or no) feature of what actually happened is kept fixed. However, there is no set of realized variable values that we can condition on to make the presence of a sensitive government a counterfactual cause; thus, it is not an actual cause.
 
-The context---the values of the exogenous nodes in the subgraphs, $S$ and $X$---determines which variables will be actual causes through setting the realized values of all endogenous variables in the model and thus restricting the values on which conditioning is permitted for the determination of actual causes. Since corruption *is* present whenever $S=1$ and $X=0$, we are permitted in this context to condition on its presence, and the free press is an actual cause of government retention. In contrast, the sensitivity of the government is not an actual cause in this same context. Given no free press, there will always be corruption but no reporting on corruption, which makes government removal impossible, regardless of government sensitivity; thus, there is no subset of actual events that, when kept fixed, would make a change to a non-sensitive government result in the government's fall. In sum, asking whether a variable in a model was the actual cause of an outcome can equivalently be understood as asking about the values of the model's exogenous nodes. Answering that question will consist either of directly observing those exogenous conditions or drawing inferences about them from other, observable nodes.
+<!-- <!-- In this causal beam with binary variables,  whenever a unique path connects one node to another then the ancestor's node's condition is a cause of the descendant's condition. These case level causal relations cannot be read directly from the graph however if there are multiple paths or non dichotomous variables. To see why multiple paths prevent this inference, return to the boulder example of non transitivity described above; to see why inferences cannot be made along paths with non binary outcomes notice that $A$ and $B$ may be connected because some change in $A$ produces a change in $B$, though not necessarily *all* changes in $A$.    --> -->
 
-<!-- This example has the odd feature that the question of whether S or X is an actual cause is itself already conditional on the values of S and X.   -->
+<!-- **Average causal effects.** Average causal effects are simply averages of case-level causal effects for the population. Since case-level causal effects are determined by the values of the exogenous nodes in cases, we need to average over the distribution of case-level contexts in the population. Put differently, the average causal effect of any variable on another will depends on how commonly the relevant case-level conditions---those in which the causal effect is and is not present---occur. In our current example, we have seen that the free press makes a difference to government survival if and only if the government is *non-sensitive* (panels $A$ and $C$): the non-sensitive government gets exposed as corrupt if and only if there is a free press while the sensitive government never gets replaced because it adjusts to the presence of a free press by eliminating corruption. Similarly, the sensitivity of the government (and the resulting level of corruption) matters only if there *is* a free press (panels $C$ and $D$). Without a free press, non-sensitive and, thus, corrupt governments do not get exposed and so stay on; with a free press, non-sensitive (and, thus, corrupt) governments get replaced.  -->
 
-**Notable cause.** In the event that that there is a non-sensitive government ($S=0$) and a free press ($X=1$), as in panel $C$, the government gets replaced and *both* of the two causes matter counterfactually for government replacement. (Absent either one, the government would survive.) Again, however, we can distinguish between them, this time on the basis of notable causation. The question, for identifying a notable cause, is how commonly the causal variable in question takes on its realized, as opposed to a counterfactual, value. Thus, like average causal effects, notable causation depends on *population-level* distributions---in the present example, on the parameters $\lambda_1^S$ and $\lambda_1^X$. If, for instance, governments are more frequently sensitive (the counterfactual) than non-sensitive (the actual value)---i.e., $\lambda_1^S > 0.5$---then the non-sensitive government is a notable cause. However, if free presses are rarer than non-sensitive governments---i.e.  $\lambda_1^X < 1-\lambda_1^S$---then the free press is a *more* notable cause than the non-sensitive government.
+<!-- Thus, the *average* effect of each of these initial causes on the outcome will depend on the probability with which the other cause is absent or present. To define a query about average causal effects, we need to examine the full probabilistic causal model as graphed in the large panel in Figure \@ref(fig:running2). What is the average causal effect of a free press ($X$) on government removal ($Y$)? As we have learned from the subgraphs, this effect is fully defined by the value of $S$. In particular, the effect of $X$ on $Y$ is equal to $1$ when $S=0$, and is equal to $0$ when $S=1$. As we've noted, we calculate the average causal effect by averaging causal effects over the distribution of the relevant exogenous variables -- which, here, is only $S$. In the probabilistic model, $S$ is a function of $\lambda^S$ and $U_S$. In particular, $S=1$ whenever $u_S < \lambda^S$. Since $U_S$ has a uniform distribution, this simply means that $S=1$ with probability $\lambda_1^S$; likewise, $S=0$ with probability $1-\lambda_1^S$.  Thus, we calculate $X$'s average causal effect on $Y$ by multiplying each causal effect by the probability of $S$'s taking on the value that generates that effect: $1 \times (1-\lambda_1^S) + 0 \times \lambda_1^S = 1-\lambda_1^S$. Put differently, the causal effect of a free press on government removal is equal to the commonness of insensitive governments in the relevant population of cases.  -->
 
-<!-- Again, would be more consistent with out queries-as-root-nodes to show the pi's as nodes. -->
+<!-- We have thus defined our causal query in terms of an exogenous variable, $\lambda_1^S$, in the probabilistic causal model. Note that, just as $S$ acts as a causal-type variable for $X$'s effect on $Y$, querying $\lambda_1^S$ is equivalent to asking about the distribution of causal types in the population. In our four-type framework, cases with $S=0$ are $b$ (positive effect) types with respect to the $X \rightarrow Y$ relationship; cases with $S=1$ are $c$ types (no effect, $Y=0$). (There are, here, no $a$ or $d$ types.) Thus, $\lambda_1^S$ represents the share of $c$ types and $1-\lambda_1^S$ the share of $b$ types in the population, vis-a-vis $X$'s effect on $Y$.  -->
 
-**Causal Paths.** Note finally that different causal paths can give rise to the same outcome, where the different paths can be distinguished based on values of root nodes $S$ and $X$. For example, the government may be retained ($Y=0$) because there is no free press ($X=0$) and so no negative reporting on the government, regardless of the value of $S$; or because, there is a free press ($X=1$) and a sensitive government ($S=1$) takes account of this and does not engage in corruption. **\color{red} To be improved to link more closely to our abstract discussion of paths as estimands.**
+<!-- We can follow the same procedure for all causal relationships in the model. Returning, for instance, to the effect of $R$ on $Y$, we learned from the subgraphs that $R$ has a causal effect of $1$ in panels $A,B$ and $C$---that is, whenever it is not the case that $X=1$ and $S=1$---and otherwise of $0$. Thus, the $R$'s average causal effect is the weighted average $1 \times (1-\lambda_1^S \times \lambda_1^X) + 0 \times \lambda_1^S \times \lambda_1^X$ = $1-\lambda_1^S \times \lambda_1^X$. This is simply the probability of not having both $X=1$ and $S=1$. Here, then, we have defined the causal query in terms of two exogenous nodes in the probabilistic model, $\lambda_1^S$ and $\lambda_1^X$. ^[Likewise, the average causal effect of $R$ conditional on $S=1$ is $1-\lambda_1^X$ (the probability of ending up in panel B, rather than D); and the average causal effect of $R$ given $S=0$ is 1 (since it has an effect in both panels A and C).] -->
+
+<!-- **TO BECOME A LONG FOOTNOTE...** -->
+<!-- These quantities can be calculated from the distributions in the same way as we calculated the case-level effects. Removing the arrows pointing to $R$, the distribution over nodes when $R=r'$---but this time not fixing $S$ and $X$---is $P(s,x,c,y | \hat{r}=r')$. Again the key part is $P(y=1| \hat{r}=1)$, which can be written $\sum_x\sum_s\sum_c P(x)P(s)P(c|x,s)P(y|c, r= 1)$. Using the structural equations, this simplifies to $\sum_x\sum_s P(x)P(s)P(c=1|x,s) = P(x=0)P(s=0) + P(x=0)P(s=1) + P(x=1)P(s=0)$, or, $1-\lambda_1^S\lambda_1^X$. -->
+
+<!-- In the same way, we can construct the average treatment effect for each of the exogenous variables: -->
+
+<!-- * $\tau_X = E_S(Y(X=1|S)-Y(X=0|S)) = -(1-\lambda_1^S)$ -->
+<!-- * $\tau_S = E_X(Y(S=1|X)-Y(S=0|X)) = \lambda_1^X$] -->
+<!-- **LONG FOOTNOTE ENDING HERE** -->
+
+<!-- In general, then, we can define queries about average causal effects as queries about the exogenous nodes that represent a causal model's probabilistic components. In the present example, probabilistic components enter only as determinants of the initial substantive causal variables. In other models, variables further downstream might also have stochastic components, a query about average causal effects might include thus further exogenous terms representing population-level distributions. Estimating average causal effects thus amounts drawing inferences about these nodes.^[Given the model, data will be useful for estimating average effects only if one is uncertain about the distributions of $S$ and $X$, which are a function of $U_S$ and $\lambda_1^S$ and $U_X$ and $\lambda_1^X$, respectively. In this example $\lambda_1^S$ and $\lambda_1^X$ are fixed in the model and so we do not learn anything about them from data. If however $\lambda_1^S$ and $\lambda_1^X$ are represented as nodes that are themselves produced by some other distribution -- such as a Beta distribution --- then the question of understanding average effects is the question of making inferences about these nodes.] -->
+
+<!-- <!-- I find the previous paragraph quite confusing in terms of what all of this says about learning about nodes. I would think we would want to set up the example so that we *can* use data to learn about the ATE and so that this runs through learning about root nodes.  --> -->
+
+<!-- **Actual cause.** Returning to a case-level query, the concept of an actual cause becomes useful when outcomes are overdetermined. Suppose there is a case with a sensitive government ($S=1$) and no free press ($X=0$), as in panel B. Then the *survival* of the government is over-determined: neither government sensitivity nor the free press is a counterfactual cause. (A lack of a free press is enough for even a corrupt government to survive; and sensitivity ensures non-corruption and, thus, survival even in the presence of a free press.)  -->
+
+<!-- Nevertheless, we can distinguish between the causes in terms of which one was an actual cause. Conditioning on there being corruption, which there actually was, the lack of a free press *is* a counterfactual cause of government survival: if there had been a free press, holding corruption constant, then the government would have been removed. This makes the lack of a free press an actual cause---that is, a counterfactual cause when some (or no) feature of what actually happened is kept fixed. However, there is no set of realized variable values that we can condition on to make the presence of a sensitive government a counterfactual cause; thus, it is not an actual cause. -->
+
+<!-- The context---the values of the exogenous nodes in the subgraphs, $S$ and $X$---determines which variables will be actual causes through setting the realized values of all endogenous variables in the model and thus restricting the values on which conditioning is permitted for the determination of actual causes. Since corruption *is* present whenever $S=1$ and $X=0$, we are permitted in this context to condition on its presence, and the free press is an actual cause of government retention. In contrast, the sensitivity of the government is not an actual cause in this same context. Given no free press, there will always be corruption but no reporting on corruption, which makes government removal impossible, regardless of government sensitivity; thus, there is no subset of actual events that, when kept fixed, would make a change to a non-sensitive government result in the government's fall. In sum, asking whether a variable in a model was the actual cause of an outcome can equivalently be understood as asking about the values of the model's exogenous nodes. Answering that question will consist either of directly observing those exogenous conditions or drawing inferences about them from other, observable nodes. -->
+
+<!-- <!-- This example has the odd feature that the question of whether S or X is an actual cause is itself already conditional on the values of S and X.   --> -->
+
+<!-- **Notable cause.** In the event that that there is a non-sensitive government ($S=0$) and a free press ($X=1$), as in panel $C$, the government gets replaced and *both* of the two causes matter counterfactually for government replacement. (Absent either one, the government would survive.) Again, however, we can distinguish between them, this time on the basis of notable causation. The question, for identifying a notable cause, is how commonly the causal variable in question takes on its realized, as opposed to a counterfactual, value. Thus, like average causal effects, notable causation depends on *population-level* distributions---in the present example, on the parameters $\lambda_1^S$ and $\lambda_1^X$. If, for instance, governments are more frequently sensitive (the counterfactual) than non-sensitive (the actual value)---i.e., $\lambda_1^S > 0.5$---then the non-sensitive government is a notable cause. However, if free presses are rarer than non-sensitive governments---i.e.  $\lambda_1^X < 1-\lambda_1^S$---then the free press is a *more* notable cause than the non-sensitive government. -->
+
+<!-- <!-- Again, would be more consistent with out queries-as-root-nodes to show the pi's as nodes. --> -->
+
+<!-- **Causal Paths.** Note finally that different causal paths can give rise to the same outcome, where the different paths can be distinguished based on values of root nodes $S$ and $X$. For example, the government may be retained ($Y=0$) because there is no free press ($X=0$) and so no negative reporting on the government, regardless of the value of $S$; or because, there is a free press ($X=1$) and a sensitive government ($S=1$) takes account of this and does not engage in corruption. **\color{red} To be improved to link more closely to our abstract discussion of paths as estimands.** -->
 
 
 
