@@ -1,6 +1,7 @@
 library("tidyverse")
 library("biqq")
 library("gbiqq")
+library("gbiqqtools")
 library("bindrcpp")
 library("ggplot2")
 library("StanHeaders")
