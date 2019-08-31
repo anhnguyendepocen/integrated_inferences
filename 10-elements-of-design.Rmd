@@ -22,19 +22,12 @@ In the remainder of this chapter we discuss a simple evaluative criterion for a 
 
 
 
-## Declaring  a process tracing design
-
-### Steps
+## Model, inquiry, data strategy, answer strategy
 
 We use the MIDA approach (model, inquiry, data strategy, answer strategy) approach to declare a simple process tracing design with an arbitrary model.
 
 
-*  **Model.** We will define a model as introduced in Chapter 2. For this we need to define:
-
-    * A directed acyclic graph. In doing so we declare the set of variables we are interested and the relations of independence between them. In defining the variables we generally also define the ranges of the  variables---indicating, for example whether  they are binary, categorical, or continuous. In defining the edges we identify the set of parents of any node. 
-    * Any restrictions on functional forms relating parents to children. In the binary set up, imposing  functional form assumptions is the same as restructuring causal types. 
-    * A declaration of structures of unobserved confounding.  
-    * Priors. Beliefs about the distribution of shocks. When defined as part of the model we think of these priors as being the priors from the vantage point of someone assessing a design and they need not be the same as the priors used in the analysis. 
+*  **Model.** We will define a model as introduced in Chapter 2. We outline approaches for this in section X below. 
 
 * **Inquiry** As discussed in Chapter 4, an inquiry is a question asked of a model. This is typically a question about the distribution of a variable in some controlled or natural condition, or some summary of such distributions. We refer to the quantity being targeted by a query as the estimand.
 
@@ -55,46 +48,51 @@ The concatenated lets us examine instances of the application of a design. A sin
 With the observation of multiple instances we get to assess the distribution of our answers --- and our uncertainty around these -- over repeated draws, and each time we get to see how well the answer we get maps onto the assumed truth in that draw.
 
 
-### Illustration in code
 
-In the `gbiqq` package there is a single function that lets you declare a full design in one go by letting you supply arguments to declare a model, an inquiry, a data strategy, and an answer strategy
 
-```{r, include = FALSE}
-library(DeclareDesign)
-library(gbiqq)
-library(dplyr)
+## Defining a model
+
+For this we need to define our model.  In doing so we declare the set of variables we are interested and the relations of independence between them. In defining the variables we generally also define the ranges of the  variables---indicating, for example whether  they are binary, categorical, or continuous. In defining the edges we identify the set of parents of any node. 
+
+### Which nodes?
+
+How much detail? Be aware of implications of uneveness in the level of detail
+
+### Justifying conditional independence claims
+    
+### Justifying restrictions
+
+Refer back to our discussion of the inequality and democracy model in section \@ref(inequalitytheory). There we discussed a theory that unpacked a higher level model but that did not place any restrictions on functional forms --- that is, on causal types. We might imagine such restrictions being justified by theory, however. 
+Drawing on @boix2003democracy, for instance, we might theorize that inequality can have a negative effect on democratization by giving the elite more to lose from majority rule, making autocrats less willing to hand over power. Inequality's positive effect, we might further posit, derives from the fact that it gives the poor more to gain from the redistribution that democratization would enable (@acemoglu2005economic). However, this positive effect can only unfold to the extent that the masses are able to mobilize, and the capacity to mobilize will hinge on ethnic homogeneity. Ethnic homogeneity thus defines the causal possibilities in regard to $I$'s effect on $D$. First, homogeneity is necessary for a positive effect of inequality. Second, by enabling mobilization around distributional demands, ethnic homogeneity rules out a net negative effect of inequality (as inequality's mobilizing effects will balance out elite fears of expropriation). Third, by making mass mobilization easier in general, ethnic homogeneity makes possible mobilization and democratization *without* inequality. Under ethnic heterogeneity, on the other hand, inequality can have a negative effect, or it can no effect at all with autocracy entrenched. 
+
+Put differently, under ethnic homogeneity, inequality's effect can only correspond to a $b$ type or a $d$ type, while under heterogeneity the effect can only be of type $a$ or type $c$. $E$ thus allows us to partition the range of causal possibilities that model (a) had lumped together under $\theta^D$. Now we can capture this logic with a functional equation in which $\theta^D$ now takes on just two possible values (0 or 1), rather than four:
+
+\begin{equation}
+D=IE(1-\theta^D)+\theta^DE+(1-E)(1-I)\theta^D
+\end{equation}
+
+We can work through the arithmetic to observe $E$'s causal-partitioning effect. Whether $E$ is 0 or 1 determines whether we are in a world of posiitve effects ($b$ types) and democratization regardless ($d$ types), or a world of negative effects ($a$ types) and autocracy regardless ($c$ types). Note that the righthand side is a sum of three expressions. We can think of $E$ as a "switch" that turns these expressions "on" or "off." When $E=1$, the third expression goes to 0, leaving only the first two in play "on." Now, $\theta^D$ determines whether $I$ has a positive effect (when $\theta^D=0$) or no effect with $D$ fixed at $1$ (when $\theta^D=1$). Conversely, when $E=0$, the first two expressions both go to $0$, and $\theta^D$ determines whether $I$ will have a negative effect (when $\theta^D=1$) or no effect with $D$ stuck at 0 (when $\theta^D=0$).
+
+
+* A declaration of structures of unobserved confounding.  
+
+* Priors. Beliefs about the distribution of shocks. When defined as part of the model we think of these priors as being the priors from the vantage point of someone assessing a design and they need not be the same as the priors used in the analysis. 
+    1. REFELCTING THE LITERATURE
+    2. GATHERING DISCPILINARY PRIORS
+    3. EMPIRICAL APPROACH
+
+
+## Choosing estimands
+
+## Selecting a data strategy
+
+```{r, echo = FALSE}
+# detach(package:DeclareDesign, unload=TRUE)
 ```
 
-```{r ch10designer, message = FALSE, warning = FALSE}
-# A single function can be used to declare a model, an inquiry, a data strategy, and an answer strategy
-
-my_design <- gbiqq_designer(
-  
-   model           = make_model("X -> M -> Y"),
-   inquiry         = list(ATE = "Y[X=1] - Y[X=0]"),
-   data_strat      = list(n_obs = 5, 
-                          vars = list(c("X", "Y"), "M"), 
-                          probs = list(1, .5), 
-                          subsets = list(NULL, "X==1 & Y==0"),
-                          n = NULL),
-   answer_strat  = NULL
-)
-
-```
 
 
-With this model in hand you can use it to draw likely data, run analyses, an drun diagnostics. 
-
-```{r, eval = FALSE}
-sample_data      <- draw_data(my_design)
-sample_estimands <- draw_estimands(my_design)
-sample_estimates <- get_estimates(my_design, df)
-```
-
-
-
-### Diagnosands: Evaluating a model
-
+## Evaluating inferences
 
 The  observation that theories vary in their precision points to a method for describing the learning that is attributable to a lower-level theory relative to a higher level theory. When a lower-level theory represents a disaggregation, the lower-level theory identifies a set of potentially observable variables that are not listed by the the higher-level theory. This allows one to assess the gains in precision (for some collection of unobserved variables) that can arise from  learning the values of additional observables in the lower-level theory. 
 
@@ -115,6 +113,8 @@ The contribution of a theory can then be defined as the mean reduction in Bayes 
 $$\text{Gains from theory} = 1- \frac{E_{K|W}(Var(Q|K,W))}{Var(Q|W)}$$
 
 This is a kind of $R^2$ measure (see also @gelman2006bayesian). 
+
+### Other loss functions
 
 Other loss functions could be used, including functions that take account of the costs of collecting additional data,^[Further, one might call into question the value of a theory if the gains in precision depend upon data that are practically impossible to gather.] or to the risks associated with false diagnoses.^[For instance, in @heckerman1991toward, an objective function is generated using  expected utility gains from diagnoses generated based on new information over diagnoses based on what is believed already. In their treatment [@heckerman1991toward, Equation 6],  the expected value of new information $K$, given existing information $W$ is: $\sum{K}P(K|W)( EU(d(Q,W,K)|W, K) - EU(d(Q, W)|W, K))$ where $EU$ is expected utility and $d$ is the optimal inference (diagnosis) given available data. Note that the diagnosis can take account of $K$ when it is observed, but the expected utility depends on $K$ whether or not it is observed, as $K$ carries information about the state of interest.] 
 
@@ -253,14 +253,39 @@ text(.8, c(.15, .25, .3, .62, .41), c("I(K,Q)/H(Q)","(Reduced posterior variance
 ```
 
 
+## Illustration in code
 
-## Declaring a mixed methods design
+In the `gbiqq` package there is a single function that lets you declare a full design in one go by letting you supply arguments to declare a model, an inquiry, a data strategy, and an answer strategy
 
-### Model
-### Data strategies
-### Estimands
-### Answer Strategies
-
-```{r}
-# detach(package:DeclareDesign, unload=TRUE)
+```{r, include = FALSE}
+library(DeclareDesign)
+library(gbiqq)
+library(dplyr)
 ```
+
+```{r ch10designer, message = FALSE, warning = FALSE, eval = FALSE}
+# A single function can be used to declare a model, an inquiry, a data strategy, and an answer strategy
+
+my_design <- gbiqq_designer(
+  
+   model           = make_model("X -> M -> Y"),
+   inquiry         = list(ATE = "Y[X=1] - Y[X=0]"),
+   data_strat      = list(n_obs = 5, 
+                          vars = list(c("X", "Y"), "M"), 
+                          probs = list(1, .5), 
+                          subsets = list(NULL, "X==1 & Y==0"),
+                          n = NULL),
+   answer_strat  = NULL
+)
+
+```
+
+
+With this model in hand you can use it to draw likely data, run analyses, an drun diagnostics. 
+
+```{r, eval = FALSE}
+sample_data      <- draw_data(my_design)
+sample_estimands <- draw_estimands(my_design)
+sample_estimates <- get_estimates(my_design, df)
+```
+

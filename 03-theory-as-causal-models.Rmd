@@ -16,11 +16,113 @@ Theory plays an important role in this book's use of causal models for causal in
 We discuss toward the end of the chapter how this definition of theory relates to common understandings of theory in the social sciences. First, however, we focus on unpacking our working definition. In embedding theorization within the world of causal models, we ultimately have an empirical objective in mind. Theorizing a causal relationship of interest, in our framework, means elaborating our causal beliefs about the world in greater detail. As we show in later chapters, theorizing in the form of a causal model allows us to generate research designs: to identify sources of inferential leverage and to explicitly and systematically link observations of components of a causal system to the causal questions we seek to answer. 
 
 
-## Two theories of inequality's effects on democratization {#inequalitytheory}
+## Theory as a "lower-level" model
+
+Let us say that a causal model, $M^\prime$, is a *theory* of $M$ if $M$ is implied by $M^\prime$. Theory is, thus, all relative. $M^\prime$ might itself sit atop a theory, $M^{\prime\prime}$, that implies $M^\prime$. To help fix the idea of theory as "supporting" or "underlying" the model(s) it theorizes, we refer to the theory, $M^\prime$, as a *lower*-level model relative to $M$ and refer to $M$ as a *higher*-level model relative to its theorization, $M^\prime$.^[We note that our definition of theory differs somewhat from that given in @pearl2009causality (p207): there a theory is a (functional) causal model and a restriction over $\times_j \mathcal{R}(U_j)$, that is, over the collection of contexts envisionable. Our definition also considers probabilistic models as theories, allowing statements such as ''the average effect of $X$ on $Y$ is 0.5.''] 
+
+<!-- Higher-level models can be generated from lower-level models in two ways, both of which are consistent with common understandings of what it is for a set of claims to constitute or, conversely, derive from a ''theory.'' -->
+
+<!-- We can distill two ways in which lower-level models can relate to, or support, higher-level models: -->
+
+
+<!-- ### Disaggregating nodes -->
+
+We illustrate showing two models, $M^\prime$, $M^{\prime\prime}$ that each imply a model  $M$. In each case the lower level models contain additional nodes in a way that allows for  a kind of "disaggregation"  of exogneous nodes.
+
+
+```{r Highlow, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "Here we represent the simple claim that one variable causes another, and two theories --- lower-level models --- that could explain this claim. Both model (b) and model (c) involve theorization via disaggregation of nodes."}
+
+par(mfrow = c(3,1))
+par(mar=c(1,1,3,1))
+hj_dag(x = c(1,2,2),
+       y = c(1,1,2),
+       names = c(
+         expression(paste(X)),
+         expression(paste("Y")),  
+         expression(paste(theta^Y))),
+       arcs = cbind( c(1, 3),
+                     c(2, 2)),
+       title = "(a) A Higher-Level Model, M",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .2
+)
+
+hj_dag(x = c(1,2,2, 1.5, 1.5),
+       y = c(1,1,2, 1  , 2),
+       names = c(
+         expression(paste(X)),
+         expression(paste("Y")),  
+         expression(paste(theta^Y[lower])),
+         expression(paste(K)),
+         expression(paste(theta[K])) 
+         ),
+       arcs = cbind( c(1, 3, 5, 4),
+                     c(4, 2, 4, 2)),
+       title = "(b) Lower-Level Model, M': Disaggregating via Mediation",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .2
+)
+
+hj_dag(x = c(1,2, 2, 1.5),
+       y = c(1,1, 2, 2),
+       names = c(
+         expression(paste(X)),
+         expression(paste("Y")),  
+         expression(paste(theta^Y[lower])),
+         expression(paste(C)) 
+         ),
+       arcs = cbind( c(1, 3, 5, 4),
+                     c(2, 2, 4, 2)),
+       title = "(c) Lower-Level Model M'': Disaggregating via Moderation",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .2
+)
+
+```
 
 
 
-To see how this works, let us return to our democratization example and consider first the very basic claim that inequality can have an affect on democratization. We represent this simple claim in Figure \@ref(fig:demtheory5), Panel (a). In this simple model, $I$ may sometimes have an effect of $D$, and sometimes not; and that effect may be positive or negative. All of this will depend on the case's causal type. In Chapter \@ref(models), we considered the idea that causal type may be conceptualized as a random disturbance, a $U$ term, that can take on different type values (e.g., $a, b, c, d$) and that points into an outcome variable. To fix this idea going forward, we make a shift in notation and use $\theta$ to indicate that a node is a receptacle for causal types. Thus, $\theta_D$ here captures the case's causal type, or $I$'s causal effect on $D$ for a given case. 
+
+We start with the higher-level model, $M$, represented in Figure \@ref(fig:Highlow)(a). We can then offer the model, $M^\prime$ in panel (b) as a *theory*, a lower-level model, of $M$. We have added a node, $K$, in the causal chain between $X$ and $Y$, a familiar mode of theorization. In doing do we have in fact *split* the error $\theta^Y$ into two parts: $\theta^{Y_\text{lower}}$ and $\theta^K$. 
+
+Intuitively, in the higher-level model, (a), $Y$ is a function of $X$ and a disturbance $\theta^Y$, the latter representing all things other than $X$ than can affect $Y$. In our four-type setup, $\theta^Y$ represents all of the (unspecified) sources of variation in $X$'s effect on $Y$. When we add $K$, $X$ now does not directly affect $Y$ but only does so via $K$. Further, we model $X$ as acting on $K$ "with error," with $\theta^K$ representing all of the (unspecified) factors determining $X$'s effect on $K$. The key thing to notice here is that $\theta^K$ now represents *a portion of the variance that $\theta^Y$ represented in the higher-level graph*: some of the variation in $X$'s effect on $Y$ now arises from $X$'s effect on $K$, which is captured by $\theta^K$. So, for instance, $X$ might have no effect on $Y$ because $\theta^K$ takes on a value such that $X$ has no effect on $K$. Likewise, any effect of $X$ on $Y$ must arise from an effect of $X$ on $K$, captured in $\theta^K$'s value. ^[As we emphasize further below, it is in fact only this "error" in the $X\rightarrow K$ link that makes the addition of $K$ potentially informative as a matter of research design: if $K$ were a deterministic function of $X$ only, then knowledge of $X$ would provide full knowledge of $K$, and nothing could be learned from observing $K$.] What $\theta^K$ represents, then, is that part of the original $\theta^Y$ that arose from some force other than $X$ operating at the *first* step of the causal chain from $X$ to $Y$. 
+
+So now, $\theta^Y$ is not quite the same entity in the lower-level graph that it was in the higher-level graph. In the original graph, $\theta^Y$ represented *all* sources of variation in $X$'s effect on $Y$. In the lower-level model, with $K$ as mediator, $\theta^Y$ represents only random variation in $K$'s effect on $Y$. $\theta^Y$ has been expunged of any factors shaping the first stage of the causal process, which now reside in $\theta^K$. Reflecting a convention that we use throughout the book, we highlight this change in $\theta^Y$'s meaning by referring in the second model to $\theta^{Y_\text{lower}}$. 
+
+Theorization here thus starts with the proliferation of substantive variables---adding beliefs about intervening steps in a causal process. But, critically, it also involves an accompanying disaggregation of unexplained variation. Addition and splitting thus go hand-in-hand: the *insertion* of a mediator between $X$ and $Y$ also involves the *splitting* of $Y$'s unspecified parent ($\theta_Y$).   
+
+<!-- Put differently, when we construct the lower-level model in (b), we are taking that part of $Y$ not determined by $X$ and splitting it in two: a non-$X$ input into $K$ and a non-$K$ (and thus also non-$X$) input into $Y$. -->
+
+Consider next model $M''$ panel (c) in Figure \@ref(fig:Highlow), which also supports (implies) the higher-level theory in panel $(a)$. The logical relationship between models $(a)$ and $(c)$, however, is somewhat different. Here the lower-level model *specifies* one of the conditions that comprised $\theta^Y$ in the higher-level model. In specifying a moderator, $C$, we have extracted $C$ from $\theta^Y$, leaving $\theta^{Y_\text{lower}}$ to represent all factors *other than $C$* that condition $X$'s effect on $Y$. (Again, the relabeling as $\theta^{Y_\text{lower}}$ reflects this change in the term's meaning.) While we might add a $\theta^C$ term pointing into $C$, this is not necessary. Whereas in Model (b) we have extracted $\theta^K$ from $\theta^Y$, in Model (c), it is $C$ itself that we have extracted from $\theta^Y$, substantively specifying what had been just a srandom disturbance.
+
+
+<!-- ### Generalizing a model -->
+
+<!-- A lower-level model, $M^\prime$, can also be a representation of $M$ in which a node has been introduced that permits variation in a feature of context that is fixed and taken-for-granted in $M$. Here, $M^\prime$ theorizes $M$ in the sense of embedding $M$ within a *more general* set of beliefs about how the world works. $M$ then becomes a special case of the theorized relations, one that holds when we condition on some data, specifying some particularity of context. -->
+
+<!-- To illustrate this approach to theorization, consider again graphs (a) and (c) in Figure \ref{fig:Highlow}. We have discussed how the graph in panel (c) can represent a disaggregation of $\theta^Y$ from panel (a) into $\theta^{Y_\text{lower}}$ and $C$. An alternative possibility, however, is to employ a moderation model that represents a more general claim than the higher-level model that it supports. For instance, the graph in panel (a) might represent the causal function $Y=X+\theta^Y$. In this model, $X$ always has an effect on $Y$. The graph in panel (c), in turn, might represent the more general function, $Y=XC+\theta^Y$ (where $C$ is binary). Now, whether $X$ has an effect depends on the value of $C$. In particular, model (c) combined with the observation $C=1$ directly implies model (a). Model (a) is a special case of model (c) that holds in and only in the context $C=1$. In answer to the question, "Why do you believe model (a)?" one could respond with model (c) plus the observation $C=1$.  -->
+
+<!-- Note the difference in how theorization has proceeded for the two moderation models (both graphically represented in panel (c)). When we introduce moderation via the disaggregation of nodes, we pull content out of $\theta^Y$ and specify it substantively. When we generalize, on the other hand, we *add* a node, a source of variation not factored into the original model at all. We can think of that variation as implicitly conditioned-on in the higher-level model. -->
+
+<!-- As a secondary matter, note that the $\theta$ term pointing into $Y$ may or may not be altered by the addition. In particular, we will explore later, if $\theta^Y$ is a vessel for causal types, then the number of possible causal types---and, thus, $\theta^Y$'s range---must expand as we add nodes pointing into $Y$. But in the functions we have used in our illustration, $\theta^{Y_\text{lower}}$ remains unchanged when we add the $C$ node. In both the higher- and lower-level models, $\theta^Y$ represents precisely the same random disturbance.  -->
+
+
+
+<!-- $M^\prime$ is a *theory* of $M$ in that it, in a sense, helps explain the dependencies of $Y$ on $X$ more fully than does $M$. -->
+
+
+
+Critically notice that since lower level models imply higher level models we think of theories as implying the models they are theorizing. If you believe Model $M'$, then you also must believe Model $M$. If it is possible that $X$ can affect $K$ and possible that $K$ can affect $Y$ then it is possible that $X$ can affect $Y$. The coverse is not true however s you might think it possible that $X$ can effect $Y$ even if you think it not possible that $X$ can affect $K$. Similarly, if you believe Model (c), then you must also believe Model (a): if it is true that $X$ can affect $Y$, possibly in ways that are moderated by $C$, then it is trivially true, more simply, that $X$ can affect $Y$. 
+
+
+## Illustration of unpacking causal types
+
+We now show more specifically how causal types in lower level models map into causal types in higher level models. 
+
+For concreteness, let us return to our democratization example and consider first the very basic claim that inequality can have an affect on democratization. We represent this simple claim in Figure \@ref(fig:demtheory5), Panel (a). In this simple model, $I$ may sometimes have an effect of $D$, and sometimes not; and that effect may be positive or negative. All of this will depend on the case's causal type. 
 
 ```{r demtheory5, echo = FALSE, fig.width = 6, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "DAG representations of three theories. DAGs only capture claims that one variable causes another, conditional on other variables. Theories (b) and (c) each imply theory (a)."}
 
@@ -76,224 +178,212 @@ hj_dag(x = c(1,2, 2, 1.5),
 ```
 
 
-We might then wonder *how* inequality might exert its effect on democratization. One possible answer, drawing on our model in Chapter \@ref{models} is that inequality can affect mass-mobilization, which in turn can affect democratization. This explanatory claim is visually represented in Panel (b) of the figure. Here, we can see that any effect of $I$ on $D$ runs through $M$. There are details of this graph that we will delve into later. But for now, it is sufficient to see that we have partly explained variation left unexplained by model (a). Model (b) allows us to say, for instance, that whether inequality has an effect on democratization has to depend on whether inequality has an effect on mobilization. Model (b) thus theorizes, in one important sense, a part of inequality's effect that is left untheorized in model (a). 
+In addition the figure shows two models that each *explain* Model (a), though in different ways. Model (b) answers the explanatory question, "*How* does inequality affect democratization?" Model (c) answers the explanatory question, "*Why* does inequality's effect on democratization vary?" Both theories provide richer, more interpretable accounts of the phenomenon of interest than the simpler model that they are theorizing.
 
-Alternatively, we might wonder *when* inequality causes democratization. Our simple claim, in panel (a), allows that $I$ *can* cause $D$, but provides no information about the conditions under which it does so. Those conditions are implicitly embedded within $\theta^D$, where they are left unspecified. We could, however, theorize some of what is left unsaid in in panel (a). We do this in panel (c), where we posit ethnic homogeneity ($E$) as a moderator of the inequality's effect on democratization. Panel (c) represents a theory of panel (a) in that it can help account for variation in causal effects that is unaccounted for by the model in (a).
+These lower level models imply a set of causal types that are richer than that implied by (a). Recall that in Chapter \@ref(models), we considered the idea that at any node, a causal type may be conceptualized as a case specific disturbance, that governs the mapping from input variables to outcome variables.  
+
+<!-- To fix this idea going forward, we make a shift in notation and use $\theta$ to indicate that a node is a receptacle for causal types. Thus, $\theta_D$ here captures the case's causal type, or $I$'s causal effect on $D$ for a given case.  -->
+
+In particular if we  deploy our four-causal-type function from Chapter \@ref(models) we have: 
+
+  * $a$: $\theta^D=\theta^D_{10}$, then $D=1-I$ ($I$ has a negative effect on $D$)
+  * $b$: $\theta^D=\theta^D_{01}$, then $D=I$ ($I$ has a positive effect on $D$)
+  * $c$: $\theta^D=\theta^D_{00}$, then $D=0$ ($I$ has no causal effect)
+  * $d$: $\theta^D=\theta^D_{11}$, then $D=1$ ($I$ has no causal effect)
+
+Knowing $\theta$ tells us how $D$ responds to $I$ and it ignores any heterogeneity between units as long they respond in the same way. For any causal type the model is *consistent* with $I$'s causal effect operating for different reasons for different units, but these differences are left entirely unaccounted for. 
+
+### Type disaggregation in a mediation model
+
+<!-- We might then wonder *how* inequality might exert its effect on democratization. One possible answer, drawing on our model in Chapter \@ref(models) is that inequality can affect mass-mobilization, which in turn can affect democratization. This explanatory claim is visually represented in Panel (b) of the figure. Here, we can see that any effect of $I$ on $D$ runs through $M$. There are details of this graph that we will delve into later. But for now, it is sufficient to see that we have partly explained variation left unexplained by model (a). Model (b) allows us to say, for instance, that whether inequality has an effect on democratization has to depend on whether inequality has an effect on mobilization. Model (b) thus theorizes, in one important sense, a part of inequality's effect that is left untheorized in model (a).  -->
 
 
-### Theory as causal functions
+Model (b) has causal types defined for nodes $M$ and for $D$. As with the overall $I,D$ relationship. We thus allow $I$ to have a positive, negative, or no effect on $M$, with $\theta^M$ taking on four possible values, again corresponding to $a,b,c,d$ nodal types (now: *a*: $\theta_{10}^M$, *b*: $\theta_{01}^M$,  *c*: $\theta_{00}^M$, *d*: $\theta_{11}^M$).
 
-Let's delve a bit deeper into how this works. Thinking through causal functions can help. Consider first a function that might correspond to panel (a). If $\theta^D$ serves as a simple receptacle for our four basic causal types, then we can deploy our four-causal-type function, familiar from Chapter \@ref{models}: 
 
-  * if $\theta^D=a$, then $D=1-I$ ($I$ has a negative causal effect on $D$)
-  * if $\theta^D=b$, then $D=I$ ($I$ has a positive causal effect on $D$)
-  * if $\theta^D=c$, then $D=0$ ($I$ has no causal effect)
-  * if $\theta^D=d$, then $D=1$ ($I$ has no causal effect)
+And we allow for $M$ to have a positive, negative, or no effect on $D$, with $\theta^D_{\text{lower}}$'s possible values again being one of four nodal types ($\theta_{10}^D$, $\theta_{01}^D$, $\theta_{00}^D$, $\theta_{11}^D$).
 
-This model thus allows for $I$'s causal effect to vary in ways that are left entirely unaccounted for. 
+We can now think about _combinations_ of types in the lower-level model as mapping onto types in the higher-level model. Table \@ref(tab:highlowmapping) illustrates.
 
-For the moderation model, in panel (c), consider a logic whereby ethnic homogeneity eases mobilization and thus democratization. Drawing on @boix2003democracy, we theorize that inequality can have a negative effect on democratization by giving the elite more to lose from majority rule, making autocrats less willing to hand over power. Inequality's positive effect, we might further posit, derives from the fact that it gives the poor more to gain from the redistribution that democratization would enable (@acemoglu2005economic). However, this positive effect can only unfold to the extent that the masses are able to mobilize, and the capacity to mobilize will hinge on ethnic homogeneity. Ethnic homogeneity thus defines the causal possibilities in regard to $I$'s effect on $D$. First, homogeneity is necessary for a positive effect of inequality. Second, by enabling mobilization around distributional demands, ethnic homogeneity rules out a net negative effect of inequality (as inequality's mobilizing effects will balance out elite fears of expropriation). Third, by making mass mobilization easier in general, ethnic homogeneity makes possible mobilization and democratization *without* inequality. Under ethnic heterogeneity, on the other hand, inequality can have a negative effect, or it can no effect at all with autocracy entrenched. 
 
-Put differently, under ethnic homogeneity, inequality's effect can only correspond to a $b$ type or a $d$ type, while under heterogeneity the effect can only be of type $a$ or type $c$. $E$ thus allows us to partition the range of causal possibilities that model (a) had lumped together under $\theta^D$. Now we can capture this logic with a functional equation in which $\theta^D$ now takes on just two possible values (0 or 1), rather than four:
+|                    | $\theta_{10}^{D_{lower}}$  | $\theta_{01}^{D_{lower}}$  | $\theta_{00}^{D_{lower}}$  | $\theta_{11}^{D_{lower}}$  |
+|--------------------|----------------------------|----------------------------|----------------------------|----------------------------|
+| $\theta_{10}^{M}$  | $\theta_{01}^{D_{higher}}$ | $\theta_{10}^{D_{higher}}$ | $\theta_{00}^{D_{higher}}$ | $\theta_{11}^{D_{higher}}$ |
+| $\theta_{01}^{M}$  | $\theta_{10}^{D_{higher}}$ | $\theta_{01}^{D_{higher}}$ | $\theta_{00}^{D_{higher}}$ | $\theta_{11}^{D_{higher}}$ |
+| $\theta_{00}^{M}$  | $\theta_{11}^{D_{higher}}$ | $\theta_{00}^{D_{higher}}$ | $\theta_{00}^{D_{higher}}$ | $\theta_{11}^{D_{higher}}$ |
+| $\theta_{11}^{M}$  | $\theta_{00}^{D_{higher}}$ | $\theta_{11}^{D_{higher}}$ | $\theta_{00}^{D_{higher}}$ | $\theta_{11}^{D_{higher}}$ |
+Table: (\#tab:highlowmapping) Mapping from lower level nodal types on $M$ and $D$ to higher level causal types on $D$. 
 
-\begin{equation}
-D=IE(1-\theta^D)+\theta^DE+(1-E)(1-I)\theta^D
-\end{equation}
+For instance, in a case in which both $\theta^M=\theta^M_{01}$ (a positive effect of $I$ on $M$) and $\theta^{D_{\text{lower}}}=\theta_{01}^{D_{lower}}$ (a positive effect of $M$ on $D$), we have a positive effect of $I$ on $D$---meaning that, in the _higher-level_ model, $\theta^{D_{higher}}=\theta^{D_{higher}}_{01}$. Two linked negative effects also generate a positive effect of $I$ on $D$ and so map onto the same higher-level type. Further, it is easy to see that if there is no causal effect at _either_ the $I \rightarrow M$ step _or_ the $M \rightarrow D$ step, we will have one of the null effect types at the higher level since, in this model, $I$ cannot affect $D$ unless there are causal effects at both constituent steps.^[These mappings, of course, hinge on the fact that $I$ affects $D$ _only_ through $M$ in this model (no direct effects or other pathways).]
 
-We can work through the arithmetic to observe $E$'s causal-partitioning effect. Whether $E$ is 0 or 1 determines whether we are in a world of posiitve effects ($b$ types) and democratization regardless ($d$ types), or a world of negative effects ($a$ types) and autocracy regardless ($c$ types). Note that the righthand side is a sum of three expressions. We can think of $E$ as a "switch" that turns these expressions "on" or "off." When $E=1$, the third expression goes to 0, leaving only the first two in play "on." Now, $\theta^D$ determines whether $I$ has a positive effect (when $\theta^D=0$) or no effect with $D$ fixed at $1$ (when $\theta^D=1$). Conversely, when $E=0$, the first two expressions both go to $0$, and $\theta^D$ determines whether $I$ will have a negative effect (when $\theta^D=1$) or no effect with $D$ stuck at 0 (when $\theta^D=0$).
+To foreshadow the discussion in later chapters, these mappings are critical: they allow us to use inferences drawn at a lower level to answer questions posed at a higher level.
+
+<!-- The lower-level functional equations are formally similar though now each unit's outcome (given $X$) depends on two event probabilities: one that determines type with respect to the effect of $X$ on $K$ ($t_{ij}^{K}$), and one with respect to the effect of $K$ on $Y$ ($u_{ij}^{Y}$): -->
+
+<!-- $$Y(K, u_{ij}^{Y}) = \left\{ \begin{array}{cc}   -->
+<!-- i & \text{ if } K=0 \\ j & \text{ if } K=1 \end{array}  \right.$$ -->
+<!-- $$K(X, u_{ij}^{K}) = \left\{ \begin{array}{cc}   -->
+<!-- i & \text{ if } X=0 \\ j & \text{ if } X=1 \end{array}  \right.$$ -->
+
+<!-- Thus, in the lower-level model, there are sixteen types that derive from the cross product of two independent random terms. -->
+
+<!-- Critically, one can derive the higher-level types from the lower level types, and beliefs about the higher level types from beliefs about the lower level types. For example, using the nomenclature in @humphreys2015mixing: -->
+
+<!-- \begin{eqnarray*} -->
+<!-- \text{adverse: }u_{10}^{high} &=& u_{01}^{K}\&u_{10}^{Y} \text{ or } u_{10}^{K}\&u_{01}^{Y} \\ -->
+<!-- \text{beneficial: }u_{01}^{high} &=& u_{01}^{K}\&u_{01}^{Y} \text{ or }  u_{10}^{K}\&u_{10}^{Y} \\ -->
+<!-- \text{chronic: } u_{00}^{high} &=& u_{00}^{Y} \text{ or }  u_{00}^{K}\&u_{01}^{Y} \text{ or }  u_{11}^{K}\&u_{10}^{Y}\\ -->
+<!-- \text{destined: }u_{11}^{high} &=& u_{11}^{Y} \text{ or }  u_{00}^{K}\&u_{10}^{Y} \text{ or }  u_{11}^{K}\&u_{01}^{Y} -->
+<!-- \end{eqnarray*} -->
+
+<!-- In the same way, the higher-level probabilities are implied by the lower level probabilities. -->
+
+<!-- \begin{eqnarray*} -->
+<!-- \text{adverse: }\lambda_{10}^{high} &=& \lambda_{01}^{K}\lambda_{10}^{Y} + \lambda_{10}^{K}\lambda_{01}^{Y} \\ -->
+<!-- \text{beneficial: }\lambda_{01}^{high} &=& \lambda_{01}^{K}\lambda_{01}^{Y} + \lambda_{10}^{K}\lambda_{10}^{Y} \\ -->
+<!-- \text{chronic: } \lambda_{00}^{high} &=& \lambda_{00}^{Y} + \lambda_{00}^{K}\lambda_{01}^{Y} + \lambda_{11}^{K}\lambda_{10}^{Y}\\ -->
+<!-- \text{destined: }\lambda_{11}^{high} &=& \lambda_{11}^{Y} + \lambda_{00}^{K}\lambda_{10}^{Y} + \lambda_{11}^{K}\lambda_{01}^{Y} -->
+<!-- \end{eqnarray*} -->
+
+<!-- Importantly, even without specifying a distribution over $U_K$ or $U_Y^{\text{lower}}$, a lower-level structural model could be informative by restricting the *ranges* of  $U_K$ or $U_Y^{\text{lower}}$. For instance, a lower level theory that imposed a monotonicity condition (no adverse effects) might exclude $t^K_{10}$ and $t^y_{10}$---that is, increasing $X$ never reduces $K$, and increasing $K$ never reduces $Y$.  -->
+
+<!-- We return  to this example below and show how observation  of $K$ can yield inference on causal estimands when  the theory places this kind of a structure on relationships. -->
+
+### Type disaggregation in a moderation model
+
+Alternatively, we might wonder *when* inequality causes democratization. Our simple claim, in panel (a), allows that $I$ *can* cause $D$, but provides no information about the conditions under which it does so. Those conditions are implicitly embedded within $\theta^D$, where they are left unspecified. We could, however, theorize some of what is left unsaid in in panel (a). We do this in panel (c), where we posit ethnic homogeneity ($E$) as a moderator of  inequality's effect on democratization. Panel (c) represents a theory of panel (a) in that it can help account for variation in causal effects that is unaccounted for by the model in (a).
+
 
 Model (c) has thus given substantive meaning to an aspect of the phenomenon that was merely residual variation in Model (a). Model (a) provides no account of why inequality has the effects it does, relying fully on $\theta^D$ as a placeholder for this uncertainty. In Model (c), $\theta^D$ plays a more modest role, with ethnic homogeneity doing a good deal of the work of determining inequality's possible effects. 
 
-In sum, Model (b) and Model (c) each *explain* Model (a), if in slightly different ways. Model (b) answers the explanatory question, "*How* does inequality affect democratization when it does?" Model (c) answers the explanatory question, "*Why* does inequality's effect on democratization vary?" Both theories provide richer, more interpretable accounts of the phenomenon of interest than the simpler model that they are theorizing.
 
-We note one final possibility. Imagine that we started with the quite *specific* claim that inequality sometimes has a positive effect on democratization and sometimes has no effect (with democratization happening for other reasons). Suppose we believed this claim to be true for some, possibly not well defined, domain of cases.^[This claim could be graphically represented by panel (a), but would involve a more restricted range for $\theta^D$ and simpler functional equation, involving only two types.] Model (c) could serve as a theory of this more specific claim in that Model (c), paired with some data, could explain the claim. In particular, Model (c) paired with the data $E=1$---we are in an ethnically homogeneous context---produces the more specific claim. Here, it is the theory *plus an observation* of context that accounts for the specific claim. 
+<!-- We note one final possibility. Imagine that we started with the quite *specific* claim that inequality sometimes has a positive effect on democratization and sometimes has no effect (with democratization happening for other reasons). Suppose we believed this claim to be true for some, possibly not well defined, domain of cases.^[This claim could be graphically represented by panel (a), but would involve a more restricted range for $\theta^D$ and simpler functional equation, involving only two types.] Model (c) could serve as a theory of this more specific claim in that Model (c), paired with some data, could explain the claim. In particular, Model (c) paired with the data $E=1$---we are in an ethnically homogeneous context---produces the more specific claim. Here, it is the theory *plus an observation* of context that accounts for the specific claim.  -->
 
 <!-- Similarly, take the functional equation $f_1: Y=X_1X_2$. Coupled with data $X_2=1$, $f_1$ implies the functional equation $f_2: Y=X_1$.  -->
 
 
-## Theory as a "lower-level" model
+<!-- ### Causal types in lower level models  -->
 
-We can, likewise, think of theories as implying the models they are theorizing. If you believe Model (b) in Figure \@ref(fig:Demtheory), then you also must believe Model (a): if inequality can affect mobilization, which can affect democratization, then inequality can affect democratization. Similarly, if you believe Model (c), then you must also believe Model (a): if it is true that inequality can have positive, negative, and null effects on democratization that depend on ethnic homogeneity, then it is also true, more simply, that inequality can have positive, negative, and null effects on democratization. 
+<!-- We have discussed theorization largely from a graphical perspective, showing how features of causal graphs change (nodes get split, combined, added, or removed) as we move down or up levels. But there is more that happens beneath the surface of a graphical structure when we theorize a claim: the space of causal types itself changes. We walk through how this works for the mediation and moderation theories described above.  -->
 
-More formally, let us say that a causal model, $M^\prime$, is a *theory* of $M$ if $M$ is implied by $M^\prime$. Theory is, thus, all relative. $M^\prime$ might itself sit atop a theory, $M^{\prime\prime}$, that implies $M^\prime$. To help fix the idea of theory as "supporting" or "underlying" the model(s) it theorizes, we refer to the theory, $M^\prime$, as a *lower*-level model relative to $M$ and refer to $M$ as a *higher*-level model relative to its theorization, $M^\prime$.^[We note that our definition of theory differs somewhat from that given in @pearl2009causality (p207): there a theory is a (functional) causal model and a restriction over $\times_j \mathcal{R}(U_j)$, that is, over the collection of contexts envisionable. Our definition also considers probabilistic models as theories, allowing statements such as ''the average effect of $X$ on $Y$ is 0.5.''] 
+<!-- ### Mediation {#medtheory} -->
 
-<!-- Higher-level models can be generated from lower-level models in two ways, both of which are consistent with common understandings of what it is for a set of claims to constitute or, conversely, derive from a ''theory.'' -->
+<!-- We begin with a simple claim: there are two binary variables, $X$ and $Y$, and $X$ may have an effect on $Y$. This claim is represented in Figure \@ref(fig:Highlow)(a) above. In this graph, $X$ is independent of $\theta^Y$, which means that it is as if $X$ is randomly assigned. -->
 
-Building on our discussion in Section \@ref(inequalitytheory), we can distill two ways in which lower-level models can relate to, or support, higher-level models:
-
-
-### Disggregating nodes
-
-A lower-level model, $M^\prime$, can be a representation of $M$ in which a node in $M$ has been disaggregated into multiple nodes.
+<!-- We will let $\theta^Y$ be a variable that ranges across our four different causal types, conditioning how $Y$ responds to $X$. While  $a, b, c$, and $d$ were heuristically useful as a way of introducing the  idea of a causal type, things will soon get more complicated, so it will be useful to have more flexible notation. Going forward, we will usually refer to causal types using $\theta$ notation, with subscripts and superscripts used to denote potential outcomes and outcome variables. In our binary $X \rightarrow Y$ setup, we can indicate the causal type governing $Y$'s response with notation of the form $\theta^Y_{ij}$, where $i$ and $j$ represent $Y$'s potential outcomes. Specifically, $i$ represents the value $Y$ takes on when $X=0$, while $j$ represents the value $Y$ takes on when $X=1$.^[The functional equation for $Y$ is then given by:  -->
+<!-- $$Y(x, \theta_{ij}^{Y_\text{higher}}) = \left\{ \begin{array}{cc}   -->
+<!-- i & \text{ if } x=0 \\ j & \text{ if } x=1 \end{array}  \right.$$] Thus, the translation from $a, b, c$ and $d$ notation is: -->
 
 
+<!-- * *a*: $\theta_{10}^Y$. A negative effect implies that $Y$ is $1$ when $X=0$ and $0$ when $X=1$. -->
+<!-- * *b*: $\theta_{01}^Y$. A positive effect implies that $Y$ is $0$ when $X=0$ and $1$ when $X=1$. -->
+<!-- * *c*: $\theta_{00}^Y$. A null "chronic" effect implies that $Y$ is $0$ regardless of $X$'s value. -->
+<!-- * *d*: $\theta_{11}^Y$. A null "destined" effect implies that $Y$ is $1$ regardless of $X$'s value. -->
 
-```{r, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:Highlow} Here we represent the simple claim that one variable causes another, and two theories --- lower-level models --- that could explain this claim. Both model (b) and model (c) involve theorization via disaggregation of nodes."}
 
-par(mfrow = c(3,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,2,2),
-       y = c(1,1,2),
-       names = c(
-         expression(paste(X)),
-         expression(paste("Y")),  
-         expression(paste(theta^Y))),
-       arcs = cbind( c(1, 3),
-                     c(2, 2)),
-       title = "(a) A Higher-Level Model",
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
-)
+<!-- To be clear, these $\theta_{ij}^Y$ terms are not random variables; they are the four _values_ (types) that the type-variable $\theta^Y$ can take on. -->
 
-hj_dag(x = c(1,2,2, 1.5, 1.5),
-       y = c(1,1,2, 1  , 2),
-       names = c(
-         expression(paste(X)),
-         expression(paste("Y")),  
-         expression(paste(theta^Y[lower])),
-         expression(paste(K)),
-         expression(paste(theta[K])) 
-         ),
-       arcs = cbind( c(1, 3, 5, 4),
-                     c(4, 2, 4, 2)),
-       title = "(b) A Lower-Level Model: Disaggregating into Mediation",
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
-)
+<!-- represented with the notation $u_{ij}$: we read the subscripts to mean that a unit of type $u_{ij}$ has outcome $i$ when $X=0$ and $j$ when $X=1$. Then let $u_Y^{higher}$ have a multinomial distribution over the four values of  $u_{ij}$ with event probabilities  $\lambda_{ij}^{higher}$. ; for example, let $u_X\sim \text{Unif}[0,1]$ and $X = \mathbb{1}(u_K<\pi^K)$. -->
 
-hj_dag(x = c(1,2, 2, 1.5),
-       y = c(1,1, 2, 2),
-       names = c(
-         expression(paste(X)),
-         expression(paste("Y")),  
-         expression(paste(theta^Y[lower])),
-         expression(paste(C)) 
-         ),
-       arcs = cbind( c(1, 3, 5, 4),
-                     c(2, 2, 4, 2)),
-       title = "(c) A Lower-Level Model: Disaggregating into Moderation",
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
-)
 
-```
+<!-- For example if $U_Y^{higher}$ is distributed normally and $Y$ takes on the value 1 if $bX+u_Y^{higher}$ is above some threshold, we have a probit model.  -->
+
+
+<!-- Now consider a theory that specifies a variable intervening between $X$ and $Y$. This theory is depicted in Figure \@ref(fig:Highlow)(b) above, where $M$ mediates the relationship. We see that there are now two $\theta$ terms, each representing a set of causal types for a different step in the causal chain. While $\theta^Y$ represented $Y$'s response to its parent $X$, $\theta^Y_{\text{lower}}$ represents $Y$'s response to its "new" parent, $M$. We now also need to conceive of a causal type capturing $M$'s response to $X$, and we let $\theta^M$ represent this type.^[This graph assumes no confounding in the mediating relationship either as the two $\theta$ terms and $X$'s assignment are all independent of one another.] -->
 
 
 
-<!-- ```{r, echo = FALSE, fig.width = 7, fig.height = 5, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:K} A model with one explanatory  variable (top left), two lower level models that can imply it, and one model that does not."} -->
+<!-- Now consider the alternative lower-level theory in which  $E$ is posited as a second parent of $D$. This graph contains the substantive assumptions that $E$'s value is determined independently of $I$'s, as well as the assumption that $I$ and $E$ are both as-if randomly assigned. -->
 
-<!-- par(mfrow = c(2,2)) -->
-<!-- par(mar=c(1.5,1.5,3.5,1.5)) -->
-<!-- hj_dag(x = c(1,1,2,2), -->
-<!--        y = c(1,2,1,2), -->
-<!--        names = c( -->
-<!--          expression(paste(X)), -->
-<!--          expression(paste(theta[X])), -->
-<!--          expression(paste("Y")), -->
-<!--          expression(paste(theta[Y]^{higher}))), -->
-<!--        arcs = cbind( c(2,1, 4), -->
-<!--                      c(1,3, 3)), -->
-<!--        title = "(a) Simplest X causes Y graph", -->
-<!--        add_functions = 0, -->
-<!--        contraction = .16, -->
-<!--        padding = .2 -->
-<!-- ) -->
+In this graph, we again have a $\theta_D^{\text{lower}}$ term, but it is a different object from $\theta_D^{\text{lower}}$ in the mediation graph. In this moderation model, $\theta_D^{\text{lower}}$ is more complex as it determines the mapping from two binary variables into $D$. A causal type in this setup now represents how a case will respond to four different possible combinations of $I$ and $E$ values. Rather than four causal types, we now have 16, as there are 16 possible ways in which a case might respond to two binary variables (see Table  \@ref(tab:PO16) in Chapter \@ref(models)).
 
-
-<!-- hj_dag(x = c(1,1,2,2, 1.5, 1.5), -->
-<!--        y = c(1,2,1,2, 1  , 2), -->
-<!--        names = c( -->
-<!--          expression(paste(X)), -->
-<!--          expression(paste(theta[X])), -->
-<!--          expression(paste("Y")), -->
-<!--          expression(paste(theta[Y]^{lower})), -->
-<!--          expression(paste(K)), -->
-<!--          expression(paste(theta[K])) -->
-<!--          ), -->
-<!--        arcs = cbind( c(2,1, 4, 6, 5), -->
-<!--                      c(1,5, 3, 5, 3)), -->
-<!--        title = "(b) Lower level graph 1:\nMediator specified", -->
-<!--        add_functions = 0, -->
-<!--        contraction = .16, -->
-<!--        padding = .2 -->
-<!-- ) -->
-
-<!-- hj_dag(x = c(1,1,2,2, 1.5, 1.5), -->
-<!--        y = c(1,2,1,2, 1.5, 2), -->
-<!--        names = c( -->
-<!--          expression(paste(X)), -->
-<!--          expression(paste(theta[X])), -->
-<!--          expression(paste("Y")), -->
-<!--          expression(paste(theta[Y]^{lower})), -->
-<!--          expression(paste(K)), -->
-<!--          expression(paste(theta[K])) -->
-<!--          ), -->
-<!--        arcs = cbind( c(2,1, 4, 6, 5), -->
-<!--                      c(1,3, 3, 5, 3)), -->
-<!--        title = "(c) Lower level graph 2:\nOrthogonal second cause", -->
-<!--        add_functions = 0, -->
-<!--        contraction = .16, -->
-<!--        padding = .2 -->
-<!-- ) -->
-
-<!-- hj_dag(x = c(1,1,2,2, 1.5, 1.5), -->
-<!--        y = c(1,2,1,2, 1.5, 2), -->
-<!--        names = c( -->
-<!--          expression(paste(X)), -->
-<!--          expression(paste(theta[X])), -->
-<!--          expression(paste("Y")), -->
-<!--          expression(paste(theta[Y]^{lower})), -->
-<!--          expression(paste(K)), -->
-<!--          expression(paste(theta[K])) -->
-<!--          ), -->
-<!--        arcs = cbind( c(2,1, 4, 6, 5, 5), -->
-<!--                      c(1,3, 3, 5, 3, 1)), -->
-<!--        title = "(d) An incompatible graph", -->
-<!--        add_functions = 0, -->
-<!--        contraction = .16, -->
-<!--        padding = .2 -->
-<!-- ) -->
-
-<!-- ``` -->
+In Table \@ref(tab:PO16b) we give a mapping from a subset of these lower level types to the upper level types corresponding to the model in (a). Here we use a  notation $\theta_{ij}^{gh}$ where the  subscripts and superscripts represent $Y$'s potential outcomes for different values of $I$ and $E$.^[To aid interpretation, we always place $I$ on the horizontal axis and a second variable (here, $E$) on the vertical access. In other words, the value of $I$ increases from 0 to 1 as we move to the _right_, from $i$ to $j$ or from $g$ to $h$. And the value of $E$ increases from 0 to 1 as we move _up_, from $i$ to $g$ or from $j$ to $h$. $\theta_{ij}^{gh}$ thus denotes a unit that has outcome $i$ when $I=0, E=0$, $j$ when $I=1, E=0$, $g$ when $I=0, E=1$, $h$ when $I=1, E=1$.]
 
 
 
-For instance, suppose we start with the higher-level model represented in Figure \ref{fig:Highlow}(a). We can then offer the graph in panel (b) as a *theory*, a lower-level model, of (a). Informally, we have added a step, $K$, in the causal chain between $X$ and $Y$, a familiar mode of theorization, exactly parallel to our model of mediation by mobilization just above. More formally, however, we have in fact *split* one node in (a) into two nodes. 
+----------------------------------------------------------------------------------------------------------------------------
+   Low Type          if $I=E=0$   if $I=0,E=1$  if $I=1,E=0$   if $I=E=1$   High Type
+-------------------  -----------  ------------  -------------  -----------  ------------------------------------------------
+$\theta^{00}_{00}$     0           0             0             0             $\theta^D_{00}$
 
-In the higher-level model, (a), $Y$ is a function of $X$ and a disturbance $\theta^Y$, the latter representing all things other than $X$ than can affect $Y$. In our four-type setup, $\theta^Y$ represents all of the (unspecified) sources of variation in $X$'s effect on $Y$. When we add $K$, $X$ now does not directly affect $Y$ but only does so via $K$. Further, we model $X$ as acting on $K$ "with error," with $\theta^K$ representing all of the (unspecified) factors determining $X$'s effect on $K$. The key thing to notice here is that $\theta^K$ now represents *a portion of the variance that $\theta^Y$ represented in the higher-level graph*: some of the variation in $X$'s effect on $Y$ now arises from $X$'s effect on $K$, which is captured by $\theta^K$. So, for instance, $X$ might have no effect on $Y$ because $\theta^K$ takes on a value such that $X$ has no effect on $K$. Likewise, any effect of $X$ on $Y$ must arise from an effect of $X$ on $K$, captured in $\theta^K$'s value. ^[As we emphasize further below, it is in fact only this "error" in the $X\rightarrow K$ link that makes the addition of $K$ potentially informative as a matter of research design: if $K$ were a deterministic function of $X$ only, then knowledge of $X$ would provide full knowledge of $K$, and nothing could be learned from observing $K$.] What $\theta^K$ represents, then, is that part of the original $\theta^Y$ that arose from some force other than $X$ operating at the *first* step of the causal chain from $X$ to $Y$. 
+      2                 0           0             0            1             $\theta^D_{00}$ if $E=0$, else $\theta^D_{01}$ 
 
-So now, $\theta^Y$ is not quite the same entity in the lower-level graph that it was in the higher-level graph. In the original graph, $\theta^Y$ represented *all* sources of variation in $X$'s effect on $Y$. In the lower-level model, with $K$ as mediator, $\theta^Y$ represents only random variation in $K$'s effect on $Y$. $\theta^Y$ has been expunged of any factors shaping the first stage of the causal process, which now reside in $\theta^K$. Reflecting a convention that we use throughout the book, we highlight this change in $\theta^Y$'s meaning by referring in the second model to $\theta^{Y_\text{lower}}$. 
+      3                 0           0             1            0             $\theta^D_{01}$ if $E=0$, else $\theta^D_{10}$
 
-Theorization here thus starts with the proliferation of substantive variables---adding beliefs about intervening steps in a causal process. But, critically, it also involves an accompanying disaggregation of unexplained variation. Addition and splitting thus go hand-in-hand: the *insertion* of a mediator between $X$ and $Y$ also involves the *splitting* of $Y$'s unspecified parent ($\theta_Y$).   
+      4                 0           0             1            1             $\theta^D_{01}$
 
-<!-- Put differently, when we construct the lower-level model in (b), we are taking that part of $Y$ not determined by $X$ and splitting it in two: a non-$X$ input into $K$ and a non-$K$ (and thus also non-$X$) input into $Y$. -->
+  $\vdots$             $\vdots$     $\vdots$      $\vdots$     $\vdots$      $\vdots$     
 
-Consider next panel (c) in Figure \ref{fig:Highlow}, which also supports (implies) the higher-level theory in panel $(a)$. The logical relationship between models $(a)$ and $(c)$, however, is somewhat different. Here the lower-level model *specifies* one of the conditions that comprised $\theta^Y$ in the higher-level model. In specifying a moderator, $C$, we have extracted $C$ from $\theta^Y$, leaving $\theta^{Y_\text{lower}}$ to represent all factors *other than $C$* that condition $X$'s effect on $Y$. (Again, the relabeling as $\theta^{Y_\text{lower}}$ reflects this change in the term's meaning.) While we might add a $\theta^C$ term pointing into $C$, this is not necessary. Whereas in Model (b) we have extracted $\theta^K$ from $\theta^Y$, in Model (c), it is $C$ itself that we have extracted from $\theta^Y$, substantively specifying what had been just a srandom disturbance.
+      15               1           1             1             0             $\theta^D_{11}$ if $E=0$, else $\theta^D_{10}$
 
-
-### Generalizing a model
-
-A lower-level model, $M^\prime$, can also be a representation of $M$ in which a node has been introduced that permits variation in a feature of context that is fixed and taken-for-granted in $M$. Here, $M^\prime$ theorizes $M$ in the sense of embedding $M$ within a *more general* set of beliefs about how the world works. $M$ then becomes a special case of the theorized relations, one that holds when we condition on some data, specifying some particularity of context.
-
-To illustrate this approach to theorization, consider again graphs (a) and (c) in Figure \ref{fig:Highlow}. We have discussed how the graph in panel (c) can represent a disaggregation of $\theta^Y$ from panel (a) into $\theta^{Y_\text{lower}}$ and $C$. An alternative possibility, however, is to employ a moderation model that represents a more general claim than the higher-level model that it supports. For instance, the graph in panel (a) might represent the causal function $Y=X+\theta^Y$. In this model, $X$ always has an effect on $Y$. The graph in panel (c), in turn, might represent the more general function, $Y=XC+\theta^Y$ (where $C$ is binary). Now, whether $X$ has an effect depends on the value of $C$. In particular, model (c) combined with the observation $C=1$ directly implies model (a). Model (a) is a special case of model (c) that holds in and only in the context $C=1$. In answer to the question, "Why do you believe model (a)?" one could respond with model (c) plus the observation $C=1$. 
-
-Note the difference in how theorization has proceeded for the two moderation models (both graphically represented in panel (c)). When we introduce moderation via the disaggregation of nodes, we pull content out of $\theta^Y$ and specify it substantively. When we generalize, on the other hand, we *add* a node, a source of variation not factored into the original model at all. We can think of that variation as implicitly conditioned-on in the higher-level model.
-
-As a secondary matter, note that the $\theta$ term pointing into $Y$ may or may not be altered by the addition. In particular, we will explore later, if $\theta^Y$ is a vessel for causal types, then the number of possible causal types---and, thus, $\theta^Y$'s range---must expand as we add nodes pointing into $Y$. But in the functions we have used in our illustration, $\theta^{Y_\text{lower}}$ remains unchanged when we add the $C$ node. In both the higher- and lower-level models, $\theta^Y$ represents precisely the same random disturbance. 
+$\theta^{11}_{11}$     1           1             1             1             $\theta^D_{11}$
+-----------------------------------------------------------------------------------------------------------------------------
+Table: (\#tab:PO16b) With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the two variables.
 
 
-
-<!-- $M^\prime$ is a *theory* of $M$ in that it, in a sense, helps explain the dependencies of $Y$ on $X$ more fully than does $M$. -->
-
-## Moving between higher- and lower-level models
-
-As we will see, thinking about models as conditionally nested within one another can be empirically useful. It provides a way of generating empirical leverage on a causal question by plumbing more deeply our background knowledge about a domain of interest. When we more fully specify higher-level claims via a more elaborate, lower-level model, we are a making explicit unspecified conditions on which the higher-level relationships depend. In doing this, we are identifying potentially observable nodes that might be informative about our research question.
+<!-- To illustrate, $\theta_Y^{\text{lower}}=$: -->
 
 
-### Mappings are not one-to-one
+<!-- * $\theta_{00}^{11}$ means that $I$ has no effect under any value of $E$, and $E$ has a positive effect under any value of $I$.  -->
+<!-- * $\theta_{10}^{10}$ implies that $I$ always has a negative effect, and $E$ never has an effect.  -->
+<!-- * $\theta_{01}^{11}$ represents one kind of conditional effect: $I$ has a positive effect only when $E=0$, and $E$ has a positive effect only when $I=0$. -->
+
+
+Importantly we see that the mapping between lower- and higher-level types can depend on data, that is, on the value of the moderator. More generally we can also think of the value of exogeneous nodes, $E$ and $I$, as being nodal types for those nodes. The lower level causal type in this case is the concatenation of the nodal types for $E$, nodal types for $I$ and the nodaly type for $D$, which specified how $D$ responds to $E$ and $I$. Thus we can think of the the higher level type as depending uniquely on the fully specified lower level type.
+
+For instance, a case has type $\theta_{01}$ in the higher-level model if it has type $\theta_{01}^{11}$ in the lower-level model _and_ $E=0$. This is a case for which $I$ has a positive effect on $D$ when $E=0$ _and_ in which $E$ _is in fact_ 0. On the other hand, the same lower level type, $\theta_{01}^{11}$, in combination with $E=1$ maps onto the type $\theta_{11}$ in the higher-level model---a type in which $D$ is 1 regardless of $I$'s value. 
+
+Meanwhile, the lower-level type $\theta_{10}^{10}$ maps onto the higher-level type $\theta_{10}$ regardless of the data ($E$'s value) since this lower-level type implies that $I$ has a negative effect on $D$ under any value of $E$. 
+
+In later chapters, we represent all lower- to higher-level mappings relevant to a question of interest with the use of "type-reduction" tables that allow one to readily see how inferences drawn at one level inform causal questions posed at another level.
+
+<!-- We let $u_Y^{\text{lower}}$ in this graph denote a multinomial distribution over the sixteen values of  $u_{ij}^{gh}$ with event probabilities  $\lambda_{ij}^{gh}$. -->
+
+<!-- I changed abcd scripts above to ghij and made corresponding (I think) changes below. I don't care what it is but abcd obviously could be confusing in this context. -->
+
+<!-- The sixteen types are illustrated in Table \@ref(tab:types2X) in the appendices. -->
+
+<!-- Again, the types in the higher level mapping are functions of the types in the lower-level mapping. For example,  a unit has type $u_{01}$ in the higher level model if $K=1$ and it is of type $u_{00}^{01},u_{10}^{01},u_{01}^{01}$, or $u_{11}^{01}$, or if $K=0$ and it is of type $\lambda_{01}^{00},\lambda_{01}^{10},\lambda_{01}^{01}$, or $\lambda_{01}^{11}$.  -->
+
+<!-- We write this as: -->
+
+<!-- $$u_{01} =  ((K=1) \land (t^{lower} \in \{u_{00}^{01} \cup u_{10}^{01} \cup  u_{01}^{01} \cup u_{11}^{01} \}) \lor  ((K=0) \land (t^{lower} \in \{\lambda_{01}^{00} \cup \lambda_{01}^{10} \cup \lambda_{01}^{01} \cup \lambda_{01}^{11}\})$$ -->
+
+<!-- In the same way, the probability of type $u_{01}$ can be written in terms of the parameters of the lower-level graph.  Importantly, the parameters of the higher-level distribution  $u_Y^{higher}$ depend on both $u_K$ and $u_Y^{\text{lower}}$. Thus, unlike the mediation case above, the probative value depends on the likelihood of an *observable* event occurring. Specifically, the share of a given higher-level type is given by: -->
+
+<!-- $$\lambda_{ij} = P(u_Y^{higher} = u_{ij}) = \pi^K\left(\lambda_{00}^{gh}+\lambda_{10}^{gh}+\lambda_{01}^{gh}+\lambda_{11}^{gh}\right) -->
+<!-- + -->
+<!-- (1-\pi^K)\left(\lambda_{ij}^{00}+\lambda_{ij}^{10}+\lambda_{ij}^{01}+\lambda_{ij}^{11}\right)$$ -->
+
+<!-- For example: -->
+
+<!-- $$\lambda_{00} = P(u_Y^{higher} = u_{00}) = \pi^K\left(\lambda_{00}^{00}+\lambda_{10}^{00}+\lambda_{01}^{00}+\lambda_{11}^{00}\right) -->
+<!-- + -->
+<!-- (1-\pi^K)\left(\lambda_{00}^{00}+\lambda_{00}^{10}+\lambda_{00}^{01}+\lambda_{00}^{11}\right)$$ -->
+
+
+<!-- Conditional probabilities follow in the usual way. Consider, for instance, the case where it is known that $X=Y=1$ and so the posterior probability of type $u_{01}$ is simply $P(i \in u_{01} | X=Y=1) = \frac{\lambda_{01}}{\lambda_{01}+\lambda_{11}}$. Note that $\pi^x$ does not appear here as this $X$ is orthogonal to $u_Y$. The probability of type $u_{01}$, knowing that $X=Y=1$, can be written in terms of the parameters of the $u$ distributions in the lower-level graph.  -->
+
+<!-- $$P(i \in u_{01} | X=Y=1) = \frac{ -->
+<!-- \pi^K\left(\lambda_{00}^{01}+\lambda_{10}^{01}+\lambda_{01}^{01}+\lambda_{11}^{01}\right) -->
+<!-- + -->
+<!-- (1-\pi^K)\left(\lambda_{01}^{00}+\lambda_{01}^{10}+\lambda_{01}^{01}+\lambda_{01}^{11}\right) -->
+<!-- }{ -->
+<!-- \sum_{i = 0}^1\left(\pi^K\left(\lambda_{00}^{i1}+\lambda_{10}^{i1}+\lambda_{01}^{i1}+\lambda_{11}^{i1}\right) -->
+<!-- + -->
+<!-- (1-\pi^K)\left(\lambda_{i1}^{00}+\lambda_{i1}^{10}+\lambda_{i1}^{01}+\lambda_{i1}^{11}\right) -->
+<!-- \right)}$$ -->
+
+<!-- We return below to this example and describe how the lower-level model can be used to generate inferences on relations implied by the higher level model.  -->
+
+
+
+
+
+## Rules for moving between higher- and lower-level models
+
+Thinking about models as conditionally nested within one another can be empirically useful. It provides a way of generating empirical leverage on a causal question by plumbing more deeply our background knowledge about a domain of interest. When we more fully specify higher-level claims via a more elaborate, lower-level model, we are a making explicit unspecified conditions on which the higher-level relationships depend. In doing this, we are identifying potentially observable nodes that might be informative about our research question.
+
 
 As we develop lower-level models to support our claims, or determine which claims are supported by our theories, what kinds of moves are we permitted to make? One important thing to note is that the mappings between higher-level claims and theories may not be one-to-one. A single theory can support multiple higher-level theories. Moreover, a single higher-level relation can be supported by multiple, possibly incompatible lower-level theories. 
 
@@ -321,11 +411,9 @@ $H_3$, however, can be supported only by one of these theories: only in $L_1$, a
 Thus multiple (possibly *incompatible*) theories can usually be proposed to explain any given causal effect.  When seeking an explanation for, say, $H_1$, the choice between $L_1$ and $L_2$ is not dictated by logic; it must be drawn from a substantive belief about which set of causal dependencies operates in the world. On the other hand, $L_2$ *is* logically ruled out as an explanation of $H_3$. Further, any given theory logically implies multiple (necessarily *compatible*) higher-level claims about causal relations.
 
 
-### Permissible moves across levels
-
 What, more generally, are the permissible moves across levels? 
 
-#### Moving down levels 
+### Moving down levels 
 
 We have already discussed two possible forms of theorization --- moves down a level: (i) disaggregating existing nodes, introducing beliefs about mediation or moderation, or (ii) adding nodes representing variation in a feature of context that is implicitly held constant in the higher-level model.
 
@@ -376,7 +464,7 @@ We start with a higher-level model, in panel (a), in which inequality affects de
 Put differently, if two variables are independent--- or conditionally independent given a third variable---in one model, then this same relation of independence (or conditional independence) must be captured in any theory of that model. A theory can *add* conditional independencies not present in the higher-level model. For instance, a mediation theory, $X \rightarrow M \rightarrow Y$, implies a conditional independence that is not present in the higher-level model that it supports, $X \rightarrow Y$: in the lower-level model only, $X$ is conditionally independent of $Y$ given $M$. But we may not theorize away (conditional) independencies insisted on by our higher-level claim.
 
 
-#### Moving up levels
+### Moving up levels
 
 Moving in the other direction, what, in general, are the permissible *simplifications* of lower-level models? In other words, given a theory, what are the higher-level claims that it can support?
 
@@ -387,7 +475,7 @@ When we move up a level --- i.e., eliminate one or more nodes --- the key rule i
 
 We can work out what this means, separately, for eliminating *endogenous* nodes and for eliminating *exogenous* nodes.
 
-##### Eliminating endogenous nodes
+*Eliminating endogenous nodes*
 
 Eliminating an endogenous nodes means removing a node with parents (direct causes) represented on the graph. If the node also has one or more children, then the node captures a dependency: it links its parents to its children. When we eliminate this node, preserving these dependencies requires that all of the eliminated node's parents adopt---become parents of---all of the eliminated node's children. Thus, for instance in panel (b) of Figure \ref{fig:Highlow}, if we were to eliminate $M$, $M$'s parents ($X$ and $\theta^M$) need to adopt $M$'s child, $Y$. We see in panel (a) of the figure, the higher-level model, that $X$ is now pointing directly into $Y$. 
 
@@ -395,7 +483,7 @@ As for $\theta^M$, it too must now point directly into $Y$---though we can use a
 
 More intuitively, when we simplify away a mediator, we need to make sure that we preserve the causal relationships being mediated---both those among substantive variables and any random shocks at the mediating causal steps.^[Eliminating endogenous nodes may also operate via "encapsulated conditional probability distributions" [@koller2009probabilistic] wherein a system of nodes, $\{Z_i\}$  is represented by a single node, $Z$,  that takes the parents of  $\{Z_i\}$ not in $\{Z_i\}$ as parents to $Z$ and issues the children of $(Z_i)$ that are not  in $(Z_i)$ as children. However, this is not a fundamental alteration of the graph.]
 
-##### Eliminating exogenous nodes
+*Eliminating exogenous nodes*
 
 What about eliminating exogenous nodes---nodes with no parents? For the most part, exogenous nodes cannot be eliminated, but must either be replaced by or incorporated into $U$ (or $\theta$) terms. The reason is that we need preserve any dependencies or variation generated by the exogenous node.  Figure \@ref(fig:elimrules) walks through four different situations in which we might want to simplify away the exogenous node, $X$. (Here we use the more generic $U$ notation, though the same principles apply if these are type-receptacles($\theta$.)
 
@@ -624,7 +712,7 @@ We can also read Figure \@ref(fig:runningsubs) as telling us the set of claims f
 
 
 
-##### Conditioning on nodes
+#### Conditioning on nodes
 
 A further permissible "upward" move is conditioning on a node. When we condition on a node, we are restricting the higher-level model in scope to situations in which that node's value is held constant. Doing so allows us to eliminate the node as well as all arrows pointing into it or out of it. Consider three different situations in which we might condition on a node:
 
@@ -734,7 +822,56 @@ Functional (but not probabilistic)  causal models allow for the representation o
 <!-- We give an example of one such model below when we turn to extensive-form games for a lower-level theory that supports our running example.   -->
 
 
-**BOXES**
+
+
+
+## Conclusion
+
+We clsoe this chapter by considering how the understanding of theory that we work with in this book compares to other prominent understandings of theory. 
+
+**Theory as tautology.**  The claim that the number of Nash equilibria is generically odd in finite games is often understood to be a theoretical claim. Unless there are errors in the derivation of the result, the claim is true in the sense that the conclusions follow from the assumptions. There is no evidence that we could go looking for in the world to assess the claim. The same can be said of the theoretical claims of many formal models in social sciences; they are theoretical deductions of the if-then variety [@clarke2012model]. Theory in this sense is true by tautology. By contrast, theory as we define it in this book refers to claims with *empirical* content: a theory refers to causal relations in the world that might or might not hold, and is susceptible to empirical testing. The deductive _logical_ relations that hold in a causal model are those of conditional independence, as discussed in Chapter \@ref(models): for instance, if $X$ causes $Y$ only through $M$ in a theory, then $X$ and $Y$ are conditionally independent given some value of $M$.
+
+**Theory as a collection of maps.** According to @clarke2012model, building on a semantic view of theory (@giere2010explaining), a theory is a collection of models, together with a set of hypotheses linking them to the real world. As in our usage, Clarke and Primo see theories and models as very similar objects: for them, a theory is a system of models; for us, a theory is a supporting model. In both frameworks, there is no real difference in kind between models and theories.
+
+Our approach also shares with Clarke and Primo the idea that models are not full and faithful reflections of reality; they are maps designed for a particular purpose. In the case of causal models, the purpose is to capture relationships of independence and possible causal dependence. As we have shown, that is a purpose that allows for the stripping away of detail---though it also forbids certain simplifications (such as any simplification that removes a dependency between variables). Clarke and Primo see models as useful to the extent that they are similar to features of the real world in ways related to the model's purpose. Along these lines, a causal model will be useful to the extent that it posits relations of independence that are similar to those prevailing in the domain under investigation.
+
+**Theory as a testable claim** In the hypothetico-deductive framework, often traced back to @popper2014conjectures and highly influential in empirical political science, empirical social science is an activity of theory-*testing*.  Having developed a theory, we then derive from it a set of empirical predictions and then test those predictions against evidence. In @clarke2012model, we also seek to confirm theories by developing and testing hypotheses about the similarity of a model or theory to particular features of the world. In both cases, a theory is posited---possibly on the basis of logic or background knowledge---and then assessed. The value (truth or usefulness) of the model itself is the object of inquiry.
+
+In a causal-model framework, theories are always tentative, and we can subject any model or theory to empirical evaluation, a task to which we turn in Chapter \@ref(evaluation). However, in the book's setup, theories are first and foremost _expressions of what we already know and don't know_ about a given causal domain when inquiry begins. We encode this background knowledge in order to inform research-design choices and draw inferences from the data.  Models and theories are thus, in this sense, the world within which inquiry unfolds. Indeed, as we explore in Chapter \@ref(questions), the very questions we ask live within---can be represented as parts of---our theories. 
+
+<!-- **Theory as model.** Although @clarke2012model argue for a separation of the ideas of model and theory, it is common for social scientists to use the terms interchangeably to denote an abstract representation of some part of the world that is of interest. For instance, a model may stipulate that outcome $X$ can have a positive effect on $Y$ because $X$ can cause $M$ and $M$ can cause $Y$.  One can read from a model how things work in the context of the model: for instance, if $M$ does not obtain, then under this model, $X$ does not cause $Y$.   One can use a model to make claims about the world only by assuming a mapping from elements in the model to elements in the worlds.  In this sense a  model is best thought of as an object that may or may not be useful [@clarke2012model]; whether the model itself is true or false is, in this usage, not a coherent question.  -->
+
+<!-- **Theory as empirical claim.** In common usage, "a theory of" a phenomenon is a direct claim about the phenomenon, in the world. The claim that natural resources cause conflict is a theoretical claim of this form. The claim is certainly not true by definition, and empirical evidence can be used to assess it. In this claim, the *theory*, as usually understood, is certainly thin; the claim is no more than an empirical proposition, and it possesses no internal logic. Yet, more elaborate collections of empirical propositions are easily constructed. For instance: natural resources cause conflict because they can finance secessionist claims in resource rich areas.^[This latter claim does seem to possess something like a logic; though it does not take much to see that the logic is just a slightly more elaborate set of empirical claims. The outcomes do not follow  *logically* from the causes----there is no logical reason why secessionist claims would cause conflict, but the theory---as a collection of claims---has implications similar to those in the model in the paragraph above: if there are no secessionist claims, then under this theory, natural resources are not causing conflict.] Theory in this sense can certainly be right or wrong. -->
+
+
+
+<!-- In this book we take a somewhat idealist position and assume that we are permanently inhabiting a world of models.  -->
+
+<!-- The distinction between the last two accounts is sometimes confusing, and  @clarke2012model make a case for cleaning up the language on this front. In their account, drawing on @giere2010explaining, a theory might be best thought of as a set of models accompanied by hypotheses linking the model to the question of interest in the  world.  -->
+
+<!-- We see our approach to theory as models as following in the spirit of  @clarke2012model and  @giere2010explaining yet also as being consistent with the treatment of models in the literature on probabilistic causal models with which this book is centrally engaged. A nice feature is that it preserves a close associated between theory and explanation and it incorporates naturally the notion of deduction without requiring that models themselves are statements of the  *if-then* variety. -->
+
+**Theory as generalization** In another of the many uses of "theory," political scientists often think of theorization as generalization. For @Van-Evera:1997 and @przeworski1970logic, for instance, theories are by their nature general statements that we can use to explain specific events. In this view, "Diamond resources caused Sierra Leone's civil war" is a case-specific explanation; "Natural resource endowments cause civil war" is a theoretical formulation. 
+
+In our treatment of theory as a lower-level causal model, however, there is no generic sense in which a theory is more or less general than the higher-level claim that it explains. In this book's framework, we _can_ theorize by generalizing: when we elaborate a model by building in variation in a factor that was held constant in the higher-level claim, we are making the model more general in scope. If our natural resources claim implicitly applies only to weak states, we can theorize this claim by allowing state strength to vary and articulating how the natural-resource effect hinges on that claim. 
+
+However, when we theorize by disaggregating nodes---say, by adding intervening causal steps---we have in fact made a more _specific_ claim. Natural resources may cause civil war under a broad set of circumstances. Natural resources will cause civil war *through looting by rebel groups* under an almost certainly narrower set of circumstances. Here, the more elaborate argument---the theorization of *why* $X$ causes $Y$---is actually a stronger claim, with narrower scope, than the simpler one that it supports. 
+
+**The value of parsimony** @Van-Evera:1997 and @przeworski1970logic also express a common view in characterizing _parsimony_ as a quality of good theory. While they recognize that parsimony must often be traded off against other goods, such as accuracy and generality, _ceteris paribus_ a more parsimonious theory---one that uses fewer causal variables to explain variation in a given outcome---is commonly understood to be a better theory. 
+
+We do not take issue with the idea that simpler models and explanations are, all else equal, better. But the succeeding chapters also demonstrate a distinctive and important way in which all else will often not be equal when we seek to use theory to guide research design and support causal inference. To foreshadow the argument to come, the elaboration of more detailed, lower-level models can direct us to new opportunities for learning. As we unpack a higher-level claim, we will often be identifying additional features of a phenomenon the observation of which can shed light on causal questions of interest. Moreover, our background beliefs---the prior knowledge on which causal inference must usually rest---are often more informative at lower levels than at higher levels: it will, for instance, often be easier for us express beliefs about causal effects for smaller steps along a causal chain than about an overarching $X \rightarrow Y$ effect. 
+
+Making things more complicated, of course, still makes things more complicated. And we should avoid doing so when the payoff is small, as it will sometimes be. But in the pages to come, we will also see a distinct set of benefits that arise from drilling more deeply into our basis of prior knowledge when formulating inferential strategies.
+
+<!-- , with these claims,  perhaps derived or inspired from some model via a statement that the model represents the world faithfully for some purpose.  -->
+
+<!-- The key difference as we see it is between representations of a system, a model, and claims that the model itself represents another system---the world---in some ways. The difference betw  -->
+
+
+
+## Chapter Appendices
+
+### Summary Boxes
 
 ***
 
@@ -774,208 +911,8 @@ When we disaggregate or add nodes to a model, new conditional independencies can
 ***
 
 
-## Beneath the Graph: Causal Types in Lower-Level Models
 
-We have discussed theorization largely from a graphical perspective, showing how features of causal graphs change (nodes get split, combined, added, or removed) as we move down or up levels. But there is more that happens beneath the surface of a graphical structure when we theorize a claim. In this section, we return to our causal-type framework, in which causal types are captured by $\theta$ terms. While we have already shown how we can introduce causal types into the simplest $X \rightarrow Y$ model, we work through here how the causal-type space changes as we complicate that model. We show, first, how causal types operate a mediation model, and then how they operate in a model with moderation.
-
-### Mediation as Theory {#medtheory}
-
-We begin with a simple claim: there are two binary variables, $X$ and $Y$, and $X$ may have an effect on $Y$. This claim is represented in Figure \ref{fig:Highlow}(a) above. In this graph, $X$ is independent of $\theta^Y$, which means that it is as if $X$ is randomly assigned.
-
-We will let $\theta^Y$ be a variable that ranges across our four different causal types, conditioning how $Y$ responds to $X$. While  $a, b, c$, and $d$ were heuristically useful as a way of introducing the  idea of a causal type, things will soon get more complicated, so it will be useful to have more flexible notation. Going forward, we will usually refer to causal types using $\theta$ notation, with subscripts and superscripts used to denote potential outcomes and outcome variables. In our binary $X \rightarrow Y$ setup, we can indicate the causal type governing $Y$'s response with notation of the form $\theta^Y_{ij}$, where $i$ and $j$ represent $Y$'s potential outcomes. Specifically, $i$ represents the value $Y$ takes on when $X=0$, while $j$ represents the value $Y$ takes on when $X=1$.^[The functional equation for $Y$ is then given by: 
-$$Y(x, \theta_{ij}^{Y_\text{higher}}) = \left\{ \begin{array}{cc}  
-i & \text{ if } x=0 \\ j & \text{ if } x=1 \end{array}  \right.$$] Thus, the translation from $a, b, c$ and $d$ notation is:
-
-
-* *a*: $\theta_{10}^Y$. A negative effect implies that $Y$ is $1$ when $X=0$ and $0$ when $X=1$.
-* *b*: $\theta_{01}^Y$. A positive effect implies that $Y$ is $0$ when $X=0$ and $1$ when $X=1$.
-* *c*: $\theta_{00}^Y$. A null "chronic" effect implies that $Y$ is $0$ regardless of $X$'s value.
-* *d*: $\theta_{11}^Y$. A null "destined" effect implies that $Y$ is $1$ regardless of $X$'s value.
-
-
-To be clear, these $\theta_{ij}^Y$ terms are not random variables; they are the four _values_ (types) that the type-variable $\theta^Y$ can take on.
-
-<!-- represented with the notation $u_{ij}$: we read the subscripts to mean that a unit of type $u_{ij}$ has outcome $i$ when $X=0$ and $j$ when $X=1$. Then let $u_Y^{higher}$ have a multinomial distribution over the four values of  $u_{ij}$ with event probabilities  $\lambda_{ij}^{higher}$. ; for example, let $u_X\sim \text{Unif}[0,1]$ and $X = \mathbb{1}(u_K<\pi^K)$. -->
-
-
-<!-- For example if $U_Y^{higher}$ is distributed normally and $Y$ takes on the value 1 if $bX+u_Y^{higher}$ is above some threshold, we have a probit model.  -->
-
-
-Now consider a theory that specifies a variable intervening between $X$ and $Y$. This theory is depicted in Figure \ref{fig:Highlow}(b) above, where $M$ mediates the relationship. We see that there are now two $\theta$ terms, each representing a set of causal types for a different step in the causal chain. While $\theta^Y$ represented $Y$'s response to its parent $X$, $\theta^Y_{\text{lower}}$ represents $Y$'s response to its "new" parent, $M$. We now also need to conceive of a causal type capturing $M$'s response to $X$, and we let $\theta^M$ represent this type.^[This graph assumes no confounding in the mediating relationship either as the two $\theta$ terms and $X$'s assignment are all independent of one another.]
-
-We thus allow $X$ to have a positive, negative, or no effect on $M$, with $\theta^M$ taking on four possible values:
-
-
-* *a*: $\theta_{10}^M$ 
-* *b*: $\theta_{01}^M$
-* *c*: $\theta_{00}^M$
-* *d*: $\theta_{11}^M$
-
-
-And we allow for $M$ to have a positive, negative, or no effect on $Y$, with $\theta^Y_{\text{lower}}$'s possible values being:
-
-
-* *a*: $\theta_{10}^Y$ 
-* *b*: $\theta_{01}^Y$
-* *c*: $\theta_{00}^Y$
-* *d*: $\theta_{11}^Y$
-
-
-We can now think about _combinations_ of types in the lower-level model as mapping onto types in the higher-level model. We work through these mappings in greater detail later in the book, but consulting table \@ref(tab:highlowmapping), one can readily see how this works. 
-
-
-
-
-|                    | $\theta_{10}^{Y_{lower}}$  | $\theta_{01}^{Y_{lower}}$  | $\theta_{00}^{Y_{lower}}$  | $\theta_{11}^{Y_{lower}}$  |
-|--------------------|----------------------------|----------------------------|----------------------------|----------------------------|
-| $\theta_{10}^{M}$  | $\theta_{01}^{Y_{higher}}$ | $\theta_{10}^{Y_{higher}}$ | $\theta_{00}^{Y_{higher}}$ | $\theta_{11}^{Y_{higher}}$ |
-| $\theta_{01}^{M}$  | $\theta_{10}^{Y_{higher}}$ | $\theta_{01}^{Y_{higher}}$ | $\theta_{00}^{Y_{higher}}$ | $\theta_{11}^{Y_{higher}}$ |
-| $\theta_{00}^{M}$  | $\theta_{11}^{Y_{higher}}$ | $\theta_{00}^{Y_{higher}}$ | $\theta_{00}^{Y_{higher}}$ | $\theta_{11}^{Y_{higher}}$ |
-| $\theta_{11}^{M}$  | $\theta_{00}^{Y_{higher}}$ | $\theta_{11}^{Y_{higher}}$ | $\theta_{00}^{Y_{higher}}$ | $\theta_{11}^{Y_{higher}}$ |
-Table: (\#tab:highlowmapping) Mapping from lower level nodal types on $M$ and $Y$ to higher level causal types on $Y$. 
-
-For instance, in a case in which both $\theta^M=\theta^M_{01}$ (a positive effect of $X$ on $M$) and $\theta^{Y_{\text{lower}}}=\theta_{01}^{Y_{lower}}$ (a positive effect of $M$ on $Y$), we have a positive effect of $X$ on $Y$---meaning that, in the _higher-level_ model, $\theta^{Y_{higher}}=\theta^{Y_{higher}}_{01}$. Two linked negative effects also generate a positive effect of $X$ on $Y$ and so map onto the same higher-level type. Further, it is easy to see that if there is no causal effect at _either_ the $X \rightarrow M$ step _or_ the $M \rightarrow Y$ step, we will have one of the null effect types at the higher level since, in this model, $X$ cannot affect $Y$ unless there are causal effects at both constituent steps.^[These mappings, of course, hinge on the fact that $X$ affects $Y$ _only_ through $M$ in this model (no direct effects or other pathways).]
-
-To foreshadow the discussion in later chapters, these mappings are critical: they allow us to use inferences drawn at a lower level to answer questions posed at a higher level.
-
-<!-- The lower-level functional equations are formally similar though now each unit's outcome (given $X$) depends on two event probabilities: one that determines type with respect to the effect of $X$ on $K$ ($t_{ij}^{K}$), and one with respect to the effect of $K$ on $Y$ ($u_{ij}^{Y}$): -->
-
-<!-- $$Y(K, u_{ij}^{Y}) = \left\{ \begin{array}{cc}   -->
-<!-- i & \text{ if } K=0 \\ j & \text{ if } K=1 \end{array}  \right.$$ -->
-<!-- $$K(X, u_{ij}^{K}) = \left\{ \begin{array}{cc}   -->
-<!-- i & \text{ if } X=0 \\ j & \text{ if } X=1 \end{array}  \right.$$ -->
-
-<!-- Thus, in the lower-level model, there are sixteen types that derive from the cross product of two independent random terms. -->
-
-<!-- Critically, one can derive the higher-level types from the lower level types, and beliefs about the higher level types from beliefs about the lower level types. For example, using the nomenclature in @humphreys2015mixing: -->
-
-<!-- \begin{eqnarray*} -->
-<!-- \text{adverse: }u_{10}^{high} &=& u_{01}^{K}\&u_{10}^{Y} \text{ or } u_{10}^{K}\&u_{01}^{Y} \\ -->
-<!-- \text{beneficial: }u_{01}^{high} &=& u_{01}^{K}\&u_{01}^{Y} \text{ or }  u_{10}^{K}\&u_{10}^{Y} \\ -->
-<!-- \text{chronic: } u_{00}^{high} &=& u_{00}^{Y} \text{ or }  u_{00}^{K}\&u_{01}^{Y} \text{ or }  u_{11}^{K}\&u_{10}^{Y}\\ -->
-<!-- \text{destined: }u_{11}^{high} &=& u_{11}^{Y} \text{ or }  u_{00}^{K}\&u_{10}^{Y} \text{ or }  u_{11}^{K}\&u_{01}^{Y} -->
-<!-- \end{eqnarray*} -->
-
-<!-- In the same way, the higher-level probabilities are implied by the lower level probabilities. -->
-
-<!-- \begin{eqnarray*} -->
-<!-- \text{adverse: }\lambda_{10}^{high} &=& \lambda_{01}^{K}\lambda_{10}^{Y} + \lambda_{10}^{K}\lambda_{01}^{Y} \\ -->
-<!-- \text{beneficial: }\lambda_{01}^{high} &=& \lambda_{01}^{K}\lambda_{01}^{Y} + \lambda_{10}^{K}\lambda_{10}^{Y} \\ -->
-<!-- \text{chronic: } \lambda_{00}^{high} &=& \lambda_{00}^{Y} + \lambda_{00}^{K}\lambda_{01}^{Y} + \lambda_{11}^{K}\lambda_{10}^{Y}\\ -->
-<!-- \text{destined: }\lambda_{11}^{high} &=& \lambda_{11}^{Y} + \lambda_{00}^{K}\lambda_{10}^{Y} + \lambda_{11}^{K}\lambda_{01}^{Y} -->
-<!-- \end{eqnarray*} -->
-
-<!-- Importantly, even without specifying a distribution over $U_K$ or $U_Y^{\text{lower}}$, a lower-level structural model could be informative by restricting the *ranges* of  $U_K$ or $U_Y^{\text{lower}}$. For instance, a lower level theory that imposed a monotonicity condition (no adverse effects) might exclude $t^K_{10}$ and $t^y_{10}$---that is, increasing $X$ never reduces $K$, and increasing $K$ never reduces $Y$.  -->
-
-<!-- We return  to this example below and show how observation  of $K$ can yield inference on causal estimands when  the theory places this kind of a structure on relationships. -->
-
-### Moderation as Theory {#modtheory}
-
-Now consider an alternative lower-level theory, represented in  Figure \ref{fig:HighLow}(c) above. Here $C$ is posited as a second parent of $Y$. This graph contains the substantive assumptions that $C$'s value is determined independently of $X$'s, as well as the assumption that $X$ and $C$ are both as-if randomly assigned.
-
-In this graph, we again have a $\theta_Y^{\text{lower}}$ term, but it is a different object from $\theta_Y^{\text{lower}}$ in the mediation graph. In this moderation model, $\theta_Y^{\text{lower}}$ is more complex as it determines the mapping from two binary variables into $Y$. A causal type in this setup now represents how a case will respond to four different possible combintations of $X$ and $C$ values. Rather than four causal types, we now have 16, as there are 16 possible ways in which a case might respond to two binary variables. Table \{#tab:PO16} in Chapter \ref{models} provides a tabular representation of the complete set of 16 potential outcomes. 
-
-However, we can also represent these types more compactly. For a setup with two binary causes, we will use the notation $\theta_{ij}^{gh}$. The subscripts and superscripts represent $Y$'s potential outcomes for different values of $X$ and $C$. To aid interpretation, we always place $X$ on the horizontal axis and a second variable (here, $C$) on the vertical access. In other words, the value of $X$ increases from 0 to 1 as we move to the _right_, from $i$ to $j$ or from $g$ to $h$. And the value of $C$ increases from 0 to 1 as we move _up_, from $i$ to $g$ or from $j$ to $h$. $\theta_{ij}^{gh}$ thus denotes a unit that has outcome $i$ when $X=0, C=0$, $j$ when $X=1, C=0$, $g$ when $X=0, C=1$, $h$ when $X=1, C=1$.
-
-To illustrate, $\theta_Y^{\text{lower}}=$:
-
-
-* $\theta_{00}^{11}$ means that $X$ has no effect under any value of $C$, and $C$ has a positive effect under any value of $X$. 
-* $\theta_{10}^{10}$ implies that $X$ always has a negative effect, and $C$ never has an effect. 
-* $\theta_{01}^{11}$ represents one kind of conditional effect: $X$ has a positive effect only when $C=0$, and $C$ has a positive effect only when $X=0$.
- 
-
-Again, we can map between lower- and higher-level types---though we may need to do so in combination with data. For instance, a case has type $\theta_{01}$ in the higher-level model if it has type $\theta_{01}^{11}$ in the lower-level model _and_ $C=0$. This is a case for which $X$ has a positive effect on $Y$ when $C=0$ _and_ in which $C$ _is in fact_ 0. On the other hand, the same lower level type, $\theta_{01}^{11}$, in combination with $C=1$ maps onto the type $\theta_{11}$ in the higher-level model---a type in which $Y$ is 1 regardless of $X$'s value. 
-
-Meanwhile, the lower-level type $\theta_{10}^{10}$ maps onto the higher-level type $\theta_{10}$ regardless of the data ($C$'s value) since this lower-level type implies that $X$ has a negative effect on $Y$ under any value of $C$. 
-
-In later chapters, we represent all lower- to higher-level mappings relevant to a question of interest with the use of "type-reduction" tables that allow one to readily see how inferences drawn at one level inform causal questions posed at another level.
-
-<!-- We let $u_Y^{\text{lower}}$ in this graph denote a multinomial distribution over the sixteen values of  $u_{ij}^{gh}$ with event probabilities  $\lambda_{ij}^{gh}$. -->
-
-<!-- I changed abcd scripts above to ghij and made corresponding (I think) changes below. I don't care what it is but abcd obviously could be confusing in this context. -->
-
-<!-- The sixteen types are illustrated in Table \@ref(tab:types2X) in the appendices. -->
-
-<!-- Again, the types in the higher level mapping are functions of the types in the lower-level mapping. For example,  a unit has type $u_{01}$ in the higher level model if $K=1$ and it is of type $u_{00}^{01},u_{10}^{01},u_{01}^{01}$, or $u_{11}^{01}$, or if $K=0$ and it is of type $\lambda_{01}^{00},\lambda_{01}^{10},\lambda_{01}^{01}$, or $\lambda_{01}^{11}$.  -->
-
-<!-- We write this as: -->
-
-<!-- $$u_{01} =  ((K=1) \land (t^{lower} \in \{u_{00}^{01} \cup u_{10}^{01} \cup  u_{01}^{01} \cup u_{11}^{01} \}) \lor  ((K=0) \land (t^{lower} \in \{\lambda_{01}^{00} \cup \lambda_{01}^{10} \cup \lambda_{01}^{01} \cup \lambda_{01}^{11}\})$$ -->
-
-<!-- In the same way, the probability of type $u_{01}$ can be written in terms of the parameters of the lower-level graph.  Importantly, the parameters of the higher-level distribution  $u_Y^{higher}$ depend on both $u_K$ and $u_Y^{\text{lower}}$. Thus, unlike the mediation case above, the probative value depends on the likelihood of an *observable* event occurring. Specifically, the share of a given higher-level type is given by: -->
-
-<!-- $$\lambda_{ij} = P(u_Y^{higher} = u_{ij}) = \pi^K\left(\lambda_{00}^{gh}+\lambda_{10}^{gh}+\lambda_{01}^{gh}+\lambda_{11}^{gh}\right) -->
-<!-- + -->
-<!-- (1-\pi^K)\left(\lambda_{ij}^{00}+\lambda_{ij}^{10}+\lambda_{ij}^{01}+\lambda_{ij}^{11}\right)$$ -->
-
-<!-- For example: -->
-
-<!-- $$\lambda_{00} = P(u_Y^{higher} = u_{00}) = \pi^K\left(\lambda_{00}^{00}+\lambda_{10}^{00}+\lambda_{01}^{00}+\lambda_{11}^{00}\right) -->
-<!-- + -->
-<!-- (1-\pi^K)\left(\lambda_{00}^{00}+\lambda_{00}^{10}+\lambda_{00}^{01}+\lambda_{00}^{11}\right)$$ -->
-
-
-<!-- Conditional probabilities follow in the usual way. Consider, for instance, the case where it is known that $X=Y=1$ and so the posterior probability of type $u_{01}$ is simply $P(i \in u_{01} | X=Y=1) = \frac{\lambda_{01}}{\lambda_{01}+\lambda_{11}}$. Note that $\pi^x$ does not appear here as this $X$ is orthogonal to $u_Y$. The probability of type $u_{01}$, knowing that $X=Y=1$, can be written in terms of the parameters of the $u$ distributions in the lower-level graph.  -->
-
-<!-- $$P(i \in u_{01} | X=Y=1) = \frac{ -->
-<!-- \pi^K\left(\lambda_{00}^{01}+\lambda_{10}^{01}+\lambda_{01}^{01}+\lambda_{11}^{01}\right) -->
-<!-- + -->
-<!-- (1-\pi^K)\left(\lambda_{01}^{00}+\lambda_{01}^{10}+\lambda_{01}^{01}+\lambda_{01}^{11}\right) -->
-<!-- }{ -->
-<!-- \sum_{i = 0}^1\left(\pi^K\left(\lambda_{00}^{i1}+\lambda_{10}^{i1}+\lambda_{01}^{i1}+\lambda_{11}^{i1}\right) -->
-<!-- + -->
-<!-- (1-\pi^K)\left(\lambda_{i1}^{00}+\lambda_{i1}^{10}+\lambda_{i1}^{01}+\lambda_{i1}^{11}\right) -->
-<!-- \right)}$$ -->
-
-<!-- We return below to this example and describe how the lower-level model can be used to generate inferences on relations implied by the higher level model.  -->
-
-
-## Conclusion
-
-Before moving on, it is worth considering how the understanding of theory that we work with in this book compares to other prominent understandings of theory. 
-
-**Theory as tautology.**  The claim that the number of Nash equilibria is generically odd in finite games is often understood to be a theoretical claim. Unless there are errors in the derivation of the result, the claim is true in the sense that the conclusions follow from the assumptions. There is no evidence that we could go looking for in the world to assess the claim. The same can be said of the theoretical claims of many formal models in social sciences; they are theoretical deductions of the if-then variety [@clarke2012model]. Theory in this sense is true by tautology. By contrast, theory as we define it in this book refers to claims with *empirical* content: a theory refers to causal relations in the world that might or might not hold, and is susceptible to empirical testing. The deductive _logical_ relations that hold in a causal model are those of conditional independence, as discussed in Chapter \@ref(models): for instance, if $X$ causes $Y$ only through $M$ in a theory, then $X$ and $Y$ are conditionally independent given some value of $M$.
-
-**Theory as a collection of maps.** According to @clarke2012model, building on a semantic view of theory (@giere2010explaining), a theory is a collection of models, together with a set of hypotheses linking them to the real world. As in our usage, Clarke and Primo see theories and models as very similar objects: for them, a theory is a system of models; for us, a theory is a supporting model. In both frameworks, there is no real difference in kind between models and theories.
-
-Our approach also shares with Clarke and Primo the idea that models are not full and faithful reflections of reality; they are maps designed for a particular purpose. In the case of causal models, the purpose is to capture relationships of independence and possible causal dependence. As we have shown, that is a purpose that allows for the stripping away of detail---though it also forbids certain simplifications (such as any simplification that removes a dependency between variables). Clarke and Primo see models as useful to the extent that they are similar to features of the real world in ways related to the model's purpose. Along these lines, a causal model will be useful to the extent that it posits relations of independence that are similar to those prevailing in the domain under investigation.
-
-**Theory as a testable claim** In the hypothetico-deductive framework, often traced back to @popper2014conjectures and highly influential in empirical political science, empirical social science is an activity of theory-*testing*.  Having developed a theory, we then derive from it a set of empirical predictions and then test those predictions against evidence. In @clarke2012model, we also seek to confirm theories by developing and testing hypotheses about the similarity of a model or theory to particular features of the world. In both cases, a theory is posited---possibly on the basis of logic or background knowledge---and then assessed. The value (truth or usefulness) of the model itself is the object of inquiry.
-
-In a causal-model framework, theories are always tentative, and we can subject any model or theory to empirical evaluation, a task to which we turn in Chapter \@ref{evaluation}. However, in the book's setup, theories are first and foremost _expressions of what we already know and don't know_ about a given causal domain when inquiry begins. We encode this background knowledge in order to inform research-design choices and draw inferences from the data.  Models and theories are thus, in this sense, the world within which inquiry unfolds. Indeed, as we explore in Chapter \@ref{questions}, the very questions we ask live within---can be represented as parts of---our theories. 
-
-<!-- **Theory as model.** Although @clarke2012model argue for a separation of the ideas of model and theory, it is common for social scientists to use the terms interchangeably to denote an abstract representation of some part of the world that is of interest. For instance, a model may stipulate that outcome $X$ can have a positive effect on $Y$ because $X$ can cause $M$ and $M$ can cause $Y$.  One can read from a model how things work in the context of the model: for instance, if $M$ does not obtain, then under this model, $X$ does not cause $Y$.   One can use a model to make claims about the world only by assuming a mapping from elements in the model to elements in the worlds.  In this sense a  model is best thought of as an object that may or may not be useful [@clarke2012model]; whether the model itself is true or false is, in this usage, not a coherent question.  -->
-
-<!-- **Theory as empirical claim.** In common usage, "a theory of" a phenomenon is a direct claim about the phenomenon, in the world. The claim that natural resources cause conflict is a theoretical claim of this form. The claim is certainly not true by definition, and empirical evidence can be used to assess it. In this claim, the *theory*, as usually understood, is certainly thin; the claim is no more than an empirical proposition, and it possesses no internal logic. Yet, more elaborate collections of empirical propositions are easily constructed. For instance: natural resources cause conflict because they can finance secessionist claims in resource rich areas.^[This latter claim does seem to possess something like a logic; though it does not take much to see that the logic is just a slightly more elaborate set of empirical claims. The outcomes do not follow  *logically* from the causes----there is no logical reason why secessionist claims would cause conflict, but the theory---as a collection of claims---has implications similar to those in the model in the paragraph above: if there are no secessionist claims, then under this theory, natural resources are not causing conflict.] Theory in this sense can certainly be right or wrong. -->
-
-
-
-<!-- In this book we take a somewhat idealist position and assume that we are permanently inhabiting a world of models.  -->
-
-<!-- The distinction between the last two accounts is sometimes confusing, and  @clarke2012model make a case for cleaning up the language on this front. In their account, drawing on @giere2010explaining, a theory might be best thought of as a set of models accompanied by hypotheses linking the model to the question of interest in the  world.  -->
-
-<!-- We see our approach to theory as models as following in the spirit of  @clarke2012model and  @giere2010explaining yet also as being consistent with the treatment of models in the literature on probabilistic causal models with which this book is centrally engaged. A nice feature is that it preserves a close associated between theory and explanation and it incorporates naturally the notion of deduction without requiring that models themselves are statements of the  *if-then* variety. -->
-
-**Theory as generalization** In another of the many uses of "theory," political scientists often think of theorization as generalization. For @Van-Evera:1997 and @przeworski1970logic, for instance, theories are by their nature general statements that we can use to explain specific events. In this view, "Diamond resources caused Sierra Leone's civil war" is a case-specific explanation; "Natural resource endowments cause civil war" is a theoretical formulation. 
-
-In our treatment of theory as a lower-level causal model, however, there is no generic sense in which a theory is more or less general than the higher-level claim that it explains. In this book's framework, we _can_ theorize by generalizing: when we elaborate a model by building in variation in a factor that was held constant in the higher-level claim, we are making the model more general in scope. If our natural resources claim implicitly applies only to weak states, we can theorize this claim by allowing state strength to vary and articulating how the natural-resource effect hinges on that claim. 
-
-However, when we theorize by disaggregating nodes---say, by adding intervening causal steps---we have in fact made a more _specific_ claim. Natural resources may cause civil war under a broad set of circumstances. Natural resources will cause civil war *through looting by rebel groups* under an almost certainly narrower set of circumstances. Here, the more elaborate argument---the theorization of *why* $X$ causes $Y$---is actually a stronger claim, with narrower scope, than the simpler one that it supports. 
-
-**The value of parsimony** @Van-Evera:1997 and @przeworski1970logic also express a common view in characterizing _parsimony_ as a quality of good theory. While they recognize that parsimony must often be traded off against other goods, such as accuracy and generality, _ceteris paribus_ a more parsimonious theory---one that uses fewer causal variables to explain variation in a given outcome---is commonly understood to be a better theory. 
-
-We do not take issue with the idea that simpler models and explanations are, all else equal, better. But the succeeding chapters also demonstrate a distinctive and important way in which all else will often not be equal when we seek to use theory to guide research design and support causal inference. To foreshadow the argument to come, the elaboration of more detailed, lower-level models can direct us to new opportunities for learning. As we unpack a higher-level claim, we will often be identifying additional features of a phenomenon the observation of which can shed light on causal questions of interest. Moreover, our background beliefs---the prior knowledge on which causal inference must usually rest---are often more informative at lower levels than at higher levels: it will, for instance, often be easier for us express beliefs about causal effects for smaller steps along a causal chain than about an overarching $X \rightarrow Y$ effect. 
-
-Making things more complicated, of course, still makes things more complicated. And we should avoid doing so when the payoff is small, as it will sometimes be. But in the pages to come, we will also see a distinct set of benefits that arise from drilling more deeply into our basis of prior knowledge when formulating inferential strategies.
-
-<!-- , with these claims,  perhaps derived or inspired from some model via a statement that the model represents the world faithfully for some purpose.  -->
-
-<!-- The key difference as we see it is between representations of a system, a model, and claims that the model itself represents another system---the world---in some ways. The difference betw  -->
-
-
-
-## Appendix:  Illustration of a Mapping from a Game to a DAG
+### Illustration of a Mapping from a Game to a DAG
 
 Our running example supports a set of higher level models, but it can also  be *implied* by a lower level models. Here we illustrate with an example in which the lower level model is a game theoretic model, together with a solution.^[Such representations have been discussed as multi agent influence diagrams, for example in @koller2003multi or @white2009settable on "settable systems"--- an extension of the "influence diagrams" described by @dawid2002influence.] 
 
