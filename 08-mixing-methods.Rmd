@@ -47,7 +47,7 @@ With multiple cases we...
 
 **Causal types**. And, again, a full set of nodal types gives rise to a full set of causal types, encompassing all possible combinations of nodal types across all nodes in the model.
 
-**Priors**. The first difference between single- and multiple-case inference lies in how we set priors on causal types. In process tracing, we set parameter values for each nodal type (or conditional nodal type, for unobserved confounding). Our parameters---e.g., $\lambda^X_0$, $\lambda^Y_{01}$---representing our beliefs about the proportions of these types in the population. When we only observe a single data type---data on a single case---we do not have sufficient information to learn about the distribution of types in the population. And so we treat these population-level beliefs as fixed parameters, rather than priors that we update on. (What we update on, in process tracing, is our priors on whether a *given case* is of a particular type or set of types.) Likewise, uncertainty about those population-level parameters has no effect on our inferences for a single case.
+**Priors**. The first difference between single- and multiple-case inference lies in how we set priors on causal types. In process tracing, we set parameter values for each nodal type (or conditional nodal type, for unobserved confounding). Our parameters---e.g., $\lambda^X_0$, $\lambda^Y_{01}$---represent our beliefs about the proportions of these types in the population. When we only observe a single data type---data on a single case---we do not have sufficient information to learn about the distribution of types in the population. And so we treat these population-level beliefs as fixed parameters, rather than priors that we update on. (What we update on, in process tracing, is our priors on whether a *given case* is of a particular type or set of types.) Likewise, uncertainty about those population-level parameters has no effect on our inferences for a single case.
 
 When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. 
 
@@ -59,7 +59,7 @@ To first examine a situation with no observed confounding, we need to specify a 
 
 A specified parameter set for node $j$, then, allows for a range of possible allocations of nodal types in the population, or $\lambda^j$'s while making some $\lambda^j$'s more likely than others. A set of $\alpha^j$'s, in other words, gives us a prior distribution over nodal types at node $j$. 
 
-Thus, under the parameter set for $Y$ ($\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, $\alpha^Y_{11}=3$), a relatively equal allocation like $\lambda^Y_{00}=0.26$, $\lambda^Y_{10}=0.24$, $\lambda^Y_{01}=0.2$, $\lambda^Y_{11}=0.3$ will have a higher probability than a highly skewed allocation like $\lambda^Y_{00}=0.1$, $\lambda^Y_{10}=0.1$, $\lambda^Y_{01}=0.7$, $\lambda^Y_{11}=0.1$. Likewise, $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, $\alpha^Y_{11}=5$ puts more prior weight on any $\lambda^Y$ with relatively more positive effects and an even distributon among other types than on a $\lambda^Y$ with an even spread across all types or than one skewed towards negative effects. Meanwhile, the tigher distribution given by ($\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$) implies even steeper differences in those probabilities.
+Thus, under the parameter set for $Y$ ($\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, $\alpha^Y_{11}=3$), a relatively equal allocation like $\lambda^Y_{00}=0.26$, $\lambda^Y_{10}=0.24$, $\lambda^Y_{01}=0.2$, $\lambda^Y_{11}=0.3$ will have a higher probability than a highly skewed allocation like $\lambda^Y_{00}=0.1$, $\lambda^Y_{10}=0.1$, $\lambda^Y_{01}=0.7$, $\lambda^Y_{11}=0.1$. Likewise, $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, $\alpha^Y_{11}=5$ puts more prior weight on any $\lambda^Y$ with relatively more positive effects and an even distributon among other types than on a $\lambda^Y$ with an even spread across all types or than one skewed towards negative effects. Meanwhile, the tighter distribution given by ($\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$) implies even steeper differences in those probabilities.
 
 For a model with any number of nodes, we can then imagine a draw of one $\lambda^j$ from its prior distribution for each node, giving a full $\lambda$ vector.  Any particular $\lambda$ vector, in turn, implies a probability distribution over *causal* types ($\theta$). With the help of a parameter matrix (mapping from parameters to causal types), we can then, just as with process tracing, calculate the prior probability that a case is of any particular causal type, given the parameter ($\lambda$) values we have drawn. Implicitly, then, our prior distribution over $\lambda$ gives rise in turn to a prior distribution over the causal type shares in the population.
 
@@ -134,11 +134,6 @@ $$
 
 
 
-### The parameter matrix
-### The ambiguity matrix
-### Likelihood
-### Estimation
-### Mixed data
 
 Thus, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions. For instance, for a model with 
 
@@ -147,6 +142,9 @@ $$
 \Pr(\mathcal{D}|\theta) = 
   \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYK}|k, w_{XYK}\right)  \\
 $$
+
+
+### Estimation
 
 
 Say a data strategy seeks data on $X$ and $Y$ in 2 cases and seeks data on $K$ if ever $X=Y=1$.
