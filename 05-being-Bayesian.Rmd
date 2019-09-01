@@ -179,124 +179,123 @@ Return now to Mr Smith's puzzle. The two "roots" are the sexes of the two childr
 
 
 
-### Bayesian correlational inference
-
-<!-- Put this in DAG framework -->
-
-In all the examples describe above Bayes rule was used to update inferences about a particular case given additional information about that case. But the same logic works just as well for problems in which one tries to update about a general relation given a set of cases. 
-The correlational solution to the fundamental problem of causal inference is to focus on *population-level* effects. Rather than seeking to identify the types of particular cases, researchers exploit covariation across cases between the treatment and the outcome variables---i.e., dataset observations---in order to assess the {average effect} of treatment on outcomes for a {population} or {sample} of cases. In the simplest, frequentist approach, under conditions described by \citep{Rubin1974} the average effect of a treatment may be estimated as the difference between the average outcome for those cases that received treatment and the average outcome for those cases that did not receive treatment.
-
-Although this frequentist approach to estimating causal effects from correlational data is more familiar, the problem can also be described in Bayesian terms.^[For a fuller treatment, see for example \citet{heckman2014treatment}.]
-
-<!-- % I think the below is necessary because we do not properly define the Bayesian approach generally; we only do it for a very special illustration -->
+<!-- ### Bayesian correlational inference -->
 
 
+<!-- In all the examples describe above Bayes rule was used to update inferences about a particular case given additional information about that case. But the same logic works just as well for problems in which one tries to update about a general relation given a set of cases.  -->
+<!-- The correlational solution to the fundamental problem of causal inference is to focus on *population-level* effects. Rather than seeking to identify the types of particular cases, researchers exploit covariation across cases between the treatment and the outcome variables---i.e., dataset observations---in order to assess the {average effect} of treatment on outcomes for a {population} or {sample} of cases. In the simplest, frequentist approach, under conditions described by \citep{Rubin1974} the average effect of a treatment may be estimated as the difference between the average outcome for those cases that received treatment and the average outcome for those cases that did not receive treatment. -->
 
-```{r simpleXYDAG, echo = FALSE, fig.width = 7, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A graph depicting a situation in which it is possible that $X$ causes $Y$; the unit level causal type is $\\theta^Y$ and the distribution of causal types is $\\lambda^Y$."}
-hj_dag(x = c(0, 0, 1, 1, 2, -1),
-       y = c(1, 0, 0, 1, 1, 1),
-       names = c(
-         expression(paste(theta^X)),
-         "X",
-         "Y",
-         expression(paste(theta^Y)), 
-         expression(paste(lambda^Y)), 
-         expression(paste(lambda^X)) 
-         ),
-       arcs = cbind( c(1, 2, 4, 5, 6),
-                     c(2, 3, 3, 4, 1)),
-       title = "",
-       padding = .2, contraction = .15, box = FALSE) 
+<!-- Although this frequentist approach to estimating causal effects from correlational data is more familiar, the problem can also be described in Bayesian terms.^[For a fuller treatment, see for example \citet{heckman2014treatment}.] -->
 
-```
+<!-- <!-- % I think the below is necessary because we do not properly define the Bayesian approach generally; we only do it for a very special illustration -->
 
 
-Suppose we are interested in determining the *distribution* of causal types in a population. We again need to specify our parameters, priors, likelihood, the probability of the data, and the inference strategy.
 
-In turn we have:
+<!-- ```{r simpleXYDAG, echo = FALSE, fig.width = 7, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A graph depicting a situation in which it is possible that $X$ causes $Y$; the unit level causal type is $\\theta^Y$ and the distribution of causal types is $\\lambda^Y$."} -->
+<!-- hj_dag(x = c(0, 0, 1, 1, 2, -1), -->
+<!--        y = c(1, 0, 0, 1, 1, 1), -->
+<!--        names = c( -->
+<!--          expression(paste(theta^X)), -->
+<!--          "X", -->
+<!--          "Y", -->
+<!--          expression(paste(theta^Y)),  -->
+<!--          expression(paste(lambda^Y)),  -->
+<!--          expression(paste(lambda^X))  -->
+<!--          ), -->
+<!--        arcs = cbind( c(1, 2, 4, 5, 6), -->
+<!--                      c(2, 3, 3, 4, 1)), -->
+<!--        title = "", -->
+<!--        padding = .2, contraction = .15, box = FALSE)  -->
 
-**Parameters.** Our hypothesis consists of a set of $\lambda$ values: i.e., the proportion of the population of authoritarian regimes for which economic crisis would generate or has generated collapse ($\lambda_b$); the proportion for which collapse is inevitable ($\lambda_d$); and so on.
-
-We can now define our hypothesis as a vector, $\lambda = (\lambda^X_0,\lambda^X_1,\lambda^Y_{00},\lambda^Y_{10},\lambda^Y_{01}, \lambda^Y_{11})$, that registers a possible set of values for the parameters over which we will update: type proportions in the population and assignment propensities by type. 
-
-**Prior.** We next need to assign a prior probability to $\lambda$. In the general case, we will do so by defining a prior probability distribution, $p(\lambda^j)$, over possible values of the elements of $\lambda^j$. Here $\lambda^Y$ has four possible values and we use a Dirichlet distribution on a 3-simplex.  $\lambda^X$ has has only two possible values and in this case the  Dirichlet distribution reduces to a Beta distribution.  
-
-**Likelihood.** Our data, $\mathcal{D}$, consist of $X$ and $Y$ observations for a sample of cases. With binary $X$ and $Y$, there are four possible data realizations (combinations of $X$ and $Y$ values) for a given case. For a single case, it is straightforward to calculate an event probability $w_{xy}$ | that is, the likelihood of observing the particular combination of $X$ and $Y$ given the type shares and assignment probabilities in $\theta$. For instance:
-
-$$w_{00}=\Pr(X=0, Y=0|\theta)=\lambda^X_0(\lambda^Y_{00} + \lambda^Y_{01})$$
-
-
-More generally, let $w_{XY}$ denote the vector of these event probabilities for each combination of $X$ and $Y$ values, conditional on $\lambda$. Further,  let $n_{XY}$ denote vector containing the number of cases observed with each $X,Y$ combination. Under an assumption of independence (data are independently and identically distributed), the full likelihood is then given by the multinomial distribution:
-$$\Pr(\mathcal{D}|\lambda)= \text{Multinomial}(n_{XY}  | w_{XY})$$
-
-Note again that here we have assumed that data is randomly drawn. More general functions can allow for more complex data gathering processes.
-
-**Probability of the data.** We calculate the unconditional probability of the data, $Pr(\mathcal{D})$, by integrating the likelihood function above over all parameter values, weighted by their prior probabilities.
- 
-
-**Inference.** After observing our data, $\mathcal{D}$, we then form posterior beliefs over  $\lambda$ by direct application of Bayes' rule, above:
-
-$$p(\lambda|\mathcal{D}) = \frac{\Pr(\mathcal{D}|\lambda)p(\lambda)}{\int\Pr(\mathcal{D}|\lambda')p(\lambda')d\lambda'}$$
+<!-- ``` -->
 
 
-This posterior distribution reflects our updated beliefs about which sets of parameter values are most likely, given the data. Critically, note that, upon observing $X$ and $Y$ data, we  simultaneously update beliefs about all parameters in $\lambda$: both beliefs about causal effects (type shares) in the population *and* beliefs about the assignment propensities for $X$.
+<!-- Suppose we are interested in determining the *distribution* of causal types in a population. We again need to specify our parameters, priors, likelihood, the probability of the data, and the inference strategy. -->
+
+<!-- In turn we have: -->
+
+<!-- **Parameters.** Our hypothesis consists of a set of $\lambda$ values: i.e., the proportion of the population of authoritarian regimes for which economic crisis would generate or has generated collapse ($\lambda_b$); the proportion for which collapse is inevitable ($\lambda_d$); and so on. -->
+
+<!-- We can now define our hypothesis as a vector, $\lambda = (\lambda^X_0,\lambda^X_1,\lambda^Y_{00},\lambda^Y_{10},\lambda^Y_{01}, \lambda^Y_{11})$, that registers a possible set of values for the parameters over which we will update: type proportions in the population and assignment propensities by type.  -->
+
+<!-- **Prior.** We next need to assign a prior probability to $\lambda$. In the general case, we will do so by defining a prior probability distribution, $p(\lambda^j)$, over possible values of the elements of $\lambda^j$. Here $\lambda^Y$ has four possible values and we use a Dirichlet distribution on a 3-simplex.  $\lambda^X$ has has only two possible values and in this case the  Dirichlet distribution reduces to a Beta distribution.   -->
+
+<!-- **Likelihood.** Our data, $\mathcal{D}$, consist of $X$ and $Y$ observations for a sample of cases. With binary $X$ and $Y$, there are four possible data realizations (combinations of $X$ and $Y$ values) for a given case. For a single case, it is straightforward to calculate an event probability $w_{xy}$ | that is, the likelihood of observing the particular combination of $X$ and $Y$ given the type shares and assignment probabilities in $\theta$. For instance: -->
+
+<!-- $$w_{00}=\Pr(X=0, Y=0|\theta)=\lambda^X_0(\lambda^Y_{00} + \lambda^Y_{01})$$ -->
 
 
-<!-- Intuitively, we treat each set of possible values of our parameters of interest---each $\lambda$ vector, that is---as a hypothesis and apply Bayes' rule to assess its probability given the data, that is, the posterior.^[More generally we might think of a hypothesis as being a subset of values of $\theta$ | e.g. "there is a positive treatment effect" corresponds to the set of values for which $b>a$.]  We use three quantities to calculate the posterior. -->
+<!-- More generally, let $w_{XY}$ denote the vector of these event probabilities for each combination of $X$ and $Y$ values, conditional on $\lambda$. Further,  let $n_{XY}$ denote vector containing the number of cases observed with each $X,Y$ combination. Under an assumption of independence (data are independently and identically distributed), the full likelihood is then given by the multinomial distribution: -->
+<!-- $$\Pr(\mathcal{D}|\lambda)= \text{Multinomial}(n_{XY}  | w_{XY})$$ -->
 
-<!-- First, we ask, if this set of parameter values is true, how likely were the observed $X, Y$ values to have emerged? {This calculation in our binary framework is simple. For example, the probability of observing the event $X=1, Y=1$ for a single randomly selected case is given by event probability $w_{11}=b\pi_b+d\pi_d$. Note that we assume in this example that each *type* is drawn independently as would be the case if cases under study were randomly sampled from a large population.} Consider a hypothesis (a specific value of $\theta$) in which most authoritarian countries are assumed to be either susceptible to a regime-collapsing effect of economic crisis or destined to collapse anyway---i.e., a $\theta$ in which $\lambda_b$ and $\lambda_d$ are very high and $\lambda_a$ and $\lambda_c$ very low. Suppose we then observe data in which a large proportion of countries display values $X=1$ and $Y=0$---they experienced crisis and did not collapse---which pegs them as either $a$ or $c$ types. The probability of these data under the hypothesized $\theta$--- $\Pr(\mathcal{D}|\theta)$ | will then be low, reducing our confidence in this hypothesis. On the other hand, such data are far more likely under any $\theta$ vector in which $\lambda_a$ or $\lambda_c$ is high, boosting our confidence in such hypotheses. -->
+<!-- Note again that here we have assumed that data is randomly drawn. More general functions can allow for more complex data gathering processes. -->
 
-<!-- Second, we ask, how likely were we to observe these data, $\mathcal{D}$, regardless of whether this particular $\theta$ is true? This value appears in the denominator, where we take into account the likelihood of observing these data for *all* of the possible values of $\theta$, weighted by their prior probabilities. More formally, under the assumption of independence, the probability of observing $\mathcal{D}$, that is, a particular collection of $X,Y$ data, is given by the corresponding value of the multinomial distribution given the event probabilities implied by $\theta$.   -->
-
-<!-- The more likely the data are in general|whether the hypothesis is true or not|the smaller the effect of these data on our beliefs. On the other hand, if the observation of lots of crisis-suffering, collapsing regimes was generally *unlikely* across all $\theta$s, then observing these data will generate a larger shift in our confidence toward any particular $\theta$ vector with which the data are relatively consistent. -->
-
-<!-- Third, we multiply the ratio of these first two quantities by our confidence in the values in this $\theta$ prior to seeing the data ($p(\theta)$). The more prior confidence we have in a hypothesis, the greater the probability that evidence consistent with and unique to the hypothesis in fact indicates that the hypothesis is true. Thus, for instance, suppose that prior evidence and logic suggest that a high proportion of authoritarian regimes in the world are susceptible to a regime-collapsing effect of crisis (are $b$ types). This strong prior belief in a high $\lambda_b$ increases the likelihood that any data pattern consistent with a high $\lambda_b$---say, many $X=1, Y=1$ cases---has *in fact* been generated by a large set of $b$ cases. -->
-
-We illustrate Bayesian correlational inference with a simple case. Suppose we observe for all postwar authoritarian regimes, whether they did or did not suffer economic crisis and did or did not collapse. Say for simplicity we know that all authoritarian regimes were "assigned" to economic crisis with a 0.5 probability during the period under analysis (thus assignment is known to be *as if* random). And assume that, prior to observing $X$, $Y$ data we believe that each of two propositions are true with 0.5 probability. Under proposition **($\theta_1$)** all regimes are of type $b$ (and so the average treatment effect is 1); under proposition **($\theta_2$)** 50\% of regimes are of type $c$ and 50\% are of type $d$ (and so the average treatment effect is 0).^[In this simple case we can think of $\theta$ as being constrained to take on only one of two possible values: $\theta \in  \{\theta_1=\{a=0,b=1, c=0, d=0, \pi_a=0.5,\pi_b=0.5,\pi_c=0.5,\pi_d=0.5\},\{\theta_2=\{a=0,b=0, c=.5, d=.5, \pi_a=0.5,\pi_b=0.5,\pi_c=0.5,\pi_d=0.5\} \}$.] 
+<!-- **Probability of the data.** We calculate the unconditional probability of the data, $Pr(\mathcal{D})$, by integrating the likelihood function above over all parameter values, weighted by their prior probabilities. -->
 
 
-<!-- %Suppose that we now randomly draw a set of authoritarian regimes from the population and observe the values on $X$ and $Y$. How should our observation of this data | $\mathcal{D}$ | shift our beliefs about the value $\lambda_b$? -->
-<!-- % -->
-<!-- %A Bayesian analysis draws on our prior beliefs about three quantities: -->
-<!-- % -->
-<!-- %\begin{itemize} -->
-<!-- % -->
-<!-- %\item **$\Pr(\mathcal{D**|b=1$)}: The probability of observing this collection of $X$ and $Y$ values under $H_1$, that is, if all cases are susceptible to a positive treatment effect. Each case should either have values $X=Y=0$ or $X=Y=1$ if indeed $b=1$, and the distribution across these values should follow a binomial distribution with $p=.5$ (since cases of all types were assigned to treatment with 0.5 probability). -->
-<!-- % -->
-<!-- %\item **$\Pr(b=1$)**: The likelihood that $H_1$ is correct. This belief represents our prior level of confidence in $H_1$, before we observe the new evidence. We have set this belief in the present illustration to 0.5. -->
-<!-- % -->
-<!-- %\item **$\Pr(\mathcal{D**)$}: The probability of observing this collection of $X$ and $Y$ values *without* conditioning on $H_1$. The expression is an average of the probabilities of observing the data under the two hypotheses, weighted by our prior belief for each hypothesis that it is correct. That is, $\Pr(\mathcal{D}) = \Pr(\mathcal{D}|b=1)\Pr(b=1)+\Pr(\mathcal{D}|b=0)\Pr(b=0)$  -->
-<!-- %\end{itemize} -->
+<!-- **Inference.** After observing our data, $\mathcal{D}$, we then form posterior beliefs over  $\lambda$ by direct application of Bayes' rule, above: -->
 
-<!-- %Thus, the observation of $X$ and $Y$ values in the sample allows us to update our beliefs %on the correlation between treatment and outcomes in the population and, hence,  -->
-<!-- %on the average treatment effect. In this simple case  -->
-<!-- %%the only data consis: do we observe data in which $X$ and $Y$ are perfectly correlated or not? In this case,  -->
-<!-- %if we see a single case that has values $(X=0, Y=1)$, then we will know for certain that $H_1$ is false since this data structure could never arise under $H_1$. If we observe data in which $X$ and $Y$ are perfectly correlated, we may still think it possible that $H_2$ is true. However, such a pattern is {*less*} likely to emerge if $H_2$ is true than if $H_1$ is true.  -->
-<!-- % -->
-<!-- Suppose we draw a random sample of $n=2$ cases and observe one case in which $X=Y=0$ and one case in which $X=Y=1$. That is, we observe a perfect correlation between $X$ and $Y$ but only two cases. What then should we infer? -->
+<!-- $$p(\lambda|\mathcal{D}) = \frac{\Pr(\mathcal{D}|\lambda)p(\lambda)}{\int\Pr(\mathcal{D}|\lambda')p(\lambda')d\lambda'}$$ -->
 
-Applying Bayes' rule, our posterior probability on proposition $\theta_1$, having observed the data, is:
 
-\begin{eqnarray*}
-\Pr(\theta_1|\mathcal{D}) 
-=\frac{\Pr(\mathcal{D}|\theta_1)\Pr(\theta_1)}{\Pr(\mathcal{D}|\theta_1)\Pr(\theta_1)+\Pr(\mathcal{D}|\theta_2)\Pr(\theta_2)}
-\end{eqnarray*}
+<!-- This posterior distribution reflects our updated beliefs about which sets of parameter values are most likely, given the data. Critically, note that, upon observing $X$ and $Y$ data, we  simultaneously update beliefs about all parameters in $\lambda$: both beliefs about causal effects (type shares) in the population *and* beliefs about the assignment propensities for $X$. -->
 
-or equivalently: 
 
-\begin{eqnarray*}
-\Pr(b=1|\mathcal{D}) 
-%=\frac{\Pr(\mathcal{D}|b=1) \Pr(b=1)}{\Pr(\mathcal{D})}
-=\frac{\Pr(\mathcal{D}|\lambda_b=1)\Pr(\lambda_b=1)}{\Pr(\mathcal{D}|\lambda_b=1)\Pr(\lambda_b=1)+\Pr(\mathcal{D}|\lambda_b=0)\Pr(\lambda_b=0)}
-\end{eqnarray*}
+<!-- <!-- Intuitively, we treat each set of possible values of our parameters of interest---each $\lambda$ vector, that is---as a hypothesis and apply Bayes' rule to assess its probability given the data, that is, the posterior.^[More generally we might think of a hypothesis as being a subset of values of $\theta$ | e.g. "there is a positive treatment effect" corresponds to the set of values for which $b>a$.]  We use three quantities to calculate the posterior. -->
 
-The event probabilities of each of the observed events is $0.5$ under $\theta_1$ but just $0.25$ under $\theta_2$.  Using the binomial distribution (a special case of the multinomial for this simple case) we know that the chances of such data arising are 1 in 2 under $\theta_1$ but only 1 in 8 under $\theta_2$. Our posterior would then be:
+<!-- <!-- First, we ask, if this set of parameter values is true, how likely were the observed $X, Y$ values to have emerged? {This calculation in our binary framework is simple. For example, the probability of observing the event $X=1, Y=1$ for a single randomly selected case is given by event probability $w_{11}=b\pi_b+d\pi_d$. Note that we assume in this example that each *type* is drawn independently as would be the case if cases under study were randomly sampled from a large population.} Consider a hypothesis (a specific value of $\theta$) in which most authoritarian countries are assumed to be either susceptible to a regime-collapsing effect of economic crisis or destined to collapse anyway---i.e., a $\theta$ in which $\lambda_b$ and $\lambda_d$ are very high and $\lambda_a$ and $\lambda_c$ very low. Suppose we then observe data in which a large proportion of countries display values $X=1$ and $Y=0$---they experienced crisis and did not collapse---which pegs them as either $a$ or $c$ types. The probability of these data under the hypothesized $\theta$--- $\Pr(\mathcal{D}|\theta)$ | will then be low, reducing our confidence in this hypothesis. On the other hand, such data are far more likely under any $\theta$ vector in which $\lambda_a$ or $\lambda_c$ is high, boosting our confidence in such hypotheses. -->
 
-\begin{eqnarray*}
-\Pr(\lambda_b=1|\mathcal{D}) =\frac{\frac{1}{2} \times \frac{1}{2}}{\frac{1}{2} \times \frac{1}{2} + \frac{1}{8}\times \frac{1}{2}} = \frac{4}{5} 
-\end{eqnarray*}
+<!-- <!-- Second, we ask, how likely were we to observe these data, $\mathcal{D}$, regardless of whether this particular $\theta$ is true? This value appears in the denominator, where we take into account the likelihood of observing these data for *all* of the possible values of $\theta$, weighted by their prior probabilities. More formally, under the assumption of independence, the probability of observing $\mathcal{D}$, that is, a particular collection of $X,Y$ data, is given by the corresponding value of the multinomial distribution given the event probabilities implied by $\theta$.   -->
 
-The key difference between this example and more general applications is simply that in the general case we allow for uncertainty --- and updating --- not simply over whether $\lambda_b$ is 0 or 1, but over a range of possible values for multiple parameters of interest. Though this adds complexity, it does not change the fundamental logic of updating.  
+<!-- <!-- The more likely the data are in general|whether the hypothesis is true or not|the smaller the effect of these data on our beliefs. On the other hand, if the observation of lots of crisis-suffering, collapsing regimes was generally *unlikely* across all $\theta$s, then observing these data will generate a larger shift in our confidence toward any particular $\theta$ vector with which the data are relatively consistent. -->
+
+<!-- <!-- Third, we multiply the ratio of these first two quantities by our confidence in the values in this $\theta$ prior to seeing the data ($p(\theta)$). The more prior confidence we have in a hypothesis, the greater the probability that evidence consistent with and unique to the hypothesis in fact indicates that the hypothesis is true. Thus, for instance, suppose that prior evidence and logic suggest that a high proportion of authoritarian regimes in the world are susceptible to a regime-collapsing effect of crisis (are $b$ types). This strong prior belief in a high $\lambda_b$ increases the likelihood that any data pattern consistent with a high $\lambda_b$---say, many $X=1, Y=1$ cases---has *in fact* been generated by a large set of $b$ cases. -->
+
+<!-- We illustrate Bayesian correlational inference with a simple case. Suppose we observe for all postwar authoritarian regimes, whether they did or did not suffer economic crisis and did or did not collapse. Say for simplicity we know that all authoritarian regimes were "assigned" to economic crisis with a 0.5 probability during the period under analysis (thus assignment is known to be *as if* random). And assume that, prior to observing $X$, $Y$ data we believe that each of two propositions are true with 0.5 probability. Under proposition **($\theta_1$)** all regimes are of type $b$ (and so the average treatment effect is 1); under proposition **($\theta_2$)** 50\% of regimes are of type $c$ and 50\% are of type $d$ (and so the average treatment effect is 0).^[In this simple case we can think of $\theta$ as being constrained to take on only one of two possible values: $\theta \in  \{\theta_1=\{a=0,b=1, c=0, d=0, \pi_a=0.5,\pi_b=0.5,\pi_c=0.5,\pi_d=0.5\},\{\theta_2=\{a=0,b=0, c=.5, d=.5, \pi_a=0.5,\pi_b=0.5,\pi_c=0.5,\pi_d=0.5\} \}$.]  -->
+
+
+<!-- <!-- %Suppose that we now randomly draw a set of authoritarian regimes from the population and observe the values on $X$ and $Y$. How should our observation of this data | $\mathcal{D}$ | shift our beliefs about the value $\lambda_b$? --> 
+<!-- <!-- % --> 
+<!-- <!-- %A Bayesian analysis draws on our prior beliefs about three quantities: -->
+<!-- <!-- % --> 
+<!-- <!-- %\begin{itemize} --> 
+<!-- <!-- % --> 
+<!-- <!-- %\item **$\Pr(\mathcal{D**|b=1$)}: The probability of observing this collection of $X$ and $Y$ values under $H_1$, that is, if all cases are susceptible to a positive treatment effect. Each case should either have values $X=Y=0$ or $X=Y=1$ if indeed $b=1$, and the distribution across these values should follow a binomial distribution with $p=.5$ (since cases of all types were assigned to treatment with 0.5 probability). -->
+<!-- <!-- % -->
+<!-- <!-- %\item **$\Pr(b=1$)**: The likelihood that $H_1$ is correct. This belief represents our prior level of confidence in $H_1$, before we observe the new evidence. We have set this belief in the present illustration to 0.5. -->
+<!-- <!-- % -->
+<!-- <!-- %\item **$\Pr(\mathcal{D**)$}: The probability of observing this collection of $X$ and $Y$ values *without* conditioning on $H_1$. The expression is an average of the probabilities of observing the data under the two hypotheses, weighted by our prior belief for each hypothesis that it is correct. That is, $\Pr(\mathcal{D}) = \Pr(\mathcal{D}|b=1)\Pr(b=1)+\Pr(\mathcal{D}|b=0)\Pr(b=0)$  -->
+<!-- <!-- %\end{itemize} --> 
+
+<!-- <!-- %Thus, the observation of $X$ and $Y$ values in the sample allows us to update our beliefs %on the correlation between treatment and outcomes in the population and, hence,  -->
+<!-- <!-- %on the average treatment effect. In this simple case  -->
+<!-- <!-- %%the only data consis: do we observe data in which $X$ and $Y$ are perfectly correlated or not? In this case,  -->
+<!-- <!-- %if we see a single case that has values $(X=0, Y=1)$, then we will know for certain that $H_1$ is false since this data structure could never arise under $H_1$. If we observe data in which $X$ and $Y$ are perfectly correlated, we may still think it possible that $H_2$ is true. However, such a pattern is {*less*} likely to emerge if $H_2$ is true than if $H_1$ is true.  -->
+<!-- <!-- % -->
+<!-- <!-- Suppose we draw a random sample of $n=2$ cases and observe one case in which $X=Y=0$ and one case in which $X=Y=1$. That is, we observe a perfect correlation between $X$ and $Y$ but only two cases. What then should we infer? -->
+
+<!-- Applying Bayes' rule, our posterior probability on proposition $\theta_1$, having observed the data, is: -->
+
+<!-- \begin{eqnarray*} -->
+<!-- \Pr(\theta_1|\mathcal{D})  -->
+<!-- =\frac{\Pr(\mathcal{D}|\theta_1)\Pr(\theta_1)}{\Pr(\mathcal{D}|\theta_1)\Pr(\theta_1)+\Pr(\mathcal{D}|\theta_2)\Pr(\theta_2)} -->
+<!-- \end{eqnarray*} -->
+
+<!-- or equivalently:  -->
+
+<!-- \begin{eqnarray*} -->
+<!-- \Pr(b=1|\mathcal{D})  -->
+<!-- %=\frac{\Pr(\mathcal{D}|b=1) \Pr(b=1)}{\Pr(\mathcal{D})} -->
+<!-- =\frac{\Pr(\mathcal{D}|\lambda_b=1)\Pr(\lambda_b=1)}{\Pr(\mathcal{D}|\lambda_b=1)\Pr(\lambda_b=1)+\Pr(\mathcal{D}|\lambda_b=0)\Pr(\lambda_b=0)} -->
+<!-- \end{eqnarray*} -->
+
+<!-- The event probabilities of each of the observed events is $0.5$ under $\theta_1$ but just $0.25$ under $\theta_2$.  Using the binomial distribution (a special case of the multinomial for this simple case) we know that the chances of such data arising are 1 in 2 under $\theta_1$ but only 1 in 8 under $\theta_2$. Our posterior would then be: -->
+
+<!-- \begin{eqnarray*} -->
+<!-- \Pr(\lambda_b=1|\mathcal{D}) =\frac{\frac{1}{2} \times \frac{1}{2}}{\frac{1}{2} \times \frac{1}{2} + \frac{1}{8}\times \frac{1}{2}} = \frac{4}{5}  -->
+<!-- \end{eqnarray*} -->
+
+<!-- The key difference between this example and more general applications is simply that in the general case we allow for uncertainty --- and updating --- not simply over whether $\lambda_b$ is 0 or 1, but over a range of possible values for multiple parameters of interest. Though this adds complexity, it does not change the fundamental logic of updating.   -->
 
 
 ### Simple Bayesian Process Tracing
