@@ -163,19 +163,24 @@ Many algorithms have been developed to achieve these tasks efficiently; in all o
 ## Bayes applied
 
 ### Bayesian Inference on Queries
+
 In Chapter 2 we described estimands of interest as queries over the values of root nodes in directed acyclic graphs. 
 
 Once queries are defined in terms of the values of roots then formation of beliefs, given data $W$,  about estimands follows immediately from application of Bayes rule. 
 
-Let $Q(u)$ define the value of the query in context $u$, the updated beliefs about the query are given by the distribution:
+Let $Q(u)$ define the value of the query in context $u$. The updated beliefs about the query are given by the distribution:
 
 $$P(q | W) = \int_{u:Q(u) = q} P(u|W)du =  \int_{u:Q(u) = q} \frac{P(W|u)P(u)}{\int_{u'}P(W|u')P(u')du'}du$$
 
 This expression gathers together all the contexts that produce a given value of $Q$ and assesses how likely these are, collectively, given the data.^[Learning about roots from observed data is sometimes termed *abduction*; see @pearl2009causality, p 206.] For an abstract representation of the relations between  assumptions, queries, data, and conclusions, see Figure 1 in @pearl2012causal.  
 
 
-Return now to Mr Smith's puzzle. The two "roots" are the sexes of the two children. The query here is $Q$: "Are both boys?" which can be written in terms of the roots. The statement "$Q=1$" is equivalent to the statement ($A$ is a boy \& $B$ is a boy). Thus it takes the value $q=1$ in just one context. Statement $q=0$ is  the statement ("$A$ is a boy \& $B$ is a girl" or "$A$ is a girl \& $B$ is a boy" or "$A$ is a girl \& $B$ is a girl"). Thus $q=0$ in three contexts.  If we assume that each of the two children is equally likely to be a boy or a girl with independent probabilities, then  each of the four contexts is equally likely. 
+Return now to Mr Smith's puzzle. The two "roots" are the sexes of the two children, child $A$ and child $B$. The query here is $Q$: "Are both boys?" which can be written in terms of the roots. The statement "$Q=1$" is equivalent to the statement ($A$ is a boy \& $B$ is a boy). Thus it takes the value $q=1$ in just one context. Statement $q=0$ is  the statement ("$A$ is a boy \& $B$ is a girl" or "$A$ is a girl \& $B$ is a boy" or "$A$ is a girl \& $B$ is a girl"). Thus $q=0$ in three contexts.  If we assume that each of the two children is equally likely to be a boy or a girl with independent probabilities, then  each of the four contexts is equally likely. 
  The  result can then be figured out as $P(Q=1) = \frac{1\times \frac{1}{4}}{1\times \frac{1}{4} + 1\times \frac{1}{4}+1\times \frac{1}{4}+0\times \frac{1}{4}} = \frac{1}{3}$. This answer requires summing  over only one context. $P(Q=0)$ is of course the complement of this, but using the Bayes formula one can see that it can be found by summing over the posterior probability of three contexts in which the statement $Q=0$ is true. 
+ 
+We will often want to think about our causal queries being collections of states of the world --- i.e., of unit causal types. Returning to our discussion of queries in Chapter \@ref(#questions), suppose we start with the model $X \rightarrow M \rightarrow Y$, and our query is whether $X$ has a positive effect on $Y$. This is a query that is satisfied by four sets of unit types: those in which $X$ has a positive effect on $M$ and $M$ has a positive effect on $Y$, with $X$ being either 0 or 1; and those in which $X$ has a negative effect on $M$ and $M$ has a negative effect on $Y$, with $X$ being either 0 or 1. Our inferences on the query will thus involve gathering these different unit types, and their associated posterior probabilities, together.
+
+One interesting feature of Bayesian updating is that we update more strongly in favor of the hypothesis for which the evidence is least damaging to the most-likely ways in which the hypothesis could be true. Suppose our prior belief was that it was much more unlikely that $M$ had a negative effect on $Y$, than that $M$ had a positive effect on $Y$. This makes one of the ways in which $X$ could have a positive effect on $Y$ (the chain of negative effects) much less likely than the other way in which $X$ could have a positive effect on $Y$ (the chain of positive effects). This means that evidence, say, against a chain of negative effects and evidence against a chain of positive effects will not be equally consequential for our query: in particular, we will update more strongly against the query if we find evidence against a chain of positive effects than if we find evidence against a chain of negative effects. Evidence against a chain of positive effects speaks against the *most* likely way in which the query could be true, whereas evidence against a chain of negative effects speaks against a way the query could be true that we did not think was very likely to begin with.
 
 
 
