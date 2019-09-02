@@ -16,9 +16,9 @@ Consider now the problem of determining what qualitative data to gather on a cas
 
 In our running example, we can see many situations where researchers have a choice of observations that could be informative, and situations in which the informativeness of an observation can depend on what is already known. In Figure \ref{fig:running}, we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the root nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see which collection of root nodes constitutes a given query, or estimand.  Turning things around, we can see, given a query, which nodes are informative of the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
 
-For example, suppose one can see that $X=0$ and  $Y=0$ but does not know the causal effect of $X$ on $Y$  This is equivalent to saying that we know that we are in either panel $A$ or $B$ but we do not know which one. Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $P(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$ . Given the structural equation for $S$, $P(S|X=0,Y=0) = P(S|X=0)$, and given independence of $X$ and $S$, $P(S=1|X=0)= \pi^S$.  Figuring out $S$ fully answers the query: that is, given what we know already, $S$ is doubly decisive for the proposition.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
+For example, suppose one can see that $X=0$ and  $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in either panel $A$ or $B$ but we do not know which one. Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $P(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$ . Given the structural equation for $S$, $P(S|X=0,Y=0) = P(S|X=0)$, and given independence of $X$ and $S$, $P(S=1|X=0)= \pi^S$.  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
 
-We can also see instances in this example of  how existing data can make clues uninformative. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$. Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
+We can also see instances in this example of  how existing data can make clues *uninformative*. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$. Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
 
 The running example also lets us demonstrate how informative clues can be found in many different places in a graph. 
 
@@ -40,27 +40,21 @@ The representation of inference problems as one of querying a Bayesian model poi
 
 This can be done as follows:
 
-1. First define a model, including a signature $S = (\mathcal{U}, \mathcal{V}, \mathcal{R})$, structural equations $\mathcal{F}$, and beliefs on $\mathcal{U}$, $P()$. 
-2. Second, define a query on the model, as a statement about values of $\mathcal{V}$ given different $\mathbb{do}$ operations. 
-3. Third, use $P$ to draw a vector of $U$ values and assess whether the query is true or not given $U$ and whether $W$ obtains. Then, over many repeated draws from $P$ calculate the *share* of times that the query  is true  among those cases in which  $W$ is  true. This gives posterior probability on $Q$, $P(Q|W)$.
-4. Fourth, given posterior $P(Q|W)$ calculate the probability of observing any realization of values $K'$ given the set of clues sought. For each possible realization calculate posterior variance using $P(Q|W, K')$, itself calculated as the share of draws in which the query is true given both $W$ and the particular set of findings $K'$ obtains.  Calculate the *expected* posterior variance by taking an average of these variances with weights given by the probability of observing the clue pattern in question.
-5. Repeat step 4 for all possible collections of clues that one could search for. 
+1. Define the model. 
+2. Define a query on the model.
+3. Define a data strategy --- for instance: figure out the value of $C$.
+4. Given existing data figure out the probability of different realizations of the data and for each possible realization calculate the posterior variance. Then calculate the *expected* posterior variance by taking an average of these variances with weights given by the probability of observing the clue pattern in question.
+5. Repeat steps 3-4 for different data strategies. 
 
-This procedure then returns expected posterior variance associated with a planned search for a collection of clues. A more sophisticated strategy would determine which clues to search for later given findings from clues that are sought first. This reflects the possibility that a given clues $K_2$ may be informative if another clue $K_1$ turns up positive but not if it comes out negative. 
+This procedure then returns expected posterior variance associated with different data strategies. A still more sophisticated strategy would determine which clues to search for later given findings from clues that are sought first. This reflects the possibility that a given clues $K_2$ may be informative if another clue $K_1$ turns up positive but not if it comes out negative. 
 
-We provide some tools for both of these  approaches and illustrate them below.
+We provide some tools for both of these  approaches and illustrate them below for hte running example and the democracy application.
 
 ## Clue selection for the running example
 
 Lets return to the running example and assess the informativeness of different clue strategies. 
 
-Recall that a model consists of an ordered set of variables $V$, a set of exogenous variables $U$, with a distribution over these, given by $P(u)$ and a set of functions, one for each $V\in\mathcal{V}$, $f_v(v',u_v)$ which takes as arguments a subset of variables in $\mathcal{V}$ that must be prior to $V$ in the ordering plus an element of $U$ associated with $V$.  
-
-
-TRANSITIONAL TEXT LINKING FROM LAST CHAPTER
-
-
-In the same way we  can figure out outcomes for all possible profiles of data one might have on $m$ binary variables. With five variables there are 243 ($3^5$) combinations of 0s, 1s and unknowns.  We provide a function which allows specific examines or else examinations of the form "all strategies that seek up to $m_k$ clues when up to $m_w$ variables are already observed."
+This model is formally defined as follows:
 
 
 ```{r ch11strategies_chunk_slowxx, warning = FALSE}
@@ -68,36 +62,52 @@ model <-
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
   
-  set_restrictions(node_restrict = list(C = "C1110", R = "R0001", Y = "Y0001"), action = "keep")
+  set_restrictions(labels = list(C = "C1110", R = "R0001", Y = "Y0001"), 
+                   keep = TRUE) %>%
+  
+  set_priors()
 
+```
+
+```{r, echo = FALSE, include = FALSE}
 plot_dag(model)
 ```
 
-```{r, echo = FALSE, warning = FALSE, include = FALSE}
-my_strategies <-  conditional_inferences(model, 
-                                         query = list(COE = "(Y[S=0] > Y[S=1])"), 
-                                         given = "Y==1 & S==0")
+Using this model we can ask how likely different data realizations are and what we would infer from each possible data realization, given existing data. We illustrate assuming we already know that $X=0$ and $Y=0$. 
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+possible_inferences <-  
+  
+  conditional_inferences(model, 
+                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                         given = "X==0 & Y==0")
 
 ```
 
-This produces a matrix shown here as table \@ref(tab:showstrats5xx) for a situation in which $S=0$ and $Y=0$ is already observed. 
+Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx).
 
 
 ```{r showstrats5xx, echo = FALSE, warning = FALSE}
-# colnames(my_strategies)[1:2] <- c("Prior var", "Var given W")
+# colnames(possible_inferences)[1:2] <- c("Prior var", "Var given W")
 
-kable(my_strategies[my_strategies$prob >0, ], caption="A fragment of the table of expected posterior variance for all two clue strategies given observations on two nodes. Firs column gives prior variance, second gives variance condition on data pattern $W$, as indicated by row labels; subsequent columns give expected variance when different clues are sought. ")
+kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns. ", row.names = FALSE)
 ```
 
-From there it is easy to assess the *expected* gains from seeking any kind of clue. See Table \@ref(tab:scxrylearning)
+Each inference has an associated posterior variance and so it is easy to assess the *expected* reduction in variance from seeking any kind of clue. See Table \@ref(tab:scxrylearning). 
 
 
 ```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
 
-expected_learning(model, query = list(COE = "(Y[X=1] > Y[X=0])"), strategy = "R", given = "X==0 & Y==0", parameters = NULL)
+strats <- list("S", "C", "R", c("C", "R"), c("C", "S"), c("S", "R"), c("C", "S", "R"))
 
-learning <- sapply(list("S", "C", "R", c("C", "R"), c("C", "S"), c("S", "R"), c("C", "S", "R")),  function(strategy) {
-expected_learning(model, query = list(COE = "(Y[X=1] > Y[X=0])"), strategy = strategy, given = "X==0 & Y==0", parameters = NULL)})
+learning <- sapply(strats,  function(strategy) {
+
+  expected_learning(model, 
+                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                    strategy = strategy, 
+                    given = "X==0 & Y==0", 
+                    parameters = NULL)
+  })
 ```
 
 
@@ -106,7 +116,7 @@ kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Unc
 ```
 
 
-In this case if we know $X=0$ and $Y=0$ and we are interested in finding out whether$X=0$ *because* $Y$ is 0 we should look for evidence on $S$. Given this simple model, knowledge of $S$ is enough to answer teh question at hand and no othe information is useful at all.
+The implication of the analysis is that if we know $X=0$ and $Y=0$ and we are interested in finding out whether$X=0$ *because* $Y$ is 0 we should look for evidence on $S$. Given this simple model, knowledge of $S$ is enough to answer the question at hand and *no othe information is useful at all*.
 
 
 ### Dynamic Strategies
@@ -114,190 +124,124 @@ In this case if we know $X=0$ and $Y=0$ and we are interested in finding out whe
 The clue collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their in Given $n$ nodes, a data collection strategy will be of the form:
 $$\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}$$
 
-where each $K_j$ is en element of the nodes on the graph, or is the empty set. Each of these strategies has an associated expected reduction in variance as well as an associated expected cost. Such a strategy vector specifies the first clue, and then subsequent clues condition on what was found from previous searches. We restrict strategies to those in which each clue is sought at most once (though possibly sought at times that depends on findings), and in which if a clue is sought it is sought immediately. For a risk neutral decision maker, this may be sufficient to choose among them. 
+where each $K_j$ is en element of the nodes on the graph, or is the empty set. Each of these strategies has an associated expected reduction in variance as well as an associated expected cost. Such a strategy vector specifies the first clue, and then subsequent clues condition on what was found from previous searches.  
 
-In the running example with five binary nodes the strategies needs to specify up to $2^4$ decision points, reflecting the initial choice and the decisions made after learning about four nodes. An example of a strategy, summarizing contingent plans is the below:
+To illustrate with the running example we imagine a situation in which it is known that $Y=1$ and we are interested in whether $Y=0$ because of $S$ (though we don't know at the outset what the value of $S$ is). We consider strategies in which we first seek information on one node and then, conditional on what we find, we look for data on one other node (or not). With five nodes, one already known, there are $4 \times 4^2$ strategies of this form.
 
+Say that the government was not replaced, we want to know is this because the government was sophisticated. If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
 
+```{r, include = FALSE}
 
+# A strategy is a triple that indicates (a) first node sought (b) action if first node is 0 (c) action if first node = 1
+# This function calculates the expected posterior variance from each strategy and the expected number of clues sought
 
-```{r, include = FALSE, eval = FALSE}
-random_list_strategy <- function(n){
-  out <- list()
-  for(j in 1:n){
-  out[[j]] <- sample(1:n, 2^{j-1}, replace = TRUE)
-  }
-  out
-  }
-random_list_strategy(4)
-
-
-# Records which cases are sought given a list of choice instructions and a realization, r
-sought <- function(strategy, r){
-  r <- unlist(r)
-  n <- length(strategy)
-  z <- rep(NA, n)
-  z[1] <- strategy[[1]]
-  for(j in 2:n){
-    z[j] <- strategy[[j]][1 + sum( sapply(1:(j-1), function(i) r[z[i]]*2^(j-i-1)))]
-    }
-  z}
-
-k = 2
-strategy <- random_list_strategy(k)
-r = sample(0:1, k, replace = TRUE)
-print("Strategy"); strategy
-print("World"); r
-print("Sought"); sought(strategy,r)
-```
-
-
-
-```{r, include = FALSE, eval = FALSE}
-strategy_cost_benefit <- function(
-  model, 
-  ops, 
-  query, 
-  sims=10, 
-  U=NULL, 
-  n    =  nrow(U),
-  cost = rep(1,n),
-  strategy = NULL,  # Or a matrix with one column per node indicating whther to be sought or not
-  asraw = FALSE # PRovide raw matrix of clues sought and variance; otherwise only summary provided
-  ){
-
-  if(is.null(U)) U <- (replicate(sims, model$P()))
-  sims <- ncol(U)
-  n    <- nrow(U)
-  if(n != length(strategy)) stop ("strategy should have n components")
-  result <- biqq::pt_which(
-                         model,
-                         ops = ops,
-                         query = query,
-                         U=U)
-  V  <- t(as.matrix(result$V))
-  Ks0 <- sapply(1:sims, function(j) sought(strategy, V[,j]))
-  Kf <- function(v) 1:n %in% v
-  Ks <- as.matrix((apply(Ks0, 2, Kf)))   # TRUE if v[i] is sought
-  K  <- matrix(NA, n, sims)
-  K[Ks] <- V[Ks]
-  En <- mean(apply(Ks, 2, sum))  # Expected number of clues sought
-  Ec <- mean(t(Ks)%*%matrix(cost, 5, 1))  # Expected cost of clues sought
-
-  # Posterior variance that will be achieved in each state of the world
-  pV <- sapply(1:sims, function(j) {
-      inK <- sapply(1:sims, function(i) !(0 %in% (1*(V[,i] == K[,j]))))
-      var(result$A[inK])})
-  # Note need to think about this step: the  posterior is calculated for each set of observations counting as possible all worlds that have these observations no matter how different they look on other fronts. This is because all data used to select the observed data is in the observed data. eg say two worlds  have  V1=1 and differ on everything else. Say that W contains V1=1 and no other data. Then the posterior relative likelihood of these two worlds is the same as the prior relative likelihoods. Note also that sims have to be large to avoid bias in estimate of variance.   
+strategy_evaluation <- function(model, 
+                                strategy  = c("X", "C", NA), 
+                                given = "Y==0",  
+                                query = "(Y[S=1] != Y[S=0])",
+                                prices = NULL) {
+  vars <- model$variables
+  if(is.null(prices)) prices <- rep(1, length(vars))
+  s1 <- strategy[[1]]
   
+  # FLAG / HACK: Better to have this only look at relevant cases, not all data
+  given_vars <- NULL
+	if(!is.null(given)) {
+			given_vars <- str_extract_all(given, boundary("word"))[[1]]
+			given_vars <- given_vars[(given_vars %in% vars)]
+			}
+  na_vars <- vars[!(vars %in% unlist(c(s1, given_vars)))]
+  given2 <- paste(given, paste(paste0(" & is.na(", na_vars, ")"), collapse = ""))
   
-out <- c("Expected posterior variance"=mean(pV, na.rm = TRUE), "Expected number of clues sought"=En, "Expected Cost"=Ec)
-if(asraw) out <- cbind(t(Ks0), pV)
-return(out)  
+  # Conditional inferences
+  ci  <- conditional_inferences(model, query = query, given = given2)
+  
+  # Step 1 conclusions depending on findings on strategy 1
+    p0 <- filter(ci, ci[s1]==0)[1, c("posterior", "prob")]
+    p1 <- filter(ci, ci[s1]==1)[1, c("posterior", "prob")]
+    
+    # Probability of finding 0/1 in step 1 (normalized)
+    probs  <- c(p0$prob, p1$prob)/(p0$prob + p1$prob)
+    
+    # Gather posteriors
+    posts <- c(p0$posterior, p1$posterior)
+    
+    evs <- 
+      sapply(0:1, function(j){
+      s <- strategy[[2+j]]
+      ifelse(is.na(s), 
+            (posts[1+j])*(1-posts[1+j]),
+            expected_learning(model, 
+                    query = query, 
+                    strategy = paste(s), 
+                    given = paste(given, "&", strategy[[1]], "==", j), 
+                    parameters = NULL)$E_post_var)
+    })
+    
+    # Flag: A little HACKY: Fill in NAs if probs = 0
+    evs[probs == 0]  <- 0
+    strategy[2:3][probs == 0]  <- "NONE"
+    
+    # Expected Number of clues sought: 1 plus 1 if additional steps sought
+    expected_n        <- 1 + probs%*%as.vector((!is.na(strategy[2:3])))
+    
+    # Expected variance given conditional strategies
+    expected_variance <- probs%*%evs  
+    
+    # Costs
+    costs <- c(sum(prices[vars %in% factor(strategy[-3])]),     
+               sum(prices[vars %in% factor(strategy[-2])]))
+    expected_costs <- probs%*%costs  
+
+    c(expected_n = expected_n, expected_variance = expected_variance, expected_costs = expected_costs)
 }
 
+# Make a list of strategies:
+vars <- c("S", "X", "C", "R") 
+strategy_list <- sapply(1:4, function(j) 
+  expand.grid(one = vars[j], two_0 = c(NA, vars[-j]), two_1 = c(NA, vars[-j]), stringsAsFactors = FALSE), 
+  simplify = FALSE)
+strategy_list <- do.call("rbind", strategy_list)
+strategy_list <- data.frame(strategy_list, stringsAsFactors = FALSE)
+
+# Calculate expected n and variance
+# Assume prices in wihch X and C are somewhat expensive
+prices <- c(1, 1.5, 1.2, .5, .7)
+# do_diagnosis <- TRUE
+if(do_diagnosis){
+results <- t(apply(strategy_list, 1, function(j) 
+  strategy_evaluation(model, strategy  = j, given = "Y==0", prices = prices))) %>%
+  data.frame()
+  write_rds(results, "saved/ch11_tradeoffs.rds")
+  }
+results <- read_rds("saved/ch11_tradeoffs.rds")
+
+out <- cbind(strategy_list, results)
+
+#Best?
+# out[17,]
+
+## FLAG: CHECK NAS / WANRINGS
 ```
 
-
-```{r Strat_Illxx, eval = FALSE}
-prices <- .5+.5*runif(5)
-
-strategy <- random_list_strategy(5)
-
-strategy_cost_benefit(  model,  my_operations, my_query, sims=100,   U=NULL,   cost = prices,   strategy = strategy  # Or a matrix with one column per node indicating whether to be sought or not
-  )
-
-```
-
-
-Note that strategies cannot use information unavailable ex ante. To ensure the right structure we specify the strategy as $n$ vectors, of length $1, 2, 4, \dots$. For example of the form $\{\{1\}, \{2,3\}, \{3, 4, \emptyset, \emptyset\}\}$
-
-This has the interpretation: seek evidence on node 1 first, if one finds $V_1=1$ seek evidence on node 2, otherwise seek evidence on node 3, if $V_1=1$ and $V_2=1$ seek evidence on node 3, but if $V_1=1$ and $V_2=0$ seek $V_4$, if $V_3$ is positive stop seeking.
 
 For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs---but collection depends on past findings---then we can also calculated the expected costs of each strategy.
 
-NEED TO REDO STRATEGIES CALCULATIONS
 
-```{r ch6_slow_chunk2xx, include = FALSE, cache = TRUE, eval = FALSE}
-U <- replicate(100, model$P()) # RAMP UP TO 1000 or more
-strats <- list()
-out <- list()
+| Strategy | Step 1 | Step 2 if 0 | Step 2 if 1 | Expected variance | Expected Cost |
+|----------|--------|-------------|-------------|-------------------|---------------|
+| 1        | S      | None        | None        |       0.167       | 1             |
+| 2        | S      | X           | X           |       0           | 2.5           |
+| 3        | S      | None        | X           |       0           | 2             |
+|          |        |             |             |                   |               |
 
-k <- 5 # RAMP UP TO 100 OR MORE
-for(i in 1:k){
-  print(i)
-  strategy <- random_list_strategy(5)
-  strats[[i]] <- strategy
-  out[[i]] <- strategy_cost_benefit(  model,  my_operations, my_query, U=U,   cost = prices,
-    strategy = strategy  # Or a matrix with one column per node indicating whther to be sought or not
-    )
-  }
+Figure \@ref(fig:ch11tradeoffs)   plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. FOr the figure we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs gathering $Y$ only.
 
-v <- unlist(sapply(1:length(out), function(i) out[[i]][1]))
-n <- unlist(sapply(1:length(out), function(i) out[[i]][2]))
-c <- unlist(sapply(1:length(out), function(i) out[[i]][3]))
-best <- (1:k)[(v+n) == min(v+n)]
-lowestvar <- (1:k)[(v) == min(v)]
-
-find_optimals <- function(r=2000){
-  best_s <- function(s) (1:k)[(v+s*n) == min(v+s*n)]
-  unique(sapply(c(1/(r:1), 1:r), best_s))}
-optimals <- find_optimals()
-
-plot(v,n, xlab = "Expected Posterior Variance from Strategy", ylab =  "Expected Number of Clues Sought", col = "orange", pch = 19)
-points(v[optimals], n[optimals], pch = 21, cex = 1.2, col = "red")
-#print(strats[[best]])
-#print(strats[[lowestvar]])
-
-k <- floor((length(optimals)+1)/2)
-median_strat = optimals[k]  # Not great for even number
-print(strats[[median_strat]])
+```{r ch11tradeoffs, echo = FALSE}
+# Plot results
+with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 ```
 
-Figure  below plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other.
-
-```{r, echo = FALSE, eval= FALSE, include = FALSE, fig.cap = "\\label{somesstrats} Non dominated strategies are circled."}
-plot(v,n, xlab = "Expected Posterior Variance from Strategy", ylab =  "Expected Number of Clues Sought.", col = "grey", pch = 19)
-points(v[optimals], n[optimals], pch = 21, cex = 1.2, col = "black")
-```
-
-
-```{r graph_strategyxxx, include = FALSE, eval = FALSE}
-
-g_strat <- function(strategy){
-  n = length(strategy)
-  plot(1:n, type = "n", xlim = c(0,n), ylim = c(-2^(n-2)+.5, 2^(n-2))-.5, axes = FALSE, xlab = "", ylab = "", main = "Decision Tree")
-  for(j in 1:length(strategy)){
-    sj <- strategy[[j]]
-    x <- rep(j, length(sj)) -1
-    y <- ((0:(length(sj)-1) - (length(sj)-1)/2))
-    if(max(y)>0) y <- y*(j/max(y))
-    points(x, y)
-    text(x+.25, y, sj, col = "red")
-  }
-    for(j in 1:(length(strategy)-1)){
-    sj  <- strategy[[j]]
-    sj2  <- strategy[[j+1]]
-    x <- rep(j, length(sj)) -1
-    y <- ((0:(length(sj)-1) - (length(sj)-1)/2))
-    if(max(y)>0)  y <- y*(j/max(y))
-    y1 <- rep(y, each = 2)
-    y2 <- ((0:(length(sj2)-1) - (length(sj2)-1)/2))
-    if(max(y2)>0)y2 <- y2*((j+1)/max(y2))
-    segments(x,y,x+.5, y)
-    segments(x+.5,y1,rep(x+1, each = 2), y2)
-    text(x+.75, .5*(y1+y2)[rep(c(TRUE, FALSE), length(y2)/2)] - .2, 0, cex = .8)
-    text(x+.75, .5*(y1+y2)[rep(c(FALSE, TRUE), length(y2)/2)]+.2, 1, cex = .8)
-    }
-}
-```
-
-Below we graph one of these strategies on the frontier (the median strategy on the frontier) as a decision tree. The interpretation is to seek the first clue first; it will be revealed to be present (1) or not(0), a subsequent branch is then chosen depending on what is found and the indicated clue then sought, and so on. (Note currently the strategy sets we examine include ones in which the same clue is sought multiple times)
-
-```{r, echo = FALSE, fig.height = 8, eval = FALSE, fig.width = 6, fig.cap = "\\label{dtree} A clue seeking strategy, indicating what to seek first; then what to seek second conditional on first findings, and so on."}
-g_strat(strats[[median_strat]])
-```  
-  
   
 ## Clue selection for the Democracy model 
 
@@ -307,11 +251,11 @@ With a model in hand we are also in a position to assess what we *could* learn f
 ```{r, echo = FALSE}
 
 model <- make_model("I -> M -> D <- P; I -> D") %>%
-         set_restrictions(causal_type_restrict =  
-           "(M[I=1] < M[I=0]) |
-            (D[I=1, M=., P=.] > D[I=0, M=., P=.]) |
-            (D[M=1, I=., P=.] < D[M=0, I=., P=.]) | 
-            (D[P=1, M=., I=.] < D[P=0, M=., I=.])")
+         set_restrictions(c(  
+           "(M[I=1] < M[I=0])",
+            "(D[I=1, M=., P=.] > D[I=0, M=., P=.])",
+            "(D[M=1, I=., P=.] < D[M=0, I=., P=.])", 
+            "(D[P=1, M=., I=.] < D[P=0, M=., I=.])"))
 
 ```
 
@@ -352,15 +296,18 @@ expected_learning(model, query = "D[I=1] == 0", strategy = "P",        given = "
 expected_learning(model, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
 expected_learning(model, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
 
-kable(EL2[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
 
 ```
 
 
 **To come**: applied case-level analyses involving causal pathways, actual causes, and notable causes.
 
+FLAG: DISTINGUISH ROWS IN THIS TABLE
 
-
+FLAG: ADD DYNAMIC 
   
 <!-- ## More complex problems -->
 
