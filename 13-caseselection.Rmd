@@ -173,7 +173,7 @@ We can see that....
 
 # We define a model
 model <- make_model("X->M->Y")  %>%
- set_restrictions(causal_type_restrict = "Y[M=1]<Y[M=0] | M[X=1]<M[X=0]") %>%
+ set_restrictions(c("(Y[M=1]<Y[M=0])", "(M[X=1]<M[X=0])")) %>%
  set_parameter_matrix() %>%
  set_parameters(type = "flat")
 
@@ -184,7 +184,12 @@ given <-  collapse_data(data, model)
 
 # We can then imagine what data we might observe if we examine M inside some subset of cases
 possible_data <- 
-  make_possible_data(model, given = given, vars = list("M", "M", "M", "M"), within = TRUE, N = list(1,1,1,1), condition = list("X==0 & Y==0", "X==1 & Y==0", "X==0 & Y==1", "X==1 & Y==1"))
+  make_possible_data(model, 
+                     given = given, 
+                     vars = list("M", "M", "M", "M"), 
+                     within = TRUE, 
+                     N = list(1,1,1,1), 
+                     condition = list("X==0 & Y==0", "X==1 & Y==0", "X==0 & Y==1", "X==1 & Y==1"))
 ```
 
 ```{r, echo = FALSE}
@@ -327,9 +332,7 @@ kable(rbind(diagnoses_df_n1, diagnoses_df_n2), digits = 3)
 ```{r, echo=FALSE, eval=FALSE}
 # A model with complementarity of X and M 
 comp_model <- make_model("X->Y<-M")  %>%
-					 set_restrictions(causal_type_restrict = "(Y[M=1, X =0] == 1) |
-					 								 	                        (Y[M=0, X =1] == 1) |
-					                                          (Y[M=0, X =1] == 1)") %>%
+					 set_restrictions("(Y[M=1, X =0] == 1) | (Y[M=0, X =1] == 1)") %>%
 					 set_parameter_matrix() %>%
 					 set_parameters(type = "flat")
 
@@ -338,44 +341,47 @@ given <-  collapse_data(data, comp_model)
 
 if(do_diagnosis){
  comp_reference_model <- gbiqq(comp_model, data)
- write_rds(comp_reference_model, "saved/ comp_reference_model.rds")
+ write_rds(comp_reference_model, "saved/comp_reference_model.rds")
 }
-
+ comp_reference_model <- read_rds("saved/comp_reference_model.rds")
 
 ```
 
 
 ```{r, echo=FALSE, eval=FALSE}
 if(do_diagnosis){
-comp_diagnoses_n1 <- diagnose_strategies(reference_model = comp_reference_model, 
-	                                    analysis_model  = comp_model,
-										                  given = given, 
-										                  queries = "Y[X=1]>Y[X=0]",
-																			vars = "M",
-																			within = TRUE, 
-																			N = 1,
-																			conditions = c("X==1 & Y==1", 
-																										 "X==1 & Y==0", 
-																										 "X==0 & Y==1", 
-																										 "X==0 & Y==0" ))
+comp_diagnoses_n1 <- diagnose_strategies(
+  reference_model = comp_reference_model, 
+	analysis_model  = comp_model,
+	given = given, 
+	queries = "Y[X=1]>Y[X=0]",
+	vars = "M",
+	within = TRUE, 
+	N = 1,
+	conditions = c( "X==1 & Y==1", 
+									"X==1 & Y==0", 
+									"X==0 & Y==1", 
+									"X==0 & Y==0" ))
 
-comp_diagnoses_n2 <- diagnose_strategies(reference_model = comp_reference_model, 
-	                                    analysis_model  = comp_model,
-										                  given = given, 
-										                  queries = "Y[X=1]>Y[X=0]",
-																			vars = "M",
-																			within = TRUE, 
-																			N = 2,
-																			conditions = c("X==1 & Y==1", 
-																										 "(X==0 & Y==1) | (X==1 & Y==1)", 
-																										 "(X==1 & Y==0) | (X==1 & Y==1)", 
-																										 "(X==1 & Y==0) | (X==0 & Y==1)",
-																										 "(X==0 & Y==1) | (X==0 & Y==0)",
-																										 "(X==0 & Y==1) | (X==0 & Y==0)" ,
-																										 "X==0 & Y==0"))
+comp_diagnoses_n2 <- 
+  diagnose_strategies(
+    reference_model = comp_reference_model, 
+	  analysis_model  = comp_model,
+		given = given, 
+		queries = "Y[X=1]>Y[X=0]",
+		vars = "M",
+		within = TRUE, 
+		N = 2,
+		conditions = c("X==1 & Y==1", 
+									 "(X==0 & Y==1) | (X==1 & Y==1)", 
+									 "(X==1 & Y==0) | (X==1 & Y==1)", 
+									 "(X==1 & Y==0) | (X==0 & Y==1)",
+									 "(X==0 & Y==1) | (X==0 & Y==0)",
+									 "(X==0 & Y==1) | (X==0 & Y==0)" ,
+									 "X==0 & Y==0"))
 
   write_rds(comp_diagnoses_n1, "saved/comp_diagnoses_n1.rds")
-  write_rds(comp_diagnoses_n2, "saved/comp_diagnoses_n1.rds")
+  write_rds(comp_diagnoses_n2, "saved/comp_diagnoses_n2.rds")
 	
 } 
 comp_diagnoses_n1 <- read_rds("saved/comp_diagnoses_n1.rds")
