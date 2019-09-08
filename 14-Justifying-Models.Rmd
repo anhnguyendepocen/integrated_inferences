@@ -528,7 +528,8 @@ We start with a model with three variables, $X,M,Y$ where $X$ affects $Y$ direct
 
 ```{r, include = FALSE}
 model1 <- make_model("X -> M -> Y <- X") %>% 
-  set_restrictions(causal_type_restrict = "(M[X=1]<M[X=0]) | (Y[M=1, X=.]<Y[M=0, X=.]) | (Y[X=1, M=.]<Y[X=0, M=.])")
+  set_restrictions(c("(M[X=1]<M[X=0])", 
+                     "(Y[M=1, X=.]<Y[M=0, X=.]) | (Y[X=1, M=.]<Y[X=0, M=.])"))
 ```
 
 
@@ -540,8 +541,7 @@ Next we consider the model in which X causes Y through M but not directly. In th
 
 ```{r, include = FALSE}
 model2 <- make_model("X -> M -> Y") %>% 
-  set_restrictions(
-    causal_type_restrict = "(M[X=1]<M[X=0]) | Y[M=1]<Y[M=0]")
+  set_restrictions(c("(M[X=1]<M[X=0])", "(Y[M=1]<Y[M=0])"))
 ```
 
 Again we have the correct skeleton and knowledge of timing is enough to recover the graph.
@@ -551,7 +551,7 @@ Finally we consider the model in which $Y$ has two causes that do not influence 
 
 ```{r, include = FALSE}
 model3 <- make_model("X1 -> Y <- X2") %>% 
-  set_restrictions(causal_type_restrict = "(Y[X1=1, X2=.]<Y[X1=0, X2=.]) | (Y[X2=1, X1=.]<Y[X2=0, X1=.])")
+  set_restrictions("(Y[X1=1]<Y[X1=0]) | (Y[X2=1]<Y[X2=0])")
 ```
 
 

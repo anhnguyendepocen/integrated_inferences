@@ -78,6 +78,7 @@ We describe here the procedure through which we can use `gbiqq` to diagnose and 
 To illustrate the procedure, suppose that we want to estimate the average treatment effect of $X$ on $Y$ in a population and have initially observed $X$ and $Y$ data on 6 cases. The initial data are summarized in Table \@ref(tab:6xycases).
 
 ```{r 6xycases, echo = FALSE}
+model <- make_model("X -> M -> Y")
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
 given <-  collapse_data(data, model)
 kable(given)
@@ -205,26 +206,27 @@ if(do_diagnosis){
   
 # Set the reference model that we will use to calculate data probabiities. The reference model is the original model updated with the XY data we've already seen.
 	reference_model <- gbiqq(model, data)
+	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
 
 # Calculate the probabiity of each data type given the reference model.  
-  diagnosis_n1 <- diagnose_strategy(
-                  reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]-Y[X=0]",
-                  estimates_database = estimates_database_n1,
-                  possible_data = possible_data)
+  diagnosis_n1 <- 
+    diagnose_strategies(
+        reference_model = reference_model, 
+        analysis_model  = model,
+        given = given, 
+        queries = "Y[X=1]-Y[X=0]",
+        estimates_database = estimates_database_n1,
+        possible_data = possible_data)
 
-  estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1.rds")
-  reference_model            <- read_rds("saved/reference_XMY_updated_model.rds")
-  diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds.rds")
+  write_rds(diagnosis_n1, "saved/diagnosis_n1.rds")
 
-	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
-	write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1.rds")
-	write_rds(diagnosis_X1Y1, "saved/diagnosis_n1.rds")
 }
 
+  reference_model            <- read_rds("saved/reference_XMY_updated_model.rds")
 
+  estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1_X1Y1.rds")
+  # diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds.rds")
+	## write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1.rds")
 
 ```
 
@@ -232,81 +234,55 @@ Diagnosis:
 
 
 
-```{r, eval=FALSE}
-diagnosis_X1Y1 <- diagnose_strategy(
-                  reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-                  estimates_database = estimates_database_n1_X1Y1,
-                  possible_data = possible_data)
+```{r showx1y1diagnosestrategies, eval=FALSE}
+diagnosis_X1Y1 <- 
+  diagnose_strategies(
+    reference_model = reference_model, 
+    analysis_model  = model,
+    given = given, 
+    queries = "Y[X=1]>Y[X=0]",
+    estimates_database = estimates_database_n1_X1Y1,
+    possible_data = possible_data)
 
 ```
 
 ## Compare multiple data strategies 
 
 We now apply the procedure to a set of strategies. 
-<!--
-```{r, echo = FALSE}
-possible_data_X1Y0 <- 
-  make_possible_data(model, given = given, vars = "M", within = TRUE, N = 1, condition = "X==1 & Y==0")
 
+```{r ch13n1n2cases, echo=FALSE}
 if(do_diagnosis){
-estimates_database <- make_estimates_database(
-  model, given, 
-  possible_data = possible_data_X1Y0, 
-  queries = "Y[X=1]>Y[X=0]")
-  write_rds(estimates_database, "saved/estimates_database_n1_X1Y0.rds")
-}
+  
+diagnoses_n1 <- 
+  diagnose_strategies(
+    reference_model = reference_model, 
+    analysis_model  = model,
+		given = given, 
+		queries = "Y[X=1]>Y[X=0]",
+		vars = "M",
+		within = TRUE, 
+		N = 1,
+		conditions = c("X==1 & Y==1", 
+									 "X==1 & Y==0", 
+									 "X==0 & Y==1", 
+									 "X==0 & Y==0" ))
 
-estimates_database_n1_X1Y0 <- read_rds("saved/estimates_database_n1_X1Y0.rds")
-
-diagnosis_X1Y0 <- diagnose_strategy(
-                  reference_model = reference_model, 
-                  analysis_model  = model,
-                  given = given, 
-                  queries = "Y[X=1]>Y[X=0]",
-                  estimates_database = estimates_database_n1_X1Y0,
-                  possible_data = possible_data_X1Y0)
-
-```
-
-```{r, echo = FALSE}
-kable(diagnosis_X1Y1, caption = "Expected value of a strategy in which one X=Y=1 case is examined", digits = 3)
-```
-```{r, echo = FALSE}
-kable(diagnosis_X1Y0, caption = "Expected value of a strategy in which one X=Y=0 case is examined", digits = 3)
-```
--->
-
-```{r, echo=FALSE}
-if(do_diagnosis){
-diagnoses_n1 <- diagnose_strategies(reference_model = reference_model, 
-                                    analysis_model  = model,
-									                  given = given, 
-									                  queries = "Y[X=1]>Y[X=0]",
-																		vars = "M",
-																		within = TRUE, 
-																		N = 1,
-																		conditions = c("X==1 & Y==1", 
-																									 "X==1 & Y==0", 
-																									 "X==0 & Y==1", 
-																									 "X==0 & Y==0" ))
-
-diagnoses_n2 <- diagnose_strategies(reference_model = reference_model, 
-                                    analysis_model  = model,
-									                  given = given, 
-									                  queries = "Y[X=1]>Y[X=0]",
-																		vars = "M",
-																		within = TRUE, 
-																		N = 2,
-																		conditions = c("X==1 & Y==1", 
-																									 "(X==0 & Y==1) | (X==1 & Y==1)", 
-																									 "(X==1 & Y==0) | (X==1 & Y==1)", 
-																									 "(X==1 & Y==0) | (X==0 & Y==1)",
-																									 "(X==0 & Y==1) | (X==0 & Y==0)",
-																									 "(X==0 & Y==1) | (X==0 & Y==0)" ,
-																									 "X==0 & Y==0"))
+diagnoses_n2 <- 
+  diagnose_strategies(
+    reference_model = reference_model, 
+    analysis_model  = model,
+		given = given, 
+		queries = "Y[X=1]>Y[X=0]",
+		vars = "M",
+		within = TRUE, 
+		N = 2,
+		conditions = c("X==1 & Y==1", 
+									 "(X==0 & Y==1) | (X==1 & Y==1)", 
+									 "(X==1 & Y==0) | (X==1 & Y==1)", 
+									 "(X==1 & Y==0) | (X==0 & Y==1)",
+									 "(X==0 & Y==1) | (X==0 & Y==0)",
+									 "(X==0 & Y==1) | (X==0 & Y==0)" ,
+									 "X==0 & Y==0"))
 
  write_rds(diagnoses_n1, "saved/diagnoses_n1.rds")
  write_rds(diagnoses_n2, "saved/diagnoses_n2.rds")
