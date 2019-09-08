@@ -70,20 +70,20 @@ Table: (\#tab:PO). Potential outcomes: What would happen to each of four possibl
 
 In each column, we have simply written down the outcome that a patient of a given type would experience if they are not treated, and the outcome they would experience if they are treated. 
 
-Throughout the book, we generalize from this toy example. Whenever we have one causal variable and one outcome, and both variables are binary (i.e., each can take on two possible values, 0 or 1), then there are only four sets of possible potential outcomes, or "causal types." More generally, for any pair of causal and outcome variables, the four types are:
+Throughout the book, we generalize from this toy example. Whenever we have one causal variable and one outcome, and both variables are binary (i.e., each can take on two possible values, 0 or 1), then there are only four sets of possible potential outcomes, or "causal types." More generally, for any pair of causal and outcome variables, we will use $\theta^Y$ to denote the causal type at node $Y$. The four types are:
 
-* **a**: A negative causal effect of $X$ on $Y$
-* **b**: A positive causal effect of $X$ on $Y$
-* **c**: No causal effect, with $Y$ "stuck" at 0
-* **d**: No causal effect, with $Y$ "stuck" at 1
+* **a**: A negative causal effect of $X$ on $Y$. We write this as:  $\theta^Y =  \theta^Y_{10}$. 
+* **b**: A positive causal effect of $X$ on $Y$. We write this as:  $\theta^Y =  \theta^Y_{01}$.
+* **c**: No causal effect, with $Y$ "stuck" at 0. We write this as:  $\theta^Y =  \theta^Y_{00}$.
+* **d**: No causal effect, with $Y$ "stuck" at 1. We write this as:  $\theta^Y =  \theta^Y_{11}$.
 
-Put in terms of a set of potential outcomes, this gives us Table \@ref(tab:POGEN):
+Table \@ref(tab:POGEN) summarizes these types in terms of potential outcomes:
 
 | \small      |          Type a          |            Type b           |         Type c         |          Type d         |
 |-------------|:------------------------:|:---------------------------:|:----------------------:|:-----------------------:|
-|             | $Y=$                     | $Y=$                        | $Y=$                   | $Y=$                    |
-| Set $X=0$   |            1             |              0              |           0            |             1           |
-| Set $X=1$   |            0             |              1              |           0            |             1           |
+|             | $\theta^Y=\theta^Y_{10}$ |  $\theta^Y=\theta^Y_{01}$   |$\theta^Y=\theta^Y_{00}$| $\theta^Y=\theta^Y_{11}$|
+| Set $X=0$   |     $Y(0)=1$             |       $Y(0)=0$              |      $Y(0)=0$          |      $Y(0)=1$           |
+| Set $X=1$   |     $Y(1)=0$             |       $Y(1)=1$              |      $Y(1)=0$          |      $Y(1)=1$           |
 Table: (\#tab:POGEN). Generalizing from Table \@ref(tab:PO), the table gives for each causal type the values that $Y$ would take on if $X$ is set at $0$ and if $X$ is set at 1.
 
 
@@ -110,41 +110,41 @@ As one might imagine, the number of causal types increases rapidly as the number
 <!-- let $Y(x_1, x_2)$ denote the outcome when $X_1=x_1$ and  $X_2=x_2$. Then the quantity $\left(Y(1, 1) - Y(0, 1)\right) - \left(Y(1, 0) - Y(0, 0)\right)$ describes the interactive effect of two treatments: it captures how the effect of $X_1$ changing from $0$ to $1$ is different between those situations in which $X_2=1$ and those situations in which $X_2=0$. -->
 
 
-------------------------------------------------------------------------------------
-   **Type**    if $X_1=X_2=0$   if $X_1=0,X_2=1$  if $X_1=1,X_2=0$   if $X_1=X_2=1$ 
--------------  ---------------  ----------------  -----------------  ---------------
-      1               0                0             0                    0      
+---------------------------------------------------------------------------------------------
+$\theta^Y$          if $X_1=0, X_2=0$   if $X_1=0,X_2=1$  if $X_1=1,X_2=0$   if $X_1=1, X_2=1$ 
+-----------------   -----------------   ----------------  -----------------  -----------------
+$\theta^Y_{0000}$         0                0                0                    0      
 
-      2               0                0             0                    1      
+$\theta^Y_{0001}$         0                0                0                    1      
 
-      3               0                0             1                    0      
+$\theta^Y_{0010}$         0                0                1                    0      
 
-      4               0                0             1                    1      
+$\theta^Y_{0011}$         0                0                1                    1      
 
-      5               0                1             0                    0      
+$\theta^Y_{0100}$         0                1                0                    0      
 
-      6               0                1             0                    1      
+$\theta^Y_{0101}$         0                1                0                    1      
 
-      7               0                1             1                    0      
+$\theta^Y_{0110}$         0                1                1                    0      
 
-      8               0                1             1                    1      
+$\theta^Y_{0111}$         0                1                1                    1      
 
-      9               1                0             0                    0      
+$\theta^Y_{1000}$         1                0                0                    0      
 
-      10              1                0             0                    1      
+$\theta^Y_{1001}$         1                0                0                    1      
 
-      11              1                0             1                    0      
+$\theta^Y_{1010}$         1                0                1                    0      
 
-      12              1                0             1                    1      
+$\theta^Y_{1011}$         1                0                1                    1      
 
-      13              1                1             0                    0      
+$\theta^Y_{1100}$         1                1                0                    0      
 
-      14              1                1             0                    1      
+$\theta^Y_{1101}$         1                1                0                    1      
 
-      15              1                1             1                    0      
+$\theta^Y_{1110}$         1                1                1                    0      
 
-      16              1                1             1                    1      
-------------------------------------------------------------------------------
+$\theta^Y_{1111}$         1                1                1                    1      
+---------------------------------------------------------------------------------------
 Table: (\#tab:PO16) With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the two variables.
 
 Readers will note that, in the counterfactual framework, causal relations are conceptualized as deterministic. A given case has a set of potential outcomes. Any randomness enters the analysis as incomplete knowledge of the factors influencing an outcome. But, in principle, if we knew all of the relevant causal conditions and the complete set of potential outcomes for a case, we could perfectly predict the actual outcome in that case. This understanding of causality---as ontologically deterministic, but empirically imperfectly understood---is compatible with views of causation commonly employed by qualitative researchers (see, e.g., @mahoney2008toward), and with understandings of causal determinism going back at least to @laplace1901philosophical. As we will see, we can readily express this kind of incompleteness of knowledge within a causal model framework; indeed, the way in which causal models manage uncertainty is central to how they allow us to pose questions of interest and to learn from evidence.
@@ -807,7 +807,7 @@ These steps are enough to fully describe a binary causal model. Later in this bo
 
 
 
-### Can you read conditional independence from a graph?
+### Test yourself! Can you read conditional independence from a graph?
 
 As an exercise, see whether you can identify the relations of conditional independence between $A$ and $D$ in Figure \ref{fig:CItest}. 
 
