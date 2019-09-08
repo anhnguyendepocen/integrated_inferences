@@ -36,13 +36,11 @@ Along with this change in goals come some changes in the structure of the model:
 We can now define the model compactly using `gbiqq` as follows.
 
 ```{r, message = FALSE}
-model <- make_model("I -> M -> D <- P; I -> D") %>%
+model <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>%
   
-         set_restrictions(causal_type_restrict =  
-           "(M[I=1] < M[I=0]) |
-            (D[I=1, M=., P=.] > D[I=0, M=., P=.]) |
-            (D[M=1, I=., P=.] < D[M=0, I=., P=.]) | 
-            (D[P=1, M=., I=.] < D[P=0, M=., I=.])") %>%
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])",
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>%
 
           set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 1)")) %>%
   
