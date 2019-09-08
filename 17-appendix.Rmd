@@ -21,7 +21,7 @@ In the simplest  $X$ causes $Y$ model the ATE is identified but the "probability
 
 The model can be written:
 
-```{r}
+```{r ap-XYnoconf}
 model <- make_model("X -> Y")
 plot_dag(model)
 ```
@@ -55,7 +55,7 @@ updated <- gbiqq(model, data)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data, refresh = 0), "saved/appendix_XY_model_1.rds")
+  write_rds(gbiqq(model, data, refresh = 0, stan_model = fit), "saved/appendix_XY_model_1.rds")
   }
 updated <- read_rds("saved/appendix_XY_model_1.rds")
 ```
@@ -149,7 +149,7 @@ updated <- gbiqq(model, data, refresh = 0)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data, refresh = 0), "saved/appendix_XY_model_2.rds")
+  write_rds(gbiqq(model, data, refresh = 0, stan_model = fit), "saved/appendix_XY_model_2.rds")
   }
 updated <- read_rds("saved/appendix_XY_model_2.rds")
 ```
@@ -170,7 +170,9 @@ Say now we have a theory that the relationship between $X$ and $Y$ is confounded
 
 ```{r, message = FALSE}
 model <- make_model("C -> X -> Y <- C") %>%
-         set_restrictions(causal_type_restrict = "(Y[X=1, C=.] < Y[X=0, C=.]) | (Y[C=1, X=.] < Y[C=0, X=.]) | (X[C=1] < X[C=0])") %>%
+         set_restrictions(c(
+           "(Y[X=1] < Y[X=0]) | (Y[C=1] < Y[C=0])",  
+           "(X[C=1] < X[C=0])")) %>%
          set_parameters(type = "prior_mean")  
 ```
 
@@ -199,7 +201,7 @@ To illustrate we will use the same data but assume priors from  model where we d
 
 ```{r}
 model <- make_model("C -> X -> Y <- C")  %>%
-         set_restrictions(causal_type_restrict = "(X[C=1] < X[C=0])") 
+         set_restrictions("(X[C=1] < X[C=0])") 
 ```
 
 
@@ -211,9 +213,6 @@ updated <- read_rds("saved/appendix_modelled_confound.rds")
 
 ate <- query_distribution(updated, "c(Y[X=1] - Y[X=0])", using = "posteriors")
 confound <- query_distribution(updated, "c(Y[C=1] - Y[C=0])", using = "posteriors")
-```
-
-```{r, echo = FALSE}
 plot(ate, confound)
 abline(lm(confound~ate), col = "red")
 ```
@@ -248,7 +247,7 @@ updated <- gbiqq(model, data)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data, refresh = 0), "saved/appendix_XMY_simple.rds")
+  write_rds(gbiqq(model, data, refresh = 0, stan_model = fit), "saved/appendix_XMY_simple.rds")
   }
 updated <- read_rds("saved/appendix_XMY_simple.rds")
 ```
@@ -294,7 +293,7 @@ posterior <- gbiqq(model, data)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data), "saved/appendix_mod_simple.rds")
+  write_rds(gbiqq(model, data, stan_model = fit), "saved/appendix_mod_simple.rds")
   }
 updated <- read_rds("saved/appendix_mod_simple.rds")
 ```
@@ -338,7 +337,7 @@ data <- simulate_data(model, n = 1000, parameters = pars)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  updated <- gbiqq(model, data)
+  updated <- gbiqq(model, data, stan_model = fit)
   write_rds(updated, "saved/appendix_IV_simple.rds")
   }
 updated <- read_rds("saved/appendix_IV_simple.rds")
@@ -366,12 +365,12 @@ We calculate the average causal effect for all and for the compliers and conditi
 
 ## Learning from a collider
 
-Pearl describes a  model similar to the following as case for which controlling for covariate $W$ induces bias in the estimation of the effect of $X$ on $Y$, which could otherwise be esimated without bias.
+Pearl describes a  model similar to the following as a case for which controlling for covariate $W$ induces bias in the estimation of the effect of $X$ on $Y$, which could otherwise be esimated without bias.
 
 ```{r}
 model <- make_model("X -> Y <- S; S -> W") %>%
-         set_confound(list(X = "W[S=1]==1")) %>%
-         set_parameters(c(.1, .9, 
+         set_confound(list(X = "W[S=1]>W[S=0]")) %>%
+         set_parameters(parameters = c(.1, .9, 
                           .5, .5, 
                           .9, .1, 
                           .1,.1,.7,.1,
@@ -380,15 +379,16 @@ model <- make_model("X -> Y <- S; S -> W") %>%
 plot_dag(model)
 
 data <- simulate_data(model, n =  20000)
+data$S <- NA
 
 ```
 
-The true effect of $X$ on $Y$ is .3 but the PC is quite different for units with $W=0$ and W=1$/
+The true effect of $X$ on $Y$ is .3 but the PC is quite different for units with $W=0$ and $W=1$:
 
 ```{r, echo = FALSE, message = FALSE}
 
 kable(
-  gbiqq::query_model(model, queries = list(ATE = "Y[X=1] - Y[X=0]"), 
+  gbiqq::query_model(model, queries = list(`Y(1)-Y(0)` = "Y[X=1] - Y[X=0]"), 
               using = "parameters",
               subsets = list(
                 TRUE, 
@@ -397,24 +397,15 @@ kable(
                 "X==1 & Y==1 & W==1")))
 ```
 
-Priors are:
+These are the quantities we seek to recover.  The ATE can be gotten fairly precisely in a simple regression. But controlling for $W$ introduces bias both for the unconditional and the conditional effects of $X$:
 
-```{r, echo = FALSE, message= FALSE}
-kable(
-  gbiqq::query_model(model, queries = list(ATE = "Y[X=1] - Y[X=0]"), 
-              using = "priors",
-              subsets = list(
-                TRUE, 
-                "X==1 & Y==1",
-                "X==1 & Y==1 & W==0",
-                "X==1 & Y==1 & W==1")))
-```
+```{r, echo = FALSE, warning = FALSE, results='asis'}
+M1 <- lm(Y~X, data = data)
+M2 <- lm(Y~X+W, data = data)
+M3 <- lm(Y~X*W, data = data)
 
-The ATE can be gotten fairly precisely in a simple regression. But controlling for $W$ introduces bias:
-
-```{r}
-summary(lm(Y~X, data = data))$coef
-summary(lm(Y~X+W, data = data))$coef
+stargazer::stargazer(M1, M2, M3, type = "html", header = FALSE)
+  
 ```
 
 How does the Bayesian model do, with and without data on $W$?
@@ -424,50 +415,48 @@ data_no_W <- data
 data_no_W$W <- NA
 ```
 
-```{r, eval = FALSE, echo = FALSE}
-updated1 <- gbiqq(model, data)
-updated2 <- gbiqq(model, data_no_W)
-```
-
 Inferences that do not use $W$ get ATE  right on average, but PC is not identified and statements about PC conditional on $W$ are not possible:
 
 ```{r, echo = FALSE}
 if(do_diagnosis){
-  updated1 <- gbiqq(model, data)
-  write_rds(updated1, "saved/appendix_collider1.rds")
-    updated2 <- gbiqq(model, data_no_W)
-  write_rds(updated2, "saved/appendix_collider2.rds")
-
+  updated_no_W <- gbiqq(model, data_no_W, refresh = 0, stan_model = fit)
+  write_rds(updated_no_W, "saved/appendix_collider1.rds")
+  updated_W <- gbiqq(model, data, refresh = 0, iter = 6000, stan_model = fit)
+  write_rds(updated_W, "saved/appendix_collider2.rds")
   }
-updated1 <- read_rds("saved/appendix_collider1.rds")
-updated2 <- read_rds("saved/appendix_collider2.rds")
+updated_no_W <- read_rds("saved/appendix_collider1.rds")
+updated_W <- read_rds("saved/appendix_collider2.rds")
 
 ```
 
+Without $W$:
 
 ```{r, echo = FALSE}
-kable(gbiqq::query_model(updated2, 
-              queries = "Y[X=1] - Y[X=0]", 
+kable(
+  gbiqq::query_model(updated_no_W, queries = list(`Y(1)-Y(0)` = "Y[X=1] - Y[X=0]"), 
               using = "posteriors",
               subsets = list(
                 TRUE, 
                 "X==1 & Y==1",
                 "X==1 & Y==1 & W==0",
-                "X==1 & Y==1 & W==1")))
+                "X==1 & Y==1 & W==1")), caption = "Collider excluded from model")
 
 ```
 
 We see  including the collider does not induce error in estimation of the ATE, even though it does in a regression framework. It provides an ability to make different PC case level claims given W, but these are nevertheless far off in this example because we still do not have identification. 
 
+With $W$:
 
 ```{r, echo = FALSE}
-kable(gbiqq::query_model(updated1, queries = "Y[X=1] - Y[X=0]", 
+kable(
+  gbiqq::query_model(updated_W, queries = list(`Y(1)-Y(0)` = "Y[X=1] - Y[X=0]"), 
               using = "posteriors",
               subsets = list(
                 TRUE, 
                 "X==1 & Y==1",
                 "X==1 & Y==1 & W==0",
-                "X==1 & Y==1 & W==1")))
+                "X==1 & Y==1 & W==1")), caption = "Collider included in model")
+
 ```
 
 
@@ -481,11 +470,16 @@ We imagine that node $R$ indicates whether a unit was assigned to be randomly as
 
 
 ```{r}
-model <- make_model("R -> X; O ->X; Z -> X; X -> Y") %>%
-         set_restrictions(causal_type_restrict = 
-                            "X[Z=1, R=1, O=0]!=1 | X[Z=0, R=1, O=0]!=0 | X[Z=1, R=1, O=1]!=1 | X[Z=0, R=1, O=1]!=0 | 
-                             X[Z=1, R=0, O=0]!=0 | X[Z=0, R=0, O=0]!=0 | X[Z=1, R=0, O=1]!=1 | X[Z=0, R=0, O=1]!=1") %>%
-         set_confound(list(O = "(Y[X=1]>Y[X=0])", O = "(Y[X=1]<Y[X=0])", O = "(Y[X=1] ==1)"))
+model <- make_model("R -> X; O ->X; Z -> X; X -> Y", 
+                    add_priors = FALSE) %>%
+         set_restrictions("(X[R=1, Z=0]!=0) | 
+                           (X[R=1, Z=1]!=1) | 
+                           (X[R=0, O=0]!=0) | 
+                           (X[R=0, O=1]!=1)") %>%
+         set_priors() %>%
+         set_confound(list(O = "(Y[X=1] > Y[X=0])", 
+                           O = "(Y[X=1] < Y[X=0])", 
+                           O = "(Y[X=1] == 1)"))
 
 plot_dag(model)
 ```
@@ -557,7 +551,7 @@ posterior <- gbiqq(model, data)
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data), "saved/appendix_exp_obs.rds")
+  write_rds(gbiqq(model, data, stan_model = fit), "saved/appendix_exp_obs.rds")
   }
 updated <- read_rds("saved/appendix_exp_obs.rds")
 ```
@@ -582,14 +576,14 @@ posterior <- gbiqq(model, data[data$R==1,])
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data[data$R==1,]), "saved/appendix_exp_obs_2.rds")
+  write_rds(gbiqq(model, data[data$R==1,], stan_model = fit), "saved/appendix_exp_obs_2.rds")
   }
-updated <- read_rds("saved/appendix_exp_obs_2.rds")
+updated_no_O <- read_rds("saved/appendix_exp_obs_2.rds")
 ```
 
 ```{r, echo = FALSE}
 result <- gbiqq::query_model(
-    updated, 
+    updated_no_O, 
     queries = list(ATE = "c(Y[X=1] - Y[X=0])"), 
     subsets = list(TRUE, "R==0", "R==1"),
     using = "posteriors")
