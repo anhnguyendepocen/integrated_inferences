@@ -6,7 +6,7 @@ source("_packages_used.R")
 
 ***
 
-With a causal model in hand, together with priors over parameters, you can assess in advance what conclusions you will draw from different observations and assess what kinds of observations are most worth seeking. We draw out the implicaitons of this idea for case selection.
+With a causal model in hand, together with priors over parameters, you can assess in advance what conclusions you will draw from different observations and assess what kinds of observations are most worth seeking. We draw out the implications of this idea for case selection.
 
 ***
 
@@ -19,7 +19,7 @@ Which cases you should choose will likely depend on the purposes to which you wa
 
 A matching strategy for instance---selecting cases that are comparable on many features but that differ on $X$---replicates at a small scale the kind of inference done by matching estimators with large-$n$ data. The strategy emphasize the inferences to be made from $X,Y$ variation rather than inferences drawn specifically from within case information beyond what is available in the measurement of $X$ and $Y$. (Citations needed.)
 
-Other treatments seek to use qualitative information to check assumptions made in $X, Y$ analysis: for example, is the measurement of $X$ and $Y$ reliable in critical cases? (Citations needed) For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the $X,Y$ inferences: for example influential cases that have unusually extreme values on $X$ and $Y$.\^[Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.] Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.
+Other treatments seek to use qualitative information to check assumptions made in $X, Y$ analysis: for example, is the measurement of $X$ and $Y$ reliable in critical cases? (Citations needed) For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the $X,Y$ inferences: for example influential cases that have unusually extreme values on $X$ and $Y$.^[Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.] Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.
 
 A third purpose is to use a case to generate alternative or richer theories of causal processes, as in Lieberman's "model-building" mode of "nested analysis" (@Lieberman2005nested). Here it may be cases off the regression line that are of interest.
 
@@ -35,21 +35,15 @@ The basic insight of this chapter is simple enough: *the optimal strategy for ca
 
 Beyond these general principles, other patterns are more complex and thus more difficult to neatly summarize. The most general message of this chapter is about the general approach: that is, that we can use a causal model to tell us what kinds of cases are likely to yield the greatest learning, given the model and a strategy of inference. We provide a tool for researchers to undertake this analysis, at least for simple problems with $X, Y, K$ data.
 
-For the general intuition, recall that the probative value of a process-tracing test hinges on the difference in clue likelihoods associated with the alternative hypotheses in play for a given case. Recall that for different values of $X$ and $Y$ cell, we want to use process tracing to help us distinguish between two specific types that are consistent with the $X, Y$ pattern. Which types are in question varies across $X,Y$ combinations. Table \ref{FP} illustrates.
+For the general intuition, recall that the probative value of a process-tracing test hinges on the difference in clue likelihoods associated with the alternative hypotheses in play for a given case. Recall that for different values of $X$ and $Y$ cell, we want to use process tracing to help us distinguish between two specific types that are consistent with the $X, Y$ pattern. Which types are in question varies across $X,Y$ combinations. Table \@ref(tab:FP) illustrates.
 
+| \small      |          $Y=0$           |           $Y=1$             |  
+|-------------|:------------------------:|:---------------------------:|
+|     $X=0$   |     $b$ or $c$           |       $a$ or $d$            |
+|     $X=1$   |     $a$ or $c$           |       $b$ or $d$            |
+Table: (\#tab:FP). The ambiguity about types in each $X, Y$ cell.
 
-\begin{table}[h!]
-\centering
-\begin{tabular}{c|cc}
-           &        $Y=0$ &        $Y=1$ \\ \hline
-       $X=0$ &     $b$ or $c$ &     $a$ or $d$ \\
-       $X=1$ &     $a$ or $c$ &     $b$ or $d$ \\
-\end{tabular}  
-\caption{The ambiguity about types in each $X, Y$ cell.}
-\label{FP} 
-\end{table}
-
-Thus, in the $X=0, Y-0$ cell, what would be most useful is a clue that has high probative value in distinguishing between an untreated ($X=0$) $b$ type and and an untreated $c$ type. For a case in the $X=1, Y=0$ cell, on the other hand, what matters is how well the clue can discriminate between treated ($X=1$) $a$ and $d$ types. In our notation, it is the difference in $phi_{jx}$ values for that indicates these cell-specific degrees of leverage. 
+Thus, in the $X=0, Y=0$ cell, what would be most useful is a clue that has high probative value in distinguishing between an untreated ($X=0$) $b$ type and and an untreated $c$ type. For a case in the $X=1, Y=0$ cell, on the other hand, what matters is how well the clue can discriminate between treated ($X=1$) $a$ and $d$ types. In our notation, it is the difference in $\phi_{jx}$ values for that indicates these cell-specific degrees of leverage. 
 
 To illustrate, consider a situation in which for a given clue we have  $\phi_{b1}$=0.5^[The probability of observing the clue for a $b$ type (positive causal effect) case with $X=1$.]; $\phi_{d1}$=0.5 ^[The probability of observing the clue for a $d$ type (zero causal effect, $Y$ fixed at 1) case with $X=1$.]; $\phi_{b0}$=0.5^^[The probability of observing the clue for a $b$ type (positive causal effect) case with $X=0$.]; and $\phi_{c0}$=0.1^[The probability of observing the clue for a $c$ type (zero causal effect, $Y$ fixed at 0) case with $X=0$.]. In this situation, searching for the clue in $X=Y=1$ cases will yield no leverage since the clue does not discriminate between the two types ($b$ and $d$) that need to be distinguished given $X=Y=1$. Here there is no additional learning about $\lambda_b$ that can be gained from looking for the clue. In contrast, $X=0, Y=0$ cases will be informative since the clue is much better at distinguishing between $b$ and $c$ types---the two types in contention for this kind of case. Thus, although process tracing here does not provide information on the prevalence of positive causal effects ($b$ types) for an $X=Y=1$ case, it does provide information when $X=Y=0$. 
 
@@ -84,7 +78,7 @@ given <-  collapse_data(data, model)
 kable(given)
 ```
 
-As we can see, two cases lie in each of the on-diagonal cells of an $X,Y$ table, those where $X=Y$, and one case lies in each of the off-diagonal cells, those where $X \neq Y$. Suppose that we are now considering gathering process-tracing evidence for 1 of these cases to inform our estimate of the ATE. There are many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
+As we can see, there are four cases where $X=Y$, and two where $X \neq Y$. Suppose that we are now considering gathering process-tracing evidence for 1 of these cases to inform our estimate of the ATE. There are many different case-selection strategies we might pursue, and each of these can give rise to different possible data and thus to different possible conclusions. What should we do?
 
 **DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustration, suppose that we are operating with a simple mediation model, $X \rightarrow M \rightarrow Y$. 
 
