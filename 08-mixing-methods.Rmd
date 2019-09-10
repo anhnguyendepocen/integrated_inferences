@@ -2,7 +2,7 @@
 
 ***
 
-We argue that mixed methods can be thought of as the analysis of single cases with vector valued variables. Reconceptualizing as large n is useful prmarily for computation reasons and often comes with hidden independence assumptions. We illustrate the single case approach and provide a set of models for the many case approach.
+We argue that mixed methods can be thought of as the analysis of single cases with vector valued variables. Reconceptualizing as large n is useful primarily for computation reasons and often comes with hidden independence assumptions. We illustrate the single case approach and provide a set of models for the many case approach.
 
 ***
 
@@ -28,7 +28,7 @@ To illustrate the idea that multi-case studies are really single-case studies wi
 
 Note that we have described the problem at the unit level. We can redescribe it at the population level however as a situation in which a treatment vector $X$ can take on one of four values, $(0,0), (0,1), (1,0), (1,1)$ with equal probability (or more strictly: as determined by $\theta$). $\theta$ is also a vector with two elements that can take on one of 16 values $(a,a), (a,b),\dots (d,d)$ as determined by $U_\theta$. In this case we will assume that the 16 possibilities are not equally likely, which captures the failure of independence in the unit level assignments.  $Y$ is a vector that reflects the elements of $\theta$ and $X$ in the obvious way (e.g $X=(0,0), \theta=(a,b)$ generates outcomes $Y=(1,0)$; though it is immediately obvious that representing nodes in vector forms allows for more general vector-level mappings to allow for SUTVA violations. $K$ has the same domain as $X$ and $Y$, and element $K[j]=1$ if $\theta[j]=b$.
 
-Note that to describe the estimand, the Sample Average Treatment Effect, we also need to consider operations and queries defined at the vector level. In practice we consider three operations, one in which both units have $X$ forced to 0 and two in which one nit has $X$ set to 0 and the other has $X$ set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary---of the form: is it a $b$ type?--and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, etc...)
+Note that to describe the estimand, the Sample Average Treatment Effect, we also need to consider operations and queries defined at the vector level. In practice we consider three operations, one in which both units have $X$ forced to 0 and two in which one unit has $X$ set to 0 and the other has $X$ set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary---of the form: is it a $b$ type?--and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, etc...)
 
 Represented in this way we can use the tools of Chapters 6 and 7 to fully examine this seemingly multi-case study. In the below we examine a situation in which we consider the value of observing $K$ on one case --- in this set up this is equivalent to observing part of the vector $K$ and making inferences on the full vector $\theta$.
 
@@ -92,7 +92,7 @@ ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = draw_type_prob(XY, us
 kable(ambXY_with_priors, caption = "An ambiguity matrix for a simple $X \rightarrow Y$ model (with no unobserved confounding), showing the priors over causal types arising from a single draw of $\\lambda$ from its prior distribution.")
 ```
 
-For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we woudl retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
+For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
 
 
 **Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed and the event probabilities for each data type, given a $\lambda$ draw.
@@ -105,7 +105,7 @@ $$
 $$
 In other words, the likelihood of observing a particular data pattern given $\lambda$ is given by the corresponding value of the multinomial distribution given the event probabilities. 
 
-What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $K$.
+What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $K$.
 
 Now, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions: 
 
@@ -131,17 +131,6 @@ $$
 <!-- |            $\lambda^Y_{01}$            |              0             |              0             |              0             |              0             |              1             |              1             |              0             |              0             |                    0.2                    | -->
 <!-- |            $\lambda^Y_{11}$            |              0             |              0             |              0             |              0             |              0             |              0             |              1             |              1             |                    0.3                    | -->
 <!-- Table: (\#tab:parammmatrixmix). A parameter matrix for a simple $X \rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\lambda$ values from the prior distribution. -->
-
-
-
-
-Thus, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions. For instance, for a model with 
-
-
-$$
-\Pr(\mathcal{D}|\theta) = 
-  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYK}|k, w_{XYK}\right)  \\
-$$
 
 
 ### Estimation
