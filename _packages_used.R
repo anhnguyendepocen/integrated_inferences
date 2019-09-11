@@ -1,5 +1,5 @@
 library("tidyverse")
-library("biqq")
+# library("biqq")
 library("gbiqq")
 library("gbiqqtools")
 library("bindrcpp")
@@ -10,6 +10,7 @@ library("knitr")
 library("expm")
 library("dagitty")
 library("stargazer")
+library("partitions")
 
 do_diagnosis = FALSE
 
