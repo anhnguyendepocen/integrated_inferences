@@ -1,7 +1,6 @@
 # Mixed-Method Application: Inequality and Democracy Revisited {#mixingapp}
 
 
-
 ```{r, include = FALSE}
 source("_packages_used.R")
 ```
@@ -17,6 +16,8 @@ In chapter 7 we drew inferences from a 'theory based' democracy and inequality m
 ***
 
 
+FLAG: Change causal types to unit types everywhere.
+
 ## A trained model
 
 We now apply these ideas on mixed method research to our model of democracy and inequality. The key difference to the exercise in in Chapter 7 is that whereas there we took the model as given, and sought to draw inferences to case given the model, the model now becomes an object that we both learn from and learn about. In essence we use the data on many cases to update our beliefs about the general model and then use this "trained' model to then make inferences about cases. 
@@ -24,9 +25,11 @@ We now apply these ideas on mixed method research to our model of democracy and 
 Along with this change in goals come some changes in the structure of the model:
 
 
-* Instead of specifying beliefs about causal types, $\theta$,  we now need to specify a belief over the *distribution* of causal types, $\lambda$. Concretely whereas in the simple process tracing model we *specified* that inequality has a positive effect on mobilization for some share of units, we now specify a distribution over the share of units for which inequality could have a positive effect, ranging anywhere from 0 to 100%  
+* Instead of positing a belief about the causal type of a given case, $\theta$, we now need to posit a belief over the *distribution* of nodal types---that is, over $\lambda$. Concretely, whereas in the simple process tracing model we *specified* that inequality has a positive effect on mobilization for some share of units, we now specify a distribution over the proportion of units for which inequality could have a positive effect, ranging anywhere from 0 to 1. 
 
-* As we train the model we allow now for the possibility that there is unobserved confounding -- in particular the possibility that inequality is less (or more!) likely in places in which inequality would induce mobilization. We do not impose confounding in one direction of another, but we do allow for the **possibility** of confounding. As a result we may have correlations in our posteriors over beliefs regarding confounding and beliefs about effects. 
+This means that we can now update on these population-level distributions as the model confronts data. 
+
+The same applies to confounding. Since $\lambda$ may include not beliefs about the *joint* distribution of nodal types, we can set priors on or allow for the possibility of confounding in our mode. In the application below, we focus on potential confounding in the relationship between inequality and mobilization---that inequality may be more or less likely in places where inequality would induce mobilization. Here do not set a prior belief about the direction or magnitude of the confounding, but we set up the parameter matrix to allow for the possibility of confounding. This allows us, in turn, to learn about confounding from the data.
 
 
 ***
@@ -42,7 +45,7 @@ model <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>%
            "(M[I=1] < M[I=0])",
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>%
 
-          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 1)")) %>%
+          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 1)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is 11. 
   
           set_priors()
   
@@ -68,6 +71,7 @@ We use the same  data as before, based on the analysis in @haggard2012inequality
 data <- gbiqq::democracy_data 
 ```
 
+Note that this is not a rectangular dataset in that Haggard and Kaufman's collection of clues was conditional on the outcome, $D$: qualitative data on the presence of international pressure and the presence of mass-mobilization were collected only for the cases that democratized.
 
 ```{r, echo = FALSE, warning = FALSE}
 data <- gbiqq::democracy_data 
@@ -75,9 +79,7 @@ kable(head(data))
 
 ```
 
-Note that although data is gathered on $D$ and $I$ in all cases, data on mobilization, $M$, and external pressure, $P$, was only gathered for some (in fact, for those cases in which there was democratization). $M$ in particular derives from qualitative research that assessed whether mobilization took place in those cases that democratized. 
-
-The raw correlations between variables is shown in Table \@ref(pimdcorr). Note that some of these correlations are missing because data was only gathered on some variables conditional on the values of others. For those quantities where we do see correlations they are not especially strong. There is a weak relation between inequality and democratization -- though this is consistent with inequality having different types of effect. the strongest correlation here is between $P$ and $M$, which are assumed to be uncorrelated in the model, though this correlation is also quite weak.   
+The raw correlations between variables is shown in Table \@ref(pimdcorr). Some correlations are missing because data was only gathered on some variables conditional on the values of others. For those quantities where we do see correlations, they are not especially strong. There is, in particular, a weak overall relationship between inequality and democratization --- though, of course, this is consistent with inequality having heterogeneous effects across the sample. The strongest correlation in the data is between $P$ and $M$, which are assumed to be uncorrelated in the model, though this correlation is also quite weak.   
 
 ```{r pimdcorr, echo = FALSE}
 kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
