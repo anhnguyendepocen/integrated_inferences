@@ -124,7 +124,17 @@ updated <- read_rds("saved/PIMD_updated.rds")
 
 We have used the data to update on $\lambda$: our beliefs about the distributions of nodal types, including about their joint distributions (i.e., confounding). We can now ask `gbiqq` to use the updated parameters to calculate any estimand of interest. 
 
-One set of questions we can ask is about the probability that high inequality causes democratization.
+One set of questions we can ask of the updated model is about the probability that high inequality causes democratization. We can pose this question at different levels of conditioning. For instance, we can ask:
+
+1. **For all cases**. For what proportion of cases in the population does inequality have a positive effect on democratization? 
+
+2. **For all cases displaying a given causal state and outcome**. Looking specifically at those cases that in fact had high inequality and democratized, for what proportion was the high inequality a cause of democratization?
+
+3. **For cases displaying a given causal state and outcome, and with additional clues present or absent.** What if we have also collected clues on mediating or moderating nodes? For instance, for what proportion of high-inequality, democratizing cases *with* mobilization did inequality cause the outcome? For what proportion *without* mobilization? Likewise for the presence or absence of international pressure?
+
+We ask `gbiqq` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the effect if interest and then "subset" for the relevant conditioning. We present the code and results of these operations below and in Figure \@ref(mixedhist).
+
+FLAG: Let's graph the priors for each of these queries next to the posteriors.
 
 ```{r, include = FALSE}
 prob_b <- query_distribution(
@@ -151,56 +161,95 @@ PC3 <- query_distribution(
                    query = "D[I=1] > D[I=0]",
                    subset = "D==1 & I==1 & M==0") #And what about for the I=D=1 cases where there was no mobilizaiton?
 
+PC4 <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=1] > D[I=0]",
+                   subset = "D==1 & I==1 & M==1 & P==1") 
+
+PC5 <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=1] > D[I=0]",
+                   subset = "D==1 & I==1 & M==1 & P==0") #And what about for the I=D=1 cases where there was no mobilizaiton?
+
+
+
 ```
 
 
-```{r mixedhet, echo =FALSE}
-par(mfrow = c(2,2))
+```{r mixedhist, echo =FALSE}
+par(mfrow = c(3,2))
 hist(prob_b, main = "I=1 causes D=1", xlim = c(0,1))
 hist(PC,     main = "D=1 caused by I=1", xlim = c(0,1))
 hist(PC2,    main = "D=1 caused by I=1 | M = 1", xlim = c(0,1))
 hist(PC3,    main = "D=1 caused by I=1 | M = 0", xlim = c(0,1))
+hist(PC4,    main = "D=1 caused by I=1 | M = 1, P=1", xlim = c(0,1))
+hist(PC5,    main = "D=1 caused by I=1 | M = 1, P=0", xlim = c(0,1))
 
 ```
+
+FLAG: Not sure how much it is worth saying here substantively about the results given how strongly they are driven by the restrictions.
+
+We can see that the share of cases overall in which inequality causes democratization is estimated to be very low, with a good deal of confidence. The proportion is considerably higher for those cases that in fact experienced high inequality and democratization. The proportion of positive causal effects is believed to be even higher for those in which mobilization occurred, especially where an alternative causes---international pressure---was absent, though our uncertainty about this share is also very high. We also see that the absence of mobilization tells us for certain that democratization was not caused by inequality. Interestingly, however, this result derives from the model restrictions, rather than from the data: under the restrictions we imposed, a positive effect of inequality could operate *only* through mobilization.
 
 
 ### Did inequality *prevent* democracy?
 
+We can undertake the same exercise for a negative causal effect, generating estimates a comparable set of estimands, as shown in Figure \@ref(mixedhist2).
+
 ```{r, include = FALSE}
-prob_b <- query_distribution(
+prob_a <- query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]")
 
-PC <- query_distribution(
+PCneg <- query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    subset = "D==0 & I==1")
 
-PC2 <- query_distribution(
+PC2neg <- query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    subset = "D==0 & I==1 & M==1")
 
-PC3 <- query_distribution(
+PC3neg <- query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    subset = "D==0 & I==1 & M==0")
+
+PC4neg <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=0] > D[I=1]",
+                   subset = "D==0 & I==1 & M==1 & P==1")
+
+PC5neg <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "D[I=0] > D[I=1]",
+                   subset = "D==0 & I==1 & M==0 & P==0")
+
 ```
 
 ```{r, mixedhist2, echo = FALSE}
-par(mfrow = c(2,2))
-hist(prob_b, main = "I=1 causes D=0", xlim = c(0,1))
-hist(PC,     main = "D=0 caused by I=1", xlim = c(0,1))
-hist(PC2,    main = "D=0 caused by I=1 | M = 1", xlim = c(0,1))
-hist(PC3,    main = "D=0 caused by I=1 | M = 0", xlim = c(0,1))
+par(mfrow = c(3,2))
+hist(prob_a, main = "I=1 causes D=0", xlim = c(0,1))
+hist(PCneg,     main = "D=0 caused by I=1", xlim = c(0,1))
+hist(PC2neg,    main = "D=0 caused by I=1 | M = 1", xlim = c(0,1))
+hist(PC3neg,    main = "D=0 caused by I=1 | M = 0", xlim = c(0,1))
+hist(PC4neg,    main = "D=0 caused by I=1 | M = 1, P=1", xlim = c(0,1))
+hist(PC5neg,    main = "D=0 caused by I=1 | M = 1, P=0", xlim = c(0,1))
 
 ```
 
-We see that inequality appears more likely to prevent democratization than to cause it. We are most confident that inequality played a preventative role in those cases in which there was mobilization but still no democratization. We are most confident that inequality had a positive effect in those cases in which we observe mobilization---but even then the probability that inequality made the difference is small. 
+We see that inequality appears, overall, more commonly to prevent democratization than to cause it. We are, moreover, most confident that inequality played a preventative role in those cases in which there was mobilization and international pressure---both of which *could* have generated democratization---but still no democratization occurred. 
+
+Importantly, in the mixed-data setting, we can think of our estimands in both population-level and case-level terms. We have initialy posed these question as population-level queries. The results in Figures \@ref(mixedhist) and \@ref(mixedhist2) can be understood as our estimates of the *share* of cases in the population, with a given set of characteristics, for which a particular causal effect holds. Yet these distributions, by the very same token, represent our beliefs about the probability that $I$ had a positive causal effect in an individual case. Thus, for instance, graph $PC2$ gives us the posterior on the proportiuon of $I=D=M=1$ cases in the population for which $I=1$ caused $D=1$. But it also tells us, for an individual case randomly selected from the population of $I=D=M=1$ cases, the probability that high inequality caused democratization in the case. The key difference from the pure process-tracing setup is that here our case-level inferences are informed by *data* from the population, rather than population-level beliefs serving only as priors.
 
 ## Prior / posterior comparison for multiple estimands
 
@@ -254,7 +303,21 @@ kable(prevent_posteriors, caption = "Posterior", digits = 3)
 ```
 
 
-FLAG: Multiple estimands.
+FLAG: Multiple estimands:
+
+1. Other links in the causal network: What is the proportion of cases in which $M$ has a positive effect on $D$? The proportion in which $P$ has a positive effect on $D$?
+
+2. Confounding: What is the difference in probability of $I=1$ for cases in which $M$ has a positive effect on $D$ vs. cases in which it does not?
+
+FLAG: Relax qualitative restrictions
+
+1. As in Chap 7, allow for negative effects of $I$ on $M$, with low prior probability but a good deal of uncertainty.
+
+2. Then we can
+
+(a) Examine sensitivity to restrictions by comparing results with those from the more restricted model
+
+(b) Examine PATHWAYS as an estimand. So most effects seem to be negative, but are they direct effects (consistent with Boix) or indirect effects running through reduced mobilization (consistent with Ansell and Samuels)?
 
 ## Discussion
 
