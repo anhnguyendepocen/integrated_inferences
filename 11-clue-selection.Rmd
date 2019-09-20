@@ -14,11 +14,15 @@ We draw out the implications of the causal model approach for clue selection str
 
 Consider now the problem of determining what qualitative data to gather on a case. Evidently it makes sense to gather information on clues that have large probative value, but whether or not clues have probative value can depend on what clues have already been collected: Finding out that the Butler had no motive may be informative for the claim that he is innocent, but it may not be useful if you already know he had no opportunity. 
 
-In our running example, we can see many situations where researchers have a choice of observations that could be informative, and situations in which the informativeness of an observation can depend on what is already known. In Figure \ref{fig:running}, we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the root nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see which collection of root nodes constitutes a given query, or estimand.  Turning things around, we can see, given a query, which nodes are informative of the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
+To motivate our thinking about clue-selection, consider again our running example with the free press and government removal. We can use this toy example to see, intuitively, how researchers may have a choice among observations that could be informative, and how the informativeness of an observation can depend on what is already known. In Figure \ref{fig:running}, we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the exogenous nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see which collection of exogenous nodes constitutes---gives the answer to---a given query, or estimand.  Turning things around, we can also see, given a query, which nodes are informative about the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
 
-For example, suppose one can see that $X=0$ and  $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in either panel $A$ or $B$ but we do not know which one. Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $P(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$ . Given the structural equation for $S$, $P(S|X=0,Y=0) = P(S|X=0)$, and given independence of $X$ and $S$, $P(S=1|X=0)= \pi^S$.  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
+FLAG: Where is the running example figure currently? Need to reference it.
 
-We can also see instances in this example of  how existing data can make clues *uninformative*. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$. Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
+FLAG: I'm having trouble getting the logical progression here. Seems somewhat broken in the sense that it's incomplete. Conceptually, we might think of informativeness situations as taking four possible forms of interest: a clue is always informative; never informative; informative only conditional on something else (obviously, what the something else is can vary); conditional only in the absence of something else. We seem to be covering always informative and conditionally uninformative. Seems odd not to also show always uninformative and informative only conditional on something else. But not sure if we can do this with this example.
+
+For example, suppose that one can see that $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in panel $A$, $B$, or $C$ but do not know which of these we are in. Would it be helpful to collect the clue $S$ if one has no other information? Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $P(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$. Given the structural equation for $S$, $P(S|X=0,Y=0) = P(S|X=0)$, and given independence of $X$ and $S$, $P(S=1|X=0)= \pi^S$ (the simple assignment propensity).  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
+
+We can also see instances in this example of  how existing data can make clues *uninformative*. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$). Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
 
 The running example also lets us demonstrate how informative clues can be found in many different places in a graph. 
 
@@ -28,34 +32,35 @@ The running example also lets us demonstrate how informative clues can be found 
 
 3. **Post-outcome clues.** Suppose we observe the presence of a free press ($X=1$) and want to know if it caused a lack of corruption ($C=0$), but cannot observe the level of corruption directly. Observing $Y$---which occurs after the outcome---is informative here: if $X=1$, then $X$ causes $C$ (negatively) if and only if $Y=0$. When an outcome is not observed, a consequence of that outcome can be informative about its value and, thus, about the effect of an observed suspected cause. 
 
-4. **Mediators as clues**: We see a politically sensitive government ($S=1$) and its survival ($S=0$). Did the government survive because of its sensitivity to public opinion? Here, the mediation clue $C$ is helpful: a lack of corruption, $C=0$, is evidence of $S$'s negative effect on $Y$. -->
+4. **Mediators as clues**: We see a politically sensitive government ($S=1$) and its survival ($S=0$). Did the government survive because of its sensitivity to public opinion? Here, the mediation clue $C$ is helpful: a lack of corruption, $C=0$, is evidence of $S$'s negative effect on $Y$. 
 
-And of course, different clues can be  informative in different ways for different types of estimand.
+And, of course, different clues can be  informative in different ways for different types of estimand.
 
-Needed then is a systematic way for identifying what clues to look for, and perhaps, in what order to look for them.
+Needed then is a systematic way for identifying what clues to look for for answering a given type of causal quesiton, given what we already know---and perhaps, in what order to look for them.
 
 ## A strategic approach
 
-The representation of inference problems as one of querying a Bayesian model points to a relatively simple method for answering this question, at least for small problems. Consider first a situation where one has access to data $W$ and wants to know the expected probative value of all possible collections of data one could gather. 
+The representation of inference problems as one of querying a Bayesian model points to a relatively simple method for answering this question, at least for small problems. Consider, first, a situation in which one has access to data $W$ and wants to know the expected probative value of all possible collections of data one could gather. 
 
 This can be done as follows:
 
 1. Define the model. 
 2. Define a query on the model.
-3. Define a data strategy --- for instance: figure out the value of $C$.
-4. Given existing data figure out the probability of different realizations of the data and for each possible realization calculate the posterior variance. Then calculate the *expected* posterior variance by taking an average of these variances with weights given by the probability of observing the clue pattern in question.
+3. Define a data strategy: a set of clues for which one might search (e.g., observe the value of $C$).
+4. Given prior data, figure out the probability of different realizations of the new data, and for each possible realization calculate the posterior variance. Then calculate the *expected* posterior variance for the data strategy by taking an average of these variances, with weights given by the probability of observing the clue realization in question.
 5. Repeat steps 3-4 for different data strategies. 
 
-This procedure then returns expected posterior variance associated with different data strategies. A still more sophisticated strategy would determine which clues to search for later given findings from clues that are sought first. This reflects the possibility that a given clues $K_2$ may be informative if another clue $K_1$ turns up positive but not if it comes out negative. 
+This procedure returns the expected posterior variances associated with different data strategies. 
 
-We provide some tools for both of these  approaches and illustrate them below for hte running example and the democracy application.
+A still more sophisticated strategy would, for multiple clues, take sequence into account: it would tell us which clues to search for later in the process given the realization of clues sought earlier. The path-dependence of clue selection arises from the possibility that the informativeness of a clue may depend on the value of other nodes in the model. A given clue $K_2$, for instance, may be informative if another clue $K_1$ has the value of 1 but not if it has the value 0. 
+
+We provide tools for both of these approaches and illustrate them below for both the running example and the democracy application.
 
 ## Clue selection for the running example
 
-Lets return to the running example and assess the informativeness of different clue strategies. 
+Let's return to the running example and assess the informativeness of different clue strategies for different estimands. 
 
-This model is formally defined as follows:
-
+This model is formally defined in `gbiqq` as follows:
 
 ```{r ch11strategies_chunk_slowxx, warning = FALSE}
 model <- 
@@ -68,6 +73,8 @@ model <-
   set_priors()
 
 ```
+
+As we have fully specified deterministic functional equations for this model, we restrict the nodal types to just those consistent with these functions. So, for instance, we restrict $C$'s nodal type to $\theta^C_{1110}$ because $C=1-XS$, meaning that it takes on a value of 1 unless both of its parents take on a value of 1, in which case it is 0. Similarly, the functional equation $R=CX$ implies the nodal type $\theta^R_{0001}$, with $R$ equal to 0 unless both of its parents are equal to 1. 
 
 ```{r, echo = FALSE, include = FALSE}
 plot_dag(model)
