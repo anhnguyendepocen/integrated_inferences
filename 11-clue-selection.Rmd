@@ -74,7 +74,7 @@ model <-
 
 ```
 
-As we have fully specified deterministic functional equations for this model, we restrict the nodal types to just those consistent with these functions. So, for instance, we restrict $C$'s nodal type to $\theta^C_{1110}$ because $C=1-XS$, meaning that it takes on a value of 1 unless both of its parents take on a value of 1, in which case it is 0. Similarly, the functional equation $R=CX$ implies the nodal type $\theta^R_{0001}$, with $R$ equal to 0 unless both of its parents are equal to 1. 
+As we have fully specified deterministic functional equations for this model, we restrict the nodal types to just those consistent with these functions. So, for instance, we restrict $C$'s nodal type to $\theta^C_{1110}$ because $C=1-XS$, meaning that it takes on a value of 1 unless both of its parents take on a value of 1 and takes on 0 otherwise. Similarly, the functional equation $R=CX$ implies the nodal type $\theta^R_{0001}$, with $R$ equal to 0 unless both of its parents are equal to 1. 
 
 ```{r, echo = FALSE, include = FALSE}
 plot_dag(model)
@@ -123,19 +123,23 @@ kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Unc
 ```
 
 
-The implication of the analysis is that if we know $X=0$ and $Y=0$ and we are interested in finding out whether$X=0$ *because* $Y$ is 0 we should look for evidence on $S$. Given this simple model, knowledge of $S$ is enough to answer the question at hand and *no othe information is useful at all*.
+The implication of the analysis is that if we know $X=0$ and $Y=0$ and we are interested in finding out whether$X=0$ *because* $Y$ is 0 we should look for evidence on $S$. Given this simple model, knowledge of $S$ is enough to answer the question at hand and *no other information is useful at all*.
 
 
 ### Dynamic Strategies
 
-The clue collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their in Given $n$ nodes, a data collection strategy will be of the form:
+The clue-collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their strategies as they go along. However, the expected informativeness of a clue may depend on the values of other clues that we see first, implying that an optimal strategy will be dynamic, taking into account earlier observations in selecting later ones. 
+
+Given $n$ nodes, a dynamic data collection strategy will be of the form:
 $$\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}$$
 
-where each $K_j$ is en element of the nodes on the graph, or is the empty set. Each of these strategies has an associated expected reduction in variance as well as an associated expected cost. Such a strategy vector specifies the first clue, and then subsequent clues condition on what was found from previous searches.  
+where each $K_j$ is en element of the nodes on the graph, or is the empty set. Thus, we start with observing $K_1$; then, whether we choose to observe $K_2$ depends on the value of $K_1$; whether we choose to observe $K_3$ depends on the value of $K_1$ and (if we observed it) $K_2$; and so on. A strategy *vector* specifies a series of conditional clue-search actions: it identifies the first clue sought and then which clues are sought conditional on the realization of all prior clues sought.  
+
+Each possible strategy has an associated expected reduction in variance as well as an associated expected cost. 
 
 To illustrate with the running example we imagine a situation in which it is known that $Y=1$ and we are interested in whether $Y=0$ because of $S$ (though we don't know at the outset what the value of $S$ is). We consider strategies in which we first seek information on one node and then, conditional on what we find, we look for data on one other node (or not). With five nodes, one already known, there are $4 \times 4^2$ strategies of this form.
 
-Say that the government was not replaced, we want to know is this because the government was sophisticated. If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
+Suppose that we observe that $Y=0$: the government was not replaced. We then want to know whether this is because the government was sophisticated ($S=1$). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
 
 ```{r, include = FALSE}
 
@@ -232,7 +236,9 @@ out <- cbind(strategy_list, results)
 ```
 
 
-For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs---but collection depends on past findings---then we can also calculated the expected costs of each strategy.
+QUERY: Are the prices in the code out of order relative to the comment and the text below?
+
+For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs---but collection depends on past findings---then we can also calculate the expected costs of each strategy.
 
 
 | Strategy | Step 1 | Step 2 if 0 | Step 2 if 1 | Expected variance | Expected Cost |
@@ -242,7 +248,10 @@ For each strategy we can then assess the expected variance reduction; in additio
 | 3        | S      | None        | X           |       0           | 2             |
 |          |        |             |             |                   |               |
 
-Figure \@ref(fig:ch11tradeoffs)   plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. FOr the figure we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs gathering $Y$ only.
+Figure \@ref(fig:ch11tradeoffs) plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs involves gathering $Y$ only.
+
+FLAG: Think we need to label the strategies in graph somehow.
+
 
 ```{r ch11tradeoffs, echo = FALSE}
 # Plot results
@@ -275,10 +284,12 @@ kable(inferences, caption = "\\label{possible_outcomes} Table shows possible dat
 
 ```
 
-We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. We show these reductions here for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect if $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
+We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. We show these reductions here for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
 
 
 
+
+FLAG: Table \ref{CaseLearn} needs a column defining the strategies.
 
 ```{r, echo = FALSE}
 
@@ -289,7 +300,7 @@ expected_learning(model, query = "D[I=0] == 0", strategy = "P",        given = "
 expected_learning(model, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
 expected_learning(model, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
 
-kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed inequality and democratization.", digits = 3)
+kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
 
@@ -310,9 +321,8 @@ kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Varia
 ```
 
 
-**To come**: applied case-level analyses involving causal pathways, actual causes, and notable causes.
-
-FLAG: DISTINGUISH ROWS IN THIS TABLE
+FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
+For population-level estimands or is this redundant? See issue 53. 
 
 FLAG: ADD DYNAMIC 
   
