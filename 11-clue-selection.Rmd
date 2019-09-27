@@ -284,7 +284,7 @@ kable(inferences, caption = "\\label{possible_outcomes} Table shows possible dat
 
 ```
 
-We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. We show these reductions here for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
+We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
 
 
 
@@ -303,7 +303,7 @@ expected_learning(model, query = "D[I=0] == 0", strategy = c("P","M"), given = "
 kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
-
+FLAG: Are we merging these two tables? Have same label.
 
 ```{r, echo = FALSE}
 
@@ -319,6 +319,24 @@ x_strategy <- c("None", "P", "M", "P and M")
 kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
 
 ```
+
+
+```{r, echo = FALSE}
+
+#Model with quant priors
+
+model <- make_model("I -> M -> D <- P; I -> D") %>%
+         set_restrictions(c(  
+            "(D[I=1, M=., P=.] > D[I=0, M=., P=.])",
+            "(D[M=1, I=., P=.] < D[M=0, I=., P=.])", 
+            "(D[P=1, M=., I=.] < D[P=0, M=., I=.])")) %>%
+  set_priors()
+
+
+
+```
+
+
 
 
 FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
