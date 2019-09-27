@@ -4,6 +4,7 @@
 
 ```{r, include = FALSE}
 source("_packages_used.R")
+do_diagnosis <- FALSE
 ```
 
 ***
@@ -67,14 +68,19 @@ model <-
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
   
-  set_restrictions(labels = list(C = "C1110", R = "R0001", Y = "Y0001"), 
+  set_restrictions(labels = list(C = c("C1110", "C1111"), 
+                                 R = c("R0001", "R0000"), 
+                                 Y = c("Y0001")), 
                    keep = TRUE) %>%
   
   set_priors()
 
 ```
 
-As we have fully specified deterministic functional equations for this model, we restrict the nodal types to just those consistent with these functions. So, for instance, we restrict $C$'s nodal type to $\theta^C_{1110}$ because $C=1-XS$, meaning that it takes on a value of 1 unless both of its parents take on a value of 1 and takes on 0 otherwise. Similarly, the functional equation $R=CX$ implies the nodal type $\theta^R_{0001}$, with $R$ equal to 0 unless both of its parents are equal to 1. 
+This version of the model differs a little from the earlier version we introduced by allowing uncertainty over teh types for $C$ and $R$.
+
+
+FLAG: EDIT: As we have fully specified deterministic functional equations for this model, we restrict the nodal types to just those consistent with these functions. So, for instance, we restrict $C$'s nodal type to $\theta^C_{1110}$ because $C=1-XS$, meaning that it takes on a value of 1 unless both of its parents take on a value of 1 and takes on 0 otherwise. Similarly, the functional equation $R=CX$ implies the nodal type $\theta^R_{0001}$, with $R$ equal to 0 unless both of its parents are equal to 1. 
 
 ```{r, echo = FALSE, include = FALSE}
 plot_dag(model)
@@ -149,7 +155,7 @@ Suppose that we observe that $Y=0$: the government was not replaced. We then wan
 strategy_evaluation <- function(model, 
                                 strategy  = c("X", "C", NA), 
                                 given = "Y==0",  
-                                query = "(Y[S=1] != Y[S=0])",
+                                query,
                                 prices = NULL) {
   vars <- model$variables
   if(is.null(prices)) prices <- rep(1, length(vars))
@@ -204,24 +210,41 @@ strategy_evaluation <- function(model,
                sum(prices[vars %in% factor(strategy[-2])]))
     expected_costs <- probs%*%costs  
 
-    c(expected_n = expected_n, expected_variance = expected_variance, expected_costs = expected_costs)
+    c(expected_n = expected_n, 
+      expected_variance = expected_variance, 
+      expected_costs = expected_costs)
 }
 
-# Make a list of strategies:
-vars <- c("S", "X", "C", "R") 
-strategy_list <- sapply(1:4, function(j) 
-  expand.grid(one = vars[j], two_0 = c(NA, vars[-j]), two_1 = c(NA, vars[-j]), stringsAsFactors = FALSE), 
-  simplify = FALSE)
-strategy_list <- do.call("rbind", strategy_list)
-strategy_list <- data.frame(strategy_list, stringsAsFactors = FALSE)
+# This function makes a list of two step strategies:
+# FLAG needs to be generalized for more steps
+strats <- function(model, vars = model$variables){
+  
+  x <- sapply(1:length(vars), function(j) 
+        expand.grid(one = vars[j], 
+                    two_0 = c(NA, vars[-j]), 
+                    two_1 = c(NA, vars[-j]), 
+                    stringsAsFactors = FALSE), 
+                    simplify = FALSE)
+    x <- do.call("rbind", x)
+    data.frame(x, stringsAsFactors = FALSE)
+    }
+```
 
-# Calculate expected n and variance
+```{r, echo = FALSE}
+# Implement for running examples
+strategy_list <- strats(model, c("S", "X", "C", "R"))
+
 # Assume prices in wihch X and C are somewhat expensive
 prices <- c(1, 1.5, 1.2, .5, .7)
-# do_diagnosis <- TRUE
+
+# Calculate expected n and variance
 if(do_diagnosis){
 results <- t(apply(strategy_list, 1, function(j) 
-  strategy_evaluation(model, strategy  = j, given = "Y==0", prices = prices))) %>%
+  strategy_evaluation(model, 
+                      strategy  = j, 
+                      given = "Y==0", 
+                      query = "(Y[S=1] != Y[S=0])", 
+                      prices = prices))) %>%
   data.frame()
   write_rds(results, "saved/ch11_tradeoffs.rds")
   }
@@ -248,12 +271,14 @@ For each strategy we can then assess the expected variance reduction; in additio
 | 3        | S      | None        | X           |       0           | 2             |
 |          |        |             |             |                   |               |
 
-Figure \@ref(fig:ch11tradeoffs) plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs involves gathering $Y$ only.
+Table: Illustration of three (of many) possible two step strategies.
+
+Figure \@ref(fig:tradeoffs) plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs involves gathering $Y$ only.
 
 FLAG: Think we need to label the strategies in graph somehow.
 
 
-```{r ch11tradeoffs, echo = FALSE}
+```{r tradeoffs, echo = FALSE}
 # Plot results
 with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 ```
@@ -261,24 +286,29 @@ with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over str
   
 ## Clue selection for the Democracy model 
 
+                                
 With a model in hand we are also in a position to assess what we *could* learn from different data stratgies and what we would infer upon discovery of different data. 
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE}
 
-model <- make_model("I -> M -> D <- P; I -> D") %>%
-         set_restrictions(c(  
-           "(M[I=1] < M[I=0])",
-            "(D[I=1, M=., P=.] > D[I=0, M=., P=.])",
-            "(D[M=1, I=., P=.] < D[M=0, I=., P=.])", 
-            "(D[P=1, M=., I=.] < D[P=0, M=., I=.])"))
+pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+
+          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta_01. 
+  
+          set_priors()
+
 
 ```
 
 ```{r, echo = FALSE}
 
 inferences <-
-  conditional_inferences(model, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
+  conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
 
 kable(inferences, caption = "\\label{possible_outcomes} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
 
@@ -291,28 +321,29 @@ We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with 
 
 FLAG: Table \ref{CaseLearn} needs a column defining the strategies.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
 EL1 <-
   rbind(
-expected_learning(model, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
-expected_learning(model, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
-expected_learning(model, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
-expected_learning(model, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
 
 kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
+
 FLAG: Are we merging these two tables? Have same label.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
 EL2 <-
   rbind(
-expected_learning(model, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
-expected_learning(model, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
-expected_learning(model, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
-expected_learning(model, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
+expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
 
 x_strategy <- c("None", "P", "M", "P and M")
 
@@ -321,20 +352,6 @@ kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Varia
 ```
 
 
-```{r, echo = FALSE}
-
-#Model with quant priors
-
-model <- make_model("I -> M -> D <- P; I -> D") %>%
-         set_restrictions(c(  
-            "(D[I=1, M=., P=.] > D[I=0, M=., P=.])",
-            "(D[M=1, I=., P=.] < D[M=0, I=., P=.])", 
-            "(D[P=1, M=., I=.] < D[P=0, M=., I=.])")) %>%
-  set_priors()
-
-
-
-```
 
 
 
@@ -342,7 +359,37 @@ model <- make_model("I -> M -> D <- P; I -> D") %>%
 FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
 For population-level estimands or is this redundant? See issue 53. 
 
-FLAG: ADD DYNAMIC 
+Here we implement the same exercise for the democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that pressure is easy to observe but moviliazation is difficult.
+
+
+```{r, echo = FALSE}
+strategy_list_pimd <- strats(pimd, c("P", "M"))
+
+# Assume prices in wihch X and C are somewhat expensive
+prices_pimd <- c(1, .5, 1.2, .5)
+
+# do_diagnosis <- TRUE
+if(do_diagnosis){
+results_pimd <- t(apply(strategy_list_pimd, 1, function(j) 
+  strategy_evaluation(pimd, 
+                      strategy  = j, 
+                      given = "D==1 & I==1", 
+                      query = "(D[I=1] != D[I=0])", 
+                      prices = prices))) %>%
+  data.frame()
+  write_rds(results_pimd, "saved/ch11_tradeoffs_pimd.rds")
+  }
+results_pimd <- read_rds("saved/ch11_tradeoffs_pimd.rds")
+
+kable(data.frame(cbind(strategy_list_pimd, results_pimd) ), digits = 4)
+# Plot results
+with(results_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
+
+# 10 is best?
+# (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
+# strategy_list_pimd[10,]
+```
+
   
 <!-- ## More complex problems -->
 
