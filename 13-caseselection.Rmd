@@ -175,7 +175,7 @@ model <- make_model("X->M->Y")  %>%
 # We imagine some preexisting data we have observed
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
 # We make a matrix showing how many cases there are of each data typema
-given <-  collapse_data(data, model)
+given <-  collapse_data(data, model, remove_family = TRUE)
 
 # We can then imagine what data we might observe if we examine M inside some subset of cases
 possible_data <- 
@@ -186,6 +186,16 @@ possible_data <-
                      N = list(1,1,1,1), 
                      condition = list("X==0 & Y==0", "X==1 & Y==0", "X==0 & Y==1", "X==1 & Y==1"))
 ```
+
+In this example we sought to observe $M$ for four units, one in each possible $X$, $Y$ combination. This gives rise to 16 distinct possible data observations.
+
+```{r, echo = FALSE}
+df <- possible_data
+colnames(df) <- c("Event", 1:16)
+kable(df, caption = "Possible data from observing M for one case in each X,Y cell")
+```
+
+For each of these possible strategies we can assess the posterior that we would obtain.
 
 ```{r, echo = FALSE}
 
