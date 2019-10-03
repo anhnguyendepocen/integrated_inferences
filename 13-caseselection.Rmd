@@ -116,23 +116,23 @@ The qualitative case-selection literature has identified a range of possible str
 
 In Table \@ref(caseselectlots), we show the results of diagnoses of each of these five classes of strategies, assuming that we will be process-tracing 6 cases. In each diagnosis we start with 500 $X, Y$ cases, with 100 $X=Y=0$ cases, 200 $X=Y=1$ cases, 130 $X=0, Y=1$ cases, and 70 $X=1, Y=0$ cases. The regression line here represents a positive association. We work with the same model and priors as above. Importantly, this  means that the results we show here are not *general* evaluations of these strategies, but contingent on this particular model and set of priors. And that is precisely our point: optimal case-selection will always hinge on our model, a claim that we demonstrate further below.
 
-FLAG: Create Table (caseselectlots) with these diagnoses. Do not represent data possibilities in the table (too many). Strategies are:
+<!-- FLAG: Create Table (caseselectlots) with these diagnoses. Do not represent data possibilities in the table (too many). Strategies are: -->
 
-1. Variation in $X$: Randomly select 3 $X=0$ cases and 3 $X=1$ cases
+<!-- 1. Variation in $X$: Randomly select 3 $X=0$ cases and 3 $X=1$ cases -->
 
-2. Variation in $Y$: Randomly select 3 $Y=0$ cases and 3 $Y=1$ cases
+<!-- 2. Variation in $Y$: Randomly select 3 $Y=0$ cases and 3 $Y=1$ cases -->
 
-3. On the regression line: Randomly select 3 from the two $X=Y=0$ cell and 3 from the $X=Y=1$ cell.
+<!-- 3. On the regression line: Randomly select 3 from the two $X=Y=0$ cell and 3 from the $X=Y=1$ cell. -->
 
-4. Off the regression line: Randomly select 3 from the $X=0, Y=1$ cell and 3 from the $X=1, Y=0$ cell.
+<!-- 4. Off the regression line: Randomly select 3 from the $X=0, Y=1$ cell and 3 from the $X=1, Y=0$ cell. -->
 
-5. Representativeness: Randomly select 6 cases
+<!-- 5. Representativeness: Randomly select 6 cases -->
 
-We can see that....
+<!-- We can see that.... -->
 
-## Different models, different strategies
+<!-- ## Different models, different strategies -->
 
-## Different queries, different strategies
+<!-- ## Different queries, different strategies -->
 
 
 
@@ -162,9 +162,8 @@ We can see that....
 
 
 
-## In code
 
-```{r selection_code}
+```{r selection_code, echo = FALSE}
 
 # We define a model
 model <- make_model("X->M->Y")  %>%
@@ -174,25 +173,52 @@ model <- make_model("X->M->Y")  %>%
 
 # We imagine some preexisting data we have observed
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
-# We make a matrix showing how many cases there are of each data typema
 given <-  collapse_data(data, model, remove_family = TRUE)
 
 # We can then imagine what data we might observe if we examine M inside some subset of cases
-possible_data <- 
-  make_possible_data(model, 
-                     given = given, 
-                     vars = list("M", "M", "M", "M"), 
-                     within = TRUE, 
-                     N = list(1,1,1,1), 
-                     condition = list("X==0 & Y==0", "X==1 & Y==0", "X==0 & Y==1", "X==1 & Y==1"))
+A_on_regression_line <- 
+  make_possible_data(model, given = given, vars = "M", N = c(1,1), 
+                     condition = c("X==1 & Y==1", "X==0 & Y==0"), prefix = "A")
+
+B_off_regression_line <- 
+  make_possible_data(model, given = given, vars = "M", N = c(1,1), 
+                     condition = c("X==1 & Y==0", "X==0 & Y==1"), prefix = "B")
+
+C_Y1_only <- 
+  make_possible_data(model, given = given, vars = "M", N = c(1,1), 
+                     condition = c("X==0 & Y==1", "X==1 & Y==1"), prefix = "C")
+
+D_X1_only <- 
+  make_possible_data(model, given = given, vars = "M", N = c(1,1), 
+                     condition = c("X==1 & Y==0", "X==1 & Y==1"), prefix = "D")
+
+E_at_random <- 
+  make_possible_data(model, given = given, vars = "M", N = 2, prefix = "E")
+
 ```
 
-In this example we sought to observe $M$ for four units, one in each possible $X$, $Y$ combination. This gives rise to 16 distinct possible data observations.
+We consider a situation in which one has access to $X,Y$ data of the form:
 
 ```{r, echo = FALSE}
-df <- possible_data
-colnames(df) <- c("Event", 1:16)
-kable(df, caption = "Possible data from observing M for one case in each X,Y cell")
+kable(given)
+```
+
+and one assesses four strategies. Strategy $A$ choses two cases on the regression line (one in the X=Y=0 cell and onne in the X=Y=1 cell); strategy $B$ chooses off the regression line and straregy C selects on the dependent variable -- choosing cases with $Y = 1$.
+
+Different strategies $A - D$ can each yield up to four different data types. Each one of these is likely to arise with a different probabilities and is associated with a different inference. This allows is to assess the *expected* posterior variance associated with each strategy. We exclude foor the moment the random strategy which produces up to 30 different data types given the available cases. 
+
+
+
+```{r, echo = FALSE}
+# Combine data types
+df <- A_on_regression_line %>% 
+  merge(B_off_regression_line, by = "event", all = TRUE) %>%
+  merge(C_Y1_only, by = "event", all = TRUE) %>%
+  merge(D_X1_only, by = "event", all = TRUE) %>%
+  dplyr:::mutate_if(is.numeric, ~replace(., is.na(.), 0))
+
+table(duplicated(t(df)))
+names(df) <- c("Event", paste0(rep(c("A", "B", "C", "D"), each = 4), 1:4))
 ```
 
 For each of these possible strategies we can assess the posterior that we would obtain.
@@ -200,45 +226,78 @@ For each of these possible strategies we can assess the posterior that we would 
 ```{r, echo = FALSE}
 
 if(do_diagnosis){
-
-# Figure out the posterior variance on our query for each possible data type, given the model and the XY data	
-	estimates_database_n1 <- make_estimates_database(
-                  model, 
-                  given, 
-                  possible_data = possible_data, 
-                  queries = "Y[X=1]-Y[X=0]")
   
+ if(!exists("fit")) fit  <- fitted_model()
+ 
+ strategies <- 
+   list(A_on_regression_line, B_off_regression_line, C_Y1_only, D_X1_only)
+
+ 	write_rds(strategies, "saved/illustration_strategies.rds")
+  
+ 
+ estimates_dbs <- lapply(strategies, function(s) 
+    make_estimates_database(model, given, possible_data = s, queries = "Y[X=1]>Y[X=0]")
+    )
+    
+	write_rds(estimates_dbs, "saved/illustration_estimates.rds")
+
 # Set the reference model that we will use to calculate data probabiities. The reference model is the original model updated with the XY data we've already seen.
 	reference_model <- gbiqq(model, data)
+	
 	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
 
-# Calculate the probabiity of each data type given the reference model.  
-  diagnosis_n1 <- 
-    diagnose_strategies(
-        reference_model = reference_model, 
-        analysis_model  = model,
-        given = given, 
-        queries = "Y[X=1]-Y[X=0]",
-        estimates_database = estimates_database_n1,
-        possible_data = possible_data)
-
-  write_rds(diagnosis_n1, "saved/diagnosis_n1.rds")
+ probabilities <- lapply(strategies, function(s) 
+    average_data_probabilities(reference_model, s, using = "posteriors")
+    )
+    
+	write_rds(probabilities, "saved/illustration_probabilities.rds")
 
 }
 
-  reference_model            <- read_rds("saved/reference_XMY_updated_model.rds")
+  reference_model <- read_rds("saved/reference_XMY_updated_model.rds")
+	probabilities   <- read_rds("saved/illustration_probabilities.rds")
+  strategies      <- read_rds("saved/illustration_strategies.rds")
+  estimates_db    <- read_rds("saved/illustration_estimates.rds")
 
-  estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1_X1Y1.rds")
+  df <- rbind(df, 
+              c("Probability", round(unlist(probabilities),2)),
+              c("Posterior variance",   round(unlist(lapply(estimates_db, function(j)   unlist(j[,5]))),2)))
+  kable(df, caption = "Each colum shows a possible distribution of data that can be generated from a given strategy. Each strategy generates one of four different data patterns. We calcualte the probability of each, given the data seen so far, and the posterior variance given each data realization.")
+```
+
+Thus each strategy generates one of four different data patterns. We calcualte the probability of each, given the data seen so far, and the posterior variance given each data realization.  The implied *expected* variance under each strategy is summarized below:
+```{r, echo = FALSE}
+expected_posterior_var <- sapply(0:3, function(i) sum(
+ as.numeric(df[df$Event == "Probability", (i*4+2):(i*4 + 5)])*
+ as.numeric(df[df$Event == "Posterior variance", (i*4+2):(i*4 + 5)]))
+ )
+kable(data.frame(Strategy = c("A", "B", "C", "D"), Variance = expected_posterior_var))
+```
+ 
+
+```{r, include = FALSE}  
+  # estimates_database_n1_X1Y1 <- read_rds("saved/estimates_database_n1_X1Y1.rds")
   # diagnosis_X1Y1             <- read_rds("saved/diagnosis_n1_X1Y1.rds.rds")
 	## write_rds(estimates_database_n1_X1Y1, "saved/estimates_database_n1.rds")
 
+  # Calculate the probability of each data type given the reference model.  
+  # illustration_diagnosis <- 
+  #   diagnose_strategies(
+  #       reference_model = reference_model, 
+  #       analysis_model  = model,
+  #       given = given, 
+  #       queries = "Y[X=1] > Y[X=0]",
+  #       estimates_database = estimates_dbs[[1]],
+  #       possible_data = strategies[[1]])
+  # 
+  # write_rds(diagnosis_n1, "saved/diagnosis_n1.rds")
+
 ```
 
-Diagnosis:
 
 
 
-```{r showx1y1diagnosestrategies, eval=FALSE}
+```{r showx1y1diagnosestrategies, eval=FALSE, include = FALSE}
 diagnosis_X1Y1 <- 
   diagnose_strategies(
     reference_model = reference_model, 
@@ -252,7 +311,7 @@ diagnosis_X1Y1 <-
 
 ## Compare multiple data strategies 
 
-We now apply the procedure to a set of strategies. 
+We now apply the procedure systematically to a set of strategies for multiple models and given differnet types of pre-existing data. 
 
 ```{r ch13n1n2cases, echo=FALSE}
 if(do_diagnosis){
