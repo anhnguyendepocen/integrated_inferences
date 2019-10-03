@@ -59,7 +59,7 @@ We provide tools for both of these approaches and illustrate them below for both
 
 ## Clue selection for the running example
 
-Let's return to the running example and assess the informativeness of different clue strategies for different estimands. 
+Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present () or that corruption is present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
 
 This model is formally defined in `gbiqq` as follows:
 
@@ -77,16 +77,11 @@ model <-
 
 ```
 
-This version of the model differs a little from the earlier version we introduced by allowing uncertainty over teh types for $C$ and $R$.
-
-
-FLAG: EDIT: As we have fully specified deterministic functional equations for this model, we restrict the nodal types to just those consistent with these functions. So, for instance, we restrict $C$'s nodal type to $\theta^C_{1110}$ because $C=1-XS$, meaning that it takes on a value of 1 unless both of its parents take on a value of 1 and takes on 0 otherwise. Similarly, the functional equation $R=CX$ implies the nodal type $\theta^R_{0001}$, with $R$ equal to 0 unless both of its parents are equal to 1. 
-
 ```{r, echo = FALSE, include = FALSE}
 plot_dag(model)
 ```
 
-Using this model we can ask how likely different data realizations are and what we would infer from each possible data realization, given existing data. We illustrate assuming we already know that $X=0$ and $Y=0$. 
+Suppose that our query is whether $X$ has a positive effect on $Y$. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that $X=0$ and $Y=0$. 
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
 possible_inferences <-  
