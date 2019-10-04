@@ -94,7 +94,9 @@ possible_inferences <-
 
 Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. We have included all 12 combinations of possible realized values for all available clue strategies given that we have already observed $X=0$ and $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $NA$ under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first row, we are collecting no clues beyond our prior data on $X$ and $Y$. In the second row, we have additionally sought clue $S$ and observed a value of $0$, while in the third row we have chosen the same strategy but observed $S=1$. 
 
-In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$. The final column 
+In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$. The final column indicates the probability of each data-realization, given the chosen strategy. FLAG: NEEDS COMPLETING.
+
+FLAG: Let's add posterior variance to Table \@ref(tab:showstrats5xx)
 
 
 ```{r showstrats5xx, echo = FALSE, warning = FALSE}
@@ -103,7 +105,7 @@ In the sixth column, we see the inference we would make from each data-realizati
 kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns. ", row.names = FALSE)
 ```
 
-Each inference has an associated posterior variance and so it is easy to assess the *expected* reduction in variance from seeking any kind of clue. See Table \@ref(tab:scxrylearning). 
+Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances in Table \@ref(tab:scxrylearning). 
 
 
 ```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
@@ -126,7 +128,7 @@ kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Unc
 ```
 
 
-The implication of the analysis is that if we know $X=0$ and $Y=0$ and we are interested in finding out whether$X=0$ *because* $Y$ is 0 we should look for evidence on $S$. Given this simple model, knowledge of $S$ is enough to answer the question at hand and *no other information is useful at all*.
+We interpret higher levels of expected learning from a strategy as a greater expected reduction in posterior variance. We can see that the clue strategies fall into two groups: one with a greater and one with a lesser expected reduction in uncertainty. The implication of the analysis is that if we know $X=0$ and $Y=0$ and we are interested in finding out whether $X=0$ *because* $Y$ is 0 we should look for evidence on $S$. Given this simple model, knowledge of $S$ is enough to answer the question at hand and *no other information is useful at all*.
 
 
 ### Dynamic Strategies
