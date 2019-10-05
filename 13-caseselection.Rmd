@@ -257,17 +257,56 @@ In this example, we see that the researcher would expect to be better off---in t
 
 All of this can be done in code in a single line. 
 
+
 ```{r showx1y1diagnosestrategies, eval=FALSE, include = TRUE}
-diagnosis_regression_line <- 
+
+diagnose_strategies(
+    
+   analysis_model = model,
+   
+   given = given,
+   
+   data_strategies = list(
+     A_online =  list(N=c(1,1), within = TRUE, vars = "M", 
+                       conditions = c("X==1 & Y==1", "X==0 & Y==0")),
+     B_offline = list(N=c(1,1), within = TRUE, vars = "M", 
+                       conditions = c("X==1 & Y==0", "X==0 & Y==1"))),
+   
+   queries = "Y[X=1] - Y[X=0]"
+   
+   )
+
+```
+
+```{r , echo = FALSE}
+
+if(do_diagnosis){
+  
+diagnosis <- 
   
   diagnose_strategies(
-    reference_model = reference_model, 
-    analysis_model  = model,
-    given           = given, 
-    queries         = "Y[X=1]-Y[X=0]",
-    estimates_database = estimates_database_n1_X1Y1,
-    possible_data   = possible_data)
+    
+   analysis_model = model,
+   
+   given = given,
+   
+   data_strategies = list(
+     A_online =  list(N=c(1,1), within = TRUE, vars = "M", 
+                       conditions = c("X==1 & Y==1", "X==0 & Y==0")),
+     B_offline = list(N=c(1,1), within = TRUE, vars = "M", 
+                       conditions = c("X==1 & Y==0", "X==0 & Y==1"))),
+   
+   queries = "Y[X=1] - Y[X=0]",
+   
+   sims = 2000
+   
+   )
 
+write_rds(diagnosis, "saved/ch13diagnosis.rds")
+}
+
+diagnosis <- read_rds("saved/ch13diagnosis.rds")
+kable(diagnosis$diagnoses_df, digits = 3)
 ```
 
 ## Results from experiments

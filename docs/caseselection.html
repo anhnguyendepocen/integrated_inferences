@@ -275,7 +275,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="11.2" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-running-example"><i class="fa fa-check"></i><b>11.2</b> Clue selection for the running example</a><ul>
 <li class="chapter" data-level="11.2.1" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#dynamic-strategies"><i class="fa fa-check"></i><b>11.2.1</b> Dynamic Strategies</a></li>
 </ul></li>
-<li class="chapter" data-level="11.3" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-democracy-model"><i class="fa fa-check"></i><b>11.3</b> Clue selection for the Democracy model</a></li>
+<li class="chapter" data-level="11.3" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>11.3</b> Clue selection for the democratization model</a></li>
 <li class="chapter" data-level="11.4" data-path="clue-selection-as-a-decision-problem.html"><a href="clue-selection-as-a-decision-problem.html#conclusion-2"><i class="fa fa-check"></i><b>11.4</b> Conclusion</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="wide.html"><a href="wide.html"><i class="fa fa-check"></i><b>12</b> Going wide and going deep</a><ul>
@@ -733,15 +733,63 @@ From the calculated probability of each data type, given the data seen so far, a
 </table>
 <p>In this example, we see that the researcher would expect to be better off—in the sense of having less posterior uncertainty—by focusing her process-tracing efforts where a greater share of the population of cases lies: on the regression line.</p>
 <p>All of this can be done in code in a single line.</p>
-<pre class="sourceCode r"><code class="sourceCode r">diagnosis_regression_line &lt;-<span class="st"> </span>
-<span class="st">  </span>
-<span class="st">  </span><span class="kw">diagnose_strategies</span>(
-    <span class="dt">reference_model =</span> reference_model, 
-    <span class="dt">analysis_model  =</span> model,
-    <span class="dt">given           =</span> given, 
-    <span class="dt">queries         =</span> <span class="st">&quot;Y[X=1]-Y[X=0]&quot;</span>,
-    <span class="dt">estimates_database =</span> estimates_database_n1_X1Y1,
-    <span class="dt">possible_data   =</span> possible_data)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">diagnose_strategies</span>(
+    
+   <span class="dt">analysis_model =</span> model,
+   
+   <span class="dt">given =</span> given,
+   
+   <span class="dt">data_strategies =</span> <span class="kw">list</span>(
+     <span class="dt">A_online =</span>  <span class="kw">list</span>(<span class="dt">N=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, 
+                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==1&quot;</span>, <span class="st">&quot;X==0 &amp; Y==0&quot;</span>)),
+     <span class="dt">B_offline =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, 
+                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==0&quot;</span>, <span class="st">&quot;X==0 &amp; Y==1&quot;</span>))),
+   
+   <span class="dt">queries =</span> <span class="st">&quot;Y[X=1] - Y[X=0]&quot;</span>
+   
+   )</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">strategy</th>
+<th align="left">Query</th>
+<th align="left">Subset</th>
+<th align="right">estimand</th>
+<th align="right">estimate</th>
+<th align="right">MSE</th>
+<th align="right">post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Prior</td>
+<td align="left">Q 1</td>
+<td align="left">All</td>
+<td align="right">0.134</td>
+<td align="right">0.134</td>
+<td align="right">0.014</td>
+<td align="right">0.017</td>
+</tr>
+<tr class="even">
+<td align="left">A_online</td>
+<td align="left">Q 1</td>
+<td align="left">All</td>
+<td align="right">0.134</td>
+<td align="right">0.136</td>
+<td align="right">0.012</td>
+<td align="right">0.015</td>
+</tr>
+<tr class="odd">
+<td align="left">B_offline</td>
+<td align="left">Q 1</td>
+<td align="left">All</td>
+<td align="right">0.134</td>
+<td align="right">0.134</td>
+<td align="right">0.014</td>
+<td align="right">0.018</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="results-from-experiments" class="section level2">
