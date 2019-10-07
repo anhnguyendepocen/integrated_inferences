@@ -185,6 +185,51 @@ What are the marginal gains from additional pieces of correlational and process-
 
 
 
+```{r, echo = FALSE}
+
+model <- make_model("K-> X -> Y <- K")
+
+if(do_diagnosis){
+
+ data_strategies = list(
+ 		N4L0 =  list(N=4, withins = FALSE, vars = list(c("X", "Y")), conditions = TRUE),
+ 		N2L2 =  list(N=2, withins = FALSE, vars = list(c("X", "K", "Y")), conditions = TRUE),
+ 		N3L1 =  list(N=list(1,2), withins = FALSE, vars = list(c("X", "K", "Y"), c("X", "Y")), conditions = TRUE))
+ 	
+ 	possible_data_list = lapply(data_strategies, function(ds)
+ 		with(ds, make_possible_data(model = model, given = NULL, 
+ 		N = N, withins = withins, conditions = conditions, vars = vars)))
+ 	
+ lapply(possible_data_list, length)
+
+
+  			  
+diagnosis <- 
+  
+  diagnose_strategies(
+    
+   analysis_model = model,
+   
+   given = given,
+   
+   data_strategies = data_strategies,
+
+   queries = "Y[X=1] - Y[X=0]",
+   
+   sims = 400
+   
+   )
+
+write_rds(diagnosis, "saved/ch13diagnosis.rds")
+}
+
+diagnosis <- read_rds("saved/ch13diagnosis.rds")
+kable(diagnosis$diagnoses_df, digits = 3)
+
+```
+
+
+
 ## Probative value of clues
 
 ## Effect Heterogeneity
