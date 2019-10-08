@@ -88,7 +88,7 @@ possible_inferences <-
   
   conditional_inferences(model, 
                          query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                         given = "X==0 & Y==0")
+                         given = "Y==0")
 
 ```
 
@@ -108,16 +108,18 @@ kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences gi
 Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances in Table \@ref(tab:scxrylearning). 
 
 
+***FLAG: Spell out all the strategies with X***
+
 ```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
 
-strats <- list("S", "C", "R", c("C", "R"), c("C", "S"), c("S", "R"), c("C", "S", "R"))
+strats <- list("X", "S", "C", "R", c("C", "R"), c("C", "S"), c("S", "R"), c("C", "S", "R"))
 
 learning <- sapply(strats,  function(strategy) {
 
   expected_learning(model, 
                     query = list(COE = "(Y[X=1] > Y[X=0])"), 
                     strategy = strategy, 
-                    given = "X==0 & Y==0", 
+                    given = "Y==0", 
                     parameters = NULL)
   })
 ```
