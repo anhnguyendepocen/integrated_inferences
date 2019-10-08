@@ -70,30 +70,49 @@ kable(q2)
 
 We now examine inferences given different data strategies:
 
-```{r, echo = FALSE}
-if(!exists("fit") & do_diagnosis) fit  <- fitted_model()
 
-wide_or_deep <- function(model, n_K, n_fold, query = "Y[X=1] - Y[X=0]") {
+```{r , echo = FALSE, message = FALSE}
 
-  df <- data.frame(X = c(0,0,0,1,1,1), Y = c(0,0,1,0,1,1), K = NA) %>%
-        slice(rep(row_number(), n_fold))
-  
-  given              <- collapse_data(df, model)
-  reference_model    <- gbiqq(model, df, stan_model = fit)
-  
-  possible_data      <- make_possible_data(model = model, given = given, N = n_K, vars = "K")
-  estimates_database <- make_estimates_database(model, given = given, possible_data = possible_data, queries = query)
-  
-  out <- diagnose_strategy(
-    reference_model, 
-    model, 
-    given, 
-    queries = query,
-  	estimates_database = estimates_database,
-  	possible_data = possible_data)
-  out
-}  
+given_fold <- function(n_fold) 
+  data.frame(X = c(0,0,0,1,1,1), Y = c(0,0,1,0,1,1), K = NA) %>%
+        slice(rep(row_number(), n_fold)) %>%
+        collapse_data(model, remove_family = TRUE)
 
+
+wd <- function(n_fold=2, sims = 600)  {
+      
+  diagnose_strategies(
+    
+   analysis_model = model,
+   
+   given = given_fold(n_fold),
+
+   data_strategies = list(
+     QL1 =  list(N = 1, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
+     QL2 =  list(N = 2, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
+     QL3 =  list(N = 3, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
+     QL4 =  list(N = 4, within = TRUE, vars = "K", conditions = c("X==1 & Y==1"))),
+   
+   queries = "Y[X=1] - Y[X=0]",
+   
+   sims = sims
+   
+   )
+}
+
+if(do_diagnosis) {
+  diagnosis <- wd(2)
+  write_rds(diagnosis, "saved/ch12diagnosiswd.rds")
+  }
+
+
+diagnosis <- read_rds("saved/ch12diagnosiswd.rds")
+
+plot(0:4, diagnosis$diagnoses_df$MSE, ylim = c(0, max(diagnosis$diagnoses_df$MSE)), ylab = "MSE",
+     xlab = "Cases with within case data", type = "b")
+```
+
+```{r, eval = FALSE}
 if(do_diagnosis){
   wd_1_2 <- wide_or_deep(model, 1, 2)
   write_rds( wd_1_2, "saved/wd_1_2.rds")
