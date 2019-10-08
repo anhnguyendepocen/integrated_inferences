@@ -13,7 +13,7 @@ source("_packages_used.R")
 
 How does this approach guide researchers in making choices about research designs?
 
-We address this question with a focus  on characterizing the kind of learning that emerges from different combinations of investment in the collection of correlational as compared with process-tracing data *under different research conditions*. We report the results here of simulation-based experiments designed to tell us under what research conditions different mixes of methods can be expected to yield more accurate inferences. We also discuss, at a high level, the implications of the framework for strategies of qualitative case-selection.  
+We address this question with a focus  on characterizing the kind of learning that emerges from gathering different sorts of data---such ,  *under different research conditions*. We report the results here of simulation-based experiments designed to tell us under what research conditions different mixes of methods can be expected to yield more accurate inferences. We also discuss, at a high level, the implications of the framework for strategies of qualitative case-selection.  
 
 
 ## Intuitions: Does a sufficiently large $N$ always trump $K$?
@@ -23,13 +23,13 @@ We begin by considering the learning that occurs upon observing outcomes from va
 The goal here is to build up intuitions on how beliefs change given different observations and how this affects posterior variance. We address the question is a very controlled setting in which 
 
 * a researcher is confronted with balanced $X,Y$ data that exhibits no correlation
-* the  researcher can seek a doubly decisive clue on cases in the $X=Y=1$ cell 
-* though not known in advance, it turns out that each time the researcher finds evidence suggesting that the case in question is a $b$ type
+* the  researcher can seek information on a highly informative ("doubly decisive") clue, $K$, on cases in the $X=Y=1$ cell 
+* though not known in advance, it turns out that each time the researcher finds evidence suggesting that the case in question is a $b$ type (that is, indeed $X$ causes $Y$)
 * the selection probabilities are either unknown or known with near certainty
 
-In this case, we can expect that seeing evidence of $b$ types will shift the researcher to increase her beliefs on the average causal effect. But how strong will these shifts be and how does this depend on the amount of XY data available? Does the signal from the $XY$ data drown out any signal from the  $K$ data?
+In this case, we can expect that seeing evidence of $b$ types will shift the researcher to increase her beliefs on the average causal effect. But how strong will these shifts be and how does this depend on the amount of $X, Y$ data available? Does the signal from the $XY$ data drown out any signal from the  $K$ data?
 
-Intuitions to answer these questions can be gathered from the simulations reported in Figure \ref{morn}. For these simulations we varied the size of the $XY$ data from 5  observations in each cell to 5000. The key features of the simulations are:
+Figure \ref{morn} reports answers to these questions. For the simulations we varied the size of the $XY$ data from 5  observations in each cell to 5000. The key features of the simulations are:
 
 1. When assignment propensities are unknown---as for example with observational data---the clue information shifts beliefs independent of how many $XY$ cases there are. The key insight is that the clue provides information on assignment propensities which are informative about the share of each type in each cell and these shares determine treatment effects no matter how large or small the cells are.
 
@@ -41,16 +41,34 @@ Intuitions to answer these questions can be gathered from the simulations report
 ```{r}
 model <- make_model("X -> Y <- K") %>%
   set_restrictions("(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)") %>%
-  set_parameters(c(0.001, .999, .5, .5, .25, .25, .25, .25))
+  set_parameters(c(0.01, .99, .5, .5, .25, .25, .25, .25))
 ```
+
+We see that prior beliefs are for a 0 average effect which rises to approximately .5 for cases in which $K=1$ is observed and falls to -.5 for cases in which $K=0$ is observed.  
 
 ```{r, echo = FALSE}
 kable(
   query_model(model, queries = list(ATE = "Y[X=1] - Y[X=0]"), 
-              using = rep(c("parameters", "priors"), each = 3), 
+              using =  "priors", 
               subsets = list(TRUE, "K==1", "K==0")))
 ```
 
+We see little  difference in the prior on estimands. Despite this an important difference is that the model that allows for confounding also allows for updating on confounding, which the simple model does not.
+
+```{r, echo  = FALSE}
+model_confound <-   set_confound(model, list(X = "(Y[X=1] > Y[X=0])")) %>%
+  set_parameters(c(0.001, .999, .5, .5, .2, .8, .25, .25, .25, .25)) 
+
+  q2 <- query_model(model_confound, 
+              queries = list(ATE = "Y[X=1] - Y[X=0]"), 
+              using = "priors",
+              subsets = list(TRUE, "K==1", "K==0"))
+kable(q2)
+
+#x <- (get_types(model_confound, query = "Y[X=1] - Y[X=0]", join_by = "|")$types)
+```
+
+We now examine inferences given different data strategies:
 
 ```{r, echo = FALSE}
 if(!exists("fit") & do_diagnosis) fit  <- fitted_model()
@@ -63,12 +81,16 @@ wide_or_deep <- function(model, n_K, n_fold, query = "Y[X=1] - Y[X=0]") {
   given              <- collapse_data(df, model)
   reference_model    <- gbiqq(model, df, stan_model = fit)
   
-  possible_data      <- make_possible_data(model = model, given = given, N = n_K)
+  possible_data      <- make_possible_data(model = model, given = given, N = n_K, vars = "K")
   estimates_database <- make_estimates_database(model, given = given, possible_data = possible_data, queries = query)
   
-  out <- diagnose_strategy(reference_model, model, given, queries = query,
-  									estimates_database = estimates_database,
-  									possible_data = possible_data)
+  out <- diagnose_strategy(
+    reference_model, 
+    model, 
+    given, 
+    queries = query,
+  	estimates_database = estimates_database,
+  	possible_data = possible_data)
   out
 }  
 
@@ -79,9 +101,6 @@ if(do_diagnosis){
 
 wd_1_2 <- read_rds("saved/wd_1_2.rds")
 
-```
-
-```{r, echo = FALSE}
 
 wd_sim <- function(model, n_K, n_fold) {
   
@@ -109,27 +128,7 @@ wd <- t(wd[c(4,9,14), ])
 rownames(wd) <- c("Clues on 4 cases", "Clues on 8 cases")
 colnames(wd) <- c("N=8", "N=40", "N=80")
 kable((wd))
-```
 
-```{r}
-model_confound <- make_model("X -> Y <- K") %>%
-  set_restrictions("(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)") %>%
-  set_parameters(c(0.001, .999, .5, .5, .25, .25, .25, .25)) %>%
-  set_confound(list(X = "(Y[X=1]==1)"))
-
-draw_parameters(model_confound)
-
-
-kable(
-  query_model(model_confound, 
-              queries = list(ATE = "Y[X=1] - Y[X=0]"), 
-              using = rep(c("parameters", "priors"), each = 3), 
-              subsets = list(TRUE, "K==1", "K==0")))
-x <- (get_types(model_confound, query = "Y[X=1] - Y[X=0]", join_by = "|")$types)
-```
-
-
-```{r, echo = FALSE}
 if(do_diagnosis){
   if(!exists("fit")) fit <- gbiqq::fitted_model()
   out <- sapply(c(4,8), function(n_K) {sapply(c(2, 10, 20), function(k) wd_sim(model_confound, n_K, k))})
@@ -147,11 +146,9 @@ kable((wd2))
 
 ## Evaluating strategies
 
-As a metric of the returns from different research strategies we calculate the *expected* inaccuracy in the estimation of the average treatment effect, as given in equation \ref{Loss}.
-\begin{equation}
-\mathcal{L}=\mathbb{E}_\theta(\mathbb{E}_{\mathcal{D}|\theta}(\tau(\theta)-\hat{\tau}(\mathcal{D}))^2) 
-\label{Loss}
-\end{equation}
+As a metric of the returns from different research strategies we calculate the *expected* inaccuracy in the estimation of the average treatment effect, as given by:
+
+$$\mathcal{L}=\mathbb{E}_\theta(\mathbb{E}_{\mathcal{D}|\theta}(\tau(\theta)-\hat{\tau}(\mathcal{D}))^2) $$
 
 
 where $\tau(\theta)$ is the value of $\lambda_b-\lambda_a$ (the average treatment effect) given $\theta$, and $\hat{\tau}(\mathcal{D})$  is the *estimate* of this treatment effect (the mean posterior value) that is generated following some realization of data $\mathcal{D}$. Thus, if some $\theta$ characterized the true state of the world, then $\mathbb{E}_{\mathcal{D}|\theta}(\tau^\theta-\hat{\tau})^2$ is the expected error in estimation of the causal effect given different realizations of the data, $\mathcal{D}$,  that could obtain in this state of the world.  $\mathcal{L}$ is then the expected value of these errors given prior beliefs over possible values of $\theta$.
@@ -193,8 +190,10 @@ if(do_diagnosis){
 
  data_strategies = list(
  		N4L0 =  list(N=4, withins = FALSE, vars = list(c("X", "Y")), conditions = TRUE),
- 		N2L2 =  list(N=2, withins = FALSE, vars = list(c("X", "K", "Y")), conditions = TRUE),
- 		N3L1 =  list(N=list(1,2), withins = FALSE, vars = list(c("X", "K", "Y"), c("X", "Y")), conditions = TRUE))
+ 		N2L2 =  list(N=2, withins = FALSE, vars = list(c("X", "K", "Y")), conditions = TRUE)
+ 		#,
+ 		#N3L1 =  list(N=list(1,2), withins = FALSE, vars = list(c("X", "K", "Y"), c("X", "Y")), conditions = TRUE)
+ 		)
  	
  	possible_data_list = lapply(data_strategies, function(ds)
  		with(ds, make_possible_data(model = model, given = NULL, 
