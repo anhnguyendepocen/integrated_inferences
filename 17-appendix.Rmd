@@ -314,6 +314,68 @@ kable(result)
 
 As an exercise, define a model where, learning about a model with moderators allows you to tighten bounds on COE even without observing the value of the mediator.
 
+## Billy and Suzy's moderator and mediation model
+
+We can describe a simple version of the Billy and Suzy stone throwing game as a model with moderation and mediation in three nodes.
+
+```{r}
+
+
+model <- make_model("Suzy -> Billy -> Smash <- Suzy") %>%
+         set_restrictions(c(
+           
+           # If Suzy throws the bottle breaks
+           "(Smash[Suzy=1]==0)",
+
+           # The bottle won't break by itself
+           "(Smash[Billy=0, Suzy = 0]==1)",
+           
+           # Suzy's throw doesn't *encourage* Billy to throw
+           "Billy[Suzy=1]>Billy[Suzy=0]"))
+plot_dag(model)
+```
+
+Here "Suzy" means Suzy throws, "Billy": means Billy throws---which he might not do if Suzy throws---and "Smash" means the bottle gets smashed.
+The version here is a somewhat less deterministic version of the classic account. Suzy is still an ace shot but now she may or may not throw and Billy may or may not respond positively  to Suzy and if he does respond he may or may not be successful. With all these possibilities we have twelve unit causal types instead of 1.
+
+We have two estimands of interest: counterfactual causation and actual causation. Conditional on Suzy throwing and the bottle breaking, would the bottle not have broken had Suzy not thrown her stone. That's counterfactual causation. The actual causation asks the same question but *conditioning* on the fact that Billy did or did not thrown *his* stone---which we know could itself be due to Suzy throwing her stone. If so then we might think of an "active path" from Suzy's throw to the smashing, even though had she not thrown the bottle would have smashed anyhow.
+
+Our results:
+
+```{r}
+actual_cause <- query_model(model, using = "priors",
+  queries = c(
+    Counterfactual = "Smash[Suzy = 1] > Smash[Suzy = 0]",
+    Actual = "Smash[Suzy = 1, Billy = Billy[Suzy = 1] ] > 
+              Smash[Suzy = 0, Billy = Billy[Suzy = 1]]"),
+  subsets = c("Suzy==1 & Smash==1", "Suzy==1 & Smash==1 & Billy==0", "Suzy==1 & Smash==1 & Billy==1"),
+  expand_grid = TRUE
+  )
+```
+
+```{r, echo = FALSE}
+kable(actual_cause)
+```
+
+Our inferences, *without even observing* Billys throw distinguish between Suzy being a counterfactual cause and an actual cause. We think it likely that Suzy's throw was an actual cause of the outcome though we are less sure that it was a counterfactual causes. Observing Billy's throw strengthens our inferences. If Billy didn't throw then we are sure Suzy's throw was the actual cause, though we are still in doubt about whether her throw was a counterfactual cause.  
+
+Note that if we observed Suzy *not* throwing  then we would learn *more* about whether she would be a counterfactual cause since we would have learned more about whether Billy reacts to her and also about whether Billy is a good shot.
+
+
+```{r, echo = FALSE}
+actual_cause_2 <- query_model(
+  model, 
+  using = "priors",
+  queries = c(
+    Counterfactual = "Smash[Suzy = 1] > Smash[Suzy = 0]",
+    Actual = "Smash[Suzy = 1, Billy = Billy[Suzy = 1] ] > 
+              Smash[Suzy = 0, Billy = Billy[Suzy = 1]]"),
+    subsets = c("Suzy==0 & Billy==0", "Suzy==0 & Billy==1",  "Suzy==0 & Billy==1 & Smash==1"),
+    expand_grid = TRUE
+    )
+kable(actual_cause_2)
+```
+
 ## An IV model
 
 We define a simple mediation model and illustrate learning about whether $X=1$ caused $Y=1$ from observations of $M$.

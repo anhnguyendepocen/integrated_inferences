@@ -1,16 +1,19 @@
-library("tidyverse")
-# library("biqq")
-library("gbiqq")
-library("gbiqqtools")
-library("bindrcpp")
-library("ggplot2")
-library("StanHeaders")
-library("rstan")
-library("knitr")
-library("expm")
-library("dagitty")
-library("stargazer")
-library("partitions")
+
+library("pacman")
+
+pacman::p_load(
+  tidyverse,
+  gbiqq,
+  gbiqqtools,
+  bindrcpp,
+  ggplot2,
+  StanHeaders,
+  rstan,
+  knitr,
+  expm,
+  dagitty,
+  stargazer,
+  partitions)
 
 do_diagnosis = FALSE
 

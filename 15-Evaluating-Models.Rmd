@@ -49,6 +49,22 @@ data <- simulate_data(reference_model, using = "parameters", n = 1000)
 
 approach 2 -- say actual confound is q~=0; but model  assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.  
 
+
+(Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions.
+
+Say we have model
+
+```{r}
+model <- make_model("X -> M1 -> M2 -> Y ") %>% set_confound(list(M1 = "Y[M2=1]>Y[M2=0]"))
+```
+
+Can we check that there is no direct path from $X$ to $Y$?
+
+ Pearl (1995) gives conditions for assessing for discrete data whether $Z$ has a  direct effect on $Y$. (Involves inequalities)
+ 
+Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.
+ 
+ 
 ### Check prior dependence
 
 
@@ -108,8 +124,12 @@ Reality checks -- posterior fits. Predict data from the posterior. Look at wheth
 
 ### Assess likelihoods under different models
 
-Compare likelihoods of the data under different models
+Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.]
+BIC involves a penalty for more parameters
 
+
+Compare likelihoods of the data under different models
+Check look package for rstan
 
 
 ## Evaluating the Democracy-Inequality model
