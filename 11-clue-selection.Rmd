@@ -59,7 +59,9 @@ We provide tools for both of these approaches and illustrate them below for both
 
 ## Clue selection for the running example
 
-Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present () or that corruption is present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
+Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present and that corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
+
+To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether corruption is ever-present or not, but if it is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it is only because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press --- the only mechanism that can generate reporting on corruption --- is present. In turn, the presence of a free press can only matter for government survival if governments are *not* sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.
 
 This model is formally defined in `gbiqq` as follows:
 
@@ -108,11 +110,9 @@ kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences gi
 Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances in Table \@ref(tab:scxrylearning). 
 
 
-***FLAG: Spell out all the strategies with X***
-
 ```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
 
-strats <- list("X", "S", "C", "R", c("C", "R"), c("C", "S"), c("S", "R"), c("C", "S", "R"))
+strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R")
 
 learning <- sapply(strats,  function(strategy) {
 
@@ -126,12 +126,101 @@ learning <- sapply(strats,  function(strategy) {
 
 
 ```{r scxrylearning, echo = FALSE}
-kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Posterior Uncertainty"))
+kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
 ```
 
 
-We operationalize higher levels of expected learning from a strategy as a greater expected reduction in posterior variance. We can see that the clue strategies fall into two groups: one with a greater and one with a lesser expected reduction in uncertainty. All strategies that involve looking for $S$ have the same expected posterior variance, which is lower than the expected posterior variance of all strategies that exclude a search for $S$. The implication that if we know $X=0$ and $Y=0$ and we are interested in finding out whether $X=0$ *because* $Y$ is 0, then we should look for evidence on $S$. Moreover, *no other information is useful at all* as we get no further reduction in expected posterior variance. Thus, if the search for information is costly, the dominant strategy is the first, looking only for $S$.
+We operationalize higher levels of expected learning from a strategy as a greater expected reduction in variance upon observing the data. We can see a couple of patterns here. 
 
+* By far the biggest gains in learning come from observing $X$. We can see this most readily by comparing the 1-clue strategies to one another. But in general, any strategy that includes observing $X$ always does substantially better than the comparable strategy that excludes $X$. The intuition here is fairly straightforward: if we want to know whether $Y=0$ was caused by $X=0$, and start out very uncertain about $X$'s value, we should expect to learn a good deal from figuring out whether $X$ is in fact equal to $0$.
+
+* Once we decide to observe $X$, then the next-most informative clue to add to our research design is $S$: $X, S$ has the lowest expected posterior variance of any of the 2-clue strategies; and the 3-clue strategies that include both $X$ and $S$ perform better in expectation than does the one that excludes $S$. This result is consistent with a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from *moderators*, like $S$ in this model, than from mediators. We return to this point below. In this model, the $S$ is potentially highly informative because if a government is sensitive, it will never fall ($Y$ will be 0) regardless of the presence or absence of a free press. We learn less from $S$ if we observe $S$ and find out if is $0$; but if we look for $S$, we have a 0.5 chance of observing a value that completely settles the matter.
+
+* We cannot improve on an $X, S$ strategy by gathering more data. Once we have decided to observe $X$ and $S$, there are no expected gains from also observing either $C$ or $R$ or both. They cannot tell us anything about whether $X=0$ could have caused $Y=0$ that we don't already know from $X$ and $S$.^[Here is the logic: $Y=0$ can occur either because $C=0$ or because $R=0$. The only way for $C=0$ to arise is if the government is sensitive ($S=1$) and there is a free press ($X=1$). And while we are uncertain whether $C$'s nodal type is such that $C$ will in fact be $0$ when $S=1$ and $C=1$, this would represent a *negative* effect of $X$ on $Y$, not a positive one. There are three ways to get no reporting ($R=0$): (1) there is never any reporting, in which case $X$ does not mattereither $C=0$ Thus, if the search for information is costly, the dominant strategy is the first, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
+
+* Clues can be more informative jointly than separately: the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing $C$ is slightly more informative than observing $S$. 
+
+OTHER ANALYSES:
+
+Try asking about a negative effect.
+Try for different priors on X and S being 1 -- makes them less informative.
+
+
+  
+## Clue selection for the democratization model 
+
+                                
+We now apply this approach to the model of democratization that we worked with in Chapters \ref(ptapp) and \ref(mixingapp).
+
+
+```{r, echo = FALSE, message = FALSE}
+
+pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+
+          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta_01. 
+  
+          set_priors()
+
+
+```
+
+```{r, echo = FALSE}
+
+inferences <-
+  conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
+
+kable(inferences, caption = "\\label{possible_outcomes} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+
+```
+
+We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
+
+
+
+
+FLAG: Table \ref{CaseLearn} needs a column defining the strategies.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+EL1 <-
+  rbind(
+expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+
+kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
+
+```
+
+FLAG: Are we merging these two tables? Have same label.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+EL2 <-
+  rbind(
+expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
+
+```
+
+
+
+
+
+
+FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
+For population-level estimands or is this redundant? See issue 53. 
 
 ### Dynamic Strategies
 
@@ -282,81 +371,7 @@ FLAG: Think we need to label the strategies in graph somehow.
 with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 ```
 
-  
-## Clue selection for the democratization model 
 
-                                
-We now apply this approach to the model of democratization that we worked with Chapters \ref(ptapp) and \ref(mixingapp).
-
-
-```{r, echo = FALSE, message = FALSE}
-
-pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
-  
-         set_restrictions(c( 
-           "(M[I=1] < M[I=0])", 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
-
-          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta_01. 
-  
-          set_priors()
-
-
-```
-
-```{r, echo = FALSE}
-
-inferences <-
-  conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
-
-kable(inferences, caption = "\\label{possible_outcomes} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
-
-```
-
-We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
-
-
-
-
-FLAG: Table \ref{CaseLearn} needs a column defining the strategies.
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
-EL1 <-
-  rbind(
-expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
-expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
-expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
-expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
-
-kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
-
-```
-
-FLAG: Are we merging these two tables? Have same label.
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
-EL2 <-
-  rbind(
-expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
-expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
-expected_learning(pimd, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
-expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
-
-x_strategy <- c("None", "P", "M", "P and M")
-
-kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
-
-```
-
-
-
-
-
-
-FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
-For population-level estimands or is this redundant? See issue 53. 
 
 Here we implement the same exercise for the democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that pressure is easy to observe but moviliazation is difficult.
 
