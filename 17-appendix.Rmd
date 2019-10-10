@@ -208,11 +208,19 @@ model <- make_model("C -> X -> Y <- C")  %>%
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
   write_rds(gbiqq::gbiqq(model, data, stan_model = fit, refresh = 0), "saved/appendix_modelled_confound.rds")
+  
+ate <- query_distribution(updated, "c(Y[X=1] - Y[X=0])", using = "posteriors")
+write_rds(ate, "saved/appendix_modelled_confound_ate.rds")
+confound <- query_distribution(updated, "c(Y[C=1] - Y[C=0])", using = "posteriors")
+write_rds(confound, "saved/appendix_modelled_confound_confound.rds")
   }
 updated <- read_rds("saved/appendix_modelled_confound.rds")
+```
 
-ate <- query_distribution(updated, "c(Y[X=1] - Y[X=0])", using = "posteriors")
-confound <- query_distribution(updated, "c(Y[C=1] - Y[C=0])", using = "posteriors")
+```{r}
+ate <- read_rds("saved/appendix_modelled_confound_ate.rds")
+confound <- read_rds("saved/appendix_modelled_confound_confound.rds")
+
 plot(ate, confound)
 abline(lm(confound~ate), col = "red")
 ```
@@ -521,8 +529,29 @@ kable(
 
 ```
 
+## Inferring a cause from symptoms
+
+Sometimes we want to know whether a particular condition was present that could have caused an observed outcome. This is the stuff of medical diagnosis: on observing symptoms, is the sickness due to $A$ or to $B$? 
+
+We imagine cases in which we do not get to observe the putative cause directly and we want to infer both whether the putative cause was present and whether it caused the outcome. This requires stating a query on both an effect and the level of an unobserved node. 
+
+As ilustration:
 
 
+```{r}
+model <- make_model("A -> S -> Y <- B") %>%
+  set_restrictions(c("(S[A=1]< S[A=0])", 
+                   "(Y[S=1]<Y[S=0])",
+                   "(Y[S = 0, B = 0]== 1)"))
+
+query_model(model, 
+       queries = list(A="(Y[A=1] > Y[A =0]) & A==1", B="(Y[B=1] > Y[B =0]) & B==1"),
+       subsets = list("Y==1",  "Y==1 & S==1"), using = "priors", 
+       expand_grid = TRUE) %>% kable
+
+```
+
+In this example there are two possible causes of interest, $A$ and $B$. With flat priors the $B$ path starts as more probable. Observation of symptom $S$, which is a consequence of $A$,  however raises the chances that the outcome is due to $A$ and lowers the chances that it is due to $B$. 
 
 
 ## A model mixing observational and experimental data
