@@ -57,7 +57,7 @@ A still more sophisticated strategy would, for multiple clues, take sequence int
 
 We provide tools for both of these approaches and illustrate them below for both the running example and the democracy application.
 
-## Clue selection for the running example
+## Clue selection with a simple example
 
 Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present and that corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
 
@@ -94,9 +94,9 @@ possible_inferences <-
 
 ```
 
-Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. We have included all 12 combinations of possible realized values for all available clue strategies given that we have already observed $X=0$ and $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $NA$ under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first row, we are collecting no clues beyond our prior data on $X$ and $Y$. In the second row, we have additionally sought clue $S$ and observed a value of $0$, while in the third row we have chosen the same strategy but observed $S=1$. 
+Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $NA$ under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first row, we are collecting no clues beyond our prior data on $X$ and $Y$. In the second row, we have additionally sought clue $S$ and observed a value of $0$, while in the third row we have chosen the same strategy but observed $S=1$. 
 
-In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$. The final column indicates the probability of each data-realization, given the chosen strategy. FLAG: NEEDS COMPLETING.
+In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$, given that $Y=0$. The final column indicates the probability of each data-realization, given the chosen strategy (*not* conditioning on the prior observation, $Y-0$). 
 
 FLAG: Let's add posterior variance to Table \@ref(tab:showstrats5xx)
 
@@ -107,7 +107,7 @@ FLAG: Let's add posterior variance to Table \@ref(tab:showstrats5xx)
 kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns. ", row.names = FALSE)
 ```
 
-Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances in Table \@ref(tab:scxrylearning). 
+Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of $Y$, in Table \@ref(tab:scxrylearning). 
 
 
 ```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
@@ -134,19 +134,155 @@ We operationalize higher levels of expected learning from a strategy as a greate
 
 * By far the biggest gains in learning come from observing $X$. We can see this most readily by comparing the 1-clue strategies to one another. But in general, any strategy that includes observing $X$ always does substantially better than the comparable strategy that excludes $X$. The intuition here is fairly straightforward: if we want to know whether $Y=0$ was caused by $X=0$, and start out very uncertain about $X$'s value, we should expect to learn a good deal from figuring out whether $X$ is in fact equal to $0$.
 
-* Once we decide to observe $X$, then the next-most informative clue to add to our research design is $S$: $X, S$ has the lowest expected posterior variance of any of the 2-clue strategies; and the 3-clue strategies that include both $X$ and $S$ perform better in expectation than does the one that excludes $S$. This result is consistent with a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from *moderators*, like $S$ in this model, than from mediators. We return to this point below. In this model, the $S$ is potentially highly informative because if a government is sensitive, it will never fall ($Y$ will be 0) regardless of the presence or absence of a free press. We learn less from $S$ if we observe $S$ and find out if is $0$; but if we look for $S$, we have a 0.5 chance of observing a value that completely settles the matter.
+* There are also considerable gains from observing $S$ or $C$ by themselves. Consider, first, why observing $S$ is informative. $S$ is potentially informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. Remember that a government is removed only if there is both corruption ($C=1$) and reporting on corruption ($R=1$). Moreover, there is only reporting on corruption (if ever) if $C=1. Thus, for both of these reasons, $X$ can only have a positive effect on government removal (by causing reporting on corruption) if $C=1$: i.e., if there is corruption. And $S$ tells us something about what $C$'s value is likely to be if $X$ were set to 1. 
 
-* We cannot improve on an $X, S$ strategy by gathering more data. Once we have decided to observe $X$ and $S$, there are no expected gains from also observing either $C$ or $R$ or both. They cannot tell us anything about whether $X=0$ could have caused $Y=0$ that we don't already know from $X$ and $S$.^[Here is the logic: $Y=0$ can occur either because $C=0$ or because $R=0$. The only way for $C=0$ to arise is if the government is sensitive ($S=1$) and there is a free press ($X=1$). And while we are uncertain whether $C$'s nodal type is such that $C$ will in fact be $0$ when $S=1$ and $C=1$, this would represent a *negative* effect of $X$ on $Y$, not a positive one. There are three ways to get no reporting ($R=0$): (1) there is never any reporting, in which case $X$ does not mattereither $C=0$ Thus, if the search for information is costly, the dominant strategy is the first, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
+ Specifically, if we observe $S=0$, then we know for sure that $C=1$, regardless of $X$, since $C$ is always 1 when $S=0$ under both permitted nodal types for $C$. If $S=1$, on the other hand, there's a lower chance that $C$ would be equal to 1 if $X$ were set to 1: in one of $C$'s permitted nodal types, there is always corruption; but in the other type, sensitive governments avoid corruption when there is a free press, so $X$ moving to 1 would give us $C=0$. We have put equal prior probabilities on these two nodal types. Thus, if we observe $S=1$, we conclude that there is a lower probability that $C$ will take on the value necessary for $X$ to exert a positive effect on $Y$ than if we observe $S=0$.
 
-* Clues can be more informative jointly than separately: the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing $C$ is slightly more informative than observing $S$. 
+ Why, then, is $C$ informative? If we observe $C=0$, then we know that $X$ must be equal to 1 since, under permitted nodal types for $C$, there is an absence of corruption *only* in the presence of a free press and sensitive governments. And if $X=1$ with $Y=0$, a positive effect is ruled out with certainty. If we observe $C=1$, then there remains some possibility that $X=0$ as well as some possibility $C$ would remain at 1 if $X$ were set to 1 (depending on $C$'s unknown nodal type), allowing $X$ to yield a positive effect on $Y$ through $R$.
+ 
+* There are no gains from observing $R$ if $Y=0$. We can see why by looking at our table of data possibilities consistent with $Y=0$ (Table \@ref(showstrats5xx)). As we can see, there is no possibility of observing anything other than $R=0$ if we have already seen $Y=0$. We can see why by thinking, jointly, about how $Y$ is determined and how $R$ is determined. $Y$ can be 0 either because $C=0$ or $R=0$. So if $R$ were equal to $1$, this must mean that $C$ was $0$. However, a necessary condition for $R$ to be 1, under $R$'s permitted nodal types, is $C=1$ and $X=1$. In other words, the condition under which $R$ could be 1 is a condition under which $Y$ would not be 0. Thus, if we already know $Y=0$, we know $R=0$, and there is no gain from actually looking for $R$. 
 
-OTHER ANALYSES:
+* Once we decide to observe $X$, then the next-most informative clue to add to our research design is $S$: $X, S$ has the lowest expected posterior variance of any of the 2-clue strategies. And, in fact, there are no gains to adding $C$ to $X$, relative to observing $X$ by itself. 
 
-Try asking about a negative effect.
-Try for different priors on X and S being 1 -- makes them less informative.
+ Let us develop the intuition underlying this result. 
+
+ Imagine that we have already observed $X$'s value. If $X=1$, then (given $Y=0$), a positive effect is immediately ruled out with certainty, rendering any further observations of no value. If we observe $X=0$, however, then (under this causal model) we know for certain that $C=1$, simply because $C=1$ for both of $C$'s permitted nodal types when $X=0$ (there is always corruption when there is no free press). Thus, there is nothing to be gained by observing $C$. (We have already seen why there is nothing to be gained from observing $R$.)
+
+ Why, we might still ask, are there possible gains to observing $S$ even if we're going to observe $X$? $S$ is informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. The potential gains from observing $S$ with $X$ arise from the possibility that we may see $X=0$ (since $X=1$ woudl decide the matter by itself). If $X=0$, then we still need to know whether $Y$ *would* be 1 if we changed $X$ to 1. As discussed above, *that* depends on whether $C$ would be $1$ if $X$ were set to 1, and (as, again, explained above) $S$ is informative on that matter.
+ 
+* We see, further, in the table --- and it follows from the above logic --- that we cannot improve on an $X, S$ strategy by gathering more data. Thus, if the search for information is costly, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
+
+* Clues can be more informative jointly than separately, and the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing $C$ by itself is slightly *more* informative than observing $S$ by itself. However, if we are planning to observe $X$, then the gains flip, and it is only $S$ that offers additional useful information. As we have discussed, observing $X$ makes observing $C$ uninformative while $S$ remains informative as a moderator of $X$'s effect.
+
+We would add that the pattern here forms part of a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from *moderators*, like $S$ in this model, than from mediators, like $C$ and $R$. We return to this point below. 
 
 
+### Dependence on prior beliefs
+
+As the foregoing discussion already suggests, optimal clue strategies can depend on our prior beliefs about causal relationships among the variables in the model.  We illustrate this point here, examining how evaluation of clue strategies shift as we relax restrictions on nodal types and set informative priors over nodal types.
+
+**Relaxing restrictions.** In the analysis above, we allowed for just two (of 16 possible) nodal types at both $C$ and $R$, effectively expressing strong beliefs about how $C$'s and $R$'s values are determined. But what if we are less certain than this? 
+
+Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
+
+```{r ch11strategies_chunk_slowxx2, warning = FALSE}
+
+#Expand nodal types for C.
+
+model <- 
   
+  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+  
+  set_restrictions(labels = list(C = c("C1110", "C1111", "C1010"), 
+                                 R = c("R0001", "R0000"), 
+                                 Y = c("Y0001")), 
+                   keep = TRUE) %>%
+  
+    set_priors()
+ 
+```
+
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+possible_inferences <-  
+  
+  conditional_inferences(model, 
+                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                         given = "Y==0")
+
+```
+
+
+```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
+
+strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
+
+learning <- sapply(strats,  function(strategy) {
+
+  expected_learning(model, 
+                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                    strategy = strategy, 
+                    given = "Y==0", 
+                    parameters = NULL)
+  })
+```
+
+
+```{r scxrylearning2, echo = FALSE}
+kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
+```
+
+The diagnosis of strategies under this adjusted set of beliefs, for the same query (whether $X$ has a positive effect on $Y$) and prior data ($Y=0$) as before, are displayed in Table \@ref(scxrylearning2).
+
+We see that, among 1-clue strategies, observing $X$ is still the best choice. Among 2-clue strategies, however, things begin to look different. The best 2-clue strategy is also still $X, S$. Where things change most significantly, however, is among 3-clue strategies: now, we can do even better by additionally observing $C$. The reason is that, with greater uncertainty about its nodal types, $C$'s value is no longer known when $X=0$: it is now possible that $C=0$ when $X=0$ since we think it possible that $C$'s nodal type is $\theta^C_{1010}$. Since $C$'s value bears on whether $X$ can have an effect via $R$, we can thus in this situation potentially learn something by observing $C$.
+
+We can also see $C$'s enhanced informational value throughout the table. Among 1-clue strategies, observing $C$ alone generates greater learning here than it does under the original setup. More strikingly, among 2-clue strategies we see that observing $C$ can now generate learning even if we have *already* observed $X$ (whereas there was no gain from strategy $X, C$ relative to $X$ under the original model). While $X, S$ is still a better strategy than $X, C$, the change in diagnosis could matter if, for instance, we cannot observe $S$ for some reason or if observing $S$ is much more costly than observing $C$.
+
+Moreover, the expected variance reduction from observing $S$ is also greater under the new model, for 1- and 2-clue strategies. To see the informal intuition here, note that $S$ is potentially informative about $C$'s value as a parent of $C$. And we now believe (with the added nodal type for $C$) that there may be an additional way in which $S$ could matter for $C$, and thus provide information about its value. Moreover, since the added nodal type has $S$ exerting a negative effect on $C$ regardless of $X$'s value, $S$ can now be informative even if we have already observed $X=0$. 
+
+Finally, we can see that nothing has changed in regard to $R$, about whose nodal types we have retained the same beliefs. It is still uniformly unprofitable to observe $R$ because we still know $R$'s value whenever $X=0$.
+
+This exercise also suggests a further interesting principle of clue-selection: that potential informativeness rests on uncertainty about what we will find.
+
+
+**Changing priors.** We can also see what happens when, rather than permitting new nodal types, we have informative beliefs about the prevalence of permitted types. We can provide a simple demonstration by expressing stronger prior beliefs about $S$'s nodal type. Suppose we believe most governments to be sensitive to public opinion. This would imply that we should put greater prior weight on $\theta^S_1$ than on $\theta^S_0$. We can do this by setting a higher $\alpha$ value corresponding to $S=1$, and telling `gbiqq` to set all paramater values (the $\lambda$'s for each nodal type) to the means of the prior distributions:
+
+```{r ch11strategies_chunk_slowxx, warning = FALSE}
+
+#Set priors for S with more weight on S=1. Should make S less informative -- the more informative value for S is expected to be less likely??
+
+model <- 
+  
+  make_model("S -> C -> Y <- R <- X; X -> C -> R", add_priors = FALSE) %>%
+  
+  set_restrictions(labels = list(C = c("C1110", "C1111"), 
+                 R = c("R0001", "R0000"), 
+                 Y = c("Y0001")), 
+          keep = TRUE) %>%
+  
+ set_priors(alphas = list(S = c(`S==1` = 10))) %>%
+   
+ set_parameters(type = "prior_mean")
+  
+
+```
+
+These priors put roughly a 0.91 probability on $S=1$. 
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+possible_inferences <-  
+  
+  conditional_inferences(model, 
+                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                         given = "Y==0")
+
+```
+
+
+```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
+
+strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
+
+learning <- sapply(strats,  function(strategy) {
+
+  expected_learning(model, 
+                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                    strategy = strategy, 
+                    given = "Y==0", 
+                    parameters = NULL)
+  })
+```
+
+
+```{r scxrylearning3, echo = FALSE}
+kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
+```
+
+We see the results of this new set of diagnoses, with informative priors on $S$'s nodal types, in Table \@ref(scxrylearning3). Comparing with Table \@ref(scxrylearning), a number of features stand out. First is the much lower *prior* variance under the new model: having a strong prior belief about $S$'s value gives us stronger prior beliefs about whether $X$ could have caused $Y$ since such an effect *depends* on $S$'s value. A second striking difference is that searching for $S$ is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for $S$. We *could* be surprised, but we should not *expect* to be. In the original model, in contrast, we were maximally uncertain about $S$'s value --- believing it had a 0.5 chance of being 1 --- and so there was much more to be gained by looking. 
+
+While not shown here, we get essentially the same result if we flip our priors and put much greater weight on $S=0$, rather than on $S=1$. 
+
+
 ## Clue selection for the democratization model 
 
                                 
