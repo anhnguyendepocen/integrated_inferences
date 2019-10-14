@@ -285,9 +285,9 @@ While not shown here, we get essentially the same result if we flip our priors a
 
 ## Clue selection for the democratization model 
 
-                                
 We now apply this approach to the model of democratization that we worked with in Chapters \ref(ptapp) and \ref(mixingapp).
 
+We start by specifying the democratization model, with negative effects ruled for $I \rightarrow M$, $M \rightarrow D$, and $P \rightarrow D$ and a positive direct effect ruled out for $I \rightarrow D$.
 
 ```{r, echo = FALSE, message = FALSE}
 
@@ -297,47 +297,63 @@ pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify 
            "(M[I=1] < M[I=0])", 
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
 
-          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta_01. 
-  
+      
           set_priors()
 
 
 ```
+
+Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables --- mobilization or international pressure --- we should collect data on: we could observe nothing further; observe $P$ only; observe $M$ only; or observe both $P$ and $M$. In Table \@ref(possible_outcomespimd_i1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditionining on $I=D=1$.)
 
 ```{r, echo = FALSE}
 
 inferences <-
   conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
 
-kable(inferences, caption = "\\label{possible_outcomes} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
 
 ```
 
-We show in Table \ref{CaseLearn}  how  uncertainty is likely to be reduced with  different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The second row shows what happens to that uncertainty when we observe just cause and outcome, $I$ and $D$. The next four rows show the results for four possible choices in regard to process tracing: looking for neither $M$ nor $P$ (which is identical to doing no process tracing at all); looking for $P$; looking for $M$; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
+We show in Table \@ref(pimdlearn_i1d1) how we expect uncertainty to be reduced by different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The next three rows show our expectations for looking for $P$ only; looking for $M$ only; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. 
+
+We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
 
 
 
 
-FLAG: Table \ref{CaseLearn} needs a column defining the strategies.
+FLAG: Table \@ref(pimdlearn_i1d1) needs a FIRST column defining the strategies.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
-EL1 <-
+ELpimd1 <-
   rbind(
 expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
 
-kable(EL1[,-1], caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd1[,-1], caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
 
-FLAG: Are we merging these two tables? Have same label.
+We turn next to considering those cases with low inequality that democratized, asking whether democratization occurred because of a *negative* effect of inequality. The possible data realizations, resulting inferences, and data probabilities are shown in Table \@ref(possible_outcomespimd_i0), while the expected learning estimates for each clue strategy are given in Table \@ref(pimdlearn_i0d1). The pattern here is similar, though somewhat starker: substantially greater gains to observing the moderator, $P$, than the mediator $M$. The gains to observing $M$ here are very small indeed. We can already see from comparing the relevant rows in the data-possibilities table how little our posterior beliefs shift depending on $M$'s realized value. $M$ is far less informative for assessing $I$'s causal effect for an $I=0, D=1$ case than for a $I=1, D=1$ case. The reason is that, in the former situation, we are looking for a positive effect while in the latter situation, we are looking for a negative effects; but only positive effects can operate through the mobilization pathway under the model restrictions. Thus, $M$ is uninformative as a mediator of $I$'s effect in an $I=0, D=1$ (though it is informative as a moderator for such a case, but less so).
+
+```{r, echo = FALSE}
+
+inferences2 <-
+  conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
+
+kable(inferences2, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+
+```
+
+
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
-EL2 <-
+ELpimd2 <-
   rbind(
 expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
 expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
@@ -346,11 +362,26 @@ expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, EL2[,-1]), caption = "\\label{CaseLearn}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "\\label{pimdlearn_i0d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
 
 ```
 
+Now, let us see what happens as we revise the model, making it less restrictive. We do this, first, by allowing for confounding. In particular, we allow for the possibility that the level of inequality will tend to be different in places where inequality causes mobilization. Inequality would be endogenous to mobilization potential, for instance. if strategic rulers take steps to diminish in contexts in which inequality poses a mobilizational threat.
 
+```{r, echo = FALSE, message = FALSE}
+
+pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+
+          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}. 
+  
+          set_priors()
+
+
+```
 
 
 
