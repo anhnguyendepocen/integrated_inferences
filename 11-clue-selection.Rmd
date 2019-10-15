@@ -386,6 +386,36 @@ pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% 
 
 
 
+
+
+
+PATHWAY QUERY
+
+
+```{r, echo = FALSE, message = FALSE}
+
+pimd_priors <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+         set_restrictions(c(
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
+
+         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5))) %>% #Set less weight on negative effect of I on M
+
+set_parameters(type = "prior_mean")
+
+
+```
+
+```{r, echo = FALSE}
+
+inferences <-
+  conditional_inferences(pimd_priors, query = "M[I=1] < M[I=0]" & "D[M[I=0]] > D[M[I=1]]" & "D[I=1, M[I=1]] = D[I=0, M[I=1]]", given = "I==0 & D==1")
+
+kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+
+```
+
+
 FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
 For population-level estimands or is this redundant? See issue 53. 
 
