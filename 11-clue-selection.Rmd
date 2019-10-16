@@ -375,17 +375,13 @@ pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% 
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
-
-          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}. 
   
-          set_priors()
+            set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}. 
+  
+  set_parameters(pimd_confound, type = 'define',
+                        alphas = list(I = c("I==0 & (M[I=1] == 1) & (M[I=0] == 0)" = 3))) %>%
 
-
-```
-
-
-
-
+    ```
 
 
 
