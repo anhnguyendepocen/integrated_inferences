@@ -17,6 +17,8 @@ pacman::p_load(
 
 do_diagnosis = FALSE
 
+if(do_diagnosis) {if(!exists("fit")) fit <- fitted_model()}
+
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 

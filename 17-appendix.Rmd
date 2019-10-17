@@ -694,44 +694,128 @@ result2 <- gbiqq::query_model(
 kable(result2)
 ```
 
-## Transportation of findings across contexts
+## Sample selection bias
 
-We study the effect of $X$ on $Y$ in country 1 and want to make inferences to country 2, Our problem however is that countries differ in terms of some feature, $W$, that is distributed differently in the two countries and that affects $Y$ via some mechanism $K$. 
+As an example consider the below  from @bareinboim2016causal (their Figure 4C). The key feature is that data is only seen for units with $S=1$.
 
-[[We assume that we have an experiment in country 1 but only observational variation in country 2.]]
-
-For instance, $X$ is cash and $Y$ is welfare. $W$ is background levels of conflict which affects welfare via security $K$, possibly differently in both countries. 
-
-Although they differ, we have the following encompassing theory for both countries.
-
-This is the DAG in figure 4C of @bareinboim2016causal. The key feature is that data is only seen for units with $S=1$.
+In this model the relationship between $X$ and $Y$ is confounded. Controlling for either $Z$ or for $W1$ *and* $W2$ can address this confounding, but only controlling for $Z$ can capture sample selection. The reason is that $Z$ is independent of $S$ and so variation in $Z$ is not affected by selection on $S$.  
 
 ```{r, eval = FALSE}
 fusion <- make_model("X <- W1 -> W2 -> X -> Y <- Z -> W2; W1 -> S")
 ```
 
-```{r, eval = FALSE, echo = FALSE}
+```{r, echo = FALSE}
 fusion <- make_model("X <- W1 -> W2 -> X -> Y <- Z -> W2; W1 -> S",
                      add_priors = FALSE)
-
-fusion <- set_restrictions(fusion, 
-                           c("(S[W1=1] < S[W1=0])",
-                             "(W2[W1=1] < W2[W1=0])", 
-                             "(X[W2=1] < X[W2=0])", 
-                             "(Y[Z=1] < Y[Z=0])")) %>%
-          set_priors()   %>%
-          set_parameters(type = "prior_draw")
-            
 plot_dag(fusion)
+```
 
-query_model(fusion, queries = "Y[X=1] - Y[X=0]", subsets = c(TRUE, "S==1"))
+To keep the parameter and type space small we also impose a set of restrictions: $S$ is non decreasing in $W_1$, $X$ is not decreasing in either $W1$ or $W2$, $Y$ is not decreasing $Z$ or $X$ and $X$ affects $Y$ only if $Z=1$. $W_2=1$ if and only if both $W_1=1$ and $Z=1$. These all reduce the problem to one with 18 nodal types and 288 causal types. 
 
-df1 <- simulate_data(fusion, n = 10) %>% filter(S==1)
-df2 <- mutate(df1, Z = NA)
-df3 <- mutate(df1, W1 = NA, W2 = NA)
+Given these priors we will assume a true (unknown) dgp with no effect of $X$ on $Y$, in which $W_1$ arises with a $1/3$ probability but has a strong positive effect on selection into the sample when it does arise.  
+
+```{r, echo = FALSE} 
+
+if(do_diagnosis) {
+  
+  {if(!exists("fit")) fit <- fitted_model()}
+  
+fusion <- make_model("X <- W1 -> W2 -> X -> Y <- Z -> W2; W1 -> S",
+                     add_priors = FALSE) %>%
+    set_restrictions(c(
+                     "(S[W1=1] < S[W1=0])",
+                     "(X[W2=1] < X[W2=0])", 
+                     "(X[W1=1] < X[W1=0])", 
+                     "(Y[Z=1] < Y[Z=0])",
+                     "(Y[X=1] < Y[X=0])",
+                     "(Y[X=1, Z=0] > Y[X=0, Z=0])")) %>%
+    set_restrictions(labels = list(W2 = "W20001"), keep = TRUE) %>%
+    set_priors() %>%
+    set_parameters(type = "flat")
+
+#Manual hack for 0 effect  
+
+fusion <- set_parameters(fusion, {
+    parameters <- fusion$parameters
+    parameters["W1.W10"] <- 2/3
+    parameters["W1.W11"] <- 1/3
+    parameters["S.S01"]  <- 2/3
+    parameters["Y.Y0001"] <- 0
+    parameters}
+    )
+
+fusion
+df  <- simulate_data(fusion, n = 60000, using = "parameters")
+df0 <- filter(df, S==1)
+df1 <- mutate(df0, Z = NA, W1 = NA, W2 = NA)
+df2 <- mutate(df0, Z = NA)
+df3 <- mutate(df0, W1 = NA, W2 = NA)
+
+
+# mean(df$W1)
+# mean(df0$W1)
+# summary(lm(X~Z, data = df0))
+# summary(lm(X~Z, data = filter(df0, W1==1, W2==1)) # But not conditional on W1, W2
+# summary(lm(Y~X, data = df0))
+# summary(lm(S~X, data = df))
+# summary(lm(S~W1, data = df))
+# summary(lm(X~W1, data = df0))
+# summary(lm(Y~X,  data = df0))
+# summary(lm(Y~X*Z_norm,  data = mutate(df0, Z_norm = Z- mean(Z))))
+# summary(lm(Y~X*W1_norm + X*W2_norm,  data = mutate(df0, W1_norm = W1- mean(W1), W2_norm = W2- mean(W2))))
+
+
+M1 <- gbiqq(fusion, df1, stan_model = fit)
+M2 <- gbiqq(fusion, df2, stan_model = fit)
+M3 <- gbiqq(fusion, df3, stan_model = fit)
+
+OUT0 <- query_model(fusion, 
+                    using = c("parameters", "priors"), 
+                    queries = "Y[X=1] - Y[X=0]")
+OUT <- lapply(list(M1, M2, M3), function(M) 
+  query_model(M, using = "posteriors", queries = "Y[X=1] - Y[X=0]"))
+
+write_rds(list(M1=M1, M2=M2, M3=M3, OUT0=OUT0, OUT=OUT, df0=df0, df1=df1, df2=df2, df3=df3, fusion), "saved/17_fusion_list.rds")
+}
+
+fusion_list <- read_rds("saved/17_fusion_list.rds")
+
+```
+
+The estimand values given the true parameters and priors for this model are as shown below. 
+
+```{r, echo = FALSE}
+
+kable(fusion_list$OUT0, caption = "Estimand values")
+```
+
+We can see the inference challenge from observational data using regression analysis with and without conditioning on $Z$.
+
+```{r, echo = FALSE, message = FALSE, results='asis'}
+
+lm1 <- lm(Y~X,  data = fusion_list$df0)
+lm2 <- lm(Y~X*Z_norm, data = mutate(fusion_list$df0, Z_norm = Z- mean(Z)))
+stargazer(lm1, lm2, type = 'html', header = FALSE)
+```
+
+Bayesian inferences given different data strategies are shown below:
+
+```{r, echo = FALSE}
+kable(
+  cbind(
+  data = c("X,Y", "X,Y, W1, W2", "X, Y, Z"),
+  bind_rows(fusion_list$OUT)[, c("mean", "sd")]
+  # [c(1,3,5),]
+  ))
 
 
 ```
+
+Note: this does not reproduce the problem that should arise from conditioning on W1 and W2.
+
+## Transportation of findings across contexts
+
+We study the effect of $X$ on $Y$ in country 1 and want to make inferences to country 2, Our problem however is that units are heterogeneous and features, $W_1$, that differ across units may be related both to treatment assignment, outcomes, and selection into the sample. 
 
 `r if (knitr:::is_html_output()) '# References {-}'`
 
