@@ -321,7 +321,6 @@ We also see that the mediator is much more informative when the causal effect we
 
 
 
-FLAG: Table \@ref(pimdlearn_i1d1) needs a FIRST column defining the strategies.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -334,7 +333,7 @@ expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd1[,-1], caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
 
@@ -345,7 +344,7 @@ We turn next to considering those cases with low inequality that democratized, a
 inferences2 <-
   conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
 
-kable(inferences2, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences2, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
 
 ```
 
@@ -376,15 +375,49 @@ pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% 
            "(M[I=1] < M[I=0])", 
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
   
-            set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}. 
+            set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)"))  #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}. 
   
-  set_parameters(pimd_confound, type = 'define',
-                        alphas = list(I = ("I==0 & (M[I=1] == 1) & (M[I=0] == 0)" = 3))) %>%
+new_parameters <-pimd_confound$parameters 
+
+new_parameters[1:2] <- c(.7, .3) 
+
+pimd_confound <- set_parameters(pimd_confound, new_parameters) %>%
   
   set_priors() 
 
     ```
 
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+ELpimdconfound1 <-
+  rbind(
+expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
+expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
+expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
+expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3)
+
+```
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+ELpimdconfound2 <-
+  rbind(
+expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
+expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
+expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
+expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3)
+
+```
 
 
 PATHWAY QUERY
@@ -411,7 +444,7 @@ inferences <-
                      (D[M=M[I=0]] > D[M=M[I=1]]) & 
                      (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", given = "I==0 & D==1")
 
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
 
 ```
 
