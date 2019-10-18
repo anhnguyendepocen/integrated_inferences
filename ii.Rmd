@@ -1,3 +1,237 @@
+--- 
+title: "Integrated Inferences"
+author: "Macartan Humphreys and Alan Jacobs"
+date: "Draft!: `r Sys.Date()`"
+documentclass: book
+fontsize: 12pt
+bibliography: [bib.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/ii
+description: "Model based strategies for integrating qualitative and quantitative inferences."
+cover-image: "dnieperriver.png"
+site: bookdown::bookdown_site
+header-includes:
+ - \usepackage{amsmath}
+ - \usepackage{mathspec}
+ - \usepackage{color}
+ - \usepackage{amssymb} 
+ - \usepackage{amsfonts} 
+ - \usepackage{dsfont}
+---
+
+# Preface {-}
+
+Placeholder
+
+
+
+<!--chapter:end:index.Rmd-->
+
+
+# Introduction  {#intro}
+
+Placeholder
+
+
+## The Case for Causal Models
+### The limits to design-based inference 
+### Qualitative and mixed-method inference
+### Connecting theory and empirics
+## Key contributions
+## The Road Ahead
+
+<!--chapter:end:01-intro.Rmd-->
+
+
+# (PART) Foundations  {-}
+# Causal Models {#models}
+
+Placeholder
+
+
+## The counterfactual model
+## Causal Models and Directed Acyclic Graphs
+### Components of a Causal Model 
+#### The variables.
+#### The functions.
+### Interpretation of functional equations
+#### The distributions
+### Rules for graphing causal models
+### Conditional independence from DAGs
+## Illustrations
+### Welfare state reform: Pierson (1994)
+### Military Interventions: Saunders (2011) 
+### Development and Democratization: Przeworski and Limongi (1997)
+## Chapter Appendix
+### Steps for constructing causal models
+### Model construction in code
+### Test yourself! Can you read conditional independence from a graph?
+
+<!--chapter:end:02-causal-models.Rmd-->
+
+
+# Theories as causal models {#theory}
+
+Placeholder
+
+
+## Theory as a "lower-level" model
+## Illustration of unpacking causal types
+### Type disaggregation in a mediation model
+### Type disaggregation in a moderation model
+## Rules for moving between higher- and lower-level models
+### Moving down levels 
+### Moving up levels
+#### Conditioning on nodes
+#### Relation to technical literature
+## Conclusion
+## Chapter Appendices
+### Summary Boxes
+### Illustration of a Mapping from a Game to a DAG
+
+<!--chapter:end:03-theory-as-causal-models.Rmd-->
+
+
+# Causal Questions {#questions}
+
+Placeholder
+
+
+## Case-level causal effects
+## Case-level causal attribution
+## Case-level explanation
+## Average causal effects
+## Causal Paths
+
+<!--chapter:end:04-causal-questions.Rmd-->
+
+
+# Bayesian Answers {#bayeschapter}
+
+Placeholder
+
+
+## Bayes Basics
+### Simple instances
+### Bayes' Rule for Discrete Hypotheses
+### The Dirichlet family and Bayes' Rule for Continuous Parameters
+### Moments
+### Bayes estimation in practice
+## Bayes applied
+### Bayesian Inference on Queries
+### Simple Bayesian Process Tracing
+## Three principles of Bayesian updating
+### Priors matter {#AppPriors}
+### Simultaneous, joint updating
+### Posteriors are independent of the ordering of data
+
+<!--chapter:end:05-being-Bayesian.Rmd-->
+
+
+# (PART) Model-Based Causal Inference {-}
+# Process Tracing with Causal Models {#pt}
+
+Placeholder
+
+
+## Process tracing and causal models
+### The intuition
+### A formalization of the general approach
+### Illustration with code
+## Five principles
+### Classic qualitative tests are special cases of updating on a model
+### Conditional independence alone does not provide probative value 
+### Uncertainty does not alter inference for single case causal inference
+### Probative value requires $d-$connection
+### Probative value 
+
+<!--chapter:end:06-process-tracing-with-models.Rmd-->
+
+
+# Application: Process Tracing with a Causal Model {#ptapp}
+
+Placeholder
+
+
+## Inequality and Democratization: The Debate
+## A Structural Causal Model
+### Forming Priors
+## Results
+## Pathways
+### Cases with incomplete data
+#### $I=0, D=0$: Non democracy with low inequality
+#### $I=1, D=0$: Non democracy with high inequality
+### Inferences for cases with observed democratization
+#### $I=0, D=1$: Low inequality democracies
+#### $I=1, D=1$: High inequality democracies
+## Model definition and inference in code
+## Concluding thoughts
+
+<!--chapter:end:07-PT-application.Rmd-->
+
+
+# Integrated inferences {#mixing}
+
+Placeholder
+
+
+## There's only ever one case
+## General procedure 
+### Estimation
+## Illustration 
+## Illustrated inferences
+### XY model
+## Considerations 
+### The identification problem
+### Continuous data
+### Measurement error
+### Spillovers
+### Clustering and other violations of independence
+### Parameteric models
+## Conclusion
+
+<!--chapter:end:08-mixing-methods.Rmd-->
+
+
+# Mixed-Method Application: Inequality and Democracy Revisited {#mixingapp}
+
+Placeholder
+
+
+## A trained model
+## Data
+## Inference
+### Did inequality *cause* democracy?
+### Did inequality *prevent* democracy?
+## Prior / posterior comparison for multiple estimands
+## Discussion
+
+<!--chapter:end:09-mixed-application.Rmd-->
+
+
+# (PART) Design Choices {-}
+# Elements of Design
+
+Placeholder
+
+
+## Model, inquiry, data strategy, answer strategy
+### Defining a model
+### Choosing estimands
+### Selecting a data strategy
+### Answer strategy
+## Evaluating a mixed method design
+### Expected loss as a evaluative metric
+### Expected variance (almost) always goes down
+### Gains
+### Illustration
+### In code
+### Other loss functions
+## Illustration of Design Decaration in code
+
+<!--chapter:end:10-elements-of-design.Rmd-->
+
 # Clue Selection as a Decision Problem
 
 
@@ -388,16 +622,6 @@ pimd_confound <- set_parameters(pimd_confound, new_parameters) %>%
     ```
 
 
-
-```{r, echo = FALSE}
-
-inferences3 <-
-  conditional_inferences(pimd_confound, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
-
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
-
-```
-
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
 ELpimdconfound1 <-
@@ -656,4 +880,117 @@ Explicit statement of a causal model---including prior beliefs over roots---allo
 We are conscious that here we are pushing the basic logic to the limits. In practice researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts; the claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data is most useful to gather. 
 
 
+
+
+<!--chapter:end:11-clue-selection.Rmd-->
+
+
+# Going wide and going deep {#wide}
+
+Placeholder
+
+
+## Intuitions: Does a sufficiently large $N$ always trump $K$?
+## Evaluating strategies
+## Varieties of mixing {#varieties}
+## Probative value of clues
+## Effect Heterogeneity
+## Uncertainty Regarding Assignment Processes
+## Uncertainty regarding the probative value of clues
+
+<!--chapter:end:12-wideordeep.Rmd-->
+
+
+# Case selection as a Decision Problem {#caseselection}
+
+Placeholder
+
+
+## Explorations
+### Procedure
+### Illustration
+## Results from experiments
+## Different strategies for different estimands
+## Where the probative value is
+## Chapter Appendix: Accounting for case selection
+### Independent case selection strategy
+### Conditional random case selection
+
+<!--chapter:end:13-caseselection.Rmd-->
+
+
+# (PART) Models in Question  {-}
+# Justifying models
+
+Placeholder
+
+
+## Bounds on probative value
+## The possibility of identification of probative value from experimental data
+### Mediator
+### Moderator
+### Case level bounds from mixed data
+## Learning across populations
+## Different models for different sites  
+### Observational and experimental
+## Causal discovery
+
+<!--chapter:end:14-Justifying-Models.Rmd-->
+
+
+# Evaluating models {#evaluation}
+
+Placeholder
+
+
+## Inferences when you don;t buy your priors
+## Tools for evaluating models
+### Check conditional independencies
+### Check confounding assumptions
+### Check prior dependence
+### Check fit
+### Assess likelihoods under different models
+## Evaluating the Democracy-Inequality model
+### Prior check
+### Monotonic restrictions
+
+<!--chapter:end:15-Evaluating-Models.Rmd-->
+
+
+# Final Words
+
+Placeholder
+
+
+## General lessons
+## Worries about what you have to put in
+## Limits on what you can get out
+## A world of models: Practical steps forward for collective cumulation
+
+<!--chapter:end:16-conclusion.Rmd-->
+
+
+# (PART) Appendices {-}
+# Analysis of canonical models with `gbiqq`  {#examplesappendix}
+
+Placeholder
+
+
+## The ladder of causation
+## $X$ causes $Y$, with unmodelled confounding
+## An $X$ causes $Y$, with confounding modelled
+## Illustration of the backdoor criterion
+## Simple mediation model
+## Simple moderator model
+## Billy and Suzy's moderator and mediation model
+## An IV model
+## A model that allows application of the frontdoor criterion
+## A model with a violation of sequential ignorability
+## Learning from a collider
+## Inferring a cause from symptoms
+## A model mixing observational and experimental data
+## Sample selection bias
+## Transportation of findings across contexts
+
+<!--chapter:end:17-appendix.Rmd-->
 
