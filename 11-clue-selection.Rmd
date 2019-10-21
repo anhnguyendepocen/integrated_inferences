@@ -1,4 +1,4 @@
-# Clue Selection as a Decision Problem
+# Clue Selection as a Decision Problem {#clue}
 
 
 
@@ -193,7 +193,7 @@ possible_inferences <-
 ```
 
 
-```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
+```{r ch11ExpectedLearning2, warning = FALSE, include = FALSE}
 
 strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
 
@@ -259,7 +259,7 @@ possible_inferences <-
 ```
 
 
-```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
+```{r ch11ExpectedLearning3, warning = FALSE, include = FALSE}
 
 strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
 
@@ -307,10 +307,10 @@ Now, let us assume that we have already observed high inequality and the outcome
 
 ```{r, echo = FALSE}
 
-inferences <-
+inferences_pimd <-
   conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
 
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences_pimd, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3)
 
 ```
 
@@ -333,7 +333,7 @@ expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = "\\label{pimdlearn_i1d1} Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
 
@@ -341,10 +341,10 @@ We turn next to considering those cases with low inequality that democratized, a
 
 ```{r, echo = FALSE}
 
-inferences2 <-
+inferences2_pimd <-
   conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
 
-kable(inferences2, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences2_pimd, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3)
 
 ```
 
@@ -361,11 +361,11 @@ expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "\\label{pimdlearn_i0d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "\\label{pimdlearn_i0d1}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
 
 ```
 
-Now, let us see what happens as we revise the model, making it less restrictive. We do this, first, by allowing for confounding. In particular, we allow for the possibility that the level of inequality will tend to be different in places where inequality causes mobilization. Inequality would be endogenous to mobilization potential, for instance. if strategic rulers take steps to diminish in contexts in which inequality poses a mobilizational threat. We create a new model, 
+Now, let us see what happens as we revise the model, making it less restrictive. We do this, first, by allowing for confounding. In particular, we allow for the possibility that the level of inequality will tend to be different in places where inequality causes mobilization. Inequality would be endogenous to mobilization potential, for instance. if strategic rulers take steps to diminish in contexts in which inequality poses a mobilizational threat. We create a new model that allows for confounding. We use the `set_confound` function to define distint parameters for $I$'s nodal type when $I$ has a positive effect on $M$ and when $I$ does not have a positive effect on $M$. This then allows us to express beliefs (parameter values) that $I=0$ is more common relative to $I=1$ whenm $I$ has a positive effect on $M$ than otherwise.^[It will be recalled that, in single-case inference we must express beliefs about population-level shares of nodal types. This includes expressing beliefs about the parameters defining the confounding.] We keep all other parameter values flat across the nodal types that are not excluded.
 
 ```{r, echo = FALSE, message = FALSE}
 
@@ -387,16 +387,19 @@ pimd_confound <- set_parameters(pimd_confound, new_parameters) %>%
 
     ```
 
+In Table \@ref(possible_outcomespimd_i1con), we can see the inferences we would derive (about $I$'s positive effect on $D$) from the possible data realizations for $I=1, D=1$ cases. Comparing with the parallel set of inferences for the model without confounding (Table \@ref(possible_outcomespimd_i1)), the key difference is that all non-zero priors and posteriors on the query are lower in the presence of confounding. The reason is straightforward. The confounding built into this model makes $I$'s value additionally informative about the causal effect of $I$ on $M$ since we have expressed a belief that $I$ is more likely to be $0$ where $I$ has a positive effect on $M$. Moreover, $I$ must have a positive effect on $M$ in order for $I$ to have a positive effect on $D$. Thus, in the model with confounding, $I=1$ is already a clue that speaks against a positive $I \rightarrow D$ effect, whereas $I=1$ is not informative in this same way in the model without confounding.  
 
 
 ```{r, echo = FALSE}
 
-inferences3 <-
+inferences_pimdcon <-
   conditional_inferences(pimd_confound, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
 
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences_pimdcon, caption = "\\label{possible_outcomespimd_i1con} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterioron the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3)
 
 ```
+In Table \@ref(pimdlearn_i1d1con), we see the expected learning results for the $I=1, D=1$ cases, given a model with confounding, which we can compare to the comparable results in Table \@ref(pimdlearn_i1d1), for the model without confounding. Differences are modest. We are in general somewhat less uncertain in the model with confounding, regardless of strategy, which likely is an artifact of the fact that our posterior means are closer to $0$. Likewise, the scope for uncertainty-reduction is lower in the new model. In addition, however, it looks like the difference in expected learning between observing $P$ and observing $M$ is slightly smaller in the model with confounding.
+
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
@@ -409,9 +412,20 @@ expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = c("P","M"), g
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3)
 
 ```
+
+
+```{r, echo = FALSE}
+
+inferences2_pimdcon <-
+  conditional_inferences(pimd_confound, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
+
+kable(inferences2_pimdcon, caption = "\\label{possible_outcomespimd_i0con} Table shows possible data patterns for P and M given I = 0 and D = 1, assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3)
+
+```
+
 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -425,10 +439,43 @@ expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = c("P","M"), g
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3)
+
+```
+```{r, echo = FALSE, message = FALSE}
+
+pimd_confound2 <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+  set_restrictions(c( 
+    "(M[I=1] < M[I=0])", 
+    "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+  
+  
+set_confound(list(P = "(D[P=1] == 1) & (D[P=0] == 1)"))
+
+new_parameters <-pimd_confound2$parameters 
+
+new_parameters[1:2] <- c(.1, .9) 
+
+pimd_confound2 <- set_parameters(pimd_confound2, new_parameters) %>%
+  
+  set_priors() 
 
 ```
 
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+ELpimdconfound3 <-
+  rbind(
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimdconfound3[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3)
+```
 
 PATHWAY QUERY
 
