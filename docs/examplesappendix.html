@@ -343,15 +343,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="part"><span><b>V Appendices</b></span></li>
 <li class="chapter" data-level="17" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>17</b> Analysis of canonical models with <code>gbiqq</code></a><ul>
-<li class="chapter" data-level="17.1" data-path="examplesappendix.html"><a href="examplesappendix.html#the-ladder-of-causation"><i class="fa fa-check"></i><b>17.1</b> The ladder of causation</a></li>
+<li class="chapter" data-level="17.1" data-path="examplesappendix.html"><a href="examplesappendix.html#a-simple-model-and-the-ladder-of-causation"><i class="fa fa-check"></i><b>17.1</b> A simple model and the ladder of causation</a></li>
 <li class="chapter" data-level="17.2" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-with-unmodelled-confounding"><i class="fa fa-check"></i><b>17.2</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with unmodelled confounding</a></li>
-<li class="chapter" data-level="17.3" data-path="examplesappendix.html"><a href="examplesappendix.html#an-x-causes-y-with-confounding-modelled"><i class="fa fa-check"></i><b>17.3</b> An <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modelled</a></li>
+<li class="chapter" data-level="17.3" data-path="examplesappendix.html"><a href="examplesappendix.html#an-x-causes-y-with-confounding-modeled"><i class="fa fa-check"></i><b>17.3</b> An <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modeled</a></li>
 <li class="chapter" data-level="17.4" data-path="examplesappendix.html"><a href="examplesappendix.html#illustration-of-the-backdoor-criterion"><i class="fa fa-check"></i><b>17.4</b> Illustration of the backdoor criterion</a></li>
 <li class="chapter" data-level="17.5" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-mediation-model"><i class="fa fa-check"></i><b>17.5</b> Simple mediation model</a></li>
 <li class="chapter" data-level="17.6" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-moderator-model"><i class="fa fa-check"></i><b>17.6</b> Simple moderator model</a></li>
 <li class="chapter" data-level="17.7" data-path="examplesappendix.html"><a href="examplesappendix.html#billy-and-suzys-moderator-and-mediation-model"><i class="fa fa-check"></i><b>17.7</b> Billy and Suzy’s moderator and mediation model</a></li>
 <li class="chapter" data-level="17.8" data-path="examplesappendix.html"><a href="examplesappendix.html#an-iv-model"><i class="fa fa-check"></i><b>17.8</b> An IV model</a></li>
-<li class="chapter" data-level="17.9" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-that-allows-application-of-the-frontdoor-criterion"><i class="fa fa-check"></i><b>17.9</b> A model that allows application of the frontdoor criterion</a></li>
+<li class="chapter" data-level="17.9" data-path="examplesappendix.html"><a href="examplesappendix.html#an-illustration-of-identification-through-the-frontdoor"><i class="fa fa-check"></i><b>17.9</b> An illustration of identification through the frontdoor</a></li>
 <li class="chapter" data-level="17.10" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-with-a-violation-of-sequential-ignorability"><i class="fa fa-check"></i><b>17.10</b> A model with a violation of sequential ignorability</a></li>
 <li class="chapter" data-level="17.11" data-path="examplesappendix.html"><a href="examplesappendix.html#learning-from-a-collider"><i class="fa fa-check"></i><b>17.11</b> Learning from a collider</a></li>
 <li class="chapter" data-level="17.12" data-path="examplesappendix.html"><a href="examplesappendix.html#inferring-a-cause-from-symptoms"><i class="fa fa-check"></i><b>17.12</b> Inferring a cause from symptoms</a></li>
@@ -385,100 +385,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr />
 <p>We walk through a set of canonical models and show how to define and analyze them using <code>gbiqq</code>.</p>
 <hr />
-<div id="the-ladder-of-causation" class="section level2">
-<h2><span class="header-section-number">17.1</span> The ladder of causation</h2>
+<div id="a-simple-model-and-the-ladder-of-causation" class="section level2">
+<h2><span class="header-section-number">17.1</span> A simple model and the ladder of causation</h2>
 <p>We first introduce a simple <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> model with no confounding and use this to illustrate the “ladder of causation.”</p>
-<p>The simplest <span class="math inline">\(X\)</span> cuases <span class="math inline">\(Y\)</span> model without confounding can be written:</p>
+<p>The model is written:</p>
 <pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y&quot;</span>)
 <span class="kw">plot_dag</span>(model)</code></pre>
 <p><img src="ii_files/figure-html/ap-XYnoconf-1.png" width="672" /></p>
-<p>With this sparse definition we can construct a parameter matrix that maps from parameters to causal types. Inspecting the parameter matrix, confirms assumes that there are no constraints here on possible nodal types and no unobserved confounding.</p>
-<table>
-<caption><span id="tab:unnamed-chunk-3">Table 17.1: </span>Parameter matrix for X causes Y model without confounding</caption>
-<thead>
-<tr class="header">
-<th></th>
-<th align="right">X0.Y00</th>
-<th align="right">X1.Y00</th>
-<th align="right">X0.Y10</th>
-<th align="right">X1.Y10</th>
-<th align="right">X0.Y01</th>
-<th align="right">X1.Y01</th>
-<th align="right">X0.Y11</th>
-<th align="right">X1.Y11</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>X0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>X1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td>Y00</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td>Y01</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td>Y11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-</tr>
-</tbody>
-</table>
-<p>In the simplest <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> model the ATE is identified but the “probability of causation” (PC) is not: we can however generally place bounds on PC.</p>
-<p>We will assume a “true” distribution over parameters. In the distribution belwo we will assume there is a true positive effect of 0.5.</p>
+<!-- The model implies a "parameter matrix" that maps from parameters to causal types. Inspecting the parameter matrix,  confirms that there are no constraints here on possible nodal types  and no unobserved confounding: -->
+<p>We will assume a “true” distribution over parameters. Let’s assume that the true effect of 0.5, but that this is not known to researchers. The .5 effect comes from the difference between the share of units with a positive effect (.6) and those with a negative effect (.1). (We say share but we may as well think in terms of the probability that a given unit is of one or other type.)</p>
 <pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">set_parameters</span>(model, <span class="kw">c</span>(.<span class="dv">5</span>, <span class="fl">.5</span>, <span class="fl">.2</span>, <span class="fl">.1</span>, <span class="fl">.6</span>, <span class="fl">.1</span>))
 
 <span class="kw">kable</span>(<span class="kw">t</span>(model<span class="op">$</span>parameters))</code></pre>
@@ -508,7 +423,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">simulate_data</span>(model, <span class="dt">n =</span> <span class="dv">1000</span>)</code></pre>
 <p>With a model and data in hand we can now update the model.</p>
 <pre class="sourceCode r"><code class="sourceCode r">updated &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, data)</code></pre>
-<p>From the updated model we can draw posterior inferences over estimands of interest. We will imagine three estimands, corresponding to Pearl’s “ladder of causation.” At the first level we are intersted in the distribution of some node, perhaps given the value of another node. At the second level we are interested in treatment effects: how changing one node changes another. THis question is answerable from an experiment. At the third level we are interested in counterfactual statements: how would things have been different if some features of the world were different from what they are?</p>
+<p>From the updated model we can draw posterior inferences over estimands of interest.</p>
+<p>We will imagine three estimands, corresponding to Pearl’s “ladder of causation.”</p>
+<ul>
+<li><p>At the first level we are interested in the distribution of some node, perhaps given the value of another node. This question is answerable from observational data.</p></li>
+<li><p>At the second level we are interested in treatment effects: how changing one node changes another. This question is answerable from experimental data.</p></li>
+<li><p>At the third level we are interested in counterfactual statements: how would things have been different if some features of the world were different from what they are? Answering this question requires a causal model.</p></li>
+</ul>
+<p>Here are the results:</p>
 <pre class="sourceCode r"><code class="sourceCode r">results &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">query_model</span>(
  updated,
  <span class="dt">queries =</span> <span class="kw">list</span>(<span class="st">&quot;Y | X=1&quot;</span> =<span class="st"> &quot;Y&quot;</span>, 
@@ -554,7 +476,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
-<p>We see from the posterior variance on PC that we have the greatest difficulty on the third rung. In particular the PC is not identified (the distribution does not tighten even with very large N). For more intuition we graph the posteriors:</p>
+<p>We see from the posterior variance on PC that we have the greatest difficulty with the third rung. In particular the PC is not identified (the distribution does not tighten even with very large N). For more intuition we graph the posteriors:</p>
 <p><img src="ii_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>We find that they do not converge but they do place positive mass in the right range. Within this range, the shape of the posterior depends on the priors only.</p>
 </div>
@@ -565,9 +487,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span class="st">         </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">X =</span> <span class="st">&quot;(Y[X=1]&gt;Y[X=0])&quot;</span>, <span class="dt">X =</span> <span class="st">&quot;(Y[X=1]&lt;Y[X=0])&quot;</span>, <span class="dt">X =</span> <span class="st">&quot;(Y[X=1] ==1)&quot;</span>))
 <span class="kw">plot_dag</span>(model)</code></pre>
 <p><img src="ii_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>The parameter matrix here has more parameters than nodal types, reflecting the conditional assignment probabilities of <span class="math inline">\(X\)</span> – <span class="math inline">\(X\)</span> can have different assignment probabilities for different nodal types for <span class="math inline">\(Y\)</span>.</p>
+<p>If we look at the parameter matrix implied by this model we see that it has more parameters than nodal types, reflecting the conditional assignment probabilities of <span class="math inline">\(X\)</span> – <span class="math inline">\(X\)</span> can have different assignment probabilities for different nodal types for <span class="math inline">\(Y\)</span>.</p>
 <table>
-<caption><span id="tab:unnamed-chunk-13">Table 17.2: </span>Parameter matrix for X causes Y model with arbitrary confounding</caption>
+<caption><span id="tab:unnamed-chunk-13">Table 17.1: </span>Parameter matrix for X causes Y model with arbitrary confounding</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -716,7 +638,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
-<p>With the possibility of any type of confounding, the best we can do is place “Mansky bounds” on the average causal effect.</p>
+<p>With the possibility of any type of confounding, the best we can do is place “Manski bounds” on the average causal effect.</p>
 <p>To see this, let’s plot a histogram of our posterior on average causal effects, given lots of data:</p>
 <pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">simulate_data</span>(
     model, <span class="dt">n =</span> <span class="dv">1000</span>, 
@@ -726,8 +648,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="ii_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>The key thing here is that the posterior on the ATE has shifted, as it should, but it is not tight, even with large data. In fact the distribution of the posterior covers one unit of the range between -1 and 1.</p>
 </div>
-<div id="an-x-causes-y-with-confounding-modelled" class="section level2">
-<h2><span class="header-section-number">17.3</span> An <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modelled</h2>
+<div id="an-x-causes-y-with-confounding-modeled" class="section level2">
+<h2><span class="header-section-number">17.3</span> An <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modeled</h2>
 <p>Say now we have a theory that the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is confounded by possibly unobserved variable <span class="math inline">\(C\)</span>. Although <span class="math inline">\(C\)</span> is unobserved we can still include it in the model and observe the confounding it generates by estimating the model on data generated by the model but assuming that we cannot observe <span class="math inline">\(C\)</span>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;C -&gt; X -&gt; Y &lt;- C&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">         </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>(
@@ -798,10 +720,10 @@ Y
 X
 </td>
 <td>
-0.446<sup>***</sup>
+0.443<sup>***</sup>
 </td>
 <td>
-0.337<sup>***</sup>
+0.327<sup>***</sup>
 </td>
 </tr>
 <tr>
@@ -829,7 +751,7 @@ C
 <td>
 </td>
 <td>
-0.322<sup>***</sup>
+0.328<sup>***</sup>
 </td>
 </tr>
 <tr>
@@ -854,10 +776,10 @@ C
 Constant
 </td>
 <td>
-0.274<sup>***</sup>
+0.282<sup>***</sup>
 </td>
 <td>
-0.168<sup>***</sup>
+0.176<sup>***</sup>
 </td>
 </tr>
 <tr>
@@ -898,7 +820,7 @@ Observations
 R<sup>2</sup>
 </td>
 <td>
-0.199
+0.196
 </td>
 <td>
 0.290
@@ -909,7 +831,7 @@ R<sup>2</sup>
 Adjusted R<sup>2</sup>
 </td>
 <td>
-0.199
+0.196
 </td>
 <td>
 0.290
@@ -931,10 +853,10 @@ Residual Std. Error
 F Statistic
 </td>
 <td>
-2,479.569<sup>***</sup> (df = 1; 9998)
+2,438.465<sup>***</sup> (df = 1; 9998)
 </td>
 <td>
-2,044.048<sup>***</sup> (df = 2; 9997)
+2,042.203<sup>***</sup> (df = 2; 9997)
 </td>
 </tr>
 <tr>
@@ -1129,29 +1051,29 @@ The version here is a somewhat less deterministic version of the classic account
 <td align="left">Counterfactual</td>
 <td align="left">Suzy==1 &amp; Smash==1</td>
 <td align="left">priors</td>
-<td align="right">0.663</td>
-<td align="right">0.236</td>
+<td align="right">0.669</td>
+<td align="right">0.234</td>
 </tr>
 <tr class="even">
 <td align="left">Counterfactual</td>
 <td align="left">Suzy==1 &amp; Smash==1 &amp; Billy==0</td>
 <td align="left">priors</td>
-<td align="right">0.750</td>
-<td align="right">0.219</td>
+<td align="right">0.754</td>
+<td align="right">0.217</td>
 </tr>
 <tr class="odd">
 <td align="left">Counterfactual</td>
 <td align="left">Suzy==1 &amp; Smash==1 &amp; Billy==1</td>
 <td align="left">priors</td>
-<td align="right">0.495</td>
-<td align="right">0.291</td>
+<td align="right">0.498</td>
+<td align="right">0.288</td>
 </tr>
 <tr class="even">
 <td align="left">Actual</td>
 <td align="left">Suzy==1 &amp; Smash==1</td>
 <td align="left">priors</td>
-<td align="right">0.830</td>
-<td align="right">0.170</td>
+<td align="right">0.832</td>
+<td align="right">0.168</td>
 </tr>
 <tr class="odd">
 <td align="left">Actual</td>
@@ -1164,12 +1086,12 @@ The version here is a somewhat less deterministic version of the classic account
 <td align="left">Actual</td>
 <td align="left">Suzy==1 &amp; Smash==1 &amp; Billy==1</td>
 <td align="left">priors</td>
-<td align="right">0.495</td>
-<td align="right">0.291</td>
+<td align="right">0.498</td>
+<td align="right">0.288</td>
 </tr>
 </tbody>
 </table>
-<p>Our inferences, <em>without even observing</em> Billys throw distinguish between Suzy being a counterfactual cause and an actual cause. We think it likely that Suzy’s throw was an actual cause of the outcome though we are less sure that it was a counterfactual causes. Observing Billy’s throw strengthens our inferences. If Billy didn’t throw then we are sure Suzy’s throw was the actual cause, though we are still in doubt about whether her throw was a counterfactual cause.</p>
+<p>Our inferences, <em>without even observing</em> Billy’s throw distinguish between Suzy being a counterfactual cause and an actual cause. We think it likely that Suzy’s throw was an actual cause of the outcome though we are less sure that it was a counterfactual causes. Observing Billy’s throw strengthens our inferences. If Billy didn’t throw then we are sure Suzy’s throw was the actual cause, though we are still in doubt about whether her throw was a counterfactual cause.</p>
 <p>Note that if we observed Suzy <em>not</em> throwing then we would learn <em>more</em> about whether she would be a counterfactual cause since we would have learned more about whether Billy reacts to her and also about whether Billy is a good shot.</p>
 <table>
 <thead>
@@ -1193,8 +1115,8 @@ The version here is a somewhat less deterministic version of the classic account
 <td align="left">Counterfactual</td>
 <td align="left">Suzy==0 &amp; Billy==1</td>
 <td align="left">priors</td>
-<td align="right">0.499</td>
-<td align="right">0.289</td>
+<td align="right">0.497</td>
+<td align="right">0.288</td>
 </tr>
 <tr class="odd">
 <td align="left">Counterfactual</td>
@@ -1214,15 +1136,15 @@ The version here is a somewhat less deterministic version of the classic account
 <td align="left">Actual</td>
 <td align="left">Suzy==0 &amp; Billy==1</td>
 <td align="left">priors</td>
-<td align="right">0.753</td>
-<td align="right">0.218</td>
+<td align="right">0.751</td>
+<td align="right">0.221</td>
 </tr>
 <tr class="even">
 <td align="left">Actual</td>
 <td align="left">Suzy==0 &amp; Billy==1 &amp; Smash==1</td>
 <td align="left">priors</td>
-<td align="right">0.507</td>
-<td align="right">0.289</td>
+<td align="right">0.506</td>
+<td align="right">0.286</td>
 </tr>
 </tbody>
 </table>
@@ -1283,15 +1205,26 @@ The version here is a somewhat less deterministic version of the classic account
 </table>
 <p>We calculate the average causal effect for all and for the compliers and conditional on values of <span class="math inline">\(M\)</span>.</p>
 </div>
-<div id="a-model-that-allows-application-of-the-frontdoor-criterion" class="section level2">
-<h2><span class="header-section-number">17.9</span> A model that allows application of the frontdoor criterion</h2>
+<div id="an-illustration-of-identification-through-the-frontdoor" class="section level2">
+<h2><span class="header-section-number">17.9</span> An illustration of identification through the frontdoor</h2>
+<p>Consider the following model:</p>
+<pre class="sourceCode r"><code class="sourceCode r">frontdoor &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; M -&gt; Y&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">X =</span> <span class="st">&quot;Y[M=1]&gt;Y[M=0]&quot;</span>, 
+                    <span class="dt">X =</span> <span class="st">&quot;Y[M=1]&lt;Y[M=0]&quot;</span>))
+
+<span class="kw">plot_dag</span>(frontdoor)</code></pre>
+<p><img src="ii_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p>FLAG (fix confound arrows)</p>
+<p>Below we plot posterior distributions given observations on 2000 units, with and without data on <span class="math inline">\(M\)</span>:</p>
+<p><img src="ii_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
 </div>
 <div id="a-model-with-a-violation-of-sequential-ignorability" class="section level2">
 <h2><span class="header-section-number">17.10</span> A model with a violation of sequential ignorability</h2>
 </div>
 <div id="learning-from-a-collider" class="section level2">
 <h2><span class="header-section-number">17.11</span> Learning from a collider</h2>
-<p>Pearl describes a model similar to the following as a case for which controlling for covariate <span class="math inline">\(W\)</span> induces bias in the estimation of the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, which could otherwise be esimated without bias.</p>
+<p>Pearl describes a model similar to the following as a case for which controlling for covariate <span class="math inline">\(W\)</span> induces bias in the estimation of the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, which could otherwise be estimated without bias.</p>
 <pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- S; S -&gt; W&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">         </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">X =</span> <span class="st">&quot;W[S=1]&gt;W[S=0]&quot;</span>)) <span class="op">%&gt;%</span>
 <span class="st">         </span><span class="kw">set_parameters</span>(<span class="dt">parameters =</span> <span class="kw">c</span>(.<span class="dv">1</span>, <span class="fl">.9</span>, 
@@ -1301,7 +1234,7 @@ The version here is a somewhat less deterministic version of the classic account
                           <span class="fl">.2</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>, <span class="fl">.6</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,.<span class="dv">2</span>)) 
 
 <span class="kw">plot_dag</span>(model)</code></pre>
-<p><img src="ii_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
 <pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">simulate_data</span>(model, <span class="dt">n =</span>  <span class="dv">20000</span>)
 data<span class="op">$</span>S &lt;-<span class="st"> </span><span class="ot">NA</span></code></pre>
 <p>The true effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is .3 but the PC is quite different for units with <span class="math inline">\(W=0\)</span> and <span class="math inline">\(W=1\)</span>:</p>
@@ -1389,13 +1322,13 @@ Y
 X
 </td>
 <td>
-0.302<sup>***</sup>
+0.298<sup>***</sup>
 </td>
 <td>
-0.301<sup>***</sup>
+0.294<sup>***</sup>
 </td>
 <td>
-0.008
+0.028<sup>***</sup>
 </td>
 </tr>
 <tr>
@@ -1428,10 +1361,10 @@ W
 <td>
 </td>
 <td>
-0.376<sup>***</sup>
+0.374<sup>***</sup>
 </td>
 <td>
--0.011
+0.018<sup>*</sup>
 </td>
 </tr>
 <tr>
@@ -1465,7 +1398,7 @@ X:W
 <td>
 </td>
 <td>
-0.583<sup>***</sup>
+0.537<sup>***</sup>
 </td>
 </tr>
 <tr>
@@ -1494,13 +1427,13 @@ X:W
 Constant
 </td>
 <td>
-0.195<sup>***</sup>
+0.199<sup>***</sup>
 </td>
 <td>
-0.007
+0.016<sup>***</sup>
 </td>
 <td>
-0.200<sup>***</sup>
+0.190<sup>***</sup>
 </td>
 </tr>
 <tr>
@@ -1549,13 +1482,13 @@ Observations
 R<sup>2</sup>
 </td>
 <td>
-0.085
+0.083
 </td>
 <td>
-0.233
+0.229
 </td>
 <td>
-0.313
+0.296
 </td>
 </tr>
 <tr>
@@ -1563,13 +1496,13 @@ R<sup>2</sup>
 Adjusted R<sup>2</sup>
 </td>
 <td>
-0.085
+0.083
 </td>
 <td>
-0.233
+0.229
 </td>
 <td>
-0.313
+0.296
 </td>
 </tr>
 <tr>
@@ -1577,13 +1510,13 @@ Adjusted R<sup>2</sup>
 Residual Std. Error
 </td>
 <td>
-0.467 (df = 19998)
+0.469 (df = 19998)
 </td>
 <td>
-0.428 (df = 19997)
+0.430 (df = 19997)
 </td>
 <td>
-0.405 (df = 19996)
+0.410 (df = 19996)
 </td>
 </tr>
 <tr>
@@ -1591,13 +1524,13 @@ Residual Std. Error
 F Statistic
 </td>
 <td>
-1,867.969<sup>***</sup> (df = 1; 19998)
+1,806.657<sup>***</sup> (df = 1; 19998)
 </td>
 <td>
-3,041.673<sup>***</sup> (df = 2; 19997)
+2,971.444<sup>***</sup> (df = 2; 19997)
 </td>
 <td>
-3,033.242<sup>***</sup> (df = 3; 19996)
+2,807.135<sup>***</sup> (df = 3; 19996)
 </td>
 </tr>
 <tr>
@@ -1617,7 +1550,7 @@ F Statistic
 <p>Inferences that do not use <span class="math inline">\(W\)</span> get ATE right on average, but PC is not identified and statements about PC conditional on <span class="math inline">\(W\)</span> are not possible:</p>
 <p>Without <span class="math inline">\(W\)</span>:</p>
 <table>
-<caption><span id="tab:unnamed-chunk-53">Table 17.3: </span>Collider excluded from model</caption>
+<caption><span id="tab:unnamed-chunk-55">Table 17.2: </span>Collider excluded from model</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -1661,7 +1594,7 @@ F Statistic
 <p>We see including the collider does not induce error in estimation of the ATE, even though it does in a regression framework. It provides an ability to make different PC case level claims given W, but these are nevertheless far off in this example because we still do not have identification.</p>
 <p>With <span class="math inline">\(W\)</span>:</p>
 <table>
-<caption><span id="tab:unnamed-chunk-54">Table 17.4: </span>Collider included in model</caption>
+<caption><span id="tab:unnamed-chunk-56">Table 17.3: </span>Collider included in model</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -1707,7 +1640,7 @@ F Statistic
 <h2><span class="header-section-number">17.12</span> Inferring a cause from symptoms</h2>
 <p>Sometimes we want to know whether a particular condition was present that could have caused an observed outcome. This is the stuff of medical diagnosis: on observing symptoms, is the sickness due to <span class="math inline">\(A\)</span> or to <span class="math inline">\(B\)</span>?</p>
 <p>We imagine cases in which we do not get to observe the putative cause directly and we want to infer both whether the putative cause was present and whether it caused the outcome. This requires stating a query on both an effect and the level of an unobserved node.</p>
-<p>As ilustration:</p>
+<p>An illustration:</p>
 <pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;A -&gt; S -&gt; Y &lt;- B&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>(<span class="st">&quot;(S[A=1]&lt; S[A=0])&quot;</span>, 
                    <span class="st">&quot;(Y[S=1]&lt;Y[S=0])&quot;</span>,
@@ -1732,29 +1665,29 @@ F Statistic
 <td align="left">A</td>
 <td align="left">Y==1</td>
 <td align="left">priors</td>
-<td align="right">0.197</td>
-<td align="right">0.195</td>
+<td align="right">0.199</td>
+<td align="right">0.204</td>
 </tr>
 <tr class="even">
 <td align="left">A</td>
 <td align="left">Y==1 &amp; S==1</td>
 <td align="left">priors</td>
 <td align="right">0.255</td>
-<td align="right">0.225</td>
+<td align="right">0.231</td>
 </tr>
 <tr class="odd">
 <td align="left">B</td>
 <td align="left">Y==1</td>
 <td align="left">priors</td>
-<td align="right">0.450</td>
-<td align="right">0.260</td>
+<td align="right">0.439</td>
+<td align="right">0.259</td>
 </tr>
 <tr class="even">
 <td align="left">B</td>
 <td align="left">Y==1 &amp; S==1</td>
 <td align="left">priors</td>
-<td align="right">0.295</td>
-<td align="right">0.223</td>
+<td align="right">0.285</td>
+<td align="right">0.218</td>
 </tr>
 </tbody>
 </table>
@@ -1775,7 +1708,7 @@ F Statistic
                            <span class="dt">O =</span> <span class="st">&quot;(Y[X=1] == 1)&quot;</span>))
 
 <span class="kw">plot_dag</span>(model)</code></pre>
-<p><img src="ii_files/figure-html/unnamed-chunk-56-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 <p>The parameter matrix has just one type for <span class="math inline">\(X\)</span> since <span class="math inline">\(X\)</span> really operates here as a kind of switch, inheriting the value of <span class="math inline">\(Z\)</span> or <span class="math inline">\(O\)</span> depending on <span class="math inline">\(R\)</span>. Parameters allow for complete confounding between <span class="math inline">\(O\)</span> and <span class="math inline">\(Y\)</span> by <span class="math inline">\(Z\)</span> and <span class="math inline">\(Y\)</span> are unconfounded.</p>
 <pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">set_parameters</span>(model, <span class="kw">c</span>(.<span class="dv">2</span>, <span class="fl">.8</span>, 
                                  <span class="fl">.8</span>, <span class="fl">.2</span>, 
@@ -1832,22 +1765,22 @@ F Statistic
 <td align="left">ATE</td>
 <td align="left">All</td>
 <td align="left">priors</td>
-<td align="right">0.008</td>
-<td align="right">0.318</td>
+<td align="right">-0.003</td>
+<td align="right">0.31</td>
 </tr>
 <tr class="even">
 <td align="left">ATE</td>
 <td align="left">R==0</td>
 <td align="left">priors</td>
-<td align="right">0.008</td>
-<td align="right">0.318</td>
+<td align="right">-0.003</td>
+<td align="right">0.31</td>
 </tr>
 <tr class="odd">
 <td align="left">ATE</td>
 <td align="left">R==1</td>
 <td align="left">priors</td>
-<td align="right">0.008</td>
-<td align="right">0.318</td>
+<td align="right">-0.003</td>
+<td align="right">0.31</td>
 </tr>
 </tbody>
 </table>
@@ -1977,12 +1910,12 @@ F Statistic
 <p>As an example consider the below from <span class="citation">Bareinboim and Pearl (<a href="#ref-bareinboim2016causal">2016</a>)</span> (their Figure 4C). The key feature is that data is only seen for units with <span class="math inline">\(S=1\)</span>.</p>
 <p>In this model the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is confounded. Controlling for either <span class="math inline">\(Z\)</span> or for <span class="math inline">\(W1\)</span> <em>and</em> <span class="math inline">\(W2\)</span> can address this confounding, but only controlling for <span class="math inline">\(Z\)</span> can capture sample selection. The reason is that <span class="math inline">\(Z\)</span> is independent of <span class="math inline">\(S\)</span> and so variation in <span class="math inline">\(Z\)</span> is not affected by selection on <span class="math inline">\(S\)</span>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">fusion &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X &lt;- W1 -&gt; W2 -&gt; X -&gt; Y &lt;- Z -&gt; W2; W1 -&gt; S&quot;</span>)</code></pre>
-<p><img src="ii_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-72-1.png" width="672" /></p>
 <p>To keep the parameter and type space small we also impose a set of restrictions: <span class="math inline">\(S\)</span> is non decreasing in <span class="math inline">\(W_1\)</span>, <span class="math inline">\(X\)</span> is not decreasing in either <span class="math inline">\(W1\)</span> or <span class="math inline">\(W2\)</span>, <span class="math inline">\(Y\)</span> is not decreasing <span class="math inline">\(Z\)</span> or <span class="math inline">\(X\)</span> and <span class="math inline">\(X\)</span> affects <span class="math inline">\(Y\)</span> only if <span class="math inline">\(Z=1\)</span>. <span class="math inline">\(W_2=1\)</span> if and only if both <span class="math inline">\(W_1=1\)</span> and <span class="math inline">\(Z=1\)</span>. These all reduce the problem to one with 18 nodal types and 288 causal types.</p>
 <p>Given these priors we will assume a true (unknown) dgp with no effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, in which <span class="math inline">\(W_1\)</span> arises with a <span class="math inline">\(1/3\)</span> probability but has a strong positive effect on selection into the sample when it does arise.</p>
 <p>The estimand values given the true parameters and priors for this model are as shown below.</p>
 <table>
-<caption><span id="tab:unnamed-chunk-72">Table 17.5: </span>Estimand values</caption>
+<caption><span id="tab:unnamed-chunk-74">Table 17.4: </span>Estimand values</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -2260,7 +2193,6 @@ F Statistic
 </tr>
 </tbody>
 </table>
-<p>Note: this does not reproduce the problem that should arise from conditioning on W1 and W2.</p>
 </div>
 <div id="transportation-of-findings-across-contexts" class="section level2">
 <h2><span class="header-section-number">17.15</span> Transportation of findings across contexts</h2>

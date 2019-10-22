@@ -15,39 +15,38 @@ We walk through  a set of canonical models and show how to define and analyze th
 
 ***
 
-## The ladder of causation
+## A simple model and the ladder of causation
 
 We first introduce a  simple $X$ causes $Y$ model with no confounding and use this to illustrate the "ladder of causation."
 
-The simplest $X$ cuases $Y$ model without confounding  can be written:
+The model is written:
 
 ```{r ap-XYnoconf}
 model <- make_model("X -> Y")
 plot_dag(model)
 ```
 
-With this  sparse definition we can construct a parameter matrix that maps from parameters to causal types. Inspecting the parameter matrix,  confirms assumes that there are no constraints here on possible nodal types  and no unobserved confounding.
+<!-- The model implies a "parameter matrix" that maps from parameters to causal types. Inspecting the parameter matrix,  confirms that there are no constraints here on possible nodal types  and no unobserved confounding: -->
 
 
-```{r, eval= FALSE, echo = FALSE}
+```{r, eval= FALSE, echo = FALSE, include = FALSE}
 get_parameter_matrix(model)
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, include = FALSE}
 kable(get_parameter_matrix(model), caption = "Parameter matrix for X causes Y model without confounding")
 ```
 
-In the simplest  $X$ causes $Y$ model the ATE is identified but the "probability of causation" (PC) is not: we can however generally place bounds on PC.
 
-We will  assume a "true" distribution over parameters. In the distribution belwo we will assume there is a true positive effect of 0.5.
+We will  assume a "true" distribution over parameters. Let's assume that the true effect of 0.5, but that this is not known to researchers. The .5 effect comes from the difference between the share of units with a positive effect (.6) and those with a negative effect (.1). (We say share but we may as well think in terms of the probability that a given unit is of one or other type.)
 
 ```{r}
 model <- set_parameters(model, c(.5, .5, .2, .1, .6, .1))
 
-kable(t(model$parameters))
+kable(t(get_parameters(model)))
 ```
 
-We can now simulate  data using the  model: 
+We can now simulate data using the  model: 
 
 ```{r}
 
@@ -62,7 +61,15 @@ updated <- gbiqq(model, data)
 ```
 
 
-From the updated model we can draw posterior inferences over estimands of interest. We will imagine three estimands, corresponding to Pearl's "ladder of causation." At the first level we are intersted in the distribution of some node, perhaps given the value of another node.  At the second  level we are interested in treatment effects: how changing one node changes another. THis question is answerable from an experiment. At the third level we are interested in counterfactual statements: how would things have been different if some features of the world were different from what they are?
+From the updated model we can draw posterior inferences over estimands of interest.
+
+We will imagine three estimands, corresponding to Pearl's "ladder of causation." 
+
+* At the first level we are interested in the distribution of some node, perhaps given the value of another node.  This question is answerable from observational data. 
+
+* At the second  level we are interested in treatment effects: how changing one node changes another. This question is answerable from experimental data. 
+
+* At the third level we are interested in counterfactual statements: how would things have been different if some features of the world were different from what they are? Answering this question requires a causal model.
 
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
@@ -72,6 +79,7 @@ if(do_diagnosis){
 updated <- read_rds("saved/appendix_XY_model_1.rds")
 ```
 
+Here are the results:
 
 ```{r}
 
@@ -88,7 +96,7 @@ results <- gbiqq::query_model(
 kable(cbind( "Query (rung)" = c("Association", "Intervention", "Imagining"), results), digits = 2)
 ```
 
-We see from the posterior variance on PC that we have the greatest difficulty on the third rung. In particular the PC is not identified (the  distribution does not tighten even with very large N).  For more intuition we graph the posteriors:
+We see from the posterior variance on PC that we have the greatest difficulty with  the third rung. In particular the PC is not identified (the  distribution does not tighten even with very large N).  For more intuition we graph the posteriors:
 
 
 ```{r, echo = FALSE} 
@@ -130,7 +138,7 @@ plot_dag(model)
 ```
 
 
-The parameter matrix here has more parameters than nodal types, reflecting the conditional assignment probabilities of $X$ -- $X$ can have different assignment probabilities for different nodal types for $Y$.
+If we look at the parameter matrix implied by this model we see that it   has more parameters than nodal types, reflecting the conditional assignment probabilities of $X$ -- $X$ can have different assignment probabilities for different nodal types for $Y$.
 
 ```{r, eval= FALSE, echo = FALSE}
 get_parameter_matrix(model)
@@ -141,7 +149,7 @@ get_parameter_matrix(model)
 kable(get_parameter_matrix(model), caption = "Parameter matrix for X causes Y model with arbitrary confounding")
 ```
 
-With the possibility of any type of confounding, the best we can do is place "Mansky bounds" on the average causal effect. 
+With the possibility of any type of confounding, the best we can do is place "Manski bounds" on the average causal effect. 
 
 To see this, let's plot a histogram of our posterior on average causal effects, given lots of data:
 
@@ -174,7 +182,8 @@ par(mfrow= c(2,1))
 
 The key thing here is that the posterior on the ATE has shifted, as it should, but it is not tight, even with large data. In fact the distribution of the posterior covers one unit of the range between -1 and 1.
 
-## An $X$ causes $Y$, with confounding modelled
+
+## An $X$ causes $Y$, with confounding modeled
 
 Say now we have a theory that the relationship between $X$ and $Y$ is confounded by possibly unobserved variable $C$. Although $C$ is unobserved we can still include it in the model and observe the confounding it generates by estimating the model on data generated by the model but assuming that we cannot observe $C$.
 
@@ -452,7 +461,7 @@ actual_cause <- query_model(model, using = "priors",
 kable(actual_cause)
 ```
 
-Our inferences, *without even observing* Billys throw distinguish between Suzy being a counterfactual cause and an actual cause. We think it likely that Suzy's throw was an actual cause of the outcome though we are less sure that it was a counterfactual causes. Observing Billy's throw strengthens our inferences. If Billy didn't throw then we are sure Suzy's throw was the actual cause, though we are still in doubt about whether her throw was a counterfactual cause.  
+Our inferences, *without even observing* Billy's throw distinguish between Suzy being a counterfactual cause and an actual cause. We think it likely that Suzy's throw was an actual cause of the outcome though we are less sure that it was a counterfactual causes. Observing Billy's throw strengthens our inferences. If Billy didn't throw then we are sure Suzy's throw was the actual cause, though we are still in doubt about whether her throw was a counterfactual cause.  
 
 Note that if we observed Suzy *not* throwing  then we would learn *more* about whether she would be a counterfactual cause since we would have learned more about whether Billy reacts to her and also about whether Billy is a good shot.
 
@@ -516,13 +525,51 @@ kable(result)
 
 We calculate the average causal effect for all and for the compliers and conditional on values of $M$.
 
-## A model that allows application of the frontdoor criterion
+## An illustration of identification through the frontdoor
+
+Consider the following model:
+
+```{r}
+
+frontdoor <- make_model("X -> M -> Y") %>%
+  
+  set_confound(list(X = "Y[M=1]>Y[M=0]", 
+                    X = "Y[M=1]<Y[M=0]"))
+
+plot_dag(frontdoor)
+
+```
+
+FLAG (fix confound arrows)
+
+Below we plot posterior distributions given observations on 2000 units, with and without data on $M$:
+
+```{r, echo = FALSE}
+
+if(do_diagnosis) {
+  data <- simulate_data(frontdoor, n = 2000)
+  
+  updated_1 <- gbiqq(frontdoor, mutate(data, M = NA), stan_model = fit)
+  
+  updated_2 <- gbiqq(frontdoor, data, stan_model = fit)
+  
+  Q1 <- query_distribution(updated_1, using = "posteriors", query = "Y[X=1] - Y[X=0]")
+  Q2 <- query_distribution(updated_2, using = "posteriors", query = "Y[X=1] - Y[X=0]")
+
+  write_rds(list(Q1=Q1, Q2=Q2), "saved/appendix_frontdoor.rds")
+}
+
+frontdoor <- read_rds("saved/appendix_frontdoor.rds")
+par(mfrow = c(1,2))
+hist(frontdoor$Q1, xlim = c(-.3, .3), main= "Inferences given X,Y, data only", xlab = "ATE")
+hist(frontdoor$Q2, xlim = c(-.3, .3), main = "Inferences given X,Y, and M data", xlab = "ATE")
+```
 
 ## A model with a violation of sequential ignorability
 
 ## Learning from a collider
 
-Pearl describes a  model similar to the following as a case for which controlling for covariate $W$ induces bias in the estimation of the effect of $X$ on $Y$, which could otherwise be esimated without bias.
+Pearl describes a  model similar to the following as a case for which controlling for covariate $W$ induces bias in the estimation of the effect of $X$ on $Y$, which could otherwise be estimated without bias.
 
 ```{r}
 model <- make_model("X -> Y <- S; S -> W") %>%
@@ -622,7 +669,7 @@ Sometimes we want to know whether a particular condition was present that could 
 
 We imagine cases in which we do not get to observe the putative cause directly and we want to infer both whether the putative cause was present and whether it caused the outcome. This requires stating a query on both an effect and the level of an unobserved node. 
 
-As ilustration:
+An illustration:
 
 
 ```{r}
