@@ -73,9 +73,7 @@ model <-
   set_restrictions(labels = list(C = c("C1110", "C1111"), 
                                  R = c("R0001", "R0000"), 
                                  Y = c("Y0001")), 
-                   keep = TRUE) %>%
-  
-  set_priors()
+                   keep = TRUE) 
 
 ```
 
@@ -176,9 +174,7 @@ model <-
   set_restrictions(labels = list(C = c("C1110", "C1111", "C1010"), 
                                  R = c("R0001", "R0000"), 
                                  Y = c("Y0001")), 
-                   keep = TRUE) %>%
-  
-    set_priors()
+                   keep = TRUE) 
  
 ```
 
@@ -295,11 +291,9 @@ pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify 
   
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))   #Exclude a set of negative-effect and positive-effect nodal types.
 
       
-          set_priors()
-
 
 ```
 
@@ -381,9 +375,7 @@ kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "\\label{pimdlearn_i
 
 <!-- new_parameters[1:2] <- c(.7, .3)  -->
 
-<!-- pimd_confound <- set_parameters(pimd_confound, new_parameters) %>% -->
-
-<!--   set_priors()  -->
+<!-- pimd_confound <- set_parameters(pimd_confound, new_parameters)  -->
 
 <!--     ``` -->
 
@@ -462,12 +454,20 @@ new_parameters <-pimd_confound2$parameters
 
 new_parameters[1:2] <- c(.05, .95) 
 
-pimd_confound2 <- set_parameters(pimd_confound2, new_parameters) %>%
-  
-  set_priors() 
+pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)  
 
 ```
 
+
+
+```{r, echo = FALSE}
+
+inferences_pimdconf <-
+  conditional_inferences(pimd_confound2, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
+
+kable(inferences_pimdconf, caption = "\\label{possible_outcomespimd_conf} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization, with confounding involving $P$.", digits = 4)
+
+```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 ELpimdconfound4 <-
@@ -479,12 +479,14 @@ ELpimdconfound4 <-
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimdconfound4[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3)
+kable(cbind(strategy = x_strategy, ELpimdconfound4[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 4)
 ```
-We then diagnose clue strategies in Table \ref@(pimdlearn_i1d1con). 
+We display the inferences we *would* draw from different clue strategies and data realizations in Table \@ref(possible_outcomespimd_conf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed $I=1$ and $D=1$, in Table \ref@(pimdlearn_i1d1con). As we can see from the latter table, the presence of a confound involving $P$ reduces this clue's relative expected contribution to learning, making it now *less* informative in expectation than $M$. 
+
+Working backwards, we can readily identify the reason for this in Table \@ref(possible_outcomespimd_conf). We see here that observing $P=1$ moves our beliefs very little off of our prior of $0.091$ because, given the confounding, we already strongly expect to see $P=1$ in a case that democratized; actually observing $P=1$ contains only a small amount of new information. Our beliefs over the query change a great deal if we observe $P=0$---since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, $P$'s value is far more consequential than $M$'s. However, we can also see from the last column of the table that the most impactful realization of $P$'s value is also extremely unlikely under the model (given $I=D=1$). Thus, $P$ *can* be highly informative under this model, but it is very unlikely to be.
 
 
-PATHWAY QUERY
+We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the *pathway* through which an effect occurs. We need to adjust the model to allow allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of $I$ on $M$ and instead use `set_priors` to state a belief that such a negative effect is less likely than $M$'s other nodal types. 
 
 
 ```{r, echo = FALSE, message = FALSE}
@@ -501,20 +503,96 @@ set_parameters(type = "prior_mean")
 
 ```
 
+To isolate how the query matters from how the restrictions matter, we first diagnose clue strategies for a causal-effect query under this new model: given $I=0, D=1$, did $I$ have a negative effect on $D$? Inferences conditional on data-realizations and clue strategies are displayed in Table \@(possible_outcomespimd_priors_effect) and expected posterior variances in Table \@ref(pimdlearn_priors_effect). 
+
+Starting with Table \@(possible_outcomespimd_priors_effect), a comparison with the parallel results for the model that excludes negative $I \rightarrow M$ effects -- Table \@ref(possible_outcomespimd_i0) -- is informative. Similar to what we saw in Chapter \@ref(pt_app), the inferences we draw from observing $M$'s values *flip* in direction when we allow for negative effects of $I$ on $M$. When such effects were excluded, $M$ was informative only as a moderator of $I$'s direct negative effect on $D$. An observation of $M=1$ counted as evidence against $I=0$ being the cause of $D=1$ since $M=1$ could be the cause (given that $M$ could have a positive effect on $D$); $M=0$ counted, by a similar logic, as evidence in favor of $I$'s negative effect. Once we relax the restriction and allow negative effects of $I$ on $M$, $M$ is additionally informative as a *mediator* along a second pathway through which $I$ can have a negative effect on $M$. Now, observing $M=0$ cuts in two directions: on the one hand, it rules out a negative effect of $I$ running through $M$ (informativeness as mediator); on the other hand, it makes it more likely that $I=0$ caused $D=1$ indirectly (informativeness as moderator). We can see that, in this situation, the information we get from $M$ as a mediator overwhelms that which we get from $M$ as a moderator since our posterior on $I$'s causal effect now moves *downwards* if we observe $M=0$. $M=1$, of course, cuts both ways as well by a parallel logic, but with the net effect being an upward shift in our posterior on the causal effect. 
+
+So how informative overall is $M$ as compared to $P$? In the model allowing negative $I \rightarrow M$ effects, we are now learning in two ways from $M$ rather than one; so our intuition might be that $M$ has become more informative than it was in our original model. In Table \@ref(pimdlearn_priors_effect), we see that this is not at all the case! Much as in Table \@ref(pimdlearn_i0d1), for the same query and given data but under our original model, we still see very little---indeed, slightly less---reduction in expected posterior variance from the search for $M$. $M$ may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect *undoes* some of the learning from the moderation by pushing our inferences in the opposing directions.
+
+
 ```{r, echo = FALSE}
 
-inferences <-
+inferences_priors_effect <-
+  conditional_inferences(pimd_priors, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
+
+kable(inferences_priors_effect, caption = "\\label{possible_outcomespimd_priors_effect} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?", digits = 3)
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+ELpimd_priors_effect <-
+  rbind(
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = NULL,       given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "P",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "M",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = c("P","M"), given = "I==0 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "\\label{pimdlearn_priors_effect}Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
+```
+Now, let's see how things look when we are interested not in $I$'s causal effect on $D$ but in whether it had an effect via particular pathway. Specifically, given $I=0$ and $D=1$, did $I$ have a negative effect on $D$ that was mediated by $M$? Following our discussion of mediation in Chapter \@ref(questions), we define the query as asking whether the following are true:
+
+1 Does $I$ have a negative effect on $M$? (in code, $M[I=1] < M[I=0]$)
+2 Does the change in $M$ resulting from a change from $I=1$ to $I=0$ cause a change in $D$ from $0$ to $1$? ($(D[M=M[I=0]] > D[M=M[I=1]])$)
+3 Does $I$'s effect on $D$ *depend* on $I$'s effect on $M$? In other words, would we still get the $I \rightarrow D$ effect if $M$ were fixed at the value that it takes on when $I=1$? ($(D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])$)
+
+Inferences conditional on data strategies and realizations are displayed in Table \@ref(possible_outcomespimd_path). We saw in Table \@ref(possible_outcomespimd_priors_effect) that seeing $M=0$ slightly reduces our confidence that there was a negative effect of $I$ on $D$. However, we see now that observing $M=0$ entirely *eliminates* the possibility that this effect was mediated by $M$. We also see that the data realization under which we update most strongly in favor of a negative causal effect--$P=0, M=1$--is also the realization most suportive of a belief in a mediated negative effect. 
+
+Turning to expected learning from alternative strategies, shown in Table \@ref(pimdlearn_path), we can see clearly -- by comparison to Table \ref@(pimdlearn_priors_effect) -- how optimal clue strategies depend on the query of interest. Whereas $M$ is only slight informative about $I$'s causal effect--with $P$ the more informative clue--we expect to learn much more from $M$ about the pathway-specific query, and $M$ is far more informative than $P$.
+
+
+```{r, echo = FALSE}
+
+inferences_pimdpath <-
   conditional_inferences(pimd_priors, query = "(M[I=1] < M[I=0]) & 
                      (D[M=M[I=0]] > D[M=M[I=1]]) & 
                      (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", given = "I==0 & D==1")
 
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
+kable(inferences_pimdpath, caption = "\\label{possible_outcomespimd_path} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?", digits = 3)
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+ELpimd_path <-
+  rbind(
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = NULL,       given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = "P",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = "M",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = c("P","M"), given = "I==0 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd_path[,-1]), caption = "\\label{pimdlearn_path}Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
+```
+Now, what if we already know that $I$ has a negative effect on $D$ and we want to know via which pathway that effect operates---the direct or the indirect? 
+
+
+```{r, echo = FALSE, message = FALSE}
+
+pimd_priors <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+         set_restrictions(c(
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
+  
+         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5))) %>% #Set less weight on negative effect of I on M
+
+set_parameters(type = "prior_mean")
+
 
 ```
 
 
-FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
-For population-level estimands or is this redundant? See issue 53. 
+
+FLAG: aactual cause and notable cause ??
 
 ### Dynamic Strategies
 
