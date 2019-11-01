@@ -25,11 +25,11 @@ The approach we have  described to inference always involve updating beliefs giv
 
 We see two broad responses to this problem.
 
-One is emphasize the contingent nature of claims. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise. But if held, then the simple DAG in chapter 4 (REF) can be taken to represents beliefs about the world rather than a model of the world, in the sense of a simplified representation. But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is truly a model and not a faithful summary of beliefs. 
+One is *emphasize the contingent nature of claims*. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then the simple $X\rightarrowY$ DAG in chapter 4 (FIGURE REF) is more of a representation of beliefs about the world  than it is a model of the world, in the sense of a simplified representation.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable invovlves a form of modelling.] But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is unquetionanly a model and hard to think of as a faithful summary of beliefs. 
 
-Owning the model in this way results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful [@clarke2012model]. That is the subject of Chapter 15.
+Recognizing in this way that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. That is the subject of Chapter 15.
 
-Here we focus on more positive steps that might be taken to underpin a model. We highlight first how the type of approach used in Chapters 8 and 9 can be used to justify a process tracing model on the basis of a mixed methods model. These applications presuppose knowledge of a DAG however. There are two further responses to this concern. One is to try to generate the DAG itself from data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of DAG assumptions -- which we address in Chapter 15.
+Here we focus on more positive steps that might be taken to underpin a model. We highlight first how the type of approach used in Chapters 8 and 9 can be used to justify a process tracing model on the basis of a mixed methods model. These applications presuppose knowledge of a DAG however. In a sense, they simply push the question down a level. There are two further responses to this concern. One is to try to generate the DAG itself from data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of DAG assumptions -- which we address in Chapter 15.
 
 ## Bounds on probative value
 
@@ -343,11 +343,11 @@ model <- make_model("X -> Y <- Z -> K")
 
 model <- make_model("X -> Y <- Z -> K") %>%
 
-          set_parameters(type = 'define',
-              alphas = list(
-                       Y = c(`(Y[X=1, Z = 1] > Y[X=0, Z = 1])` = 10), 
-                       K = c(`(K[Z = 1] > K[Z = 0])` = 5)
-                       ))
+          set_parameters(
+            statement = list("(Y[X=1, Z = 1] > Y[X=0, Z = 1])",  
+                             "(K[Z = 1] > K[Z = 0])"),
+            node = c("Y","K"), 
+            alpha = c(10,5))
 ```
 
 ```{r, echo = FALSE}

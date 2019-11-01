@@ -232,655 +232,19 @@ Placeholder
 
 <!--chapter:end:10-elements-of-design.Rmd-->
 
-# Clue Selection as a Decision Problem
 
+# Clue Selection as a Decision Problem {#clue}
 
+Placeholder
 
-```{r, include = FALSE}
-source("_packages_used.R")
-do_diagnosis <- FALSE
-```
-
-***
-
-We draw out the implications of the causal model approach for clue selection strategies. We introduce a tool for generating an optimal decision tree for clue selection given.
-
-***
-
-Consider now the problem of determining what qualitative data to gather on a case. Evidently it makes sense to gather information on clues that have large probative value, but whether or not clues have probative value can depend on what clues have already been collected: Finding out that the Butler had no motive may be informative for the claim that he is innocent, but it may not be useful if you already know he had no opportunity. 
-
-To motivate our thinking about clue-selection, consider again our running example with the free press and government removal. We can use this toy example to see, intuitively, how researchers may have a choice among observations that could be informative, and how the informativeness of an observation can depend on what is already known. In Figure \ref{fig:running}, we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the exogenous nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see which collection of exogenous nodes constitutes---gives the answer to---a given query, or estimand.  Turning things around, we can also see, given a query, which nodes are informative about the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
-
-FLAG: Where is the running example figure currently? Need to reference it.
-
-FLAG: I'm having trouble getting the logical progression here. Seems somewhat broken in the sense that it's incomplete. Conceptually, we might think of informativeness situations as taking four possible forms of interest: a clue is always informative; never informative; informative only conditional on something else (obviously, what the something else is can vary); conditional only in the absence of something else. We seem to be covering always informative and conditionally uninformative. Seems odd not to also show always uninformative and informative only conditional on something else. But not sure if we can do this with this example.
-
-For example, suppose that one can see that $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in panel $A$, $B$, or $C$ but do not know which of these we are in. Would it be helpful to collect the clue $S$ if one has no other information? Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $P(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$. Given the structural equation for $S$, $P(S|X=0,Y=0) = P(S|X=0)$, and given independence of $X$ and $S$, $P(S=1|X=0)= \pi^S$ (the simple assignment propensity).  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
-
-We can also see instances in this example of  how existing data can make clues *uninformative*. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$). Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
-
-The running example also lets us demonstrate how informative clues can be found in many different places in a graph. 
-
-1. **Informative spouses** Spouses---parents of the same child---can inform on one another. As we have seen in other examples, when an outcome has multiple causes, knowing the value of one of those causes helps assess the effect(s) of the other(s). For example, here, $S$ and $X$ are both parents of $C$; $S$ is thus informative for assessing whether $X$ causes $C$. Indeed this query, written in terms of roots, is simply $P(S)$:  $X$ causes $C$ if and only if $S=1$. Likewise, $S$ causes $C$ (negatively) if and only if $X=1$. 
-
-2. **Pre-treatment clues.** Did the absence of media reports on corruption ($R=0$) cause government survival ($Y=0$)? Look to the pre-treatment clue, $X$: $X=0$ is a smoking gun establishing that the absence of a report produced government survival. Or, substantively, if there were a free press, then a missing report would never be a cause of survival since it would occur only in the absence of corruption, which would itself be sufficient for survival. More broadly, this example illustrates how knowledge of selection into treatment can be informative about treatment effects. 
-
-3. **Post-outcome clues.** Suppose we observe the presence of a free press ($X=1$) and want to know if it caused a lack of corruption ($C=0$), but cannot observe the level of corruption directly. Observing $Y$---which occurs after the outcome---is informative here: if $X=1$, then $X$ causes $C$ (negatively) if and only if $Y=0$. When an outcome is not observed, a consequence of that outcome can be informative about its value and, thus, about the effect of an observed suspected cause. 
-
-4. **Mediators as clues**: We see a politically sensitive government ($S=1$) and its survival ($S=0$). Did the government survive because of its sensitivity to public opinion? Here, the mediation clue $C$ is helpful: a lack of corruption, $C=0$, is evidence of $S$'s negative effect on $Y$. 
-
-And, of course, different clues can be  informative in different ways for different types of estimand.
-
-Needed then is a systematic way for identifying what clues to look for for answering a given type of causal quesiton, given what we already know---and perhaps, in what order to look for them.
 
 ## A strategic approach
-
-The representation of inference problems as one of querying a Bayesian model points to a relatively simple method for answering this question, at least for small problems. Consider, first, a situation in which one has access to data $W$ and wants to know the expected probative value of all possible collections of data one could gather. 
-
-This can be done as follows:
-
-1. Define the model. 
-2. Define a query on the model.
-3. Define a data strategy: a set of clues for which one might search (e.g., observe the value of $C$).
-4. Given prior data, figure out the probability of different realizations of the new data, and for each possible realization calculate the posterior variance. Then calculate the *expected* posterior variance for the data strategy by taking an average of these variances, with weights given by the probability of observing the clue realization in question.
-5. Repeat steps 3-4 for different data strategies. 
-
-This procedure returns the expected posterior variances associated with different data strategies. 
-
-A still more sophisticated strategy would, for multiple clues, take sequence into account: it would tell us which clues to search for later in the process given the realization of clues sought earlier. The path-dependence of clue selection arises from the possibility that the informativeness of a clue may depend on the value of other nodes in the model. A given clue $K_2$, for instance, may be informative if another clue $K_1$ has the value of 1 but not if it has the value 0. 
-
-We provide tools for both of these approaches and illustrate them below for both the running example and the democracy application.
-
 ## Clue selection with a simple example
-
-Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present and that corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
-
-To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether corruption is ever-present or not, but if it is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it is only because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press --- the only mechanism that can generate reporting on corruption --- is present. In turn, the presence of a free press can only matter for government survival if governments are *not* sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.
-
-This model is formally defined in `gbiqq` as follows:
-
-```{r ch11strategies_chunk_slowxx, warning = FALSE}
-model <- 
-  
-  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
-  
-  set_restrictions(labels = list(C = c("C1110", "C1111"), 
-                                 R = c("R0001", "R0000"), 
-                                 Y = c("Y0001")), 
-                   keep = TRUE) %>%
-  
-  set_priors()
-
-```
-
-```{r, echo = FALSE, include = FALSE}
-plot_dag(model)
-```
-
-Suppose that our query is whether $X$ has a positive effect on $Y$. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that $Y=0$. 
-
-```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
-possible_inferences <-  
-  
-  conditional_inferences(model, 
-                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                         given = "Y==0")
-
-```
-
-Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $NA$ under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first row, we are collecting no clues beyond our prior data on $X$ and $Y$. In the second row, we have additionally sought clue $S$ and observed a value of $0$, while in the third row we have chosen the same strategy but observed $S=1$. 
-
-In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$, given that $Y=0$. The final column indicates the probability of each data-realization, given the chosen strategy (*not* conditioning on the prior observation, $Y-0$). 
-
-FLAG: Let's add posterior variance to Table \@ref(tab:showstrats5xx)
-
-
-```{r showstrats5xx, echo = FALSE, warning = FALSE}
-# colnames(possible_inferences)[1:2] <- c("Prior var", "Var given W")
-
-kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns. ", row.names = FALSE)
-```
-
-Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of $Y$, in Table \@ref(tab:scxrylearning). 
-
-
-```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
-
-strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
-
-learning <- sapply(strats,  function(strategy) {
-
-  expected_learning(model, 
-                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                    strategy = strategy, 
-                    given = "Y==0", 
-                    parameters = NULL)
-  })
-```
-
-
-```{r scxrylearning, echo = FALSE}
-kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
-```
-  
-
-We operationalize higher levels of expected learning from a strategy as a greater expected reduction in variance upon observing the data. We can see a couple of patterns here. 
-
-* By far the biggest gains in learning come from observing $X$. We can see this most readily by comparing the 1-clue strategies to one another. But in general, any strategy that includes observing $X$ always does substantially better than the comparable strategy that excludes $X$. The intuition here is fairly straightforward: if we want to know whether $Y=0$ was caused by $X=0$, and start out very uncertain about $X$'s value, we should expect to learn a good deal from figuring out whether $X$ is in fact equal to $0$.
-
-* There are also considerable gains from observing $S$ or $C$ by themselves. Consider, first, why observing $S$ is informative. $S$ is potentially informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. Remember that a government is removed only if there is both corruption ($C=1$) and reporting on corruption ($R=1$). Moreover, there is only reporting on corruption (if ever) if $C=1. Thus, for both of these reasons, $X$ can only have a positive effect on government removal (by causing reporting on corruption) if $C=1$: i.e., if there is corruption. And $S$ tells us something about what $C$'s value is likely to be if $X$ were set to 1. 
-
- Specifically, if we observe $S=0$, then we know for sure that $C=1$, regardless of $X$, since $C$ is always 1 when $S=0$ under both permitted nodal types for $C$. If $S=1$, on the other hand, there's a lower chance that $C$ would be equal to 1 if $X$ were set to 1: in one of $C$'s permitted nodal types, there is always corruption; but in the other type, sensitive governments avoid corruption when there is a free press, so $X$ moving to 1 would give us $C=0$. We have put equal prior probabilities on these two nodal types. Thus, if we observe $S=1$, we conclude that there is a lower probability that $C$ will take on the value necessary for $X$ to exert a positive effect on $Y$ than if we observe $S=0$.
-
- Why, then, is $C$ informative? If we observe $C=0$, then we know that $X$ must be equal to 1 since, under permitted nodal types for $C$, there is an absence of corruption *only* in the presence of a free press and sensitive governments. And if $X=1$ with $Y=0$, a positive effect is ruled out with certainty. If we observe $C=1$, then there remains some possibility that $X=0$ as well as some possibility $C$ would remain at 1 if $X$ were set to 1 (depending on $C$'s unknown nodal type), allowing $X$ to yield a positive effect on $Y$ through $R$.
- 
-* There are no gains from observing $R$ if $Y=0$. We can see why by looking at our table of data possibilities consistent with $Y=0$ (Table \@ref(showstrats5xx)). As we can see, there is no possibility of observing anything other than $R=0$ if we have already seen $Y=0$. We can see why by thinking, jointly, about how $Y$ is determined and how $R$ is determined. $Y$ can be 0 either because $C=0$ or $R=0$. So if $R$ were equal to $1$, this must mean that $C$ was $0$. However, a necessary condition for $R$ to be 1, under $R$'s permitted nodal types, is $C=1$ and $X=1$. In other words, the condition under which $R$ could be 1 is a condition under which $Y$ would not be 0. Thus, if we already know $Y=0$, we know $R=0$, and there is no gain from actually looking for $R$. 
-
-* Once we decide to observe $X$, then the next-most informative clue to add to our research design is $S$: $X, S$ has the lowest expected posterior variance of any of the 2-clue strategies. And, in fact, there are no gains to adding $C$ to $X$, relative to observing $X$ by itself. 
-
- Let us develop the intuition underlying this result. 
-
- Imagine that we have already observed $X$'s value. If $X=1$, then (given $Y=0$), a positive effect is immediately ruled out with certainty, rendering any further observations of no value. If we observe $X=0$, however, then (under this causal model) we know for certain that $C=1$, simply because $C=1$ for both of $C$'s permitted nodal types when $X=0$ (there is always corruption when there is no free press). Thus, there is nothing to be gained by observing $C$. (We have already seen why there is nothing to be gained from observing $R$.)
-
- Why, we might still ask, are there possible gains to observing $S$ even if we're going to observe $X$? $S$ is informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. The potential gains from observing $S$ with $X$ arise from the possibility that we may see $X=0$ (since $X=1$ woudl decide the matter by itself). If $X=0$, then we still need to know whether $Y$ *would* be 1 if we changed $X$ to 1. As discussed above, *that* depends on whether $C$ would be $1$ if $X$ were set to 1, and (as, again, explained above) $S$ is informative on that matter.
- 
-* We see, further, in the table --- and it follows from the above logic --- that we cannot improve on an $X, S$ strategy by gathering more data. Thus, if the search for information is costly, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
-
-* Clues can be more informative jointly than separately, and the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing $C$ by itself is slightly *more* informative than observing $S$ by itself. However, if we are planning to observe $X$, then the gains flip, and it is only $S$ that offers additional useful information. As we have discussed, observing $X$ makes observing $C$ uninformative while $S$ remains informative as a moderator of $X$'s effect.
-
-We would add that the pattern here forms part of a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from *moderators*, like $S$ in this model, than from mediators, like $C$ and $R$. We return to this point below. 
-
-
 ### Dependence on prior beliefs
-
-As the foregoing discussion already suggests, optimal clue strategies can depend on our prior beliefs about causal relationships among the variables in the model.  We illustrate this point here, examining how evaluation of clue strategies shift as we relax restrictions on nodal types and set informative priors over nodal types.
-
-**Relaxing restrictions.** In the analysis above, we allowed for just two (of 16 possible) nodal types at both $C$ and $R$, effectively expressing strong beliefs about how $C$'s and $R$'s values are determined. But what if we are less certain than this? 
-
-Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
-
-```{r ch11strategies_chunk_slowxx2, warning = FALSE}
-
-#Expand nodal types for C.
-
-model <- 
-  
-  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
-  
-  set_restrictions(labels = list(C = c("C1110", "C1111", "C1010"), 
-                                 R = c("R0001", "R0000"), 
-                                 Y = c("Y0001")), 
-                   keep = TRUE) %>%
-  
-    set_priors()
- 
-```
-
-
-```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
-possible_inferences <-  
-  
-  conditional_inferences(model, 
-                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                         given = "Y==0")
-
-```
-
-
-```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
-
-strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
-
-learning <- sapply(strats,  function(strategy) {
-
-  expected_learning(model, 
-                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                    strategy = strategy, 
-                    given = "Y==0", 
-                    parameters = NULL)
-  })
-```
-
-
-```{r scxrylearning2, echo = FALSE}
-kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
-```
-
-The diagnosis of strategies under this adjusted set of beliefs, for the same query (whether $X$ has a positive effect on $Y$) and prior data ($Y=0$) as before, are displayed in Table \@ref(scxrylearning2).
-
-We see that, among 1-clue strategies, observing $X$ is still the best choice. Among 2-clue strategies, however, things begin to look different. The best 2-clue strategy is also still $X, S$. Where things change most significantly, however, is among 3-clue strategies: now, we can do even better by additionally observing $C$. The reason is that, with greater uncertainty about its nodal types, $C$'s value is no longer known when $X=0$: it is now possible that $C=0$ when $X=0$ since we think it possible that $C$'s nodal type is $\theta^C_{1010}$. Since $C$'s value bears on whether $X$ can have an effect via $R$, we can thus in this situation potentially learn something by observing $C$.
-
-We can also see $C$'s enhanced informational value throughout the table. Among 1-clue strategies, observing $C$ alone generates greater learning here than it does under the original setup. More strikingly, among 2-clue strategies we see that observing $C$ can now generate learning even if we have *already* observed $X$ (whereas there was no gain from strategy $X, C$ relative to $X$ under the original model). While $X, S$ is still a better strategy than $X, C$, the change in diagnosis could matter if, for instance, we cannot observe $S$ for some reason or if observing $S$ is much more costly than observing $C$.
-
-Moreover, the expected variance reduction from observing $S$ is also greater under the new model, for 1- and 2-clue strategies. To see the informal intuition here, note that $S$ is potentially informative about $C$'s value as a parent of $C$. And we now believe (with the added nodal type for $C$) that there may be an additional way in which $S$ could matter for $C$, and thus provide information about its value. Moreover, since the added nodal type has $S$ exerting a negative effect on $C$ regardless of $X$'s value, $S$ can now be informative even if we have already observed $X=0$. 
-
-Finally, we can see that nothing has changed in regard to $R$, about whose nodal types we have retained the same beliefs. It is still uniformly unprofitable to observe $R$ because we still know $R$'s value whenever $X=0$.
-
-This exercise also suggests a further interesting principle of clue-selection: that potential informativeness rests on uncertainty about what we will find.
-
-
-**Changing priors.** We can also see what happens when, rather than permitting new nodal types, we have informative beliefs about the prevalence of permitted types. We can provide a simple demonstration by expressing stronger prior beliefs about $S$'s nodal type. Suppose we believe most governments to be sensitive to public opinion. This would imply that we should put greater prior weight on $\theta^S_1$ than on $\theta^S_0$. We can do this by setting a higher $\alpha$ value corresponding to $S=1$, and telling `gbiqq` to set all paramater values (the $\lambda$'s for each nodal type) to the means of the prior distributions:
-
-```{r ch11strategies_chunk_slowxx, warning = FALSE}
-
-#Set priors for S with more weight on S=1. Should make S less informative -- the more informative value for S is expected to be less likely??
-
-model <- 
-  
-  make_model("S -> C -> Y <- R <- X; X -> C -> R", add_priors = FALSE) %>%
-  
-  set_restrictions(labels = list(C = c("C1110", "C1111"), 
-                 R = c("R0001", "R0000"), 
-                 Y = c("Y0001")), 
-          keep = TRUE) %>%
-  
- set_priors(alphas = list(S = c(`S==1` = 10))) %>%
-   
- set_parameters(type = "prior_mean")
-  
-
-```
-
-These priors put roughly a 0.91 probability on $S=1$. 
-
-```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
-possible_inferences <-  
-  
-  conditional_inferences(model, 
-                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                         given = "Y==0")
-
-```
-
-
-```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
-
-strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
-
-learning <- sapply(strats,  function(strategy) {
-
-  expected_learning(model, 
-                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                    strategy = strategy, 
-                    given = "Y==0", 
-                    parameters = NULL)
-  })
-```
-
-
-```{r scxrylearning3, echo = FALSE}
-kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
-```
-
-We see the results of this new set of diagnoses, with informative priors on $S$'s nodal types, in Table \@ref(scxrylearning3). Comparing with Table \@ref(scxrylearning), a number of features stand out. First is the much lower *prior* variance under the new model: having a strong prior belief about $S$'s value gives us stronger prior beliefs about whether $X$ could have caused $Y$ since such an effect *depends* on $S$'s value. A second striking difference is that searching for $S$ is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for $S$. We *could* be surprised, but we should not *expect* to be. In the original model, in contrast, we were maximally uncertain about $S$'s value --- believing it had a 0.5 chance of being 1 --- and so there was much more to be gained by looking. 
-
-While not shown here, we get essentially the same result if we flip our priors and put much greater weight on $S=0$, rather than on $S=1$. 
-
-
 ## Clue selection for the democratization model 
-
-We now apply this approach to the model of democratization that we worked with in Chapters \ref(ptapp) and \ref(mixingapp).
-
-We start by specifying the democratization model, with negative effects ruled for $I \rightarrow M$, $M \rightarrow D$, and $P \rightarrow D$ and a positive direct effect ruled out for $I \rightarrow D$.
-
-```{r, echo = FALSE, message = FALSE}
-
-pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
-  
-         set_restrictions(c( 
-           "(M[I=1] < M[I=0])", 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
-
-      
-          set_priors()
-
-
-```
-
-Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables --- mobilization or international pressure --- we should collect data on: we could observe nothing further; observe $P$ only; observe $M$ only; or observe both $P$ and $M$. In Table \@ref(possible_outcomespimd_i1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditionining on $I=D=1$.)
-
-```{r, echo = FALSE}
-
-inferences <-
-  conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
-
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
-
-```
-
-We show in Table \@ref(pimdlearn_i1d1) how we expect uncertainty to be reduced by different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The next three rows show our expectations for looking for $P$ only; looking for $M$ only; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. 
-
-We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
-
-
-
-
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
-ELpimd1 <-
-  rbind(
-expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
-expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
-expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
-expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
-
-x_strategy <- c("None", "P", "M", "P and M")
-
-kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
-
-```
-
-We turn next to considering those cases with low inequality that democratized, asking whether democratization occurred because of a *negative* effect of inequality. The possible data realizations, resulting inferences, and data probabilities are shown in Table \@ref(possible_outcomespimd_i0), while the expected learning estimates for each clue strategy are given in Table \@ref(pimdlearn_i0d1). The pattern here is similar, though somewhat starker: substantially greater gains to observing the moderator, $P$, than the mediator $M$. The gains to observing $M$ here are very small indeed. We can already see from comparing the relevant rows in the data-possibilities table how little our posterior beliefs shift depending on $M$'s realized value. $M$ is far less informative for assessing $I$'s causal effect for an $I=0, D=1$ case than for a $I=1, D=1$ case. The reason is that, in the former situation, we are looking for a positive effect while in the latter situation, we are looking for a negative effects; but only positive effects can operate through the mobilization pathway under the model restrictions. Thus, $M$ is uninformative as a mediator of $I$'s effect in an $I=0, D=1$ (though it is informative as a moderator for such a case, but less so).
-
-```{r, echo = FALSE}
-
-inferences2 <-
-  conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
-
-kable(inferences2, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
-
-```
-
-
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
-ELpimd2 <-
-  rbind(
-expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
-expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
-expected_learning(pimd, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
-expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
-
-x_strategy <- c("None", "P", "M", "P and M")
-
-kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "\\label{pimdlearn_i0d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
-
-```
-
-Now, let us see what happens as we revise the model, making it less restrictive. We do this, first, by allowing for confounding. In particular, we allow for the possibility that the level of inequality will tend to be different in places where inequality causes mobilization. Inequality would be endogenous to mobilization potential, for instance. if strategic rulers take steps to diminish in contexts in which inequality poses a mobilizational threat. We create a new model, 
-
-```{r, echo = FALSE, message = FALSE}
-
-pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
-  
-         set_restrictions(c( 
-           "(M[I=1] < M[I=0])", 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
-  
-            set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)"))  #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}. 
-  
-new_parameters <-pimd_confound$parameters 
-
-new_parameters[1:2] <- c(.7, .3) 
-
-pimd_confound <- set_parameters(pimd_confound, new_parameters) %>%
-  
-  set_priors() 
-
-    ```
-
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
-ELpimdconfound1 <-
-  rbind(
-expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
-expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
-expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
-expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
-
-x_strategy <- c("None", "P", "M", "P and M")
-
-kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3)
-
-```
-
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-
-ELpimdconfound2 <-
-  rbind(
-expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
-expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
-expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
-expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
-
-x_strategy <- c("None", "P", "M", "P and M")
-
-kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1}Variances and expected variances given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3)
-
-```
-
-
-PATHWAY QUERY
-
-
-```{r, echo = FALSE, message = FALSE}
-
-pimd_priors <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
-  
-         set_restrictions(c(
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
-
-         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5))) %>% #Set less weight on negative effect of I on M
-
-set_parameters(type = "prior_mean")
-
-
-```
-
-```{r, echo = FALSE}
-
-inferences <-
-  conditional_inferences(pimd_priors, query = "(M[I=1] < M[I=0]) & 
-                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
-                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", given = "I==0 & D==1")
-
-kable(inferences, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization.", digits = 3)
-
-```
-
-
-FLAG: applied case-level analyses involving causal pathways, actual causes, and notable causes.
-For population-level estimands or is this redundant? See issue 53. 
-
 ### Dynamic Strategies
-
-The clue-collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their strategies as they go along. However, the expected informativeness of a clue may depend on the values of other clues that we see first, implying that an optimal strategy will be dynamic, taking into account earlier observations in selecting later ones. 
-
-Given $n$ nodes, a dynamic data collection strategy will be of the form:
-$$\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}$$
-
-where each $K_j$ is en element of the nodes on the graph, or is the empty set. Thus, we start with observing $K_1$; then, whether we choose to observe $K_2$ depends on the value of $K_1$; whether we choose to observe $K_3$ depends on the value of $K_1$ and (if we observed it) $K_2$; and so on. A strategy *vector* specifies a series of conditional clue-search actions: it identifies the first clue sought and then which clues are sought conditional on the realization of all prior clues sought.  
-
-Each possible strategy has an associated expected reduction in variance as well as an associated expected cost. 
-
-To illustrate with the running example we imagine a situation in which it is known that $Y=1$ and we are interested in whether $Y=0$ because of $S$ (though we don't know at the outset what the value of $S$ is). We consider strategies in which we first seek information on one node and then, conditional on what we find, we look for data on one other node (or not). With five nodes, one already known, there are $4 \times 4^2$ strategies of this form.
-
-Suppose that we observe that $Y=0$: the government was not replaced. We then want to know whether this is because the government was sophisticated ($S=1$). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
-
-```{r, include = FALSE}
-
-# A strategy is a triple that indicates (a) first node sought (b) action if first node is 0 (c) action if first node = 1
-# This function calculates the expected posterior variance from each strategy and the expected number of clues sought
-
-strategy_evaluation <- function(model, 
-                                strategy  = c("X", "C", NA), 
-                                given = "Y==0",  
-                                query,
-                                prices = NULL) {
-  vars <- model$variables
-  if(is.null(prices)) prices <- rep(1, length(vars))
-  s1 <- strategy[[1]]
-  
-  # FLAG / HACK: Better to have this only look at relevant cases, not all data
-  given_vars <- NULL
-	if(!is.null(given)) {
-			given_vars <- str_extract_all(given, boundary("word"))[[1]]
-			given_vars <- given_vars[(given_vars %in% vars)]
-			}
-  na_vars <- vars[!(vars %in% unlist(c(s1, given_vars)))]
-  given2 <- paste(given, paste(paste0(" & is.na(", na_vars, ")"), collapse = ""))
-  
-  # Conditional inferences
-  ci  <- conditional_inferences(model, query = query, given = given2)
-  
-  # Step 1 conclusions depending on findings on strategy 1
-    p0 <- filter(ci, ci[s1]==0)[1, c("posterior", "prob")]
-    p1 <- filter(ci, ci[s1]==1)[1, c("posterior", "prob")]
-    
-    # Probability of finding 0/1 in step 1 (normalized)
-    probs  <- c(p0$prob, p1$prob)/(p0$prob + p1$prob)
-    
-    # Gather posteriors
-    posts <- c(p0$posterior, p1$posterior)
-    
-    evs <- 
-      sapply(0:1, function(j){
-      s <- strategy[[2+j]]
-      ifelse(is.na(s), 
-            (posts[1+j])*(1-posts[1+j]),
-            expected_learning(model, 
-                    query = query, 
-                    strategy = paste(s), 
-                    given = paste(given, "&", strategy[[1]], "==", j), 
-                    parameters = NULL)$E_post_var)
-    })
-    
-    # Flag: A little HACKY: Fill in NAs if probs = 0
-    evs[probs == 0]  <- 0
-    strategy[2:3][probs == 0]  <- "NONE"
-    
-    # Expected Number of clues sought: 1 plus 1 if additional steps sought
-    expected_n        <- 1 + probs%*%as.vector((!is.na(strategy[2:3])))
-    
-    # Expected variance given conditional strategies
-    expected_variance <- probs%*%evs  
-    
-    # Costs
-    costs <- c(sum(prices[vars %in% factor(strategy[-3])]),     
-               sum(prices[vars %in% factor(strategy[-2])]))
-    expected_costs <- probs%*%costs  
-
-    c(expected_n = expected_n, 
-      expected_variance = expected_variance, 
-      expected_costs = expected_costs)
-}
-
-# This function makes a list of two step strategies:
-# FLAG needs to be generalized for more steps
-strats <- function(model, vars = model$variables){
-  
-  x <- sapply(1:length(vars), function(j) 
-        expand.grid(one = vars[j], 
-                    two_0 = c(NA, vars[-j]), 
-                    two_1 = c(NA, vars[-j]), 
-                    stringsAsFactors = FALSE), 
-                    simplify = FALSE)
-    x <- do.call("rbind", x)
-    data.frame(x, stringsAsFactors = FALSE)
-    }
-```
-
-```{r, echo = FALSE}
-# Implement for running examples
-strategy_list <- strats(model, c("S", "X", "C", "R"))
-
-# Assume prices in wihch X and C are somewhat expensive
-prices <- c(1, 1.5, 1.2, .5, .7)
-
-# Calculate expected n and variance
-if(do_diagnosis){
-results <- t(apply(strategy_list, 1, function(j) 
-  strategy_evaluation(model, 
-                      strategy  = j, 
-                      given = "Y==0", 
-                      query = "(Y[S=1] != Y[S=0])", 
-                      prices = prices))) %>%
-  data.frame()
-  write_rds(results, "saved/ch11_tradeoffs.rds")
-  }
-results <- read_rds("saved/ch11_tradeoffs.rds")
-
-out <- cbind(strategy_list, results)
-
-#Best?
-# out[17,]
-
 ## FLAG: CHECK NAS / WANRINGS
-```
-
-
-For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs---but collection depends on past findings---then we can also calculate the expected costs of each strategy.
-
-
-| Strategy | Step 1 | Step 2 if 0 | Step 2 if 1 | Expected variance | Expected Cost |
-|----------|--------|-------------|-------------|-------------------|---------------|
-| 1        | S      | None        | None        |       0.167       | 1             |
-| 2        | S      | X           | X           |       0           | 2.5           |
-| 3        | S      | None        | X           |       0           | 2             |
-|          |        |             |             |                   |               |
-
-Table: Illustration of three (of many) possible two step strategies.
-
-Figure \@ref(fig:tradeoffs) plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs involves gathering $Y$ only.
-
-FLAG: Think we need to label the strategies in graph somehow.
-
-
-```{r tradeoffs, echo = FALSE}
-# Plot results
-with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
-```
-
-
-
-Here we implement the same exercise for the democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that pressure is easy to observe but moviliazation is difficult.
-
-
-```{r, echo = FALSE}
-strategy_list_pimd <- strats(pimd, c("P", "M"))
-
-# Assume prices in wihch X and C are somewhat expensive
-prices_pimd <- c(1, .5, 1.2, .5)
-
-# do_diagnosis <- TRUE
-if(do_diagnosis){
-results_pimd <- t(apply(strategy_list_pimd, 1, function(j) 
-  strategy_evaluation(pimd, 
-                      strategy  = j, 
-                      given = "D==1 & I==1", 
-                      query = "(D[I=1] != D[I=0])", 
-                      prices = prices))) %>%
-  data.frame()
-  write_rds(results_pimd, "saved/ch11_tradeoffs_pimd.rds")
-  }
-results_pimd <- read_rds("saved/ch11_tradeoffs_pimd.rds")
-
-kable(data.frame(cbind(strategy_list_pimd, results_pimd) ), digits = 4)
-# Plot results
-with(results_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
-
-# 10 is best?
-# (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
-# strategy_list_pimd[10,]
-```
-
-  
-<!-- ## More complex problems -->
-
-<!-- Illustration of clue inference for a continuous problem. -->
-
 ## Conclusion
-
-Explicit statement of a causal model---including prior beliefs over roots---allows one to assess what will be inferred from all possible observations. This opens the way for simple strategies for assessing what data is most valuable, and in what order it should be gathered. 
-
-We are conscious that here we are pushing the basic logic to the limits. In practice researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts; the claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data is most useful to gather. 
-
-
-
 
 <!--chapter:end:11-clue-selection.Rmd-->
 
@@ -918,22 +282,581 @@ Placeholder
 
 <!--chapter:end:13-caseselection.Rmd-->
 
-
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # (PART) Models in Question  {-}
+
 # Justifying models
 
-Placeholder
 
+***
+
+We outline strategies to reduce reliance on unfounded beliefs about the probative value of clues.
+
+***
+
+
+```{r, include = FALSE}
+source("_packages_used.R")
+do_diagnosis = FALSE
+```
+
+
+The approach we have  described to inference always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters. In many applications the problem of stating priors can be more fundamental than for many Bayesian applications for two reasons. First the  beliefs are beliefs over the distribution of individual level effects and not just the beliefs over average effects. This puts us up against the fundamental problem of causal inference (Holland cite, Dawid cite FLAG). Second, the beliefs can do a lot of work---especially in small $n$ applications. Indeed for the the process tracing described chapters 6 and 7 [FLAG ADD REFS] the inferences are little more than conditional applications of a model.      
+
+We see two broad responses to this problem.
+
+One is *emphasize the contingent nature of claims*. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then the simple $X\rightarrowY$ DAG in chapter 4 (FIGURE REF) is more of a representation of beliefs about the world  than it is a model of the world, in the sense of a simplified representation.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable invovlves a form of modelling.] But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is unquetionanly a model and hard to think of as a faithful summary of beliefs. 
+
+Recognizing in this way that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. That is the subject of Chapter 15.
+
+Here we focus on more positive steps that might be taken to underpin a model. We highlight first how the type of approach used in Chapters 8 and 9 can be used to justify a process tracing model on the basis of a mixed methods model. These applications presuppose knowledge of a DAG however. In a sense, they simply push the question down a level. There are two further responses to this concern. One is to try to generate the DAG itself from data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of DAG assumptions -- which we address in Chapter 15.
 
 ## Bounds on probative value
+
+Classic treatments of process tracing make use of Causal Process Observations --- observations that are taken to be indicative of a particular causal process in operation. We introduced in Chapter 5 (as well as in FLAG CITE humphreysjacobs)  quantities such as $\phi_{b}$---the probability that $K=1$ given $X$ caused $Y$ and $X=Y=1$, or $\phi_{d}$-----the probability that $K=1$ given $X$ did not cause $Y$ and $X=Y=1$. 
+
+These accounts do not guide much guidance however regarding where these quantities come from --- given that causal types are unobservable how can one justify a belief about the probability of some observation *given* a causal type. Is it even possible to justify such beliefs?
+
+The grounded approach we described provides an answer to this puzzle. In short, knowledge of the structure of a causal model, together with data on exchangeable units, can be enough to place bounds on possible values of $\phi_{b}, \phi_{d}$. 
+
+We illustrate the basic idea and then review some results in this area.
+
+Imagine a fortunate situation in which (a) it is known that the true causal model has the form $X \rightarrow M \rightarrow Y$ and (b) we have a lot of experimental data on the conditional distribution of $M$ given $X$ and of $Y$ given $M$ for exchangeable units (meaning that we can treat our unit of interest as if it were a draw from this set). 
+
+Let us define:
+
+* $\tau_1 = \Pr(M=1 | X=1) - \Pr(M=1 | X=0)$
+* $\rho_1 = \Pr(M=1 | X=1) - \Pr(M=0 | X=0)$
+* $\tau_2 = \Pr(Y=1 | M=1) - \Pr(Y=1 | M=0)$
+* $\rho_2 = \Pr(Y=1 | M=1) - \Pr(Y=0 | M=0)$
+
+These are all quantities that can be calculated from the data. The $\tau$s are average treatment effects and the $\rho$s are indicators for how common the $Y=1$ outcome is.
+
+We are interested in the probability of observing $M=1$ given $X=Y=1$:
+
+$$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + \lambda_{a}^K\lambda_{a}^Y}$$
+
+
+Noting that $\tau_j = \lambda_{b_j} - \lambda_{a_j}$:
+
+$$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + (\lambda_{b}^K-\tau_1)(\lambda_{b}^Y - \tau_2)}$$
+which we can see is decreasing in $\lambda_{b}^j$ (this may seem counterintuitive, but the reason is that with $\tau^j$ fixed, lower $\lambda_{b}^j$ also means lower $\lambda_{a}^j$ which means less ambiguity about *how* $X$ affects $Y$ (i.e. through positive or negative effects on $K$).
+
+ <!-- $$\phi_{1} = \frac{\lambda_{b}^Y}{2\lambda_{b}^Y -\tau_2 - \tau_1(\lambda_{b}^Y - \tau_2)/\lambda_{b}}^K$$ -->
+
+The lowest permissible value of  $\lambda_{b_j}$  is $\tau_j$, yielding $\phi_{b1} = 1$. 
+
+The highest value obtainable by $\lambda_{b_j}$ is when $\lambda_{a_j} = \frac{1-\tau_j+\rho_j}2$ and so $\lambda_{b_j} = \frac{1+\tau_j+\rho_j}2$. 
+
+In this case:
+$$\phi_{b1} = \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2) + (1-\tau_1+\rho_1)(1-\tau_2+\rho_2)}= \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau}$$
+
+And so:
+
+$$\frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau_2} \leq \phi_{b1} \leq 1$$
+
+These are the bounds on $\phi_{b1}$. We can calculate bounds on $\phi_{d1}$ in a similar way (though of course the bounds on  $\phi_{b1}$ and $\phi_{d1}$ are not independent). 
+
+
+$$\phi_{d1} = \frac{\lambda_{b}^K\lambda_{d}^Y}{(\lambda_{a}^K + \lambda_{b}^K + \lambda_{c}^K)\lambda_{d}^Y+ \lambda_{c}^K\lambda_{a}^Y}$$
+
+Figure \@ref(fig:probval1) illustrates how "smoking gun" and "hoop" tests might each be justified with knowledge of $\tau_j, \rho_j$. 
+
+```{r, echo = FALSE, include = FALSE}
+
+make_phis <- function(model = make_model("X -> M -> Y"), 
+                        par = c(.5, .5, .3, 0, .6, .1, .1, 0, .6, .3),
+                        n = 60000){
+    
+  data <- simulate_data(model, 
+                        n = n,
+                        parameters = par, 
+                        using = "parameters") 
+  
+  m1 <- with(data, c(mean(M[X==0]), mean(M[X==1])))
+  m1[2] - m1[1]; m1[2] - 1 + m1[1]
+  m2<- with(data, c(mean(Y[M==0]), mean(Y[M==1])))
+  m2[2] - m2[1]; m2[2] - 1 + m2[1]
+  
+  if(!exists("fit")) fit <- fitted_model()
+  
+  updated <- gbiqq(model, data, stan_model = fit)
+  
+  # check <- rstan::extract(updated$posterior, pars= "lambdas")$lambdas
+  
+  phi_b_num <- query_distribution(updated, query = "(M==1) & (Y[X=0]==0)", subset = "X==1 & Y==1", using = "posteriors")
+  phi_b_denom <- query_distribution(updated, query = "(Y[X=0]==0)", subset = "X==1 & Y==1", using = "posteriors")
+  phi_b <- phi_b_num/phi_b_denom
+  
+  phi_d_num <- query_distribution(updated, query = "(M==1) & (Y[X=0]==1)", subset = "X==1 & Y==1", using = "posteriors")
+  phi_d_denom <- query_distribution(updated, query = "(Y[X=0]==1)", subset = "X==1 & Y==1", using = "posteriors")
+  phi_d <- phi_d_num/phi_d_denom
+  
+  out <- data.frame(phi_b, phi_d)
+  
+  out
+  }
+
+plot_phi <- function(out, main = "bounds"){
+    plot(out$phi_d, out$phi_b, xlim = c(0,1), ylim = c(0,1), cex = .5, main = main, 
+       xlab = expression(phi[d]), ylab = expression(phi[b]))
+  abline(0,1)
+}
+```
+
+```{r, include = FALSE}
+if(do_diagnosis){
+  phis1  <- make_phis(model = make_model("X -> M -> Y"), 
+                        par = c(.5, .5, .3, 0, .6, .1, .1, 0, .6, .3),
+                        n = 80000)
+  write_rds(phis1, "saved/phis_1.rds")
+  
+  phis2  <- make_phis(model = make_model("X -> M -> Y"), 
+                        par = c(.5, .5, 
+                                .95, 0, 0, .05, 
+                                .95, 0, 0, .05),
+                        n = 80000)
+  write_rds(phis2, "saved/phis_2.rds")
+
+}
+```
+
+```{r, echo = FALSE}
+phis1 <- read_rds("saved/phis_1.rds")
+phis2 <- read_rds("saved/phis_2.rds")
+
+par(mfrow = c(1,2))
+
+plot_phi(phis1,
+         main = expression(paste("Hoop: ", tau[1], "= .6, ",
+                                           rho[1], "= -.2, ",
+                                           tau[2], "= .6, ",
+                                           rho[2], "= .2"))
+         )
+
+plot_phi(phis2,
+          main = expression(paste("Smoking gun: ", 
+                                  tau[1], "= 0, ",
+                                  rho[1], "= -.9, ",
+                                  tau[2], "= 0, ",
+                                  rho[2], "= -.9"))
+         )
+
+```
+
+
+<!-- plot_bounds(.6, -.2, .6, .2, 20, main = expression(paste("Hoop: ", tau[1], "= .6, ", -->
+<!--                                                             rho[1], "= -.2, ", -->
+<!--                                                             tau[2], "= .6, ", -->
+<!--                                                             rho[2], "= .2"))) -->
+
+<!-- plot_bounds(0.0, -.9, .0, -.9, 100, main = expression(paste("Smoking gun: ", tau[1], "= 0, ", -->
+<!--                                                             rho[1], "= -.9, ", -->
+<!--                                                             tau[2], "= 0, ", -->
+<!--                                                             rho[2], "= -.9, "))) -->
+
+<!-- ``` -->
+
+
+<!-- ```{r, eval = FALSE, echo = FALSE} -->
+<!-- # An odd one! -->
+<!-- plot_bounds(.02, -.5, -.10, -.5,600) -->
+<!-- ``` -->
+
+For the smoking gun,  $\phi_{b1}$ is .5 because $\lambda_a^j = \lambda_b^j$ so half of the upper level $b$ types work through a positive effect on $M$ and half through a negative effect on $M$. $\phi_{d1}$, on the other hand, is low here $d$ types mostly arise because of $c$ types in the first step and $a$ types in the second, and hence most commonly with $M=1$. 
+
+Whether the bounds map into useful probative value depends in part on whether causal effects are better identified in the first or the second stage. We can see this in Figure \@ref(fig:probval2).
+
+The key difference between the panels is that $\phi_d$ is constrained to be low in the first panel but not in the second. 
+
+For intuition note that a higher level $d$ type will exhibit $M=1$ if it is formed via $db$, $bd$,or $dd$ and it will exhibit $M=0$ if it is formed via $ca$, $cd$, $ad$. The weak second stage makes it possible that there are no second stage d types, only a and b types. The stronger first stage makes it possible that there are no first stage $c$ types. In that case the higher level d types are formed uniquely of $db$ types -- which always exhibit $M=1$ if $X=1$.
+
+This is not possible however for the data assume in the first panel. In the first panel the the higher value on $\rho_2$ means that there must be at least .25 d types. And the weak first stage means that there must at least .5 a and c types combined. Thus there *must* be a set of cases in which $M$ is not observed even though we have an upper level d type.
+
+```{r probval2, echo = FALSE, fig.width = 10, fig.cap = "Probative value with different first and second stage relations"}
+
+# par(mfrow = c(1,2))
+# 
+# plot_bounds(0, 0, .25, .25, 20, main = expression(paste("Weak first stage: ", tau[1], "= 0, ",
+#                                                             rho[1], "= 0, ",
+#                                                             tau[2], "= .25 ",
+#                                                             rho[2], "= .25")))
+# 
+# plot_bounds(.25, .25, 0, 0, 20, main = expression(paste("Weak second stage: ", tau[1], "= .25, ",
+#                                                             rho[1], "= .25, ",
+#                                                             tau[2], "= 0, ",
+#                                                            rho[2], "= 0")))
+
+if(do_diagnosis){
+  phis3  <- make_phis(model = make_model("X -> M -> Y"), 
+                        par = c(.5, .5, 
+                                .25, .25, .25, .25, 
+                                .25, 0, .25, .5),
+                        n = 50000)
+  write_rds(phis3, "saved/phis_3.rds")
+  
+  phis4  <- make_phis(model = make_model("X -> M -> Y"), 
+                        par = c(.5, .5, 
+                                .25, 0, .25, .5,
+                                .25, .25, .25, .25),
+                        n = 50000)
+  write_rds(phis4, "saved/phis_4.rds")
+
+}
+
+phis3 <- read_rds("saved/phis_3.rds")
+phis4 <- read_rds("saved/phis_4.rds")
+
+par(mfrow = c(1,2))
+
+plot_phi(phis3,
+         main = expression(paste("Hoop: ", tau[1], "= 0, ",
+                                                            rho[1], "= 0, ",
+                                                            tau[2], "= .25, ",
+                                                            rho[2], "= .25")))
+
+plot_phi(phis4,
+          main = expression(paste("Smoking gun: ", 
+                                  tau[1], "= .25, ",
+                                  rho[1], "= .25, ",
+                                  tau[2], "= 0, ",
+                                  rho[2], "= 0, ")))
+
+```
+
+
+In short we emphasize that difficult as it might seem at first it is possible to put relatively tight bounds on probative value for causal types with access to experimental data on exchangeable units. 
+
 ## The possibility of identification of probative value from experimental data
+
+
+
+While it is possible to calculate bounds on probative value, it can be simpler to calculate bounds on estimands directly. These bounds can be justified with reference to background data in the same ways as the bounds on probative value. 
+
+Following @dawid2019bounding we again imagine we had access to infinite experimental data on the effect of $X$ on $Y$ and we want to know for a case (exchangeable with any other in this population) with $X=Y=1$, whether $X=1$ caused $Y=1$. Call this the "probability of causation." 
+
+Say we knew the marginal distributions:
+
+* $\Pr(Y=1|X=1) = .75$
+* $\Pr(Y=1|X=0) = .25$
+
+The we could represent this knowledge as Markovian transition matrix from $X$ to $Y$ like this:
+
+$$P=\left( \begin{array}{cc} 0.50 & 0.50 \\ 0.25 & 0.75 \end{array}\right)$$
+
+In this case, from results in @dawid2017probability,  we can place bounds directly on the probability that $X$ caused $Y$, viz:
+
+$$\frac13 \leq PC \leq \frac23 $$
+For intuition note that  $P$ implies a causal effect of .25 and so the lowest  value of $\lambda_b$ consistent with $P$ arises when $\lambda_b =  .25$ and $\lambda_a = 0$, in which case  $\lambda_c = .25$ and $\lambda_d = .5$.    In this case  $\lambda_b/(\lambda_b+ \lambda_d)=\frac{1}{3}$.  The highest consistent   value of $\lambda_b$ arises when $\lambda_b =  .5$ and $\lambda_a = .25$, in which case  $\lambda_c = 0$ and $\lambda_d = .25$. In this case  $\lambda_b/(\lambda_b+ \lambda_d)=\frac{2}{3}$.
+
+Defining $\tau$ and $\rho$ as before, the more general formula for the case with $\rho>0$ is:
+
+$$\frac{2\tau}{1+\tau+\rho} \leq PC \leq \frac{1+\tau-|\rho|}{1+\tau+\rho} $$
+
+
+Say now we have access to auxiliary data $K$ and plan to make inferences based on $K$. 
+
+We will suppose  first that $K$ is a mediator, as above, and second that $K$ is a moderator.
+
+
+
 ### Mediator
+
+Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$. 
+
+Say the transition matrices from $X$ to $K$ and $K$ to $Y$ are:
+
+$$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$ 
+Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$. 
+
+To see this, note that we can calculate:
+
+* $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$
+* $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$
+
+and so:
+
+* $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$
+* $\lambda_d^u = \lambda_d^Y$ 
+* $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$.
+
+whence:
+
+* $\phi_{b1} = 1$
+* $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$
+
+More generally we can calculate the lower bound on the probability that $X$ caused $Y$ as the product of the lower bounds that $X$ caused $M$ and that $M$ caused $Y$, and similarly for the upper bound, using the same formula as before. Signing things so that $\tau^j\geq 0$, $j \in {1,2}$:
+
+$$\frac{2\tau_1}{1+\tau_1+\rho_1}\frac{2\tau_2}{1+\tau_2+\rho_2}  \leq PC \leq \frac{1+\tau_1-|\rho_1|}{1+\tau_1+\rho_1}\frac{1+\tau_2-|\rho_2|}{1+\tau_2+\rho_2} $$
+
+
+We have undertaken essentially the same operations as above except that now we are placing bounds on a substantive estimand of interest rather than first placing bounds on probative value of a clue and then turning to Bayes rule to place bounds on the estimand.
+
+
 ### Moderator
+Consider now  a situation  in which our case is drawn from a set of cases for which $X$ and $K$ were each randomly assigned. Say then that the transition matrices, conditional on $K$ look as follows:
+
+$$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$
+In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$ --- before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$. 
+
+How about $\phi_{b1}$ and $\phi_{d1}$?
+
+Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue.
+
+
 ### Case level bounds from mixed data
+
+
 ## Learning across populations
+
+Now consider strategies to learn about clues from observing patterns in different populations.
+
+We first consider a situation in which we believe the same model holds in multiple sites but in which learning about the model requires combining data about different parts of the model from multiple studies. 
+
+```{r, eval = FALSE}
+model <- make_model("X -> Y <- Z -> K")
+```
+
+```{r, echo = FALSE}
+
+# Population determines the strength of causal effects.  K observed whenever X causes Y, but possibly also when Y=1 regardless
+
+model <- make_model("X -> Y <- Z -> K") %>%
+
+          set_parameters(
+            statement = list("(Y[X=1, Z = 1] > Y[X=0, Z = 1])",  
+                             "(K[Z = 1] > K[Z = 0])"),
+            node = c("Y","K"), 
+            alpha = c(10,5))
+```
+
+```{r, echo = FALSE}
+plot_dag(model)
+
+if(do_diagnosis){
+  
+if(!exists("fit")) fit <- fitted_model()
+
+N <- 300
+df <- simulate_data(model, n = N, using = "parameters") 
+A <- 1:(N/3)
+B <- (1+N/3):(2*N/3) 
+C <- (1+2*N/3):N
+
+df[A, "K"] <- NA           #  factorial
+df[B, c("X", "Y")] <- NA   #  mechanism study 
+df[C, "Z"] <- NA           #  no clue
+
+updated1 <- gbiqq(model, df[A, ], stan_model = fit)
+updated2 <- gbiqq(model, df[B, ], stan_model = fit)
+updated3 <- gbiqq(model, df[C, ], stan_model = fit)
+updated_all <- gbiqq(model, df, stan_model = fit)
+
+subs <- list(
+              "X == 1 & Y == 1 & K == 1",
+              "X == 1 & Y == 1 & K == 0")
+subs2 <- list(
+              "X == 1 & Y == 1 & K == 1",
+              "X == 1 & Y == 1 & K == 0",
+              "X == 1 & Y == 1 & K == 1 & Z == 1",
+              "X == 1 & Y == 1 & K == 0 & Z == 1",
+              "X == 1 & Y == 1 & K == 1 & Z == 0",
+              "X == 1 & Y == 1 & K == 0 & Z == 0")
+
+# If updating done using case data only
+result1 <- query_model(updated1, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result2 <- query_model(updated2, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result3 <- query_model(updated3, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result4 <- query_model(updated_all, queries = "Y[X=0] == 0", subsets = subs2, using = "posteriors")
+
+write_rds(list(result1, result2, result3, result4), "saved/frankenstein.rds")
+}
+
+```
+
+We imagine we have access to three types of data;
+
+1. Study 1 is an experiment looking at the effects of $X$ on $Y$, ancillary data on $K$ is collected but $Z$ is not observed
+2. Study 2 is a factorial study examining the joint effects of $X$ and $Z$ on $Y$, $K$ is not observed
+3. Study 3 is an RCT looking at the relation between $Z$ and $K$. $X$ and $Y$ are not observed. 
+
+Tables \@ref(tab:frank1) -  \@ref(tab:frank3) show conditional inferences for the probability that $X$ caused $Y$ in $X=Y=1$ cases conditional on $K$ for each study, analyzed individually 
+
+```{r frank1, echo = FALSE}
+
+frank <- read_rds("saved/frankenstein.rds")
+
+kable(frank[[3]][,-c(1,3)], caption = "Clue is uninformative in Study 1")
+```
+
+```{r frank2, echo = FALSE}
+kable(frank[[1]][,-c(1,3)], caption = "Clue is also uninformative in Study 2 (factorial)")
+```
+
+```{r frank3, echo = FALSE}
+kable(frank[[2]][,-c(1,3)], caption = "Clue is also uninformative in Study 3 (experiment studying $K$)")
+```
+
+In no case is  $K$ informative. In study 1 data on $K$ is not available, in study 2 it is available but researchers do not know, quantitatively, how it relates to  $Z$. In the third study the $Z,K$ relationship is well understood but the joint relation between  $Z,X$, and $Y$ is not understood.
+
+Table \@ref(tab:frank4) shows the inferences when the data are combined with joint updating across all parameters.
+
+```{r frank4, echo = FALSE}
+kable(frank[[4]][,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$")
+```
+
+Here fuller understanding of the model lets researchers use information on $Z$ to update on values for $Z$ and in turn update on the likely effects of $X$ on $Y$. Rows 3-6 highlight that the updating works through inferences on $Z$ and there are no gains when $Z$ is known, as in Study 2. 
+
+In this example Studies 2 and 3 can be thought of as helper experiments for Study 1.  Study 2 might be thought of as a mechnism study whereas Study 3 is more like a measurement study. 
+
 ## Different models for different sites  
+
+In the last example we assumed that the same model operated in the same wayat all sites. This is a strong assumption, though sometimes justifiable (for instance if sites were randomly allocated across studies). 
+
+If the same model does not operate at different sites it might still be possible to update in this way. For this, however, we need to be able to specify *how* sites differ  Consider  a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the same. As a simple example we might imagine that $X$ is differentially likely to produce $M$ in two sites, but if it does the relation between $M$ and $Y$ is common across sites.
+
+```{r}
+# In this model you are more likely to have an M=1 type regardless if Y = 1 regardless 
+# This produces a positive confound
+
+model_1 <- make_model("X->M->Y") %>%
+            set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
+            set_parameters(c(.1, 0, .2, .7, 
+                             .5, .5, 
+                             .7, 0, .2, .1,
+                               .2, .2, .4, .2))
+
+plot_dag(model_1)
+
+if(do_diagnosis){
+  
+  df_1 <- simulate_data(model_1, n = 20000, using = "parameters")
+  
+  posterior_1 <- gbiqq(model_1, df_1, stan_model = fit)
+  
+  
+  
+  # In this model you are more likely to have an M=1 regardless if Y = 1 regardless 
+  # This produces a negative confound
+  model_2 <- make_model("X->M->Y") %>%
+              set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
+              set_parameters(c(.7, .1, .2, 0, 
+                               .5, .5, 
+                                0, .1, .2, .7,
+                               .2, .2, .4, .2))
+  df_2 <- simulate_data(model_2, n = 20000, using = "parameters")
+  
+  posterior_2 <- gbiqq(model_2, df_2, stan_model = fit)
+  
+  out1 <- query_model(posterior_1, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
+  
+  out2 <- query_model(posterior_2, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
+  
+  write_rds(list(posterior_1, posterior_2, out1, out2), "saved/same_mechanism.rds")
+  
+  }
+
+same_mechanism <- read_rds("saved/same_mechanism.rds")
+
+kable(same_mechanism[[3]])
+kable(same_mechanism[[4]])
+
+# The marginal effect of X on M will be different in the two cases
+# The effect of M on Y is the same however, though it is confounded
+
+```
+
+Under the model there is possibly a difference in the effect of $X$ on $Y$ in the 
+
+
 ### Observational and experimental
+
+Let us imagine a second case in which one wants to update based on 
+
 ## Causal discovery
+
+```{r, include = FALSE}
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("RBGL")
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install("Rgraphviz")
+# library(Rgraphviz)
+
+library(gbiqq)
+library(dplyr)
+library(Rgraphviz)
+library(pcalg)
+
+recover_model <- function(model) {
+    
+  df <- simulate_data(model, n = 1000)
+  V  <- colnames(df)
+  
+  suffStat <- list(dm = df, nlev = c(2,2,2), adaptDF = FALSE)
+  skel.fit <- skeleton(suffStat,
+                       indepTest = disCItest, 
+                       alpha = 0.01, labels = V, 
+                       verbose = TRUE)
+  plot(skel.fit, main = "Estimated Skeleton")
+  }
+```
+
+We start with a model with three variables, $X,M,Y$ where $X$ affects $Y$ directly and indirectly through $M$. We simulate data from this model -- assuming monotonicity but otherwise a flat distribution on types, and then try to recover the structure from this model.
+
+
+
+```{r, include = FALSE}
+model1 <- make_model("X -> M -> Y <- X") %>% 
+  set_restrictions(c("(M[X=1]<M[X=0])", 
+                     "(Y[M=1, X=.]<Y[M=0, X=.]) | (Y[X=1, M=.]<Y[X=0, M=.])"))
+```
+
+
+
+In this case the data structure did not impose restrictions on the skeleton. The true graph can however be recovered with knowledge of the temporal ordering of variables. 
+
+Next we consider the model in which X causes Y through M but not directly. In this case we have a restriction --- specifically there is no arrow pointing directly from $X$ to $Y$. Again we impose monotonicity, draw data, and try to recover the model:
+
+
+```{r, include = FALSE}
+model2 <- make_model("X -> M -> Y") %>% 
+  set_restrictions(c("(M[X=1]<M[X=0])", "(Y[M=1]<Y[M=0])"))
+```
+
+Again we have the correct skeleton and knowledge of timing is enough to recover the graph.
+
+Finally we consider the model in which $Y$ has two causes that do not influence each other. Again we impose monotonicity, draw data, and try to recover the model:
+
+
+```{r, include = FALSE}
+model3 <- make_model("X1 -> Y <- X2") %>% 
+  set_restrictions("(Y[X1=1]<Y[X1=0]) | (Y[X2=1]<Y[X2=0])")
+```
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "DAGs from Data", fig.width = 5, fig.height = 10,results='hide',fig.keep='all'}
+par(mfrow = c(3,2))
+par(mar = rep(3, 4))
+plot_dag(model1); title("True model")
+recover_model(model1)
+plot_dag(model2); title("True model")
+recover_model(model2)
+plot_dag(model3); title("True model")
+recover_model(model3)
+```
+
+
+
+
+
+
+
+
 
 <!--chapter:end:14-Justifying-Models.Rmd-->
 
@@ -976,15 +899,15 @@ Placeholder
 Placeholder
 
 
-## The ladder of causation
+## A simple model and the ladder of causation
 ## $X$ causes $Y$, with unmodelled confounding
-## An $X$ causes $Y$, with confounding modelled
+## An $X$ causes $Y$, with confounding modeled
 ## Illustration of the backdoor criterion
 ## Simple mediation model
 ## Simple moderator model
 ## Billy and Suzy's moderator and mediation model
 ## An IV model
-## A model that allows application of the frontdoor criterion
+## An illustration of identification through the frontdoor
 ## A model with a violation of sequential ignorability
 ## Learning from a collider
 ## Inferring a cause from symptoms
