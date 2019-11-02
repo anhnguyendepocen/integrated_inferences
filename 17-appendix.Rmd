@@ -132,12 +132,12 @@ We find that they do not converge but they do place positive mass in the right r
 An $X$ causes $Y$ model with confounding can be written:
 
 ```{r}
-model <- make_model("X -> Y"; "X <-> Y") 
+model <- make_model("X -> Y; X <-> Y") 
 plot_dag(model)
 ```
 
 
-If we look at the parameter matrix implied by this model we see that it   has more parameters than nodal types, reflecting the conditional assignment probabilities of $X$ -- $X$ can have different assignment probabilities for different nodal types for $Y$.
+If we look at the parameter matrix implied by this model we see that it   has more parameters than nodal types, reflecting the joint assignment probabilities of $\theta_X$ and $\theta_Y$. Here we have parameters for $\Pr(\theta_X=x)$ and $\Pr(\theta_Y |\theta_X=x)$, which allow us to represent $\Pr(\theta_X, \theta_Y)$ via  $\Pr(\theta_X=x)\Pr(\theta_Y |\theta_X=x)$.
 
 ```{r, eval= FALSE, echo = FALSE}
 get_parameter_matrix(model)
@@ -150,33 +150,38 @@ kable(get_parameter_matrix(model), caption = "Parameter matrix for X causes Y mo
 
 With the possibility of any type of confounding, the best we can do is place "Manski bounds" on the average causal effect. 
 
-To see this, let's plot a histogram of our posterior on average causal effects, given lots of data:
+To see this, let's plot a histogram of our posterior on average causal effects, given lots of data. We will assume here that in truth there is no confounding, but that that is not known to researchers.
 
 ```{r}
-data <- simulate_data(
-    model, n = 1000, 
-    parameters = c(.5, .5, .5, .5, .5, .5, .5, .5, .1, .1, .7, .1))
+data5000 <- simulate_data(
+    model, n = 5000, 
+    parameters = c(.25, .0, .5, .25, .5, .5, .25, 0, .5, .25))
+
+data100 <- data5000[sample(5000, 100), ]
+
 ```
 
-
-```{r, message = FALSE, warning = FALSE, eval = FALSE}
-updated <- gbiqq(model, data, refresh = 0)
-```
 
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(gbiqq(model, data, refresh = 0, stan_model = fit), "saved/appendix_XY_model_2.rds")
+  write_rds(gbiqq(model, data5000, refresh = 0, stan_model = fit), "saved/appendix_XY_model_5000.rds")
+    write_rds(gbiqq(model, data100, refresh = 0, stan_model = fit), "saved/appendix_XY_model_100.rds")
+
   }
-updated <- read_rds("saved/appendix_XY_model_2.rds")
+updated_5000 <- read_rds("saved/appendix_XY_model_5000.rds")
+updated_100  <- read_rds("saved/appendix_XY_model_100.rds")
 ```
 
-```{r, echo = FALSE}
-prior_ate <- query_distribution(updated, "c(Y[X=1] - Y[X=0])", using = "priors")
-post_ate <- query_distribution(updated, "c(Y[X=1] - Y[X=0])", using = "posteriors")
-par(mfrow= c(2,1))
-    hist(prior_ate, xlim = c(-1,1), main = "Prior")
-    hist(post_ate, xlim = c(-1,1), main = "Posterior")
+```{r, echo = FALSE, fig.cap= "Modest gains from additional data when ATE is not identified"}
+prior_ate      <- query_distribution(updated_5000, "c(Y[X=1] - Y[X=0])", using = "priors")
+post_ate_5000  <- query_distribution(updated_5000, "c(Y[X=1] - Y[X=0])", using = "posteriors")
+post_ate_100   <- query_distribution(updated_100, "c(Y[X=1] - Y[X=0])", using = "posteriors")
+par(mfrow= c(1,3))
+    hist(prior_ate, xlim = c(-1,1), main = "Prior", xlab = "ATE")
+    hist(post_ate_100, xlim = c(-1,1), main = "Posterior, n = 100", xlab = "ATE")
+    hist(post_ate_5000, xlim = c(-1,1), main = "Posterior, n = 5000", xlab = "ATE")
+
 ```
 
 The key thing here is that the posterior on the ATE has shifted, as it should, but it is not tight, even with large data. In fact the distribution of the posterior covers one unit of the range between -1 and 1.
@@ -229,18 +234,22 @@ if(do_diagnosis){
 
   write_rds(gbiqq::gbiqq(model, data, stan_model = fit, refresh = 0), "saved/appendix_modelled_confound.rds")
 
-    write_rds(gbiqq::gbiqq(model, data_sparse, stan_model = fit, refresh = 0), "saved/appendix_modelled_confound_sparse.rds")
+  write_rds(gbiqq::gbiqq(model, data_sparse, stan_model = fit, refresh = 0), "saved/appendix_modelled_confound_sparse.rds")
   
 ate <- query_distribution(updated, "c(Y[X=1] - Y[X=0])", using = "posteriors")
 write_rds(ate, "saved/appendix_modelled_confound_ate.rds")
+
+updated <- read_rds("saved/appendix_modelled_confound.rds")
+
 confound <- query_distribution(updated, "c(Y[C=1] - Y[C=0])", using = "posteriors")
 write_rds(confound, "saved/appendix_modelled_confound_confound.rds")
-  }
+}
+
 updated <- read_rds("saved/appendix_modelled_confound.rds")
 ```
 
 ```{r}
-ate <- read_rds("saved/appendix_modelled_confound_ate.rds")
+ate      <- read_rds("saved/appendix_modelled_confound_ate.rds")
 confound <- read_rds("saved/appendix_modelled_confound_confound.rds")
 
 plot(ate, confound)
@@ -328,10 +337,12 @@ We define a simple mediation model and illustrate learning about  whether $X=1$ 
 ```{r}
 model <- make_model("X -> M -> Y") %>%
          set_confound(confound = list(X = "M[X=1]==1")) %>%
-         set_parameters(node = "X", confound = "M[X=1]!=1", alphas = c(.2, .8)) %>% 
+         set_parameters(node = "X",  alphas = c(.2, .8, .8, .2)) %>% 
          set_parameters(node = "M", alphas = c(.2, 0, .8, 0)) %>%
          set_parameters(node = "Y", alphas = c(.2, 0, .8, 0))
 
+#FLAG check code on confound alphas setting
+# confound = "M[X=1]=1",
 ```
 
 
@@ -827,6 +838,62 @@ result2 <- gbiqq::query_model(
 kable(result2)
 ```
 
+## Simple sample selection bias
+
+Say we are interested in assessing the share of Republicans in a population but Republicans are (possible) systematically likely to be absent from our sample. What inferences can we make given our sample?
+
+We will assume that we know when we have missing data though of course we do not know the value of the missing data. 
+
+To tackle the problem we will include sample selection into our model:
+
+```{r}
+
+model <- make_model("R -> S") %>%
+  set_parameters(node = c("R", "S"), alphas = list(c(2,1), c(1, 0, 1, 1)))
+
+data <- simulate_data(model, n = 1000) %>%
+        mutate(R = ifelse(S==0, NA, R ))
+
+```
+
+From this data and model, the priors and posteriors for population and sample quantities are:
+
+```{r, echo = FALSE}
+if(do_diagnosis){
+  write_rds(gbiqq(model, data, refresh = 0, stan_model = fit), "saved/appendix_simple_selection1.rds")
+  }
+
+updated <- read_rds("saved/appendix_simple_selection1.rds")
+
+results <- query_model(updated, queries = "R==1", subsets = c(TRUE, "S==1"), using = c("parameters", "priors", "posteriors"), expand_grid = TRUE)
+
+kable(results)
+```
+
+For the population average effect we tighted our posteriors relative to the priors, though credibility intervals remain wide, even with large data, reflecting our uncertainty about the nature of selection.  Our posteriors on the sample mean are accurate and tight.
+
+Importantly we would not do so well if our data did not indicate that we had missingness.
+
+
+```{r, echo = FALSE}
+data <- simulate_data(model, n = 10000) %>%
+        filter(S==1)
+
+if(do_diagnosis){
+  write_rds(gbiqq(model, data, refresh = 0, stan_model = fit), "saved/appendix_simple_selection2.rds")
+  }
+
+updated <- read_rds("saved/appendix_simple_selection2.rds")
+
+results <- query_model(updated, queries = "R==1", subsets = c(TRUE, "S==1"), using = c("parameters", "posteriors"), expand_grid = TRUE)
+
+kable(results)
+
+```
+
+We naively conclude that all cases are sampled and that population effects are the same as sample effects. The problem here arises because the causal model does not encompass the data gathering process. 
+
+
 ## Sample selection bias
 
 As an example consider the below  from @bareinboim2016causal (their Figure 4C). The key feature is that data is only seen for units with $S=1$.
@@ -844,6 +911,8 @@ plot_dag(selection)
 
 To keep the parameter and type space small we also impose a set of restrictions: $S$ is non decreasing in $W_1$, $X$ is not decreasing in either $W1$ or $W2$, $Y$ is not decreasing $Z$ or $X$ and $X$ affects $Y$ only if $Z=1$. $W_2=1$ if and only if both $W_1=1$ and $Z=1$. These all reduce the problem to one with 18 nodal types and 288 causal types. 
 
+Worth noting that in this model although selection is related to patterns of confounding, it is not related to causal effects: the effect of $X$ on $Y$ is not different from units that are or are not selected. 
+
 Given these priors we will assume a true (unknown) dgp with no effect of $X$ on $Y$, in which $W_1$ arises with a $1/3$ probability but has a strong positive effect on selection into the sample when it does arise.  
 
 ```{r, echo = FALSE} 
@@ -857,43 +926,56 @@ selection <- make_model("X <- W1 -> W2 -> X -> Y <- Z -> W2; W1 -> S") %>%
                      "(S[W1=1] < S[W1=0])",
                      "(X[W2=1] < X[W2=0])", 
                      "(X[W1=1] < X[W1=0])", 
-                     "(Y[Z=1] < Y[Z=0])",
-                     "(Y[X=1] < Y[X=0])",
-                     "(Y[X=1, Z=0] > Y[X=0, Z=0])")) %>%
-    set_restrictions(labels = list(W2 = "W20001"), keep = TRUE) %>%
-    set_priors() %>%
-    set_parameters(type = "flat")
+                     "(Y[Z=1]  < Y[Z=0])",
+                     "(Y[X=1]  < Y[X=0])")) %>%
+    set_restrictions(labels = list(W2 = c("W20001", "W21111")), keep = TRUE) %>% 
+    set_parameters(statement = "(S[W1=1] > S[W1=0])", 
+                   node = "S", alphas = .1) %>%
+    set_parameters(node = "W2", alphas = c(1,1)) %>%
+    set_parameters(statement = "(Y[X=1] != Y[X=0])", 
+                   node = "Y", alphas = 0) %>%
+    set_parameters(label = "X0001", alphas = 5 )
 
-#Manual hack for 0 effect  
-
-selection <- set_parameters(selection, {
-    parameters <- selection$parameters
-    parameters["W1.W10"] <- 2/3
-    parameters["W1.W11"] <- 1/3
-    parameters["S.S01"]  <- 2/3
-    parameters["Y.Y0001"] <- 0
-    parameters}
-    )
-
-selection
-df  <- simulate_data(selection, n = 60000, using = "parameters")
-df0 <- filter(df, S==1)
-df1 <- mutate(df0, Z = NA, W1 = NA, W2 = NA)
-df2 <- mutate(df0, Z = NA)
-df3 <- mutate(df0, W1 = NA, W2 = NA)
+selection$parameters_df
+df  <- simulate_data(selection, n = 30000, using = "parameters")
+df0 <- dplyr::filter(df, S==1)
+df1 <- dplyr::mutate(df0, Z = NA, W1 = NA, W2 = NA)
+df2 <- dplyr::mutate(df0, Z = NA)
+df3 <- dplyr::mutate(df0, W1 = NA, W2 = NA)
 
 
 # mean(df$W1)
 # mean(df0$W1)
+# summary(lm(S~W1, data = df))
 # summary(lm(X~Z, data = df0))
-# summary(lm(X~Z, data = filter(df0, W1==1, W2==1)) # But not conditional on W1, W2
+# summary(lm(Y~Z, data = df0))
 # summary(lm(Y~X, data = df0))
+# summary(lm(W1~Z, data = filter(df, W2 ==1)))
+# summary(lm(W1~Z, data = filter(df, W2 ==0)))
+# summary(lm(X~Z, data = filter(df, S ==1)))
+# summary(lm(X~Z, data = filter(df, S ==0)))
+# summary(lm(Y~X + W2, data = filter(df, S ==1)))
+# summary(lm(Y~X + W2, data = filter(df, S ==0)))
+# summary(lm(Y~X, data = df0))
+
+# summary(lm(W2~W1, data = df0))
+# summary(lm(Y~W1, data = df0))
+# summary(lm(Y~W1 + W2, data = dplyr::filter(df0, X ==1)))
+# summary(lm(Y~W1 + W2, data = dplyr::filter(df0, X ==0)))
+
+# summary(lm(X~Z, data = dplyr::filter(df0, W1==1, W2==1))) # But not conditional on W1, W2
 # summary(lm(S~X, data = df))
 # summary(lm(S~W1, data = df))
 # summary(lm(X~W1, data = df0))
 # summary(lm(Y~X,  data = df0))
 # summary(lm(Y~X*Z_norm,  data = mutate(df0, Z_norm = Z- mean(Z))))
 # summary(lm(Y~X*W1_norm + X*W2_norm,  data = mutate(df0, W1_norm = W1- mean(W1), W2_norm = W2- mean(W2))))
+
+sapply(0:1, function(w1) {sapply(0:1, function(w2)  with(dplyr::filter(df0, W1 == w1, W2==w2), mean(Y[X==1]) - mean(Y[X==0])))})
+
+
+  
+# summary(lm(Y~X*W2_norm ,  data = mutate(df0, W1_norm = W1- mean(W1), W2_norm = W2- mean(W2))))
 
 
 M1 <- gbiqq(selection, df1, stan_model = fit)
@@ -906,8 +988,20 @@ OUT0 <- query_model(selection,
 OUT <- lapply(list(M1, M2, M3), function(M) 
   query_model(M, using = "posteriors", queries = "Y[X=1] - Y[X=0]"))
 
+check <- query_model(M2, using = "posteriors", queries = 
+              c(
+                "Y[X=1, W1=1, W2= 1] - Y[X=0, W1=1, W2= 1]",
+                "Y[X=1, W1=0, W2= 1] - Y[X=0, W1=0, W2= 1]",
+                "Y[X=1, W1=1, W2= 0] - Y[X=0, W1=1, W2= 0]",
+                "Y[X=1, W1=0, W2= 0] - Y[X=0, W1=0, W2= 0]",
+                "Y[X=1, Z= 1] - Y[X=0, W1=0, Z= 1]",
+                "Y[X=1, Z= 0] - Y[X=0, W1=0, Z= 0]"))
+check
+
+                
 write_rds(list(M1=M1, M2=M2, M3=M3, OUT0=OUT0, OUT=OUT, df0=df0, df1=df1, df2=df2, df3=df3, selection), "saved/17_selection_list.rds")
 }
+
 
 selection_list <- read_rds("saved/17_selection_list.rds")
 
@@ -922,14 +1016,19 @@ The estimand values given the true parameters and priors for this model are as s
 kable(selection_list$OUT0, caption = "Estimand values")
 ```
 
-We can see the inference challenge from observational data using regression analysis with and without conditioning on $Z$.
+This confirms a zero true effect, though priors are dispersed centered on a positive effect.
+
+We can see the inference challenge from observational data using regression analysis with and without conditioning on $Z$ and $W_1, W_2$.
 
 ```{r, echo = FALSE, message = FALSE, results='asis'}
 
 lm1 <- lm(Y~X,  data = selection_list$df0)
-lm2 <- lm(Y~X*Z_norm, data = mutate(selection_list$df0, Z_norm = Z- mean(Z)))
-stargazer(lm1, lm2, type = 'html', header = FALSE)
+lm2 <- lm(Y~X*W1_norm + X*W2_norm, data = mutate(selection_list$df0, W1_norm = W1 - mean(W1), lm3 <- lm(Y~X*Z_norm, data = mutate(selection_list$df0, Z_norm = Z - mean(Z)))
+W2_norm = W2 - mean(W2)))
+stargazer(lm1, lm2, lm3, type = 'html', header = FALSE, keep = "X")
 ```
+
+Naive analysis is far off; but even after conditioning on $W_1, W_2$ we still wrongly infer a positive effect. 
 
 Bayesian inferences given different data strategies are shown below:
 
@@ -944,23 +1043,12 @@ kable(
 
 ```
 
-
+We see the best performance is achieved for the model with data on $Z$---in this case the mean posterior estimate is closest to the truth--0--and the standard deviation is lowest also.
 
 ## Transportation of findings across contexts
 
 We study the effect of $X$ on $Y$ in country 1 and want to make inferences to country 2, Our problem however is that units are heterogeneous and features, $W_1$, that differ across units may be related both to treatment assignment, outcomes, and selection into the sample. 
 
-model <- make_model("R -> X; O ->X; Z -> X; X -> Y") %>%
-         set_restrictions("(X[R=1, Z=0]!=0) | 
-                           (X[R=1, Z=1]!=1) | 
-                           (X[R=0, O=0]!=0) | 
-                           (X[R=0, O=1]!=1)") %>%
-         set_priors(distribution = "uniform") %>%
-         set_confound(list(O = "(Y[X=1] > Y[X=0])", 
-                           O = "(Y[X=1] < Y[X=0])", 
-                           O = "(Y[X=1] == 1) & (Y[X=0] == 1)"))
-
-plot_dag(model)
 
 
 ```{r}
