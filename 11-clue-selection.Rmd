@@ -227,7 +227,7 @@ This exercise also suggests a further interesting principle of clue-selection: t
 
 #Set priors for S with more weight on S=1. Should make S less informative -- the more informative value for S is expected to be less likely??
 
-model <- 
+model_priors <- 
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R", add_priors = FALSE) %>%
   
@@ -248,7 +248,7 @@ These priors put roughly a 0.91 probability on $S=1$.
 ```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
 possible_inferences <-  
   
-  conditional_inferences(model, 
+  conditional_inferences(model_priors, 
                          query = list(COE = "(Y[X=1] > Y[X=0])"), 
                          given = "Y==0")
 
@@ -261,7 +261,7 @@ strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C",
 
 learning <- sapply(strats,  function(strategy) {
 
-  expected_learning(model, 
+  expected_learning(model_priors, 
                     query = list(COE = "(Y[X=1] > Y[X=0])"), 
                     strategy = strategy, 
                     given = "Y==0", 
@@ -292,8 +292,6 @@ pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify 
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))   #Exclude a set of negative-effect and positive-effect nodal types.
-
-      
 
 ```
 
@@ -592,7 +590,7 @@ set_parameters(type = "prior_mean")
 
 
 
-FLAG: aactual cause and notable cause ??
+FLAG: actual cause and notable cause ??
 
 ### Dynamic Strategies
 
@@ -603,11 +601,26 @@ $$\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}$$
 
 where each $K_j$ is en element of the nodes on the graph, or is the empty set. Thus, we start with observing $K_1$; then, whether we choose to observe $K_2$ depends on the value of $K_1$; whether we choose to observe $K_3$ depends on the value of $K_1$ and (if we observed it) $K_2$; and so on. A strategy *vector* specifies a series of conditional clue-search actions: it identifies the first clue sought and then which clues are sought conditional on the realization of all prior clues sought.  
 
-Each possible strategy has an associated expected reduction in variance as well as an associated expected cost. 
+Each possible strategy has an associated expected reduction in variance. We can also build in an expected cost associated with each clue, allowing us to treat clue-selection as an optimization problem. 
 
-To illustrate with the running example we imagine a situation in which it is known that $Y=1$ and we are interested in whether $Y=0$ because of $S$ (though we don't know at the outset what the value of $S$ is). We consider strategies in which we first seek information on one node and then, conditional on what we find, we look for data on one other node (or not). With five nodes, one already known, there are $4 \times 4^2$ strategies of this form.
+To illustrate with the running example, we imagine a situation in which it is known that $Y=1$, and we are interested in whether $Y=0$ because of $S$ (though we don't know at the outset what the value of $S$ is). We consider strategies in which we first seek information on one node and then, conditional on what we find, look or do not look for data on one other node. With five nodes, one already known, there are $4 \times 4^2$ strategies of this form.
 
 Suppose that we observe that $Y=0$: the government was not replaced. We then want to know whether this is because the government was sophisticated ($S=1$). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
+
+
+```{r ch11strategies_chunk_slowxx, warning = FALSE}
+model <- 
+  
+  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+  
+  set_restrictions(labels = list(C = c("C1110", "C1111"), 
+                                 R = c("R0001", "R0000"), 
+                                 Y = c("Y0001")), 
+                   keep = TRUE) 
+
+```
+
+
 
 ```{r, include = FALSE}
 
@@ -745,14 +758,25 @@ with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over str
 
 
 
-Here we implement the same exercise for the democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that pressure is easy to observe but moviliazation is difficult.
+Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.
+
+
+```{r, echo = FALSE, message = FALSE}
+
+pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))   #Exclude a set of negative-effect and positive-effect nodal types.
+
+```
 
 
 ```{r, echo = FALSE}
 strategy_list_pimd <- strats(pimd, c("P", "M"))
 
 # Assume prices in wihch X and C are somewhat expensive
-prices_pimd <- c(1, .5, 1.2, .5)
+prices_pimd <- c(1, .5)
 
 # do_diagnosis <- TRUE
 if(do_diagnosis){
@@ -761,7 +785,7 @@ results_pimd <- t(apply(strategy_list_pimd, 1, function(j)
                       strategy  = j, 
                       given = "D==1 & I==1", 
                       query = "(D[I=1] != D[I=0])", 
-                      prices = prices))) %>%
+                      prices = prices_pimd))) %>%
   data.frame()
   write_rds(results_pimd, "saved/ch11_tradeoffs_pimd.rds")
   }
@@ -770,6 +794,68 @@ results_pimd <- read_rds("saved/ch11_tradeoffs_pimd.rds")
 kable(data.frame(cbind(strategy_list_pimd, results_pimd) ), digits = 4)
 # Plot results
 with(results_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
+
+
+# (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
+# strategy_list_pimd[10,]
+```
+
+FLAG: Have the table and graph display separately, each with a label. Insert table label into text.
+FLAG: Label the 4 non-dominated strategies.
+
+We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:
+
+1 Observe $M$ first, then stop. This strategy has relatively high expected uncertainty but minimizes costs relative to any other strategy: we observe just one clue, and it's the cheaper one.
+2 Observe $P$ first, then stop. We'll learn more from this strategy than from Strategy 1, though at higher cost. Still there is no other strategy that allows us to reduce costs without increasing variqnce.
+3 Observe $P$ first; if $P=0$, observe $M$, otherwise stop. We, again, get uncertainty reduction here, relative to Strategy 2, but again at higher cost.
+4 Observe $M$ first; if $M=0$, stop; if $M=1$, observe $P$. This strategy gets us the lowest expected posterior variance of any strategy. Moreover, it is not the highest-cost strategy, which would be to observe both clues no matter what. Once we've observed $M=0$, we get nothing from the additional investment in $P$ since $M=0$ already tells us that $I$ could not have had a positive effect on $D$.
+
+Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don't expect to learn the most by starting with the most probative clue. If we start with the more informative clue, $P$, observing $M$ only if $P=0$, we expect to end up with *more* uncertainty than if we start with the less informative clue, $M$, and observe $P$ only if $M=1$. 
+
+
+
+```{r, echo = FALSE, message = FALSE}
+
+pimd_confound2 <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+  
+  set_restrictions(c( 
+    "(M[I=1] < M[I=0])", 
+    "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+  
+  
+set_confound(list(P = "(D[P=1] == 1)"))
+
+new_parameters <-pimd_confound2$parameters 
+
+new_parameters[1:2] <- c(.05, .95) 
+
+pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)  
+
+```
+
+
+```{r, echo = FALSE}
+strategy_list_pimd_confound2 <- strats(pimd_confound2, c("P", "M"))
+
+# Assume prices in wihch X and C are somewhat expensive
+prices_pimd_confound2 <- c(1, .5, 1.2, .5)
+
+# do_diagnosis <- TRUE
+if(do_diagnosis){
+results_pimd_confound2 <- t(apply(strategy_list_pimd_confound2, 1, function(j) 
+  strategy_evaluation(pimd_confound2, 
+                      strategy  = j, 
+                      given = "D==1 & I==1", 
+                      query = "(D[I=1] != D[I=0])", 
+                      prices = prices_pimd_confound2))) %>%
+  data.frame()
+  write_rds(results_pimd_confound2, "saved/ch11_tradeoffs_pimd2.rds")
+  }
+results_pimd_confound2 <- read_rds("saved/ch11_tradeoffs_pimd2.rds")
+
+kable(data.frame(cbind(strategy_list_pimd_confound2, results_pimd_confound2) ), digits = 4)
+# Plot results
+with(results_pimd_confound2, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model with confound"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 
 # 10 is best?
 # (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
@@ -780,6 +866,8 @@ with(results_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs ove
 <!-- ## More complex problems -->
 
 <!-- Illustration of clue inference for a continuous problem. -->
+
+
 
 ## Conclusion
 
