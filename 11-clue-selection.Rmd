@@ -835,27 +835,27 @@ pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)
 
 
 ```{r, echo = FALSE}
-strategy_list_pimd_confound2 <- strats(pimd_confound2, c("P", "M"))
+strategy_list_pimdconfound2 <- strats(pimd_confound2, c("P", "M"))
 
-# Assume prices in wihch X and C are somewhat expensive
-prices_pimd_confound2 <- c(1, .5, 1.2, .5)
+# Assume prices in wihch P is more expensive than M
+prices_pimdconfound2 <- c(1, .5, 1, 1)
 
 # do_diagnosis <- TRUE
 if(do_diagnosis){
-results_pimd_confound2 <- t(apply(strategy_list_pimd_confound2, 1, function(j) 
+results_pimdconfound2 <- t(apply(strategy_list_pimdconfound2, 1, function(j) 
   strategy_evaluation(pimd_confound2, 
                       strategy  = j, 
                       given = "D==1 & I==1", 
                       query = "(D[I=1] != D[I=0])", 
-                      prices = prices_pimd_confound2))) %>%
+                      prices = prices_pimdconfound2))) %>%
   data.frame()
-  write_rds(results_pimd_confound2, "saved/ch11_tradeoffs_pimd2.rds")
+  write_rds(results_pimdconfound2, "saved/ch11_tradeoffs_pimd2.rds")
   }
-results_pimd_confound2 <- read_rds("saved/ch11_tradeoffs_pimd2.rds")
+results_pimdconfound2 <- read_rds("saved/ch11_tradeoffs_pimd2.rds")
 
-kable(data.frame(cbind(strategy_list_pimd_confound2, results_pimd_confound2) ), digits = 4)
+kable(data.frame(cbind(strategy_list_pimdconfound2, results_pimdconfound2) ), digits = 4)
 # Plot results
-with(results_pimd_confound2, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model with confound"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
+with(results_pimdconfound2, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model with confound"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 
 # 10 is best?
 # (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
