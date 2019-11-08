@@ -4,7 +4,7 @@
 
 ```{r, include = FALSE}
 source("_packages_used.R")
-do_diagnosis <- FALSE
+do_diagnosis <- TRUE
 ```
 
 ***
@@ -720,9 +720,10 @@ results <- t(apply(strategy_list, 1, function(j)
                       given = "Y==0", 
                       query = "(Y[S=1] != Y[S=0])", 
                       prices = prices))) %>%
-  data.frame()
+  data.frame() 
   write_rds(results, "saved/ch11_tradeoffs.rds")
   }
+
 results <- read_rds("saved/ch11_tradeoffs.rds")
 
 out <- cbind(strategy_list, results)
@@ -775,8 +776,8 @@ pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify 
 ```{r, echo = FALSE}
 strategy_list_pimd <- strats(pimd, c("P", "M"))
 
-# Assume prices in wihch X and C are somewhat expensive
-prices_pimd <- c(1, .5)
+# Assume prices in which X and C are somewhat expensive
+prices_pimd <- c(1, 1.5, 1, 1)
 
 # do_diagnosis <- TRUE
 if(do_diagnosis){
@@ -788,12 +789,14 @@ results_pimd <- t(apply(strategy_list_pimd, 1, function(j)
                       prices = prices_pimd))) %>%
   data.frame()
   write_rds(results_pimd, "saved/ch11_tradeoffs_pimd.rds")
-  }
-results_pimd <- read_rds("saved/ch11_tradeoffs_pimd.rds")
+}
 
-kable(data.frame(cbind(strategy_list_pimd, results_pimd) ), digits = 4)
+
+resultsfile_pimd <- read_rds("saved/ch11_tradeoffs_pimd.rds")
+
+kable(data.frame(cbind(strategy_list_pimd, resultsfile_pimd) ), digits = 4)
 # Plot results
-with(results_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
+with(resultsfile_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 
 
 # (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
@@ -814,31 +817,48 @@ Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strateg
 
 
 
+<!-- ```{r, echo = FALSE, message = FALSE} -->
+
+<!-- pimd_confound2 <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG -->
+
+<!--   set_restrictions(c( -->
+<!--     "(M[I=1] < M[I=0])", -->
+<!--     "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. -->
+
+
+<!-- set_confound(list(P = "(D[P=1] == 1)")) -->
+
+<!-- new_parameters <-pimd_confound2$parameters -->
+
+<!-- new_parameters[1:2] <- c(.05, .95) -->
+
+<!-- pimd_confound2 <- set_parameters(pimd_confound2, new_parameters) -->
+
+<!-- ``` -->
+
 ```{r, echo = FALSE, message = FALSE}
 
-pimd_confound2 <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+confound = list(P = "(D[P=1] == 1)")
+
+pimd_confound2 <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
   set_restrictions(c( 
     "(M[I=1] < M[I=0])", 
     "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
   
+  set_confound(list(P = "(D[P=1] == 1)")) %>%
   
-set_confound(list(P = "(D[P=1] == 1)"))
-
-new_parameters <-pimd_confound2$parameters 
-
-new_parameters[1:2] <- c(.05, .95) 
-
-pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)  
+  set_parameters(confound = confound, alphas = c(.05, .95), node = "P")
 
 ```
+
 
 
 ```{r, echo = FALSE}
 strategy_list_pimdconfound2 <- strats(pimd_confound2, c("P", "M"))
 
 # Assume prices in wihch P is more expensive than M
-prices_pimdconfound2 <- c(1, .5)
+prices_pimdconfound2 <- c(1, 1.5, 1, 1)
 
 # do_diagnosis <- TRUE
 if(do_diagnosis){
@@ -849,13 +869,14 @@ results_pimdconfound2 <- t(apply(strategy_list_pimdconfound2, 1, function(j)
                       query = "(D[I=1] != D[I=0])", 
                       prices = prices_pimdconfound2))) %>%
   data.frame()
-  write_rds(results_pimdconfound2, "saved/ch11_tradeoffs_pimd2.rds")
+  write_rds(results_pimdconfound2, "saved/ch11_pimd2.rds")
   }
-results_pimdconfound2 <- read_rds("saved/ch11_tradeoffs_pimd2.rds")
 
-kable(data.frame(cbind(strategy_list_pimdconfound2, results_pimdconfound2) ), digits = 4)
+resultsfile_pimdconfound2 <- read_rds("saved/ch11_pimd2.rds")
+
+kable(data.frame(cbind(strategy_list_pimdconfound2, resultsfile_pimdconfound2)), digits = 4)
 # Plot results
-with(results_pimdconfound2, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model with confound"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
+with(resultsfile_pimdconfound2, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model with confound"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 
 # 10 is best?
 # (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
