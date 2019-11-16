@@ -536,7 +536,7 @@ kable(result)
 
 We calculate the average causal effect for all and for the compliers and conditional on values of $M$.
 
-## An illustration of identification through the frontdoor
+## Identification through the frontdoor
 
 Consider the following model:
 
@@ -673,6 +673,59 @@ kable(
                 "X==1 & Y==1 & W==1")), caption = "Collider included in model")
 
 ```
+
+## Mixing methods: Where a little data goes a long way
+
+We sometimes might wonder whether qualitative information is bound to get drowned out by quantiative information. But in fact sometimes a lot of quantitiatve information can render qualitiative information highly informative. 
+
+```{r}
+model <- make_model("X -> M1 -> Y <- M2 <- X") %>%
+  set_restrictions(c(decreasing("X", "M1"), 
+                     decreasing("M1", "Y"),
+                     decreasing("X", "M2"), 
+                     decreasing("M2", "Y"))) %>%
+  set_parameters(node = c("M1", "M2"), alphas = list(c(0,1,0), c(.5, 0,.5)))  %>%
+  set_parameters(statement = "(Y[M1=1] == Y[M1=0])", alphas = 0)  
+```
+
+```{r, echo = FALSE}
+
+# Updating
+if(do_diagnosis){
+
+XY_data <- data_strategy(model, n_obs = 10000, 
+                         vars = list(c("X", "Y")), 
+                         probs = 1, using = "parameters")
+
+mixed_data <- data_strategy(model, 
+                            n_obs = 10000, 
+                            vars = list(c("X", "Y"), c("M1", "M2")),
+                            probs = list(1, .01), 
+                            subsets = list(NULL, "X==1"))
+  
+if(!exists("fit")) fit <- gbiqq::fitted_model()
+
+updated_XY    <- gbiqq(model, XY_data,    stan_model = fit)
+updated_mixed <- gbiqq(model, mixed_data, stan_model = fit)
+write_rds(updated_XY, "saved/17_twopaths1.rds")
+write_rds(updated_mixed, "saved/17_twopaths2.rds")
+}
+updated_XY <- read_rds("saved/17_twopaths1.rds")
+updated_mixed  <- read_rds("saved/17_twopaths2.rds")
+
+# Inferences with model updated by knowledge of XY only 
+query_model(updated_XY, 
+  queries = list(ate = te("X", "Y"), X_on_M1 = te("X", "M1"), X_on_M2 = te("X", "M2")), 
+  using = c("priors", "posteriors"),
+  expand_grid = TRUE)
+
+query_model(updated_mixed, 
+  queries = list(ate = te("X", "Y"), X_on_M1 = te("X", "M1"), X_on_M2 = te("X", "M2")), 
+  using = c("priors", "posteriors"),
+  expand_grid = TRUE)
+
+```
+
 
 ## Inferring a cause from symptoms
 
