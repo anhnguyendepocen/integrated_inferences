@@ -229,14 +229,14 @@ This exercise also suggests a further interesting principle of clue-selection: t
 
 model_priors <- 
   
-  make_model("S -> C -> Y <- R <- X; X -> C -> R", add_priors = FALSE) %>%
+  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
   
   set_restrictions(labels = list(C = c("C1110", "C1111"), 
                  R = c("R0001", "R0000"), 
                  Y = c("Y0001")), 
           keep = TRUE) %>%
   
- set_priors(alphas = list(S = c(`S==1` = 10))) %>%
+ set_priors(node = "S", statement = "S==1", alphas = 10) %>%
    
  set_parameters(type = "prior_mean")
   
@@ -287,7 +287,7 @@ We start by specifying the democratization model, with negative effects ruled fo
 
 ```{r, echo = FALSE, message = FALSE}
 
-pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
@@ -439,20 +439,27 @@ Having set the confound condition, we can then express beliefs (parameter values
 
 ```{r, echo = FALSE, message = FALSE}
 
-pimd_confound2 <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+pimd_confound2 <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
   set_restrictions(c( 
     "(M[I=1] < M[I=0])", 
     "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
   
-  
-set_confound(list(P = "(D[P=1] == 1)"))
+set_confound(list(P = "(D[P=1] == 1)")) %>%
 
-new_parameters <-pimd_confound2$parameters 
+set_priors(alphas = c(90), statement = "P==1", confound = list(P = "(D[P=1] == 1)")) %>%
 
-new_parameters[1:2] <- c(.05, .95) 
+set_parameters(type = "prior_mean")  
 
-pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)  
+
+
+
+
+#new_parameters <-pimd_confound2$parameters 
+
+#new_parameters[1:2] <- c(.05, .95) 
+
+#pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)  
 
 ```
 
