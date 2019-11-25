@@ -1726,22 +1726,16 @@ model_priors &lt;-<span class="st"> </span>
 <td align="right">0.0811</td>
 <td align="right">0.0791</td>
 </tr>
-<tr class="odd">
-<td align="left">We display</td>
-<td align="left">the inferences</td>
-<td align="right">we <em>would</em> draw</td>
-<td align="right">from differe</td>
-<td align="right">nt clue strategies and data realizations in Table @ref(possible_outcomespimd_conf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed <span class="math inline">\(I=1\)</span> and <span class="math inline">\(D=1\)</span>, in Table (pimdlearn_i1d1con). As we can see from the latter table, the presence of a confound involving <span class="math inline">\(P\)</span> reduces this clue’s relative expected contribution to learning, making it now <em>less</em> informative in expectation than <span class="math inline">\(M\)</span>.</td>
-</tr>
 </tbody>
 </table>
+<p>We display the inferences we <em>would</em> draw from different clue strategies and data realizations in Table @ref(possible_outcomespimd_conf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed <span class="math inline">\(I=1\)</span> and <span class="math inline">\(D=1\)</span>, in Table (pimdlearn_i1d1con). As we can see from the latter table, the presence of a confound involving <span class="math inline">\(P\)</span> reduces this clue’s relative expected contribution to learning, making it now <em>less</em> informative in expectation than <span class="math inline">\(M\)</span>.</p>
 <p>Working backwards, we can readily identify the reason for this in Table @ref(possible_outcomespimd_conf). We see here that observing <span class="math inline">\(P=1\)</span> moves our beliefs very little off of our prior of <span class="math inline">\(0.091\)</span> because, given the confounding, we already strongly expect to see <span class="math inline">\(P=1\)</span> in a case that democratized; actually observing <span class="math inline">\(P=1\)</span> contains only a small amount of new information. Our beliefs over the query change a great deal if we observe <span class="math inline">\(P=0\)</span>—since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, <span class="math inline">\(P\)</span>’s value is far more consequential than <span class="math inline">\(M\)</span>’s. However, we can also see from the last column of the table that the most impactful realization of <span class="math inline">\(P\)</span>’s value is also extremely unlikely under the model (given <span class="math inline">\(I=D=1\)</span>). Thus, <span class="math inline">\(P\)</span> <em>can</em> be highly informative under this model, but it is very unlikely to be.</p>
 <p>We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the <em>pathway</em> through which an effect occurs. We need to adjust the model to allow allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> and instead use <code>set_priors</code> to state a belief that such a negative effect is less likely than <span class="math inline">\(M\)</span>’s other nodal types.</p>
 <p>To isolate how the query matters from how the restrictions matter, we first diagnose clue strategies for a causal-effect query under this new model: given <span class="math inline">\(I=0, D=1\)</span>, did <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span>? Inferences conditional on data-realizations and clue strategies are displayed in Table @(possible_outcomespimd_priors_effect) and expected posterior variances in Table @ref(pimdlearn_priors_effect).</p>
 <p>Starting with Table @(possible_outcomespimd_priors_effect), a comparison with the parallel results for the model that excludes negative <span class="math inline">\(I \rightarrow M\)</span> effects – Table @ref(possible_outcomespimd_i0) – is informative. Similar to what we saw in Chapter @ref(pt_app), the inferences we draw from observing <span class="math inline">\(M\)</span>’s values <em>flip</em> in direction when we allow for negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. When such effects were excluded, <span class="math inline">\(M\)</span> was informative only as a moderator of <span class="math inline">\(I\)</span>’s direct negative effect on <span class="math inline">\(D\)</span>. An observation of <span class="math inline">\(M=1\)</span> counted as evidence against <span class="math inline">\(I=0\)</span> being the cause of <span class="math inline">\(D=1\)</span> since <span class="math inline">\(M=1\)</span> could be the cause (given that <span class="math inline">\(M\)</span> could have a positive effect on <span class="math inline">\(D\)</span>); <span class="math inline">\(M=0\)</span> counted, by a similar logic, as evidence in favor of <span class="math inline">\(I\)</span>’s negative effect. Once we relax the restriction and allow negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, <span class="math inline">\(M\)</span> is additionally informative as a <em>mediator</em> along a second pathway through which <span class="math inline">\(I\)</span> can have a negative effect on <span class="math inline">\(M\)</span>. Now, observing <span class="math inline">\(M=0\)</span> cuts in two directions: on the one hand, it rules out a negative effect of <span class="math inline">\(I\)</span> running through <span class="math inline">\(M\)</span> (informativeness as mediator); on the other hand, it makes it more likely that <span class="math inline">\(I=0\)</span> caused <span class="math inline">\(D=1\)</span> indirectly (informativeness as moderator). We can see that, in this situation, the information we get from <span class="math inline">\(M\)</span> as a mediator overwhelms that which we get from <span class="math inline">\(M\)</span> as a moderator since our posterior on <span class="math inline">\(I\)</span>’s causal effect now moves <em>downwards</em> if we observe <span class="math inline">\(M=0\)</span>. <span class="math inline">\(M=1\)</span>, of course, cuts both ways as well by a parallel logic, but with the net effect being an upward shift in our posterior on the causal effect.</p>
 <p>So how informative overall is <span class="math inline">\(M\)</span> as compared to <span class="math inline">\(P\)</span>? In the model allowing negative <span class="math inline">\(I \rightarrow M\)</span> effects, we are now learning in two ways from <span class="math inline">\(M\)</span> rather than one; so our intuition might be that <span class="math inline">\(M\)</span> has become more informative than it was in our original model. In Table @ref(pimdlearn_priors_effect), we see that this is not at all the case! Much as in Table @ref(pimdlearn_i0d1), for the same query and given data but under our original model, we still see very little—indeed, slightly less—reduction in expected posterior variance from the search for <span class="math inline">\(M\)</span>. <span class="math inline">\(M\)</span> may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect <em>undoes</em> some of the learning from the moderation by pushing our inferences in the opposing directions.</p>
 <table>
-<caption><span id="tab:unnamed-chunk-16">Table 11.8: </span> Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?</caption>
+<caption>(#tab:table_inferences_priors_effect) Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -1838,7 +1832,7 @@ model_priors &lt;-<span class="st"> </span>
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-17">Table 11.9: </span>Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different clue-seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
+<caption><span id="tab:unnamed-chunk-16">Table 11.8: </span>Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different clue-seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
 <thead>
 <tr class="header">
 <th align="left">strategy</th>
@@ -1877,22 +1871,16 @@ model_priors &lt;-<span class="st"> </span>
 <td align="right">0.25</td>
 <td align="right">0.2313</td>
 </tr>
-<tr class="odd">
-<td align="left">Now, let’s</td>
-<td align="left">see how things</td>
-<td align="right">look when we are</td>
-<td align="right">interested</td>
-<td align="right">not in <span class="math inline">\(I\)</span>’s causal effect on <span class="math inline">\(D\)</span> but in whether it had an effect via particular pathway. Specifically, given <span class="math inline">\(I=0\)</span> and <span class="math inline">\(D=1\)</span>, did <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span> that was mediated by <span class="math inline">\(M\)</span>? Following our discussion of mediation in Chapter <a href="questions.html#questions">4</a>, we define the query as asking whether the following are true:</td>
-</tr>
 </tbody>
 </table>
+<p>Now, let’s see how things look when we are interested not in <span class="math inline">\(I\)</span>’s causal effect on <span class="math inline">\(D\)</span> but in whether it had an effect via particular pathway. Specifically, given <span class="math inline">\(I=0\)</span> and <span class="math inline">\(D=1\)</span>, did <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span> that was mediated by <span class="math inline">\(M\)</span>? Following our discussion of mediation in Chapter <a href="questions.html#questions">4</a>, we define the query as asking whether the following are true:</p>
 <p>1 Does <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(M\)</span>? (in code, <span class="math inline">\(M[I=1] &lt; M[I=0]\)</span>)
 2 Does the change in <span class="math inline">\(M\)</span> resulting from a change from <span class="math inline">\(I=1\)</span> to <span class="math inline">\(I=0\)</span> cause a change in <span class="math inline">\(D\)</span> from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>? (<span class="math inline">\((D[M=M[I=0]] &gt; D[M=M[I=1]])\)</span>)
 3 Does <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(D\)</span> <em>depend</em> on <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(M\)</span>? In other words, would we still get the <span class="math inline">\(I \rightarrow D\)</span> effect if <span class="math inline">\(M\)</span> were fixed at the value that it takes on when <span class="math inline">\(I=1\)</span>? (<span class="math inline">\((D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])\)</span>)</p>
 <p>Inferences conditional on data strategies and realizations are displayed in Table @ref(possible_outcomespimd_path). We saw in Table @ref(possible_outcomespimd_priors_effect) that seeing <span class="math inline">\(M=0\)</span> slightly reduces our confidence that there was a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span>. However, we see now that observing <span class="math inline">\(M=0\)</span> entirely <em>eliminates</em> the possibility that this effect was mediated by <span class="math inline">\(M\)</span>. We also see that the data realization under which we update most strongly in favor of a negative causal effect–<span class="math inline">\(P=0, M=1\)</span>–is also the realization most suportive of a belief in a mediated negative effect.</p>
 <p>Turning to expected learning from alternative strategies, shown in Table @ref(pimdlearn_path), we can see clearly – by comparison to Table (pimdlearn_priors_effect) – how optimal clue strategies depend on the query of interest. Whereas <span class="math inline">\(M\)</span> is only slight informative about <span class="math inline">\(I\)</span>’s causal effect–with <span class="math inline">\(P\)</span> the more informative clue–we expect to learn much more from <span class="math inline">\(M\)</span> about the pathway-specific query, and <span class="math inline">\(M\)</span> is far more informative than <span class="math inline">\(P\)</span>.</p>
 <table>
-<caption><span id="tab:unnamed-chunk-18">Table 11.10: </span> Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?</caption>
+<caption><span id="tab:unnamed-chunk-17">Table 11.9: </span> Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -1989,7 +1977,7 @@ model_priors &lt;-<span class="st"> </span>
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-19">Table 11.11: </span>Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different clue-seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
+<caption><span id="tab:unnamed-chunk-18">Table 11.10: </span>Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different clue-seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
 <thead>
 <tr class="header">
 <th align="left">strategy</th>
@@ -2028,15 +2016,9 @@ model_priors &lt;-<span class="st"> </span>
 <td align="right">0.0677</td>
 <td align="right">0.0617</td>
 </tr>
-<tr class="odd">
-<td align="left">Now, what i</td>
-<td align="left">f we already k</td>
-<td align="right">now that <span class="math inline">\(I\)</span> has</td>
-<td align="right">a negative e</td>
-<td align="right">ffect on <span class="math inline">\(D\)</span> and we want to know via which pathway that effect operates—the direct or the indirect?</td>
-</tr>
 </tbody>
 </table>
+<p>Now, what if we already know that <span class="math inline">\(I\)</span> has a negative effect on <span class="math inline">\(D\)</span> and we want to know via which pathway that effect operates—the direct or the indirect?</p>
 <p>FLAG</p>
 <p>FLAG: actual cause and notable cause ??</p>
 <div id="dynamic-strategies" class="section level3">
@@ -2056,7 +2038,7 @@ model &lt;-
                      <span class="dt">R =</span> <span class="kw">c</span>(<span class="st">&quot;R0001&quot;</span>, <span class="st">&quot;R0000&quot;</span>),
                      <span class="dt">Y =</span> <span class="kw">c</span>(<span class="st">&quot;Y0001&quot;</span>)),
        <span class="dt">keep =</span> <span class="ot">TRUE</span>)</code></pre>
-<p><img src="ii_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <p>For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs—but collection depends on past findings—then we can also calculate the expected costs of each strategy.</p>
 <table>
 <caption>Illustration of three (of many) possible two step strategies.</caption>
@@ -2107,14 +2089,13 @@ model &lt;-
 </table>
 <p>Figure <a href="#fig:tradeoffs"><strong>??</strong></a> plots a collection of strategies based on two criteria—the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that <span class="math inline">\(X\)</span> is the most costly to collect, followed by <span class="math inline">\(C\)</span>, then <span class="math inline">\(S\)</span>, then <span class="math inline">\(Y\)</span>, then <span class="math inline">\(R\)</span>. The cheapest strategy among those that minimize variance involves gathering <span class="math inline">\(C\)</span> only. The lowest variance strategy that minimizes costs involves gathering <span class="math inline">\(Y\)</span> only.</p>
 <p>Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.</p>
-<p><img src="ii_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <p>We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:</p>
 <p>1 Observe <span class="math inline">\(M\)</span> first, then stop. This strategy has relatively high expected uncertainty but minimizes costs relative to any other strategy: we observe just one clue, and it’s the cheaper one.
 2 Observe <span class="math inline">\(P\)</span> first, then stop. We’ll learn more from this strategy than from Strategy 1, though at higher cost. Still there is no other strategy that allows us to reduce costs without increasing variqnce.
 3 Observe <span class="math inline">\(P\)</span> first; if <span class="math inline">\(P=0\)</span>, observe <span class="math inline">\(M\)</span>, otherwise stop. We, again, get uncertainty reduction here, relative to Strategy 2, but again at higher cost.
 4 Observe <span class="math inline">\(M\)</span> first; if <span class="math inline">\(M=0\)</span>, stop; if <span class="math inline">\(M=1\)</span>, observe <span class="math inline">\(P\)</span>. This strategy gets us the lowest expected posterior variance of any strategy. Moreover, it is not the highest-cost strategy, which would be to observe both clues no matter what. Once we’ve observed <span class="math inline">\(M=0\)</span>, we get nothing from the additional investment in <span class="math inline">\(P\)</span> since <span class="math inline">\(M=0\)</span> already tells us that <span class="math inline">\(I\)</span> could not have had a positive effect on <span class="math inline">\(D\)</span>.</p>
 <p>Note also that both Strategy 3 and Strategy 4 are <em>conditional</em> two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don’t expect to learn the most by starting with the most probative clue. If we start with the more informative clue, <span class="math inline">\(P\)</span>, observing <span class="math inline">\(M\)</span> only if <span class="math inline">\(P=0\)</span>, we expect to end up with <em>more</em> uncertainty than if we start with the less informative clue, <span class="math inline">\(M\)</span>, and observe <span class="math inline">\(P\)</span> only if <span class="math inline">\(M=1\)</span>.</p>
-<p><img src="ii_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <!-- ## More complex problems -->
 <!-- Illustration of clue inference for a continuous problem. -->
 </div>
