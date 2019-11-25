@@ -4,7 +4,7 @@
 
 ```{r, include = FALSE}
 source("_packages_used.R")
-do_diagnosis <- TRUE
+#  do_diagnosis <- TRUE
 ```
 
 ***
@@ -65,7 +65,7 @@ To summarize the intuition, then, governments will fall only if there is both co
 
 This model is formally defined in `gbiqq` as follows:
 
-```{r ch11strategies_chunk_slowxx, warning = FALSE}
+```{r ch11define_running_model_1, warning = FALSE}
 model <- 
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
@@ -163,7 +163,7 @@ As the foregoing discussion already suggests, optimal clue strategies can depend
 
 Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
 
-```{r ch11strategies_chunk_slowxx2, warning = FALSE}
+```{r, warning = FALSE}
 
 #Expand nodal types for C.
 
@@ -486,6 +486,7 @@ x_strategy <- c("None", "P", "M", "P and M")
 
 kable(cbind(strategy = x_strategy, ELpimdconfound4[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 4)
 ```
+
 We display the inferences we *would* draw from different clue strategies and data realizations in Table \@ref(possible_outcomespimd_conf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed $I=1$ and $D=1$, in Table \ref@(pimdlearn_i1d1con). As we can see from the latter table, the presence of a confound involving $P$ reduces this clue's relative expected contribution to learning, making it now *less* informative in expectation than $M$. 
 
 Working backwards, we can readily identify the reason for this in Table \@ref(possible_outcomespimd_conf). We see here that observing $P=1$ moves our beliefs very little off of our prior of $0.091$ because, given the confounding, we already strongly expect to see $P=1$ in a case that democratized; actually observing $P=1$ contains only a small amount of new information. Our beliefs over the query change a great deal if we observe $P=0$---since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, $P$'s value is far more consequential than $M$'s. However, we can also see from the last column of the table that the most impactful realization of $P$'s value is also extremely unlikely under the model (given $I=D=1$). Thus, $P$ *can* be highly informative under this model, but it is very unlikely to be.
@@ -496,14 +497,14 @@ We turn next to examining clue strategies for a different kind of query. So far 
 
 ```{r, echo = FALSE, message = FALSE}
 
-pimd_priors <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c(
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
 
-         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5))) %>% #Set less weight on negative effect of I on M
+#         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5)))  #Set less weight on negative effect of I on M
 
-set_parameters(type = "prior_mean")
+           set_parameters(node = "M", statement = "(M[I=0] > M[I=1])", alphas = 0.125)  #Set less weight on negative effect of I on M
 
 
 ```
@@ -515,7 +516,7 @@ Starting with Table \@(possible_outcomespimd_priors_effect), a comparison with t
 So how informative overall is $M$ as compared to $P$? In the model allowing negative $I \rightarrow M$ effects, we are now learning in two ways from $M$ rather than one; so our intuition might be that $M$ has become more informative than it was in our original model. In Table \@ref(pimdlearn_priors_effect), we see that this is not at all the case! Much as in Table \@ref(pimdlearn_i0d1), for the same query and given data but under our original model, we still see very little---indeed, slightly less---reduction in expected posterior variance from the search for $M$. $M$ may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect *undoes* some of the learning from the moderation by pushing our inferences in the opposing directions.
 
 
-```{r, echo = FALSE}
+```{r table_inferences_priors_effect, echo = FALSE}
 
 inferences_priors_effect <-
   conditional_inferences(pimd_priors, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
@@ -536,6 +537,7 @@ x_strategy <- c("None", "P", "M", "P and M")
 
 kable(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "\\label{pimdlearn_priors_effect}Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
 ```
+
 Now, let's see how things look when we are interested not in $I$'s causal effect on $D$ but in whether it had an effect via particular pathway. Specifically, given $I=0$ and $D=1$, did $I$ have a negative effect on $D$ that was mediated by $M$? Following our discussion of mediation in Chapter \@ref(questions), we define the query as asking whether the following are true:
 
 1 Does $I$ have a negative effect on $M$? (in code, $M[I=1] < M[I=0]$)
@@ -578,20 +580,19 @@ x_strategy <- c("None", "P", "M", "P and M")
 
 kable(cbind(strategy = x_strategy, ELpimd_path[,-1]), caption = "\\label{pimdlearn_path}Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
 ```
+
 Now, what if we already know that $I$ has a negative effect on $D$ and we want to know via which pathway that effect operates---the direct or the indirect? 
 
+FLAG
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 
-pimd_priors <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c(
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
   
          set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5))) %>% #Set less weight on negative effect of I on M
-
-set_parameters(type = "prior_mean")
-
 
 ```
 
@@ -615,130 +616,66 @@ To illustrate with the running example, we imagine a situation in which it is kn
 Suppose that we observe that $Y=0$: the government was not replaced. We then want to know whether this is because the government was sophisticated ($S=1$). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
 
 
-```{r ch11strategies_chunk_slowxx, warning = FALSE}
-model <- 
-  
-  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
-  
-  set_restrictions(labels = list(C = c("C1110", "C1111"), 
-                                 R = c("R0001", "R0000"), 
-                                 Y = c("Y0001")), 
-                   keep = TRUE) 
+```{r ch11define_running_model_3, warning = FALSE}
+
+# Make model
+model <-
+    make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+       set_restrictions(
+       labels = list(C = c("C1110", "C1111"),
+                     R = c("R0001", "R0000"),
+                     Y = c("Y0001")),
+       keep = TRUE)
 
 ```
 
-
-
-```{r, include = FALSE}
-
-# A strategy is a triple that indicates (a) first node sought (b) action if first node is 0 (c) action if first node = 1
-# This function calculates the expected posterior variance from each strategy and the expected number of clues sought
-
-strategy_evaluation <- function(model, 
-                                strategy  = c("X", "C", NA), 
-                                given = "Y==0",  
-                                query,
-                                prices = NULL) {
-  vars <- model$variables
-  if(is.null(prices)) prices <- rep(1, length(vars))
-  s1 <- strategy[[1]]
-  
-  # FLAG / HACK: Better to have this only look at relevant cases, not all data
-  given_vars <- NULL
-	if(!is.null(given)) {
-			given_vars <- str_extract_all(given, boundary("word"))[[1]]
-			given_vars <- given_vars[(given_vars %in% vars)]
-			}
-  na_vars <- vars[!(vars %in% unlist(c(s1, given_vars)))]
-  given2 <- paste(given, paste(paste0(" & is.na(", na_vars, ")"), collapse = ""))
-  
-  # Conditional inferences
-  ci  <- conditional_inferences(model, query = query, given = given2)
-  
-  # Step 1 conclusions depending on findings on strategy 1
-    p0 <- filter(ci, ci[s1]==0)[1, c("posterior", "prob")]
-    p1 <- filter(ci, ci[s1]==1)[1, c("posterior", "prob")]
-    
-    # Probability of finding 0/1 in step 1 (normalized)
-    probs  <- c(p0$prob, p1$prob)/(p0$prob + p1$prob)
-    
-    # Gather posteriors
-    posts <- c(p0$posterior, p1$posterior)
-    
-    evs <- 
-      sapply(0:1, function(j){
-      s <- strategy[[2+j]]
-      ifelse(is.na(s), 
-            (posts[1+j])*(1-posts[1+j]),
-            expected_learning(model, 
-                    query = query, 
-                    strategy = paste(s), 
-                    given = paste(given, "&", strategy[[1]], "==", j), 
-                    parameters = NULL)$E_post_var)
-    })
-    
-    # Flag: A little HACKY: Fill in NAs if probs = 0
-    evs[probs == 0]  <- 0
-    strategy[2:3][probs == 0]  <- "NONE"
-    
-    # Expected Number of clues sought: 1 plus 1 if additional steps sought
-    expected_n        <- 1 + probs%*%as.vector((!is.na(strategy[2:3])))
-    
-    # Expected variance given conditional strategies
-    expected_variance <- probs%*%evs  
-    
-    # Costs
-    costs <- c(sum(prices[vars %in% factor(strategy[-3])]),     
-               sum(prices[vars %in% factor(strategy[-2])]))
-    expected_costs <- probs%*%costs  
-
-    c(expected_n = expected_n, 
-      expected_variance = expected_variance, 
-      expected_costs = expected_costs)
-}
-
-# This function makes a list of two step strategies:
-# FLAG needs to be generalized for more steps
-strats <- function(model, vars = model$variables){
-  
-  x <- sapply(1:length(vars), function(j) 
-        expand.grid(one = vars[j], 
-                    two_0 = c(NA, vars[-j]), 
-                    two_1 = c(NA, vars[-j]), 
-                    stringsAsFactors = FALSE), 
-                    simplify = FALSE)
-    x <- do.call("rbind", x)
-    data.frame(x, stringsAsFactors = FALSE)
-    }
-```
 
 ```{r, echo = FALSE}
 # Implement for running examples
-strategy_list <- strats(model, c("S", "X", "C", "R"))
 
-# Assume prices in wihch X and C are somewhat expensive
-prices <- c(1, 1.5, 1.2, .5, .7)
 
 # Calculate expected n and variance
 if(do_diagnosis){
-results <- t(apply(strategy_list, 1, function(j) 
-  strategy_evaluation(model, 
-                      strategy  = j, 
-                      given = "Y==0", 
-                      query = "(Y[S=1] != Y[S=0])", 
-                      prices = prices))) %>%
-  data.frame() 
-  write_rds(results, "saved/ch11_tradeoffs.rds")
+
+
+# Generate strategies list
+strategies <- two_step_strategies(model)
+
+# Evaluate list of strategies
+results <-
+  strategy_evaluation(
+    model,
+    strategies  = strategies,
+    query = "(Y[S=1] != Y[S=0])",
+    given = "Y==0",
+    prices = c(1, 1.4, 2.5, .5, .7))
+
+    write_rds(results, "saved/ch11_tradeoffs.rds")
   }
 
 results <- read_rds("saved/ch11_tradeoffs.rds")
 
-out <- cbind(strategy_list, results)
 
-#Best?
-# out[17,]
+# Plot results
+# Which labels to print?
+extremes_for_var <- function(D)
+sapply(1:nrow(D), function(i) {
+j <- D[i, ]
+S <- filter(D, (expected_variance - j["expected_variance"][[1]])^2 < .000001) %>%
+mutate(dominated = expected_costs < j["expected_costs"][[1]],
+ undominated = expected_costs > j["expected_costs"][[1]])
+(!any(S$dominated)) 
+# | (!any(S$undominated)) 
+})    
 
-## FLAG: CHECK NAS / WANRINGS
+show <- extremes_for_var(results)
+
+with(results, {
+  plot(expected_variance, expected_costs, type = "n", xlab = "Expected Variance", ylab = "Expected Costs", xlim = c(.035, .075), main = "Variance / cost tradeoffs", ylim = c(-.3, 4))
+  points(expected_variance, expected_costs)
+  text(expected_variance[show], expected_costs[show] - .3, labs[show], cex = .8)
+
+})
 ```
 
 
@@ -756,22 +693,13 @@ Table: Illustration of three (of many) possible two step strategies.
 
 Figure \@ref(fig:tradeoffs) plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs involves gathering $Y$ only.
 
-FLAG: Think we need to label the strategies in graph somehow.
-
-
-```{r tradeoffs, echo = FALSE}
-# Plot results
-with(results, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
-```
-
-
 
 Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.
 
 
 ```{r, echo = FALSE, message = FALSE}
 
-pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
@@ -781,37 +709,48 @@ pimd <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify 
 
 
 ```{r, echo = FALSE}
-strategy_list_pimd <- strats(pimd, c("P", "M"))
 
-# Assume prices in which X and C are somewhat expensive
-prices_pimd <- c(1, 1.5, 1, 1)
+strategies <- two_step_strategies(pimd) %>% 
+  filter((one %in% c("P", "M"))) %>% 
+  filter(is.na(two_0) | (two_0 %in% c("P", "M")))%>% 
+  filter(is.na(two_1) | (two_1 %in% c("P", "M")))
 
-# do_diagnosis <- TRUE
+# Calculate expected n and variance
 if(do_diagnosis){
-results_pimd <- t(apply(strategy_list_pimd, 1, function(j) 
-  strategy_evaluation(pimd, 
-                      strategy  = j, 
-                      given = "D==1 & I==1", 
-                      query = "(D[I=1] != D[I=0])", 
-                      prices = prices_pimd))) %>%
-  data.frame()
-  write_rds(results_pimd, "saved/ch11_tradeoffs_pimd.rds")
-}
 
 
-resultsfile_pimd <- read_rds("saved/ch11_tradeoffs_pimd.rds")
+# Evaluate list of strategies
+results_pimd_tradeoff <-
+  strategy_evaluation(
+    pimd,
+    strategies  = strategies,
+    given = "D==1 & I==1", 
+    query = "(D[I=1] != D[I=0])", 
+    prices = c(1, 1.5, 1, 1))
 
-kable(data.frame(cbind(strategy_list_pimd, resultsfile_pimd) ), digits = 4)
-# Plot results
-with(resultsfile_pimd, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
+    write_rds(results_pimd_tradeoff, "saved/ch11_tradeoffs_pimd.rds")
+  }
+
+results_pimd_tradeoff <- read_rds("saved/ch11_tradeoffs_pimd.rds")
 
 
-# (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
-# strategy_list_pimd[10,]
+results_pimd_tradeoff <- 
+  results_pimd_tradeoff %>% 
+  mutate(labs = ifelse(expected_n ==2, "All", as.character(labs)))
+
+with(results_pimd_tradeoff, {
+  plot(expected_variance, expected_costs, type = "n", xlab = "Expected Variance", ylab = "Expected Costs", 
+       ylim = c(-.0, 2.8), 
+       main = "Variance / cost tradeoffs" , 
+       xlim = c(.1035, .1125)
+       )
+#  points(expected_variance, expected_costs)
+  text(expected_variance, expected_costs, labs, cex = .8)
+
+})
+
 ```
 
-FLAG: Have the table and graph display separately, each with a label. Insert table label into text.
-FLAG: Label the 4 non-dominated strategies.
 
 We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:
 
@@ -823,70 +762,60 @@ We can see here that four strategies are non-dominated by any alternative. These
 Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don't expect to learn the most by starting with the most probative clue. If we start with the more informative clue, $P$, observing $M$ only if $P=0$, we expect to end up with *more* uncertainty than if we start with the less informative clue, $M$, and observe $P$ only if $M=1$. 
 
 
+```{r, echo = FALSE, message = FALSE, eval = FALSE}
 
-<!-- ```{r, echo = FALSE, message = FALSE} -->
-
-<!-- pimd_confound2 <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG -->
-
-<!--   set_restrictions(c( -->
-<!--     "(M[I=1] < M[I=0])", -->
-<!--     "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. -->
-
-
-<!-- set_confound(list(P = "(D[P=1] == 1)")) -->
-
-<!-- new_parameters <-pimd_confound2$parameters -->
-
-<!-- new_parameters[1:2] <- c(.05, .95) -->
-
-<!-- pimd_confound2 <- set_parameters(pimd_confound2, new_parameters) -->
-
-<!-- ``` -->
-
-```{r, echo = FALSE, message = FALSE}
+## DYNAMIC STRATGIEZ WITH CONFOUNDED MODEL IS NOT BEING DONE (SEE EVAL = FALSE ABOVE)
 
 confound = list(P = "(D[P=1] == 1)")
 
 pimd_confound2 <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
-  set_restrictions(c( 
-    "(M[I=1] < M[I=0])", 
-    "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+  #Exclude a set of negative-effect and positive-effect nodal types.
+  set_restrictions(c(decreasing("I", "M"), increasing("I", "D"), 
+                     decreasing("M", "D"), decreasing("P", "D"))) %>% 
   
-  set_confound(list(P = "(D[P=1] == 1)")) %>%
+  set_confound(confound) %>%
   
   set_parameters(confound = confound, alphas = c(.05, .95), node = "P")
 
-```
+strategies <- two_step_strategies(pimd_confound2) %>% 
+  filter((one %in% c("P", "M"))) %>% 
+  filter(is.na(two_0) | (two_0 %in% c("P", "M")))%>% 
+  filter(is.na(two_1) | (two_1 %in% c("P", "M")))
 
-
-```{r, echo = FALSE}
-strategy_list_pimdconfound2 <- strats(pimd_confound2, c("P", "M"))
-
-# Assume prices in wihch P is more expensive than M
-prices_pimdconfound2 <- c(1, 1.5, 1, 1)
-
-# do_diagnosis <- TRUE
+# Calculate expected n and variance
 if(do_diagnosis){
-results_pimdconfound2 <- t(apply(strategy_list_pimdconfound2, 1, function(j) 
-  strategy_evaluation(pimd_confound2, 
-                      strategy  = j, 
-                      given = "D==1 & I==1", 
-                      query = "(D[I=1] != D[I=0])", 
-                      prices = prices_pimdconfound2))) %>%
-  data.frame()
-  write_rds(results_pimdconfound2, "saved/ch11_pimd2.rds")
+
+# Evaluate list of strategies
+results_pimd_tradeoff_confound <-
+  strategy_evaluation(
+    pimd_confound2,
+    strategies  = strategies,
+    given = "D==1 & I==1", 
+    query = "(D[I=1] != D[I=0])", 
+    prices = c(1, 1.5, 1, 1))
+
+    write_rds(results_pimd_tradeoff_confound, "saved/ch11_tradeoffs_pimd_confound.rds")
   }
 
-resultsfile_pimdconfound2 <- read_rds("saved/ch11_pimd2.rds")
+results_pimd_tradeoff_confound <- read_rds("saved/ch11_tradeoffs_pimd_confound.rds")
 
-kable(data.frame(cbind(strategy_list_pimdconfound2, resultsfile_pimdconfound2)), digits = 4)
-# Plot results
-with(resultsfile_pimdconfound2, plot(expected_costs, expected_variance, main = "Tradeoffs over strategies | Democracy model with confound"), xlab = "Expected costs of strategy", ylab = "Expected posterior variance from strategy")
 
-# 10 is best?
-# (1:27)[results_pimd$expected_variance<.195 & results_pimd$expected_costs<2]
-# strategy_list_pimd[10,]
+results_pimd_tradeoff_confound <- 
+  results_pimd_tradeoff_confound %>% 
+  mutate(labs = ifelse(expected_n ==2, "All", as.character(labs)))
+
+with(results_pimd_tradeoff_confound, {
+  plot(expected_variance, expected_costs, type = "n", xlab = "Expected Variance", ylab = "Expected Costs", 
+       ylim = c(-.0, 2.6), 
+       main = "Variance / cost tradeoffs" , 
+       xlim = c(.080, .083)
+       )
+#  points(expected_variance, expected_costs)
+  text(expected_variance, expected_costs, labs, cex = .8)
+
+})
+
 ```
 
   

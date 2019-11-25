@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 11 Clue Selection as a Decision Problem | Integrated Inferences</title>
+  <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 11 Clue Selection as a Decision Problem | Integrated Inferences" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:image" content="dnieperriver.png" />
+  <meta property="og:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="github-repo" content="rstudio/ii" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 11 Clue Selection as a Decision Problem | Integrated Inferences" />
+  
+  <meta name="twitter:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
+  <meta name="twitter:image" content="dnieperriver.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="elements-of-design.html">
+<link rel="next" href="wide.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="headers\style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Model based causal inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a><ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#key-contributions"><i class="fa fa-check"></i><b>1.2</b> Key contributions</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a><ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#the-counterfactual-model"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
+<li class="chapter" data-level="2.2.2" data-path="models.html"><a href="models.html#interpretation-of-functional-equations"><i class="fa fa-check"></i><b>2.2.2</b> Interpretation of functional equations</a></li>
+<li class="chapter" data-level="2.2.3" data-path="models.html"><a href="models.html#rules-for-graphing-causal-models"><i class="fa fa-check"></i><b>2.2.3</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.2.4" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.2.4</b> Conditional independence from DAGs</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#illustrations"><i class="fa fa-check"></i><b>2.3</b> Illustrations</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#welfare-state-reform-pierson-1994"><i class="fa fa-check"></i><b>2.3.1</b> Welfare state reform: Pierson (1994)</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#military-interventions-saunders-2011"><i class="fa fa-check"></i><b>2.3.2</b> Military Interventions: Saunders (2011)</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#development-and-democratization-przeworski-and-limongi-1997"><i class="fa fa-check"></i><b>2.3.3</b> Development and Democratization: Przeworski and Limongi (1997)</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.4</b> Chapter Appendix</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.4.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.4.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.4.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.4.3" data-path="models.html"><a href="models.html#test-yourself-can-you-read-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.4.3</b> Test yourself! Can you read conditional independence from a graph?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>3</b> Theories as causal models</a><ul>
+<li class="chapter" data-level="3.1" data-path="theory.html"><a href="theory.html#theory-as-a-lower-level-model"><i class="fa fa-check"></i><b>3.1</b> Theory as a “lower-level” model</a></li>
+<li class="chapter" data-level="3.2" data-path="theory.html"><a href="theory.html#illustration-of-unpacking-causal-types"><i class="fa fa-check"></i><b>3.2</b> Illustration of unpacking causal types</a><ul>
+<li class="chapter" data-level="3.2.1" data-path="theory.html"><a href="theory.html#type-disaggregation-in-a-mediation-model"><i class="fa fa-check"></i><b>3.2.1</b> Type disaggregation in a mediation model</a></li>
+<li class="chapter" data-level="3.2.2" data-path="theory.html"><a href="theory.html#type-disaggregation-in-a-moderation-model"><i class="fa fa-check"></i><b>3.2.2</b> Type disaggregation in a moderation model</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="theory.html"><a href="theory.html#rules-for-moving-between-higher--and-lower-level-models"><i class="fa fa-check"></i><b>3.3</b> Rules for moving between higher- and lower-level models</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="theory.html"><a href="theory.html#moving-down-levels"><i class="fa fa-check"></i><b>3.3.1</b> Moving down levels</a></li>
+<li class="chapter" data-level="3.3.2" data-path="theory.html"><a href="theory.html#moving-up-levels"><i class="fa fa-check"></i><b>3.3.2</b> Moving up levels</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>3.4</b> Conclusion</a></li>
+<li class="chapter" data-level="3.5" data-path="theory.html"><a href="theory.html#chapter-appendices"><i class="fa fa-check"></i><b>3.5</b> Chapter Appendices</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="theory.html"><a href="theory.html#summary-boxes"><i class="fa fa-check"></i><b>3.5.1</b> Summary Boxes</a></li>
+<li class="chapter" data-level="3.5.2" data-path="theory.html"><a href="theory.html#illustration-of-a-mapping-from-a-game-to-a-dag"><i class="fa fa-check"></i><b>3.5.2</b> Illustration of a Mapping from a Game to a DAG</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Questions</a><ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#case-level-explanation"><i class="fa fa-check"></i><b>4.3</b> Case-level explanation</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a><ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.1</b> Bayesian Inference on Queries</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.2</b> Simple Bayesian Process Tracing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#three-principles-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Three principles of Bayesian updating</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="6" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>6</b> Process Tracing with Causal Models</a><ul>
+<li class="chapter" data-level="6.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>6.1</b> Process tracing and causal models</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>6.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="6.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>6.1.2</b> A formalization of the general approach</a></li>
+<li class="chapter" data-level="6.1.3" data-path="pt.html"><a href="pt.html#illustration-with-code"><i class="fa fa-check"></i><b>6.1.3</b> Illustration with code</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pt.html"><a href="pt.html#five-principles"><i class="fa fa-check"></i><b>6.2</b> Five principles</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="pt.html"><a href="pt.html#classic-qualitative-tests-are-special-cases-of-updating-on-a-model"><i class="fa fa-check"></i><b>6.2.1</b> Classic qualitative tests are special cases of updating on a model</a></li>
+<li class="chapter" data-level="6.2.2" data-path="pt.html"><a href="pt.html#conditional-independence-alone-does-not-provide-probative-value"><i class="fa fa-check"></i><b>6.2.2</b> Conditional independence alone does not provide probative value</a></li>
+<li class="chapter" data-level="6.2.3" data-path="pt.html"><a href="pt.html#uncertainty-does-not-alter-inference-for-single-case-causal-inference"><i class="fa fa-check"></i><b>6.2.3</b> Uncertainty does not alter inference for single case causal inference</a></li>
+<li class="chapter" data-level="6.2.4" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>6.2.4</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+<li class="chapter" data-level="6.2.5" data-path="pt.html"><a href="pt.html#probative-value"><i class="fa fa-check"></i><b>6.2.5</b> Probative value</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>7</b> Application: Process Tracing with a Causal Model</a><ul>
+<li class="chapter" data-level="7.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>7.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="7.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>7.2</b> A Structural Causal Model</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>7.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>7.3</b> Results</a></li>
+<li class="chapter" data-level="7.4" data-path="ptapp.html"><a href="ptapp.html#pathways"><i class="fa fa-check"></i><b>7.4</b> Pathways</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>7.4.1</b> Cases with incomplete data</a></li>
+<li class="chapter" data-level="7.4.2" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>7.4.2</b> Inferences for cases with observed democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="ptapp.html"><a href="ptapp.html#model-definition-and-inference-in-code"><i class="fa fa-check"></i><b>7.5</b> Model definition and inference in code</a></li>
+<li class="chapter" data-level="7.6" data-path="ptapp.html"><a href="ptapp.html#concluding-thoughts"><i class="fa fa-check"></i><b>7.6</b> Concluding thoughts</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>8</b> Integrated inferences</a><ul>
+<li class="chapter" data-level="8.1" data-path="mixing.html"><a href="mixing.html#theres-only-ever-one-case"><i class="fa fa-check"></i><b>8.1</b> There’s only ever one case</a></li>
+<li class="chapter" data-level="8.2" data-path="mixing.html"><a href="mixing.html#general-procedure"><i class="fa fa-check"></i><b>8.2</b> General procedure</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="mixing.html"><a href="mixing.html#estimation"><i class="fa fa-check"></i><b>8.2.1</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="mixing.html"><a href="mixing.html#illustration"><i class="fa fa-check"></i><b>8.3</b> Illustration</a></li>
+<li class="chapter" data-level="8.4" data-path="mixing.html"><a href="mixing.html#illustrated-inferences"><i class="fa fa-check"></i><b>8.4</b> Illustrated inferences</a><ul>
+<li class="chapter" data-level="8.4.1" data-path="mixing.html"><a href="mixing.html#xy-model"><i class="fa fa-check"></i><b>8.4.1</b> XY model</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>8.5</b> Considerations</a><ul>
+<li class="chapter" data-level="8.5.1" data-path="mixing.html"><a href="mixing.html#the-identification-problem"><i class="fa fa-check"></i><b>8.5.1</b> The identification problem</a></li>
+<li class="chapter" data-level="8.5.2" data-path="mixing.html"><a href="mixing.html#continuous-data"><i class="fa fa-check"></i><b>8.5.2</b> Continuous data</a></li>
+<li class="chapter" data-level="8.5.3" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>8.5.3</b> Measurement error</a></li>
+<li class="chapter" data-level="8.5.4" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>8.5.4</b> Spillovers</a></li>
+<li class="chapter" data-level="8.5.5" data-path="mixing.html"><a href="mixing.html#clustering-and-other-violations-of-independence"><i class="fa fa-check"></i><b>8.5.5</b> Clustering and other violations of independence</a></li>
+<li class="chapter" data-level="8.5.6" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>8.5.6</b> Parameteric models</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="mixing.html"><a href="mixing.html#conclusion-1"><i class="fa fa-check"></i><b>8.6</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>9</b> Mixed-Method Application: Inequality and Democracy Revisited</a><ul>
+<li class="chapter" data-level="9.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>9.1</b> A trained model</a></li>
+<li class="chapter" data-level="9.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>9.2</b> Data</a></li>
+<li class="chapter" data-level="9.3" data-path="mixingapp.html"><a href="mixingapp.html#inference"><i class="fa fa-check"></i><b>9.3</b> Inference</a><ul>
+<li class="chapter" data-level="9.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democracy"><i class="fa fa-check"></i><b>9.3.1</b> Did inequality <em>cause</em> democracy?</a></li>
+<li class="chapter" data-level="9.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>9.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="9.4" data-path="mixingapp.html"><a href="mixingapp.html#prior-posterior-comparison-for-multiple-estimands"><i class="fa fa-check"></i><b>9.4</b> Prior / posterior comparison for multiple estimands</a></li>
+<li class="chapter" data-level="9.5" data-path="mixingapp.html"><a href="mixingapp.html#discussion"><i class="fa fa-check"></i><b>9.5</b> Discussion</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="10" data-path="elements-of-design.html"><a href="elements-of-design.html"><i class="fa fa-check"></i><b>10</b> Elements of Design</a><ul>
+<li class="chapter" data-level="10.1" data-path="elements-of-design.html"><a href="elements-of-design.html#model-inquiry-data-strategy-answer-strategy"><i class="fa fa-check"></i><b>10.1</b> Model, inquiry, data strategy, answer strategy</a><ul>
+<li class="chapter" data-level="10.1.1" data-path="elements-of-design.html"><a href="elements-of-design.html#defining-a-model"><i class="fa fa-check"></i><b>10.1.1</b> Defining a model</a></li>
+<li class="chapter" data-level="10.1.2" data-path="elements-of-design.html"><a href="elements-of-design.html#choosing-estimands"><i class="fa fa-check"></i><b>10.1.2</b> Choosing estimands</a></li>
+<li class="chapter" data-level="10.1.3" data-path="elements-of-design.html"><a href="elements-of-design.html#selecting-a-data-strategy"><i class="fa fa-check"></i><b>10.1.3</b> Selecting a data strategy</a></li>
+<li class="chapter" data-level="10.1.4" data-path="elements-of-design.html"><a href="elements-of-design.html#answer-strategy"><i class="fa fa-check"></i><b>10.1.4</b> Answer strategy</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="elements-of-design.html"><a href="elements-of-design.html#evaluating-a-mixed-method-design"><i class="fa fa-check"></i><b>10.2</b> Evaluating a mixed method design</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="elements-of-design.html"><a href="elements-of-design.html#expected-loss-as-a-evaluative-metric"><i class="fa fa-check"></i><b>10.2.1</b> Expected loss as a evaluative metric</a></li>
+<li class="chapter" data-level="10.2.2" data-path="elements-of-design.html"><a href="elements-of-design.html#expected-variance-almost-always-goes-down"><i class="fa fa-check"></i><b>10.2.2</b> Expected variance (almost) always goes down</a></li>
+<li class="chapter" data-level="10.2.3" data-path="elements-of-design.html"><a href="elements-of-design.html#gains"><i class="fa fa-check"></i><b>10.2.3</b> Gains</a></li>
+<li class="chapter" data-level="10.2.4" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-1"><i class="fa fa-check"></i><b>10.2.4</b> Illustration</a></li>
+<li class="chapter" data-level="10.2.5" data-path="elements-of-design.html"><a href="elements-of-design.html#in-code"><i class="fa fa-check"></i><b>10.2.5</b> In code</a></li>
+<li class="chapter" data-level="10.2.6" data-path="elements-of-design.html"><a href="elements-of-design.html#other-loss-functions"><i class="fa fa-check"></i><b>10.2.6</b> Other loss functions</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-of-design-decaration-in-code"><i class="fa fa-check"></i><b>10.3</b> Illustration of Design Decaration in code</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>11</b> Clue Selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="11.1" data-path="clue.html"><a href="clue.html#a-strategic-approach"><i class="fa fa-check"></i><b>11.1</b> A strategic approach</a></li>
+<li class="chapter" data-level="11.2" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>11.2</b> Clue selection with a simple example</a><ul>
+<li class="chapter" data-level="11.2.1" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>11.2.1</b> Dependence on prior beliefs</a></li>
+</ul></li>
+<li class="chapter" data-level="11.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>11.3</b> Clue selection for the democratization model</a><ul>
+<li class="chapter" data-level="11.3.1" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>11.3.1</b> Dynamic Strategies</a></li>
+</ul></li>
+<li class="chapter" data-level="11.4" data-path="clue.html"><a href="clue.html#conclusion-2"><i class="fa fa-check"></i><b>11.4</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="wide.html"><a href="wide.html"><i class="fa fa-check"></i><b>12</b> Going wide and going deep</a><ul>
+<li class="chapter" data-level="12.1" data-path="wide.html"><a href="wide.html#intuitions-does-a-sufficiently-large-n-always-trump-k"><i class="fa fa-check"></i><b>12.1</b> Intuitions: Does a sufficiently large <span class="math inline">\(N\)</span> always trump <span class="math inline">\(K\)</span>?</a></li>
+<li class="chapter" data-level="12.2" data-path="wide.html"><a href="wide.html#evaluating-strategies"><i class="fa fa-check"></i><b>12.2</b> Evaluating strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="wide.html"><a href="wide.html#varieties"><i class="fa fa-check"></i><b>12.3</b> Varieties of mixing</a></li>
+<li class="chapter" data-level="12.4" data-path="wide.html"><a href="wide.html#probative-value-of-clues"><i class="fa fa-check"></i><b>12.4</b> Probative value of clues</a></li>
+<li class="chapter" data-level="12.5" data-path="wide.html"><a href="wide.html#effect-heterogeneity"><i class="fa fa-check"></i><b>12.5</b> Effect Heterogeneity</a></li>
+<li class="chapter" data-level="12.6" data-path="wide.html"><a href="wide.html#uncertainty-regarding-assignment-processes"><i class="fa fa-check"></i><b>12.6</b> Uncertainty Regarding Assignment Processes</a></li>
+<li class="chapter" data-level="12.7" data-path="wide.html"><a href="wide.html#uncertainty-regarding-the-probative-value-of-clues"><i class="fa fa-check"></i><b>12.7</b> Uncertainty regarding the probative value of clues</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#explorations"><i class="fa fa-check"></i><b>13.1</b> Explorations</a><ul>
+<li class="chapter" data-level="13.1.1" data-path="caseselection.html"><a href="caseselection.html#procedure"><i class="fa fa-check"></i><b>13.1.1</b> Procedure</a></li>
+<li class="chapter" data-level="13.1.2" data-path="caseselection.html"><a href="caseselection.html#illustration-2"><i class="fa fa-check"></i><b>13.1.2</b> Illustration</a></li>
+</ul></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#results-from-experiments"><i class="fa fa-check"></i><b>13.2</b> Results from experiments</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#different-strategies-for-different-estimands"><i class="fa fa-check"></i><b>13.3</b> Different strategies for different estimands</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#where-the-probative-value-is"><i class="fa fa-check"></i><b>13.4</b> Where the probative value is</a></li>
+<li class="chapter" data-level="13.5" data-path="caseselection.html"><a href="caseselection.html#chapter-appendix-accounting-for-case-selection"><i class="fa fa-check"></i><b>13.5</b> Chapter Appendix: Accounting for case selection</a><ul>
+<li class="chapter" data-level="13.5.1" data-path="caseselection.html"><a href="caseselection.html#independent-case-selection-strategy"><i class="fa fa-check"></i><b>13.5.1</b> Independent case selection strategy</a></li>
+<li class="chapter" data-level="13.5.2" data-path="caseselection.html"><a href="caseselection.html#conditional-random-case-selection"><i class="fa fa-check"></i><b>13.5.2</b> Conditional random case selection</a></li>
+</ul></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="14" data-path="justifying-models.html"><a href="justifying-models.html"><i class="fa fa-check"></i><b>14</b> Justifying models</a><ul>
+<li class="chapter" data-level="14.1" data-path="justifying-models.html"><a href="justifying-models.html#bounds-on-probative-value"><i class="fa fa-check"></i><b>14.1</b> Bounds on probative value</a></li>
+<li class="chapter" data-level="14.2" data-path="justifying-models.html"><a href="justifying-models.html#the-possibility-of-identification-of-probative-value-from-experimental-data"><i class="fa fa-check"></i><b>14.2</b> The possibility of identification of probative value from experimental data</a><ul>
+<li class="chapter" data-level="14.2.1" data-path="justifying-models.html"><a href="justifying-models.html#mediator"><i class="fa fa-check"></i><b>14.2.1</b> Mediator</a></li>
+<li class="chapter" data-level="14.2.2" data-path="justifying-models.html"><a href="justifying-models.html#moderator"><i class="fa fa-check"></i><b>14.2.2</b> Moderator</a></li>
+<li class="chapter" data-level="14.2.3" data-path="justifying-models.html"><a href="justifying-models.html#case-level-bounds-from-mixed-data"><i class="fa fa-check"></i><b>14.2.3</b> Case level bounds from mixed data</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="justifying-models.html"><a href="justifying-models.html#learning-across-populations"><i class="fa fa-check"></i><b>14.3</b> Learning across populations</a></li>
+<li class="chapter" data-level="14.4" data-path="justifying-models.html"><a href="justifying-models.html#different-models-for-different-sites"><i class="fa fa-check"></i><b>14.4</b> Different models for different sites</a><ul>
+<li class="chapter" data-level="14.4.1" data-path="justifying-models.html"><a href="justifying-models.html#observational-and-experimental"><i class="fa fa-check"></i><b>14.4.1</b> Observational and experimental</a></li>
+</ul></li>
+<li class="chapter" data-level="14.5" data-path="justifying-models.html"><a href="justifying-models.html#causal-discovery"><i class="fa fa-check"></i><b>14.5</b> Causal discovery</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>15</b> Evaluating models</a><ul>
+<li class="chapter" data-level="15.1" data-path="evaluation.html"><a href="evaluation.html#inferences-when-you-dont-buy-your-priors"><i class="fa fa-check"></i><b>15.1</b> Inferences when you don;t buy your priors</a></li>
+<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#tools-for-evaluating-models"><i class="fa fa-check"></i><b>15.2</b> Tools for evaluating models</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independencies"><i class="fa fa-check"></i><b>15.2.1</b> Check conditional independencies</a></li>
+<li class="chapter" data-level="15.2.2" data-path="evaluation.html"><a href="evaluation.html#check-confounding-assumptions"><i class="fa fa-check"></i><b>15.2.2</b> Check confounding assumptions</a></li>
+<li class="chapter" data-level="15.2.3" data-path="evaluation.html"><a href="evaluation.html#check-prior-dependence"><i class="fa fa-check"></i><b>15.2.3</b> Check prior dependence</a></li>
+<li class="chapter" data-level="15.2.4" data-path="evaluation.html"><a href="evaluation.html#check-fit"><i class="fa fa-check"></i><b>15.2.4</b> Check fit</a></li>
+<li class="chapter" data-level="15.2.5" data-path="evaluation.html"><a href="evaluation.html#assess-likelihoods-under-different-models"><i class="fa fa-check"></i><b>15.2.5</b> Assess likelihoods under different models</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.3</b> Evaluating the Democracy-Inequality model</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.3.1</b> Prior check</a></li>
+<li class="chapter" data-level="15.3.2" data-path="evaluation.html"><a href="evaluation.html#monotonic-restrictions"><i class="fa fa-check"></i><b>15.3.2</b> Monotonic restrictions</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>16</b> Final Words</a><ul>
+<li class="chapter" data-level="16.1" data-path="final-words.html"><a href="final-words.html#general-lessons"><i class="fa fa-check"></i><b>16.1</b> General lessons</a></li>
+<li class="chapter" data-level="16.2" data-path="final-words.html"><a href="final-words.html#worries-about-what-you-have-to-put-in"><i class="fa fa-check"></i><b>16.2</b> Worries about what you have to put in</a></li>
+<li class="chapter" data-level="16.3" data-path="final-words.html"><a href="final-words.html#limits-on-what-you-can-get-out"><i class="fa fa-check"></i><b>16.3</b> Limits on what you can get out</a></li>
+<li class="chapter" data-level="16.4" data-path="final-words.html"><a href="final-words.html#a-world-of-models-practical-steps-forward-for-collective-cumulation"><i class="fa fa-check"></i><b>16.4</b> A world of models: Practical steps forward for collective cumulation</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="17" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>17</b> Analysis of canonical models with <code>gbiqq</code></a><ul>
+<li class="chapter" data-level="17.1" data-path="examplesappendix.html"><a href="examplesappendix.html#a-simple-model-and-the-ladder-of-causation"><i class="fa fa-check"></i><b>17.1</b> A simple model and the ladder of causation</a></li>
+<li class="chapter" data-level="17.2" data-path="examplesappendix.html"><a href="examplesappendix.html#x-causes-y-with-unmodelled-confounding"><i class="fa fa-check"></i><b>17.2</b> <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with unmodelled confounding</a></li>
+<li class="chapter" data-level="17.3" data-path="examplesappendix.html"><a href="examplesappendix.html#an-x-causes-y-with-confounding-modeled"><i class="fa fa-check"></i><b>17.3</b> An <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>, with confounding modeled</a></li>
+<li class="chapter" data-level="17.4" data-path="examplesappendix.html"><a href="examplesappendix.html#illustration-of-the-backdoor-criterion"><i class="fa fa-check"></i><b>17.4</b> Illustration of the backdoor criterion</a></li>
+<li class="chapter" data-level="17.5" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-mediation-model"><i class="fa fa-check"></i><b>17.5</b> Simple mediation model</a></li>
+<li class="chapter" data-level="17.6" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-moderator-model"><i class="fa fa-check"></i><b>17.6</b> Simple moderator model</a></li>
+<li class="chapter" data-level="17.7" data-path="examplesappendix.html"><a href="examplesappendix.html#billy-and-suzys-moderator-and-mediation-model"><i class="fa fa-check"></i><b>17.7</b> Billy and Suzy’s moderator and mediation model</a></li>
+<li class="chapter" data-level="17.8" data-path="examplesappendix.html"><a href="examplesappendix.html#an-iv-model"><i class="fa fa-check"></i><b>17.8</b> An IV model</a></li>
+<li class="chapter" data-level="17.9" data-path="examplesappendix.html"><a href="examplesappendix.html#identification-through-the-frontdoor"><i class="fa fa-check"></i><b>17.9</b> Identification through the frontdoor</a></li>
+<li class="chapter" data-level="17.10" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-with-a-violation-of-sequential-ignorability"><i class="fa fa-check"></i><b>17.10</b> A model with a violation of sequential ignorability</a></li>
+<li class="chapter" data-level="17.11" data-path="examplesappendix.html"><a href="examplesappendix.html#learning-from-a-collider"><i class="fa fa-check"></i><b>17.11</b> Learning from a collider</a></li>
+<li class="chapter" data-level="17.12" data-path="examplesappendix.html"><a href="examplesappendix.html#mixing-methods-where-a-little-data-goes-a-long-way"><i class="fa fa-check"></i><b>17.12</b> Mixing methods: Where a little data goes a long way</a></li>
+<li class="chapter" data-level="17.13" data-path="examplesappendix.html"><a href="examplesappendix.html#inferring-a-cause-from-symptoms"><i class="fa fa-check"></i><b>17.13</b> Inferring a cause from symptoms</a></li>
+<li class="chapter" data-level="17.14" data-path="examplesappendix.html"><a href="examplesappendix.html#a-model-mixing-observational-and-experimental-data"><i class="fa fa-check"></i><b>17.14</b> A model mixing observational and experimental data</a></li>
+<li class="chapter" data-level="17.15" data-path="examplesappendix.html"><a href="examplesappendix.html#simple-sample-selection-bias"><i class="fa fa-check"></i><b>17.15</b> Simple sample selection bias</a></li>
+<li class="chapter" data-level="17.16" data-path="examplesappendix.html"><a href="examplesappendix.html#sample-selection-bias"><i class="fa fa-check"></i><b>17.16</b> Sample selection bias</a></li>
+<li class="chapter" data-level="17.17" data-path="examplesappendix.html"><a href="examplesappendix.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>17.17</b> Transportation of findings across contexts</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/gbiqq/" target="blank">Uses gbiqq</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Integrated Inferences</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="clue" class="section level1">
+<h1><span class="header-section-number">Chapter 11</span> Clue Selection as a Decision Problem</h1>
+<hr />
+<p>We draw out the implications of the causal model approach for clue selection strategies. We introduce a tool for generating an optimal decision tree for clue selection given.</p>
+<hr />
+<p>Consider now the problem of determining what qualitative data to gather on a case. Evidently it makes sense to gather information on clues that have large probative value, but whether or not clues have probative value can depend on what clues have already been collected: Finding out that the Butler had no motive may be informative for the claim that he is innocent, but it may not be useful if you already know he had no opportunity.</p>
+<p>To motivate our thinking about clue-selection, consider again our running example with the free press and government removal. We can use this toy example to see, intuitively, how researchers may have a choice among observations that could be informative, and how the informativeness of an observation can depend on what is already known. In Figure , we showed how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the exogenous nodes <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span>. Each of these plots graphs a particular context. We can thus readily see which collection of exogenous nodes constitutes—gives the answer to—a given query, or estimand. Turning things around, we can also see, given a query, which nodes are informative about the probability that the query is true.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>FLAG: Where is the running example figure currently? Need to reference it.</p>
+<p>FLAG: I’m having trouble getting the logical progression here. Seems somewhat broken in the sense that it’s incomplete. Conceptually, we might think of informativeness situations as taking four possible forms of interest: a clue is always informative; never informative; informative only conditional on something else (obviously, what the something else is can vary); conditional only in the absence of something else. We seem to be covering always informative and conditionally uninformative. Seems odd not to also show always uninformative and informative only conditional on something else. But not sure if we can do this with this example.</p>
+<p>For example, suppose that one can see that <span class="math inline">\(Y=0\)</span> but does not know the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. This is equivalent to saying that we know that we are in panel <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, or <span class="math inline">\(C\)</span> but do not know which of these we are in. Would it be helpful to collect the clue <span class="math inline">\(S\)</span> if one has no other information? Defining the query in terms of root nodes, the question becomes <span class="math inline">\(S \stackrel{?}{=} 1\)</span>, or <span class="math inline">\(P(S=1|X=0,Y=0)\)</span>; the difference between the contexts in the two panels is that <span class="math inline">\(S=0\)</span> when, and only when, <span class="math inline">\(X=0\)</span> causes <span class="math inline">\(Y=0\)</span>. Given the structural equation for <span class="math inline">\(S\)</span>, <span class="math inline">\(P(S|X=0,Y=0) = P(S|X=0)\)</span>, and given independence of <span class="math inline">\(X\)</span> and <span class="math inline">\(S\)</span>, <span class="math inline">\(P(S=1|X=0)= \pi^S\)</span> (the simple assignment propensity). Figuring out <span class="math inline">\(S\)</span> <em>fully</em> answers the query.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>We can also see instances in this example of how existing data can make clues <em>uninformative</em>. Say one wanted to know if <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> in a case. As we can see from inspection of the panels, this query is equivalent to asking whether <span class="math inline">\(S=1\)</span> (as <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> only in those two panels (<span class="math inline">\(B\)</span> and <span class="math inline">\(D\)</span>) where <span class="math inline">\(S=1\)</span>). Data on <span class="math inline">\(R\)</span> is unconditionally informative about this query as <span class="math inline">\(R\)</span> is not <span class="math inline">\(d-\)</span>separated from <span class="math inline">\(S\)</span>. For example, <span class="math inline">\(R=1\)</span> implies <span class="math inline">\(S=0\)</span>. However, if <span class="math inline">\(C\)</span> and <span class="math inline">\(X\)</span> are already known, then <span class="math inline">\(R\)</span> is no longer informative because <span class="math inline">\(C\)</span> and <span class="math inline">\(X\)</span> together <em>d</em>-separate <span class="math inline">\(R\)</span> from <span class="math inline">\(S\)</span>.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>The running example also lets us demonstrate how informative clues can be found in many different places in a graph.</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Informative spouses</strong> Spouses—parents of the same child—can inform on one another. As we have seen in other examples, when an outcome has multiple causes, knowing the value of one of those causes helps assess the effect(s) of the other(s). For example, here, <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span> are both parents of <span class="math inline">\(C\)</span>; <span class="math inline">\(S\)</span> is thus informative for assessing whether <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span>. Indeed this query, written in terms of roots, is simply <span class="math inline">\(P(S)\)</span>: <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> if and only if <span class="math inline">\(S=1\)</span>. Likewise, <span class="math inline">\(S\)</span> causes <span class="math inline">\(C\)</span> (negatively) if and only if <span class="math inline">\(X=1\)</span>.</p></li>
+<li><p><strong>Pre-treatment clues.</strong> Did the absence of media reports on corruption (<span class="math inline">\(R=0\)</span>) cause government survival (<span class="math inline">\(Y=0\)</span>)? Look to the pre-treatment clue, <span class="math inline">\(X\)</span>: <span class="math inline">\(X=0\)</span> is a smoking gun establishing that the absence of a report produced government survival. Or, substantively, if there were a free press, then a missing report would never be a cause of survival since it would occur only in the absence of corruption, which would itself be sufficient for survival. More broadly, this example illustrates how knowledge of selection into treatment can be informative about treatment effects.</p></li>
+<li><p><strong>Post-outcome clues.</strong> Suppose we observe the presence of a free press (<span class="math inline">\(X=1\)</span>) and want to know if it caused a lack of corruption (<span class="math inline">\(C=0\)</span>), but cannot observe the level of corruption directly. Observing <span class="math inline">\(Y\)</span>—which occurs after the outcome—is informative here: if <span class="math inline">\(X=1\)</span>, then <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> (negatively) if and only if <span class="math inline">\(Y=0\)</span>. When an outcome is not observed, a consequence of that outcome can be informative about its value and, thus, about the effect of an observed suspected cause.</p></li>
+<li><p><strong>Mediators as clues</strong>: We see a politically sensitive government (<span class="math inline">\(S=1\)</span>) and its survival (<span class="math inline">\(S=0\)</span>). Did the government survive because of its sensitivity to public opinion? Here, the mediation clue <span class="math inline">\(C\)</span> is helpful: a lack of corruption, <span class="math inline">\(C=0\)</span>, is evidence of <span class="math inline">\(S\)</span>’s negative effect on <span class="math inline">\(Y\)</span>.</p></li>
+</ol>
+<p>And, of course, different clues can be informative in different ways for different types of estimand.</p>
+<p>Needed then is a systematic way for identifying what clues to look for for answering a given type of causal quesiton, given what we already know—and perhaps, in what order to look for them.</p>
+<div id="a-strategic-approach" class="section level2">
+<h2><span class="header-section-number">11.1</span> A strategic approach</h2>
+<p>The representation of inference problems as one of querying a Bayesian model points to a relatively simple method for answering this question, at least for small problems. Consider, first, a situation in which one has access to data <span class="math inline">\(W\)</span> and wants to know the expected probative value of all possible collections of data one could gather.</p>
+<p>This can be done as follows:</p>
+<ol style="list-style-type: decimal">
+<li>Define the model.</li>
+<li>Define a query on the model.</li>
+<li>Define a data strategy: a set of clues for which one might search (e.g., observe the value of <span class="math inline">\(C\)</span>).</li>
+<li>Given prior data, figure out the probability of different realizations of the new data, and for each possible realization calculate the posterior variance. Then calculate the <em>expected</em> posterior variance for the data strategy by taking an average of these variances, with weights given by the probability of observing the clue realization in question.</li>
+<li>Repeat steps 3-4 for different data strategies.</li>
+</ol>
+<p>This procedure returns the expected posterior variances associated with different data strategies.</p>
+<p>A still more sophisticated strategy would, for multiple clues, take sequence into account: it would tell us which clues to search for later in the process given the realization of clues sought earlier. The path-dependence of clue selection arises from the possibility that the informativeness of a clue may depend on the value of other nodes in the model. A given clue <span class="math inline">\(K_2\)</span>, for instance, may be informative if another clue <span class="math inline">\(K_1\)</span> has the value of 1 but not if it has the value 0.</p>
+<p>We provide tools for both of these approaches and illustrate them below for both the running example and the democracy application.</p>
+</div>
+<div id="clue-selection-with-a-simple-example" class="section level2">
+<h2><span class="header-section-number">11.2</span> Clue selection with a simple example</h2>
+<p>Let’s return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for <span class="math inline">\(C\)</span> and <span class="math inline">\(R\)</span>. At <span class="math inline">\(C\)</span>, we allow for the possibilities that corruption is always present and that corruption is always present except when there is both a free press (<span class="math inline">\(X=1\)</span>) and sensitivity to public opinion (<span class="math inline">\(S=1\)</span>). Thus, we permit both <span class="math inline">\(\theta^C_{1111}\)</span> and <span class="math inline">\(\theta^C_{1110}\)</span>. At <span class="math inline">\(R\)</span>, we allow for both <span class="math inline">\(\theta^R_{0001}\)</span> and <span class="math inline">\(\theta^R_{0000}\)</span>: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.</p>
+<p>To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether corruption is ever-present or not, but if it is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it is only because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press — the only mechanism that can generate reporting on corruption — is present. In turn, the presence of a free press can only matter for government survival if governments are <em>not</em> sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.</p>
+<p>This model is formally defined in <code>gbiqq</code> as follows:</p>
+<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">make_model</span>(<span class="st">&quot;S -&gt; C -&gt; Y &lt;- R &lt;- X; X -&gt; C -&gt; R&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">set_restrictions</span>(<span class="dt">labels =</span> <span class="kw">list</span>(<span class="dt">C =</span> <span class="kw">c</span>(<span class="st">&quot;C1110&quot;</span>, <span class="st">&quot;C1111&quot;</span>), 
+                                 <span class="dt">R =</span> <span class="kw">c</span>(<span class="st">&quot;R0001&quot;</span>, <span class="st">&quot;R0000&quot;</span>), 
+                                 <span class="dt">Y =</span> <span class="kw">c</span>(<span class="st">&quot;Y0001&quot;</span>)), 
+                   <span class="dt">keep =</span> <span class="ot">TRUE</span>) </code></pre>
+<p>Suppose that our query is whether <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that <span class="math inline">\(Y=0\)</span>.</p>
+<p>Application of the function <code>conditional_inferences</code> produces a matrix with the results. We reproduce these as Table <a href="clue.html#tab:showstrats5xx">11.1</a>. The first five columns of Table <a href="clue.html#tab:showstrats5xx">11.1</a> define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed <span class="math inline">\(Y=0\)</span>. A “0” or “1” represents the observed value for a node that we have chosen to observe while <span class="math inline">\(NA\)</span> under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first row, we are collecting no clues beyond our prior data on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. In the second row, we have additionally sought clue <span class="math inline">\(S\)</span> and observed a value of <span class="math inline">\(0\)</span>, while in the third row we have chosen the same strategy but observed <span class="math inline">\(S=1\)</span>.</p>
+<p>In the sixth column, we see the inference we would make from each data-realization, the posterior probability that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, given that <span class="math inline">\(Y=0\)</span>. The final column indicates the probability of each data-realization, given the chosen strategy (<em>not</em> conditioning on the prior observation, <span class="math inline">\(Y-0\)</span>).</p>
+<p>FLAG: Let’s add posterior variance to Table <a href="clue.html#tab:showstrats5xx">11.1</a></p>
+<table>
+<caption><span id="tab:showstrats5xx">Table 11.1: </span>Inferences given different data patterns.</caption>
+<thead>
+<tr class="header">
+<th align="right">S</th>
+<th align="right">X</th>
+<th align="right">C</th>
+<th align="right">R</th>
+<th align="right">Y</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.250</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.0625</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.375</td>
+<td align="right">0.5000</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1875</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.333</td>
+<td align="right">0.3750</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.200</td>
+<td align="right">0.3125</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.250</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1875</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.250</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.0625</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.273</td>
+<td align="right">0.6875</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.375</td>
+<td align="right">0.5000</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.3125</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.333</td>
+<td align="right">0.3750</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.143</td>
+<td align="right">0.4375</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.375</td>
+<td align="right">0.5000</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1875</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.333</td>
+<td align="right">0.3750</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.200</td>
+<td align="right">0.3125</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.500</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.250</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1875</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.231</td>
+<td align="right">0.8125</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.1250</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.273</td>
+<td align="right">0.6875</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.375</td>
+<td align="right">0.5000</td>
+</tr>
+<tr class="odd">
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.000</td>
+<td align="right">0.3125</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.333</td>
+<td align="right">0.3750</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.143</td>
+<td align="right">0.4375</td>
+</tr>
+<tr class="even">
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">0.231</td>
+<td align="right">0.8125</td>
+</tr>
+</tbody>
+</table>
+<p>Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the <em>expected</em> reduction in variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of <span class="math inline">\(Y\)</span>, in Table <a href="#tab:scxrylearning"><strong>??</strong></a>.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Strategy</th>
+<th align="left">Given</th>
+<th align="left">Prior belief</th>
+<th align="left">Prior Uncertainty</th>
+<th align="left">Expected Posterior Uncertainty</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.144230769230769</td>
+</tr>
+<tr class="even">
+<td align="left">S</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.168501769230769</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.167937</td>
+</tr>
+<tr class="even">
+<td align="left">R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.177639</td>
+</tr>
+<tr class="odd">
+<td align="left">X, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.144230769230769</td>
+</tr>
+<tr class="even">
+<td align="left">X, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.134615384615385</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.144230769230769</td>
+</tr>
+<tr class="even">
+<td align="left">C, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.167937</td>
+</tr>
+<tr class="odd">
+<td align="left">C, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.164051230769231</td>
+</tr>
+<tr class="even">
+<td align="left">S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.168501769230769</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.134615384615385</td>
+</tr>
+<tr class="even">
+<td align="left">X, C, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.144230769230769</td>
+</tr>
+<tr class="odd">
+<td align="left">X, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.134615384615385</td>
+</tr>
+<tr class="even">
+<td align="left">C, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.164051230769231</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.231</td>
+<td align="left">0.177639</td>
+<td align="left">0.134615384615385</td>
+</tr>
+</tbody>
+</table>
+<p>We operationalize higher levels of expected learning from a strategy as a greater expected reduction in variance upon observing the data. We can see a couple of patterns here.</p>
+<ul>
+<li><p>By far the biggest gains in learning come from observing <span class="math inline">\(X\)</span>. We can see this most readily by comparing the 1-clue strategies to one another. But in general, any strategy that includes observing <span class="math inline">\(X\)</span> always does substantially better than the comparable strategy that excludes <span class="math inline">\(X\)</span>. The intuition here is fairly straightforward: if we want to know whether <span class="math inline">\(Y=0\)</span> was caused by <span class="math inline">\(X=0\)</span>, and start out very uncertain about <span class="math inline">\(X\)</span>’s value, we should expect to learn a good deal from figuring out whether <span class="math inline">\(X\)</span> is in fact equal to <span class="math inline">\(0\)</span>.</p></li>
+<li><p>There are also considerable gains from observing <span class="math inline">\(S\)</span> or <span class="math inline">\(C\)</span> by themselves. Consider, first, why observing <span class="math inline">\(S\)</span> is informative. <span class="math inline">\(S\)</span> is potentially informative because it tells us something about whether <span class="math inline">\(X\)</span> can affect <span class="math inline">\(Y\)</span> by affecting <span class="math inline">\(R\)</span>. Remember that a government is removed only if there is both corruption (<span class="math inline">\(C=1\)</span>) and reporting on corruption (<span class="math inline">\(R=1\)</span>). Moreover, there is only reporting on corruption (if ever) if $C=1. Thus, for both of these reasons, <span class="math inline">\(X\)</span> can only have a positive effect on government removal (by causing reporting on corruption) if <span class="math inline">\(C=1\)</span>: i.e., if there is corruption. And <span class="math inline">\(S\)</span> tells us something about what <span class="math inline">\(C\)</span>’s value is likely to be if <span class="math inline">\(X\)</span> were set to 1.</p></li>
+</ul>
+<p>Specifically, if we observe <span class="math inline">\(S=0\)</span>, then we know for sure that <span class="math inline">\(C=1\)</span>, regardless of <span class="math inline">\(X\)</span>, since <span class="math inline">\(C\)</span> is always 1 when <span class="math inline">\(S=0\)</span> under both permitted nodal types for <span class="math inline">\(C\)</span>. If <span class="math inline">\(S=1\)</span>, on the other hand, there’s a lower chance that <span class="math inline">\(C\)</span> would be equal to 1 if <span class="math inline">\(X\)</span> were set to 1: in one of <span class="math inline">\(C\)</span>’s permitted nodal types, there is always corruption; but in the other type, sensitive governments avoid corruption when there is a free press, so <span class="math inline">\(X\)</span> moving to 1 would give us <span class="math inline">\(C=0\)</span>. We have put equal prior probabilities on these two nodal types. Thus, if we observe <span class="math inline">\(S=1\)</span>, we conclude that there is a lower probability that <span class="math inline">\(C\)</span> will take on the value necessary for <span class="math inline">\(X\)</span> to exert a positive effect on <span class="math inline">\(Y\)</span> than if we observe <span class="math inline">\(S=0\)</span>.</p>
+<p>Why, then, is <span class="math inline">\(C\)</span> informative? If we observe <span class="math inline">\(C=0\)</span>, then we know that <span class="math inline">\(X\)</span> must be equal to 1 since, under permitted nodal types for <span class="math inline">\(C\)</span>, there is an absence of corruption <em>only</em> in the presence of a free press and sensitive governments. And if <span class="math inline">\(X=1\)</span> with <span class="math inline">\(Y=0\)</span>, a positive effect is ruled out with certainty. If we observe <span class="math inline">\(C=1\)</span>, then there remains some possibility that <span class="math inline">\(X=0\)</span> as well as some possibility <span class="math inline">\(C\)</span> would remain at 1 if <span class="math inline">\(X\)</span> were set to 1 (depending on <span class="math inline">\(C\)</span>’s unknown nodal type), allowing <span class="math inline">\(X\)</span> to yield a positive effect on <span class="math inline">\(Y\)</span> through <span class="math inline">\(R\)</span>.</p>
+<ul>
+<li><p>There are no gains from observing <span class="math inline">\(R\)</span> if <span class="math inline">\(Y=0\)</span>. We can see why by looking at our table of data possibilities consistent with <span class="math inline">\(Y=0\)</span> (Table <a href="#showstrats5xx"><strong>??</strong></a>). As we can see, there is no possibility of observing anything other than <span class="math inline">\(R=0\)</span> if we have already seen <span class="math inline">\(Y=0\)</span>. We can see why by thinking, jointly, about how <span class="math inline">\(Y\)</span> is determined and how <span class="math inline">\(R\)</span> is determined. <span class="math inline">\(Y\)</span> can be 0 either because <span class="math inline">\(C=0\)</span> or <span class="math inline">\(R=0\)</span>. So if <span class="math inline">\(R\)</span> were equal to <span class="math inline">\(1\)</span>, this must mean that <span class="math inline">\(C\)</span> was <span class="math inline">\(0\)</span>. However, a necessary condition for <span class="math inline">\(R\)</span> to be 1, under <span class="math inline">\(R\)</span>’s permitted nodal types, is <span class="math inline">\(C=1\)</span> and <span class="math inline">\(X=1\)</span>. In other words, the condition under which <span class="math inline">\(R\)</span> could be 1 is a condition under which <span class="math inline">\(Y\)</span> would not be 0. Thus, if we already know <span class="math inline">\(Y=0\)</span>, we know <span class="math inline">\(R=0\)</span>, and there is no gain from actually looking for <span class="math inline">\(R\)</span>.</p></li>
+<li><p>Once we decide to observe <span class="math inline">\(X\)</span>, then the next-most informative clue to add to our research design is <span class="math inline">\(S\)</span>: <span class="math inline">\(X, S\)</span> has the lowest expected posterior variance of any of the 2-clue strategies. And, in fact, there are no gains to adding <span class="math inline">\(C\)</span> to <span class="math inline">\(X\)</span>, relative to observing <span class="math inline">\(X\)</span> by itself.</p></li>
+</ul>
+<p>Let us develop the intuition underlying this result.</p>
+<p>Imagine that we have already observed <span class="math inline">\(X\)</span>’s value. If <span class="math inline">\(X=1\)</span>, then (given <span class="math inline">\(Y=0\)</span>), a positive effect is immediately ruled out with certainty, rendering any further observations of no value. If we observe <span class="math inline">\(X=0\)</span>, however, then (under this causal model) we know for certain that <span class="math inline">\(C=1\)</span>, simply because <span class="math inline">\(C=1\)</span> for both of <span class="math inline">\(C\)</span>’s permitted nodal types when <span class="math inline">\(X=0\)</span> (there is always corruption when there is no free press). Thus, there is nothing to be gained by observing <span class="math inline">\(C\)</span>. (We have already seen why there is nothing to be gained from observing <span class="math inline">\(R\)</span>.)</p>
+<p>Why, we might still ask, are there possible gains to observing <span class="math inline">\(S\)</span> even if we’re going to observe <span class="math inline">\(X\)</span>? <span class="math inline">\(S\)</span> is informative because it tells us something about whether <span class="math inline">\(X\)</span> can affect <span class="math inline">\(Y\)</span> by affecting <span class="math inline">\(R\)</span>. The potential gains from observing <span class="math inline">\(S\)</span> with <span class="math inline">\(X\)</span> arise from the possibility that we may see <span class="math inline">\(X=0\)</span> (since <span class="math inline">\(X=1\)</span> woudl decide the matter by itself). If <span class="math inline">\(X=0\)</span>, then we still need to know whether <span class="math inline">\(Y\)</span> <em>would</em> be 1 if we changed <span class="math inline">\(X\)</span> to 1. As discussed above, <em>that</em> depends on whether <span class="math inline">\(C\)</span> would be <span class="math inline">\(1\)</span> if <span class="math inline">\(X\)</span> were set to 1, and (as, again, explained above) <span class="math inline">\(S\)</span> is informative on that matter.</p>
+<ul>
+<li><p>We see, further, in the table — and it follows from the above logic — that we cannot improve on an <span class="math inline">\(X, S\)</span> strategy by gathering more data. Thus, if the search for information is costly, looking only for <span class="math inline">\(X\)</span> and <span class="math inline">\(S\)</span> dominates all 3- and 4-clue strategies.</p></li>
+<li><p>Clues can be more informative jointly than separately, and the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing <span class="math inline">\(C\)</span> by itself is slightly <em>more</em> informative than observing <span class="math inline">\(S\)</span> by itself. However, if we are planning to observe <span class="math inline">\(X\)</span>, then the gains flip, and it is only <span class="math inline">\(S\)</span> that offers additional useful information. As we have discussed, observing <span class="math inline">\(X\)</span> makes observing <span class="math inline">\(C\)</span> uninformative while <span class="math inline">\(S\)</span> remains informative as a moderator of <span class="math inline">\(X\)</span>’s effect.</p></li>
+</ul>
+<p>We would add that the pattern here forms part of a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from <em>moderators</em>, like <span class="math inline">\(S\)</span> in this model, than from mediators, like <span class="math inline">\(C\)</span> and <span class="math inline">\(R\)</span>. We return to this point below.</p>
+<div id="dependence-on-prior-beliefs" class="section level3">
+<h3><span class="header-section-number">11.2.1</span> Dependence on prior beliefs</h3>
+<p>As the foregoing discussion already suggests, optimal clue strategies can depend on our prior beliefs about causal relationships among the variables in the model. We illustrate this point here, examining how evaluation of clue strategies shift as we relax restrictions on nodal types and set informative priors over nodal types.</p>
+<p><strong>Relaxing restrictions.</strong> In the analysis above, we allowed for just two (of 16 possible) nodal types at both <span class="math inline">\(C\)</span> and <span class="math inline">\(R\)</span>, effectively expressing strong beliefs about how <span class="math inline">\(C\)</span>’s and <span class="math inline">\(R\)</span>’s values are determined. But what if we are less certain than this?</p>
+<p>Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that <span class="math inline">\(S\)</span> might have a negative effect on <span class="math inline">\(C\)</span> regardless of <span class="math inline">\(X\)</span>’s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for <span class="math inline">\(C\)</span> to include <span class="math inline">\(\theta^C_{1010}\)</span> in defining the model.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Expand nodal types for C.</span>
+
+model &lt;-<span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">make_model</span>(<span class="st">&quot;S -&gt; C -&gt; Y &lt;- R &lt;- X; X -&gt; C -&gt; R&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">set_restrictions</span>(<span class="dt">labels =</span> <span class="kw">list</span>(<span class="dt">C =</span> <span class="kw">c</span>(<span class="st">&quot;C1110&quot;</span>, <span class="st">&quot;C1111&quot;</span>, <span class="st">&quot;C1010&quot;</span>), 
+                                 <span class="dt">R =</span> <span class="kw">c</span>(<span class="st">&quot;R0001&quot;</span>, <span class="st">&quot;R0000&quot;</span>), 
+                                 <span class="dt">Y =</span> <span class="kw">c</span>(<span class="st">&quot;Y0001&quot;</span>)), 
+                   <span class="dt">keep =</span> <span class="ot">TRUE</span>) </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Strategy</th>
+<th align="left">Given</th>
+<th align="left">Prior belief</th>
+<th align="left">Prior Uncertainty</th>
+<th align="left">Expected Posterior Uncertainty</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1332666</td>
+</tr>
+<tr class="even">
+<td align="left">S</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1454454</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1429428</td>
+</tr>
+<tr class="even">
+<td align="left">R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.16</td>
+</tr>
+<tr class="odd">
+<td align="left">X, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1332666</td>
+</tr>
+<tr class="even">
+<td align="left">X, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1167333</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.12</td>
+</tr>
+<tr class="even">
+<td align="left">C, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1429428</td>
+</tr>
+<tr class="odd">
+<td align="left">C, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.13994995</td>
+</tr>
+<tr class="even">
+<td align="left">S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1454454</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1125</td>
+</tr>
+<tr class="even">
+<td align="left">X, C, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.12</td>
+</tr>
+<tr class="odd">
+<td align="left">X, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1167333</td>
+</tr>
+<tr class="even">
+<td align="left">C, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.13994995</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.2</td>
+<td align="left">0.16</td>
+<td align="left">0.1125</td>
+</tr>
+</tbody>
+</table>
+<p>The diagnosis of strategies under this adjusted set of beliefs, for the same query (whether <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>) and prior data (<span class="math inline">\(Y=0\)</span>) as before, are displayed in Table <a href="#scxrylearning2"><strong>??</strong></a>.</p>
+<p>We see that, among 1-clue strategies, observing <span class="math inline">\(X\)</span> is still the best choice. Among 2-clue strategies, however, things begin to look different. The best 2-clue strategy is also still <span class="math inline">\(X, S\)</span>. Where things change most significantly, however, is among 3-clue strategies: now, we can do even better by additionally observing <span class="math inline">\(C\)</span>. The reason is that, with greater uncertainty about its nodal types, <span class="math inline">\(C\)</span>’s value is no longer known when <span class="math inline">\(X=0\)</span>: it is now possible that <span class="math inline">\(C=0\)</span> when <span class="math inline">\(X=0\)</span> since we think it possible that <span class="math inline">\(C\)</span>’s nodal type is <span class="math inline">\(\theta^C_{1010}\)</span>. Since <span class="math inline">\(C\)</span>’s value bears on whether <span class="math inline">\(X\)</span> can have an effect via <span class="math inline">\(R\)</span>, we can thus in this situation potentially learn something by observing <span class="math inline">\(C\)</span>.</p>
+<p>We can also see <span class="math inline">\(C\)</span>’s enhanced informational value throughout the table. Among 1-clue strategies, observing <span class="math inline">\(C\)</span> alone generates greater learning here than it does under the original setup. More strikingly, among 2-clue strategies we see that observing <span class="math inline">\(C\)</span> can now generate learning even if we have <em>already</em> observed <span class="math inline">\(X\)</span> (whereas there was no gain from strategy <span class="math inline">\(X, C\)</span> relative to <span class="math inline">\(X\)</span> under the original model). While <span class="math inline">\(X, S\)</span> is still a better strategy than <span class="math inline">\(X, C\)</span>, the change in diagnosis could matter if, for instance, we cannot observe <span class="math inline">\(S\)</span> for some reason or if observing <span class="math inline">\(S\)</span> is much more costly than observing <span class="math inline">\(C\)</span>.</p>
+<p>Moreover, the expected variance reduction from observing <span class="math inline">\(S\)</span> is also greater under the new model, for 1- and 2-clue strategies. To see the informal intuition here, note that <span class="math inline">\(S\)</span> is potentially informative about <span class="math inline">\(C\)</span>’s value as a parent of <span class="math inline">\(C\)</span>. And we now believe (with the added nodal type for <span class="math inline">\(C\)</span>) that there may be an additional way in which <span class="math inline">\(S\)</span> could matter for <span class="math inline">\(C\)</span>, and thus provide information about its value. Moreover, since the added nodal type has <span class="math inline">\(S\)</span> exerting a negative effect on <span class="math inline">\(C\)</span> regardless of <span class="math inline">\(X\)</span>’s value, <span class="math inline">\(S\)</span> can now be informative even if we have already observed <span class="math inline">\(X=0\)</span>.</p>
+<p>Finally, we can see that nothing has changed in regard to <span class="math inline">\(R\)</span>, about whose nodal types we have retained the same beliefs. It is still uniformly unprofitable to observe <span class="math inline">\(R\)</span> because we still know <span class="math inline">\(R\)</span>’s value whenever <span class="math inline">\(X=0\)</span>.</p>
+<p>This exercise also suggests a further interesting principle of clue-selection: that potential informativeness rests on uncertainty about what we will find.</p>
+<p><strong>Changing priors.</strong> We can also see what happens when, rather than permitting new nodal types, we have informative beliefs about the prevalence of permitted types. We can provide a simple demonstration by expressing stronger prior beliefs about <span class="math inline">\(S\)</span>’s nodal type. Suppose we believe most governments to be sensitive to public opinion. This would imply that we should put greater prior weight on <span class="math inline">\(\theta^S_1\)</span> than on <span class="math inline">\(\theta^S_0\)</span>. We can do this by setting a higher <span class="math inline">\(\alpha\)</span> value corresponding to <span class="math inline">\(S=1\)</span>, and telling <code>gbiqq</code> to set all paramater values (the <span class="math inline">\(\lambda\)</span>’s for each nodal type) to the means of the prior distributions:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Set priors for S with more weight on S=1. Should make S less informative -- the more informative value for S is expected to be less likely??</span>
+
+model_priors &lt;-<span class="st"> </span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">make_model</span>(<span class="st">&quot;S -&gt; C -&gt; Y &lt;- R &lt;- X; X -&gt; C -&gt; R&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st">  </span><span class="kw">set_restrictions</span>(<span class="dt">labels =</span> <span class="kw">list</span>(<span class="dt">C =</span> <span class="kw">c</span>(<span class="st">&quot;C1110&quot;</span>, <span class="st">&quot;C1111&quot;</span>), 
+                 <span class="dt">R =</span> <span class="kw">c</span>(<span class="st">&quot;R0001&quot;</span>, <span class="st">&quot;R0000&quot;</span>), 
+                 <span class="dt">Y =</span> <span class="kw">c</span>(<span class="st">&quot;Y0001&quot;</span>)), 
+          <span class="dt">keep =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span>
+<span class="st"> </span><span class="kw">set_priors</span>(<span class="dt">node =</span> <span class="st">&quot;S&quot;</span>, <span class="dt">statement =</span> <span class="st">&quot;S==1&quot;</span>, <span class="dt">alphas =</span> <span class="dv">10</span>) <span class="op">%&gt;%</span>
+<span class="st">   </span>
+<span class="st"> </span><span class="kw">set_parameters</span>(<span class="dt">type =</span> <span class="st">&quot;prior_mean&quot;</span>)</code></pre>
+<p>These priors put roughly a 0.91 probability on <span class="math inline">\(S=1\)</span>.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Strategy</th>
+<th align="left">Given</th>
+<th align="left">Prior belief</th>
+<th align="left">Prior Uncertainty</th>
+<th align="left">Expected Posterior Uncertainty</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.114904263157895</td>
+</tr>
+<tr class="even">
+<td align="left">S</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.130411</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.123939789473684</td>
+</tr>
+<tr class="even">
+<td align="left">R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.133036</td>
+</tr>
+<tr class="odd">
+<td align="left">X, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.114904263157895</td>
+</tr>
+<tr class="even">
+<td align="left">X, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.111842105263158</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.114904263157895</td>
+</tr>
+<tr class="even">
+<td align="left">C, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.123939789473684</td>
+</tr>
+<tr class="odd">
+<td align="left">C, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.122798236842105</td>
+</tr>
+<tr class="even">
+<td align="left">S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.130411</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C, S</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.111842105263158</td>
+</tr>
+<tr class="even">
+<td align="left">X, C, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.114904263157895</td>
+</tr>
+<tr class="odd">
+<td align="left">X, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.111842105263158</td>
+</tr>
+<tr class="even">
+<td align="left">C, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.122798236842105</td>
+</tr>
+<tr class="odd">
+<td align="left">X, C, S, R</td>
+<td align="left">Y==0</td>
+<td align="left">0.158</td>
+<td align="left">0.133036</td>
+<td align="left">0.111842105263158</td>
+</tr>
+</tbody>
+</table>
+<p>We see the results of this new set of diagnoses, with informative priors on <span class="math inline">\(S\)</span>’s nodal types, in Table <a href="#scxrylearning3"><strong>??</strong></a>. Comparing with Table <a href="#scxrylearning"><strong>??</strong></a>, a number of features stand out. First is the much lower <em>prior</em> variance under the new model: having a strong prior belief about <span class="math inline">\(S\)</span>’s value gives us stronger prior beliefs about whether <span class="math inline">\(X\)</span> could have caused <span class="math inline">\(Y\)</span> since such an effect <em>depends</em> on <span class="math inline">\(S\)</span>’s value. A second striking difference is that searching for <span class="math inline">\(S\)</span> is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for <span class="math inline">\(S\)</span>. We <em>could</em> be surprised, but we should not <em>expect</em> to be. In the original model, in contrast, we were maximally uncertain about <span class="math inline">\(S\)</span>’s value — believing it had a 0.5 chance of being 1 — and so there was much more to be gained by looking.</p>
+<p>While not shown here, we get essentially the same result if we flip our priors and put much greater weight on <span class="math inline">\(S=0\)</span>, rather than on <span class="math inline">\(S=1\)</span>.</p>
+</div>
+</div>
+<div id="clue-selection-for-the-democratization-model" class="section level2">
+<h2><span class="header-section-number">11.3</span> Clue selection for the democratization model</h2>
+<p>We now apply this approach to the model of democratization that we worked with in Chapters (ptapp) and (mixingapp).</p>
+<p>We start by specifying the democratization model, with negative effects ruled for <span class="math inline">\(I \rightarrow M\)</span>, <span class="math inline">\(M \rightarrow D\)</span>, and <span class="math inline">\(P \rightarrow D\)</span> and a positive direct effect ruled out for <span class="math inline">\(I \rightarrow D\)</span>.</p>
+<p>Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables — mobilization or international pressure — we should collect data on: we could observe nothing further; observe <span class="math inline">\(P\)</span> only; observe <span class="math inline">\(M\)</span> only; or observe both <span class="math inline">\(P\)</span> and <span class="math inline">\(M\)</span>. In Table @ref(possible_outcomespimd_i1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditionining on <span class="math inline">\(I=D=1\)</span>.)</p>
+<table>
+<caption><span id="tab:unnamed-chunk-8">Table 11.2: </span> Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>) given that data realization.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">I</th>
+<th align="right">P</th>
+<th align="right">M</th>
+<th align="right">D</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I1P0M0D1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.004</td>
+</tr>
+<tr class="even">
+<td>I1P1M0D1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.025</td>
+</tr>
+<tr class="odd">
+<td>I1P0M1D1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.250</td>
+<td align="right">0.050</td>
+</tr>
+<tr class="even">
+<td>I1P1M1D1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.107</td>
+<td align="right">0.117</td>
+</tr>
+<tr class="odd">
+<td>I1M0D1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.029</td>
+</tr>
+<tr class="even">
+<td>I1M1D1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.150</td>
+<td align="right">0.167</td>
+</tr>
+<tr class="odd">
+<td>I1P0D1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.231</td>
+<td align="right">0.054</td>
+</tr>
+<tr class="even">
+<td>I1P1D1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.088</td>
+<td align="right">0.142</td>
+</tr>
+<tr class="odd">
+<td>I1D1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.128</td>
+<td align="right">0.196</td>
+</tr>
+</tbody>
+</table>
+<p>We show in Table @ref(pimdlearn_i1d1) how we expect uncertainty to be reduced by different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span> before we observe anything at all. The next three rows show our expectations for looking for <span class="math inline">\(P\)</span> only; looking for <span class="math inline">\(M\)</span> only; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe <span class="math inline">\(P\)</span>: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator.</p>
+<p>We also see that the mediator is much more informative when the causal effect we are looking for is one that <em>could</em> have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause’s direct effects.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-9">Table 11.3: </span> Prior estimand, prior variances and expected posterior variances for the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>?) given different clue seeking stratgies for cases in which we have observed high inequality and democratization.</caption>
+<thead>
+<tr class="header">
+<th align="left">strategy</th>
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">None</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.112</td>
+<td align="right">0.112</td>
+</tr>
+<tr class="even">
+<td align="left">P</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.112</td>
+<td align="right">0.107</td>
+</tr>
+<tr class="odd">
+<td align="left">M</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.112</td>
+<td align="right">0.109</td>
+</tr>
+<tr class="even">
+<td align="left">P and M</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.128</td>
+<td align="right">0.112</td>
+<td align="right">0.105</td>
+</tr>
+</tbody>
+</table>
+<p>We turn next to considering those cases with low inequality that democratized, asking whether democratization occurred because of a <em>negative</em> effect of inequality. The possible data realizations, resulting inferences, and data probabilities are shown in Table @ref(possible_outcomespimd_i0), while the expected learning estimates for each clue strategy are given in Table @ref(pimdlearn_i0d1). The pattern here is similar, though somewhat starker: substantially greater gains to observing the moderator, <span class="math inline">\(P\)</span>, than the mediator <span class="math inline">\(M\)</span>. The gains to observing <span class="math inline">\(M\)</span> here are very small indeed. We can already see from comparing the relevant rows in the data-possibilities table how little our posterior beliefs shift depending on <span class="math inline">\(M\)</span>’s realized value. <span class="math inline">\(M\)</span> is far less informative for assessing <span class="math inline">\(I\)</span>’s causal effect for an <span class="math inline">\(I=0, D=1\)</span> case than for a <span class="math inline">\(I=1, D=1\)</span> case. The reason is that, in the former situation, we are looking for a positive effect while in the latter situation, we are looking for a negative effects; but only positive effects can operate through the mobilization pathway under the model restrictions. Thus, <span class="math inline">\(M\)</span> is uninformative as a mediator of <span class="math inline">\(I\)</span>’s effect in an <span class="math inline">\(I=0, D=1\)</span> (though it is informative as a moderator for such a case, but less so).</p>
+<table>
+<caption><span id="tab:unnamed-chunk-10">Table 11.4: </span> Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span>) given that data realization.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">I</th>
+<th align="right">P</th>
+<th align="right">M</th>
+<th align="right">D</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I0P0M0D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.667</td>
+<td align="right">0.050</td>
+</tr>
+<tr class="even">
+<td>I0P1M0D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.393</td>
+<td align="right">0.117</td>
+</tr>
+<tr class="odd">
+<td>I0P0M1D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.571</td>
+<td align="right">0.058</td>
+</tr>
+<tr class="even">
+<td>I0P1M1D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.263</td>
+<td align="right">0.079</td>
+</tr>
+<tr class="odd">
+<td>I0M0D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.475</td>
+<td align="right">0.167</td>
+</tr>
+<tr class="even">
+<td>I0M1D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.394</td>
+<td align="right">0.138</td>
+</tr>
+<tr class="odd">
+<td>I0P0D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.615</td>
+<td align="right">0.108</td>
+</tr>
+<tr class="even">
+<td>I0P1D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.340</td>
+<td align="right">0.196</td>
+</tr>
+<tr class="odd">
+<td>I0D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.438</td>
+<td align="right">0.304</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-11">Table 11.5: </span>Prior estimand, prior variances and expected posterior variances for the query (does <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span>?) given different clue seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
+<thead>
+<tr class="header">
+<th align="left">strategy</th>
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">None</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.246</td>
+</tr>
+<tr class="even">
+<td align="left">P</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.229</td>
+</tr>
+<tr class="odd">
+<td align="left">M</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.245</td>
+</tr>
+<tr class="even">
+<td align="left">P and M</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.438</td>
+<td align="right">0.246</td>
+<td align="right">0.225</td>
+</tr>
+</tbody>
+</table>
+<!-- ```{r, echo = FALSE, message = FALSE} -->
+<!-- pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG -->
+<!--          set_restrictions(c(  -->
+<!--            "(M[I=1] < M[I=0])",  -->
+<!--            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. -->
+<!--             set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)"))  #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}.  -->
+<!-- new_parameters <-pimd_confound$parameters  -->
+<!-- new_parameters[1:2] <- c(.7, .3)  -->
+<!-- pimd_confound <- set_parameters(pimd_confound, new_parameters)  -->
+<!--     ``` -->
+<!-- In Table \@ref(possible_outcomespimd_i1con), we can see the inferences we would derive (about $I$'s positive effect on $D$) from the possible data realizations for $I=1, D=1$ cases. Comparing with the parallel set of inferences for the model without confounding (Table \@ref(possible_outcomespimd_i1)), the key difference is that all non-zero priors and posteriors on the query are lower in the presence of confounding. The reason is straightforward. The confounding built into this model makes $I$'s value additionally informative about the causal effect of $I$ on $M$ since we have expressed a belief that $I$ is more likely to be $0$ where $I$ has a positive effect on $M$. Moreover, $I$ must have a positive effect on $M$ in order for $I$ to have a positive effect on $D$. Thus, in the model with confounding, $I=1$ is already a clue that speaks against a positive $I \rightarrow D$ effect, whereas $I=1$ is not informative in this same way in the model without confounding.   -->
+<!-- ```{r, echo = FALSE} -->
+<!-- inferences_pimdcon <- -->
+<!--   conditional_inferences(pimd_confound, query = "D[I=1] > D[I=0]", given = "I==1 & D==1") -->
+<!-- kable(inferences_pimdcon, caption = "\\label{possible_outcomespimd_i1con} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterioron the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3) -->
+<!-- ``` -->
+<!-- In Table \@ref(pimdlearn_i1d1con), we see the expected learning results for the $I=1, D=1$ cases, given a model with confounding, which we can compare to the comparable results in Table \@ref(pimdlearn_i1d1), for the model without confounding. Differences are modest. We are in general somewhat less uncertain in the model with confounding, regardless of strategy, which likely is an artifact of the fact that our posterior means are closer to $0$. Likewise, the scope for uncertainty-reduction is lower in the new model. In addition, however, it looks like the difference in expected learning between observing $P$ and observing $M$ is slightly smaller in the model with confounding. -->
+<!-- ```{r, echo = FALSE, message = FALSE, warning = FALSE} -->
+<!-- ELpimdconfound1 <- -->
+<!--   rbind( -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1")) -->
+<!-- x_strategy <- c("None", "P", "M", "P and M") -->
+<!-- kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3) -->
+<!-- ``` -->
+<!-- ```{r, echo = FALSE} -->
+<!-- inferences2_pimdcon <- -->
+<!--   conditional_inferences(pimd_confound, query = "D[I=1] < D[I=0]", given = "I==0 & D==1") -->
+<!-- kable(inferences2_pimdcon, caption = "\\label{possible_outcomespimd_i0con} Table shows possible data patterns for P and M given I = 0 and D = 1, assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3) -->
+<!-- ``` -->
+<!-- ```{r, echo = FALSE, message = FALSE, warning = FALSE} -->
+<!-- ELpimdconfound2 <- -->
+<!--   rbind( -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1")) -->
+<!-- x_strategy <- c("None", "P", "M", "P and M") -->
+<!-- kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3) -->
+<!-- ``` -->
+<p>Now, let us see what happens as we revise the model, making it less restrictive. We do this, first, by allowing for confounding between two nodes in the model, international pressure and democratization. In particular, we allow for the possibility that, in order to generate a perception of foreign-policy influence and success, other states may target democratization pressure on autocratic regimes that are likely to democratize in the presence of pressure. This includes regimes that will democratize <em>only</em> if pressured as well as those that will democratize in the presence of pressure but where pressure itself was not a cause. We use the <code>set_confound</code> function to define distinct parameters for <span class="math inline">\(P\)</span>’s nodal type when this is the case. The confound condition here is extremely easy to define: it is simply all unit types in which <span class="math inline">\(D=1\)</span> when <span class="math inline">\(P=1\)</span> ((D[P=1] == 1)). This includes all unit types (combinations of nodal types) that generate democratization in the presence of international pressure.</p>
+<p>Having set the confound condition, we can then express beliefs (parameter values) that <span class="math inline">\(P=1\)</span> is more common relative to <span class="math inline">\(P=0\)</span> when the condition is met than otherwise.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> We keep all other parameter values flat across the nodal types that are not excluded.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-13">Table 11.6: </span> Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>) given that data realization, with confounding involving <span class="math inline">\(P\)</span>.</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">I</th>
+<th align="right">P</th>
+<th align="right">M</th>
+<th align="right">D</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I1P0M0D1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.0001</td>
+</tr>
+<tr class="even">
+<td>I1P1M0D1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.0495</td>
+</tr>
+<tr class="odd">
+<td>I1P0M1D1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.250</td>
+<td align="right">0.0011</td>
+</tr>
+<tr class="even">
+<td>I1P1M1D1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.107</td>
+<td align="right">0.2308</td>
+</tr>
+<tr class="odd">
+<td>I1M0D1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.0495</td>
+</tr>
+<tr class="even">
+<td>I1M1D1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.108</td>
+<td align="right">0.2319</td>
+</tr>
+<tr class="odd">
+<td>I1P0D1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.231</td>
+<td align="right">0.0012</td>
+</tr>
+<tr class="even">
+<td>I1P1D1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.088</td>
+<td align="right">0.2802</td>
+</tr>
+<tr class="odd">
+<td>I1D1</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.089</td>
+<td align="right">0.2814</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-14">Table 11.7: </span>Prior estimand, prior variances and expected posterior variances for the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>?) given different clue seeking stratgies for cases in which we have observed high inequality and democratization, with confounding.</caption>
+<thead>
+<tr class="header">
+<th align="left">strategy</th>
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">None</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.089</td>
+<td align="right">0.0811</td>
+<td align="right">0.0811</td>
+</tr>
+<tr class="even">
+<td align="left">P</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.089</td>
+<td align="right">0.0811</td>
+<td align="right">0.0807</td>
+</tr>
+<tr class="odd">
+<td align="left">M</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.089</td>
+<td align="right">0.0811</td>
+<td align="right">0.0794</td>
+</tr>
+<tr class="even">
+<td align="left">P and M</td>
+<td align="left">I==1 &amp; D==1</td>
+<td align="right">0.089</td>
+<td align="right">0.0811</td>
+<td align="right">0.0791</td>
+</tr>
+<tr class="odd">
+<td align="left">We display</td>
+<td align="left">the inferences</td>
+<td align="right">we <em>would</em> draw</td>
+<td align="right">from differe</td>
+<td align="right">nt clue strategies and data realizations in Table @ref(possible_outcomespimd_conf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed <span class="math inline">\(I=1\)</span> and <span class="math inline">\(D=1\)</span>, in Table (pimdlearn_i1d1con). As we can see from the latter table, the presence of a confound involving <span class="math inline">\(P\)</span> reduces this clue’s relative expected contribution to learning, making it now <em>less</em> informative in expectation than <span class="math inline">\(M\)</span>.</td>
+</tr>
+</tbody>
+</table>
+<p>Working backwards, we can readily identify the reason for this in Table @ref(possible_outcomespimd_conf). We see here that observing <span class="math inline">\(P=1\)</span> moves our beliefs very little off of our prior of <span class="math inline">\(0.091\)</span> because, given the confounding, we already strongly expect to see <span class="math inline">\(P=1\)</span> in a case that democratized; actually observing <span class="math inline">\(P=1\)</span> contains only a small amount of new information. Our beliefs over the query change a great deal if we observe <span class="math inline">\(P=0\)</span>—since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, <span class="math inline">\(P\)</span>’s value is far more consequential than <span class="math inline">\(M\)</span>’s. However, we can also see from the last column of the table that the most impactful realization of <span class="math inline">\(P\)</span>’s value is also extremely unlikely under the model (given <span class="math inline">\(I=D=1\)</span>). Thus, <span class="math inline">\(P\)</span> <em>can</em> be highly informative under this model, but it is very unlikely to be.</p>
+<p>We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the <em>pathway</em> through which an effect occurs. We need to adjust the model to allow allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> and instead use <code>set_priors</code> to state a belief that such a negative effect is less likely than <span class="math inline">\(M\)</span>’s other nodal types.</p>
+<p>To isolate how the query matters from how the restrictions matter, we first diagnose clue strategies for a causal-effect query under this new model: given <span class="math inline">\(I=0, D=1\)</span>, did <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span>? Inferences conditional on data-realizations and clue strategies are displayed in Table @(possible_outcomespimd_priors_effect) and expected posterior variances in Table @ref(pimdlearn_priors_effect).</p>
+<p>Starting with Table @(possible_outcomespimd_priors_effect), a comparison with the parallel results for the model that excludes negative <span class="math inline">\(I \rightarrow M\)</span> effects – Table @ref(possible_outcomespimd_i0) – is informative. Similar to what we saw in Chapter @ref(pt_app), the inferences we draw from observing <span class="math inline">\(M\)</span>’s values <em>flip</em> in direction when we allow for negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. When such effects were excluded, <span class="math inline">\(M\)</span> was informative only as a moderator of <span class="math inline">\(I\)</span>’s direct negative effect on <span class="math inline">\(D\)</span>. An observation of <span class="math inline">\(M=1\)</span> counted as evidence against <span class="math inline">\(I=0\)</span> being the cause of <span class="math inline">\(D=1\)</span> since <span class="math inline">\(M=1\)</span> could be the cause (given that <span class="math inline">\(M\)</span> could have a positive effect on <span class="math inline">\(D\)</span>); <span class="math inline">\(M=0\)</span> counted, by a similar logic, as evidence in favor of <span class="math inline">\(I\)</span>’s negative effect. Once we relax the restriction and allow negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, <span class="math inline">\(M\)</span> is additionally informative as a <em>mediator</em> along a second pathway through which <span class="math inline">\(I\)</span> can have a negative effect on <span class="math inline">\(M\)</span>. Now, observing <span class="math inline">\(M=0\)</span> cuts in two directions: on the one hand, it rules out a negative effect of <span class="math inline">\(I\)</span> running through <span class="math inline">\(M\)</span> (informativeness as mediator); on the other hand, it makes it more likely that <span class="math inline">\(I=0\)</span> caused <span class="math inline">\(D=1\)</span> indirectly (informativeness as moderator). We can see that, in this situation, the information we get from <span class="math inline">\(M\)</span> as a mediator overwhelms that which we get from <span class="math inline">\(M\)</span> as a moderator since our posterior on <span class="math inline">\(I\)</span>’s causal effect now moves <em>downwards</em> if we observe <span class="math inline">\(M=0\)</span>. <span class="math inline">\(M=1\)</span>, of course, cuts both ways as well by a parallel logic, but with the net effect being an upward shift in our posterior on the causal effect.</p>
+<p>So how informative overall is <span class="math inline">\(M\)</span> as compared to <span class="math inline">\(P\)</span>? In the model allowing negative <span class="math inline">\(I \rightarrow M\)</span> effects, we are now learning in two ways from <span class="math inline">\(M\)</span> rather than one; so our intuition might be that <span class="math inline">\(M\)</span> has become more informative than it was in our original model. In Table @ref(pimdlearn_priors_effect), we see that this is not at all the case! Much as in Table @ref(pimdlearn_i0d1), for the same query and given data but under our original model, we still see very little—indeed, slightly less—reduction in expected posterior variance from the search for <span class="math inline">\(M\)</span>. <span class="math inline">\(M\)</span> may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect <em>undoes</em> some of the learning from the moderation by pushing our inferences in the opposing directions.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-16">Table 11.8: </span> Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">I</th>
+<th align="right">P</th>
+<th align="right">M</th>
+<th align="right">D</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I0P0M0D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.667</td>
+<td align="right">0.043</td>
+</tr>
+<tr class="even">
+<td>I0P1M0D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.393</td>
+<td align="right">0.100</td>
+</tr>
+<tr class="odd">
+<td>I0P0M1D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.690</td>
+<td align="right">0.075</td>
+</tr>
+<tr class="even">
+<td>I0P1M1D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.404</td>
+<td align="right">0.102</td>
+</tr>
+<tr class="odd">
+<td>I0M0D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.475</td>
+<td align="right">0.143</td>
+</tr>
+<tr class="even">
+<td>I0M1D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.525</td>
+<td align="right">0.177</td>
+</tr>
+<tr class="odd">
+<td>I0P0D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.682</td>
+<td align="right">0.118</td>
+</tr>
+<tr class="even">
+<td>I0P1D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.398</td>
+<td align="right">0.202</td>
+</tr>
+<tr class="odd">
+<td>I0D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.503</td>
+<td align="right">0.320</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-17">Table 11.9: </span>Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different clue-seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
+<thead>
+<tr class="header">
+<th align="left">strategy</th>
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">None</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.503</td>
+<td align="right">0.25</td>
+<td align="right">0.2500</td>
+</tr>
+<tr class="even">
+<td align="left">P</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.503</td>
+<td align="right">0.25</td>
+<td align="right">0.2312</td>
+</tr>
+<tr class="odd">
+<td align="left">M</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.503</td>
+<td align="right">0.25</td>
+<td align="right">0.2494</td>
+</tr>
+<tr class="even">
+<td align="left">P and M</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.503</td>
+<td align="right">0.25</td>
+<td align="right">0.2313</td>
+</tr>
+<tr class="odd">
+<td align="left">Now, let’s</td>
+<td align="left">see how things</td>
+<td align="right">look when we are</td>
+<td align="right">interested</td>
+<td align="right">not in <span class="math inline">\(I\)</span>’s causal effect on <span class="math inline">\(D\)</span> but in whether it had an effect via particular pathway. Specifically, given <span class="math inline">\(I=0\)</span> and <span class="math inline">\(D=1\)</span>, did <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span> that was mediated by <span class="math inline">\(M\)</span>? Following our discussion of mediation in Chapter <a href="questions.html#questions">4</a>, we define the query as asking whether the following are true:</td>
+</tr>
+</tbody>
+</table>
+<p>1 Does <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(M\)</span>? (in code, <span class="math inline">\(M[I=1] &lt; M[I=0]\)</span>)
+2 Does the change in <span class="math inline">\(M\)</span> resulting from a change from <span class="math inline">\(I=1\)</span> to <span class="math inline">\(I=0\)</span> cause a change in <span class="math inline">\(D\)</span> from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>? (<span class="math inline">\((D[M=M[I=0]] &gt; D[M=M[I=1]])\)</span>)
+3 Does <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(D\)</span> <em>depend</em> on <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(M\)</span>? In other words, would we still get the <span class="math inline">\(I \rightarrow D\)</span> effect if <span class="math inline">\(M\)</span> were fixed at the value that it takes on when <span class="math inline">\(I=1\)</span>? (<span class="math inline">\((D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])\)</span>)</p>
+<p>Inferences conditional on data strategies and realizations are displayed in Table @ref(possible_outcomespimd_path). We saw in Table @ref(possible_outcomespimd_priors_effect) that seeing <span class="math inline">\(M=0\)</span> slightly reduces our confidence that there was a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span>. However, we see now that observing <span class="math inline">\(M=0\)</span> entirely <em>eliminates</em> the possibility that this effect was mediated by <span class="math inline">\(M\)</span>. We also see that the data realization under which we update most strongly in favor of a negative causal effect–<span class="math inline">\(P=0, M=1\)</span>–is also the realization most suportive of a belief in a mediated negative effect.</p>
+<p>Turning to expected learning from alternative strategies, shown in Table @ref(pimdlearn_path), we can see clearly – by comparison to Table (pimdlearn_priors_effect) – how optimal clue strategies depend on the query of interest. Whereas <span class="math inline">\(M\)</span> is only slight informative about <span class="math inline">\(I\)</span>’s causal effect–with <span class="math inline">\(P\)</span> the more informative clue–we expect to learn much more from <span class="math inline">\(M\)</span> about the pathway-specific query, and <span class="math inline">\(M\)</span> is far more informative than <span class="math inline">\(P\)</span>.</p>
+<table>
+<caption><span id="tab:unnamed-chunk-18">Table 11.10: </span> Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?</caption>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">I</th>
+<th align="right">P</th>
+<th align="right">M</th>
+<th align="right">D</th>
+<th align="right">posterior</th>
+<th align="right">prob</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I0P0M0D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.043</td>
+</tr>
+<tr class="even">
+<td>I0P1M0D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.100</td>
+</tr>
+<tr class="odd">
+<td>I0P0M1D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.190</td>
+<td align="right">0.075</td>
+</tr>
+<tr class="even">
+<td>I0P1M1D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.088</td>
+<td align="right">0.102</td>
+</tr>
+<tr class="odd">
+<td>I0M0D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.000</td>
+<td align="right">0.143</td>
+</tr>
+<tr class="even">
+<td>I0M1D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.131</td>
+<td align="right">0.177</td>
+</tr>
+<tr class="odd">
+<td>I0P0D1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.121</td>
+<td align="right">0.118</td>
+</tr>
+<tr class="even">
+<td>I0P1D1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.044</td>
+<td align="right">0.202</td>
+</tr>
+<tr class="odd">
+<td>I0D1</td>
+<td align="right">0</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">1</td>
+<td align="right">0.073</td>
+<td align="right">0.320</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:unnamed-chunk-19">Table 11.11: </span>Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different clue-seeking stratgies for cases in which we have observed low inequality and democratization.</caption>
+<thead>
+<tr class="header">
+<th align="left">strategy</th>
+<th align="left">given</th>
+<th align="right">prior_estimand</th>
+<th align="right">prior_var</th>
+<th align="right">E_post_var</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">None</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.073</td>
+<td align="right">0.0677</td>
+<td align="right">0.0677</td>
+</tr>
+<tr class="even">
+<td align="left">P</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.073</td>
+<td align="right">0.0677</td>
+<td align="right">0.0658</td>
+</tr>
+<tr class="odd">
+<td align="left">M</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.073</td>
+<td align="right">0.0677</td>
+<td align="right">0.0630</td>
+</tr>
+<tr class="even">
+<td align="left">P and M</td>
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">0.073</td>
+<td align="right">0.0677</td>
+<td align="right">0.0617</td>
+</tr>
+<tr class="odd">
+<td align="left">Now, what i</td>
+<td align="left">f we already k</td>
+<td align="right">now that <span class="math inline">\(I\)</span> has</td>
+<td align="right">a negative e</td>
+<td align="right">ffect on <span class="math inline">\(D\)</span> and we want to know via which pathway that effect operates—the direct or the indirect?</td>
+</tr>
+</tbody>
+</table>
+<p>FLAG</p>
+<p>FLAG: actual cause and notable cause ??</p>
+<div id="dynamic-strategies" class="section level3">
+<h3><span class="header-section-number">11.3.1</span> Dynamic Strategies</h3>
+<p>The clue-collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their strategies as they go along. However, the expected informativeness of a clue may depend on the values of other clues that we see first, implying that an optimal strategy will be dynamic, taking into account earlier observations in selecting later ones.</p>
+<p>Given <span class="math inline">\(n\)</span> nodes, a dynamic data collection strategy will be of the form:
+<span class="math display">\[\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}\]</span></p>
+<p>where each <span class="math inline">\(K_j\)</span> is en element of the nodes on the graph, or is the empty set. Thus, we start with observing <span class="math inline">\(K_1\)</span>; then, whether we choose to observe <span class="math inline">\(K_2\)</span> depends on the value of <span class="math inline">\(K_1\)</span>; whether we choose to observe <span class="math inline">\(K_3\)</span> depends on the value of <span class="math inline">\(K_1\)</span> and (if we observed it) <span class="math inline">\(K_2\)</span>; and so on. A strategy <em>vector</em> specifies a series of conditional clue-search actions: it identifies the first clue sought and then which clues are sought conditional on the realization of all prior clues sought.</p>
+<p>Each possible strategy has an associated expected reduction in variance. We can also build in an expected cost associated with each clue, allowing us to treat clue-selection as an optimization problem.</p>
+<p>To illustrate with the running example, we imagine a situation in which it is known that <span class="math inline">\(Y=1\)</span>, and we are interested in whether <span class="math inline">\(Y=0\)</span> because of <span class="math inline">\(S\)</span> (though we don’t know at the outset what the value of <span class="math inline">\(S\)</span> is). We consider strategies in which we first seek information on one node and then, conditional on what we find, look or do not look for data on one other node. With five nodes, one already known, there are <span class="math inline">\(4 \times 4^2\)</span> strategies of this form.</p>
+<p>Suppose that we observe that <span class="math inline">\(Y=0\)</span>: the government was not replaced. We then want to know whether this is because the government was sophisticated (<span class="math inline">\(S=1\)</span>). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make model</span>
+model &lt;-
+<span class="st">    </span><span class="kw">make_model</span>(<span class="st">&quot;S -&gt; C -&gt; Y &lt;- R &lt;- X; X -&gt; C -&gt; R&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">       </span><span class="kw">set_restrictions</span>(
+       <span class="dt">labels =</span> <span class="kw">list</span>(<span class="dt">C =</span> <span class="kw">c</span>(<span class="st">&quot;C1110&quot;</span>, <span class="st">&quot;C1111&quot;</span>),
+                     <span class="dt">R =</span> <span class="kw">c</span>(<span class="st">&quot;R0001&quot;</span>, <span class="st">&quot;R0000&quot;</span>),
+                     <span class="dt">Y =</span> <span class="kw">c</span>(<span class="st">&quot;Y0001&quot;</span>)),
+       <span class="dt">keep =</span> <span class="ot">TRUE</span>)</code></pre>
+<p><img src="ii_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs—but collection depends on past findings—then we can also calculate the expected costs of each strategy.</p>
+<table>
+<caption>Illustration of three (of many) possible two step strategies.</caption>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Step 1</th>
+<th>Step 2 if 0</th>
+<th>Step 2 if 1</th>
+<th>Expected variance</th>
+<th>Expected Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>S</td>
+<td>None</td>
+<td>None</td>
+<td>0.167</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>S</td>
+<td>X</td>
+<td>X</td>
+<td>0</td>
+<td>2.5</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>S</td>
+<td>None</td>
+<td>X</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Figure <a href="#fig:tradeoffs"><strong>??</strong></a> plots a collection of strategies based on two criteria—the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that <span class="math inline">\(X\)</span> is the most costly to collect, followed by <span class="math inline">\(C\)</span>, then <span class="math inline">\(S\)</span>, then <span class="math inline">\(Y\)</span>, then <span class="math inline">\(R\)</span>. The cheapest strategy among those that minimize variance involves gathering <span class="math inline">\(C\)</span> only. The lowest variance strategy that minimizes costs involves gathering <span class="math inline">\(Y\)</span> only.</p>
+<p>Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.</p>
+<p><img src="ii_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p>We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:</p>
+<p>1 Observe <span class="math inline">\(M\)</span> first, then stop. This strategy has relatively high expected uncertainty but minimizes costs relative to any other strategy: we observe just one clue, and it’s the cheaper one.
+2 Observe <span class="math inline">\(P\)</span> first, then stop. We’ll learn more from this strategy than from Strategy 1, though at higher cost. Still there is no other strategy that allows us to reduce costs without increasing variqnce.
+3 Observe <span class="math inline">\(P\)</span> first; if <span class="math inline">\(P=0\)</span>, observe <span class="math inline">\(M\)</span>, otherwise stop. We, again, get uncertainty reduction here, relative to Strategy 2, but again at higher cost.
+4 Observe <span class="math inline">\(M\)</span> first; if <span class="math inline">\(M=0\)</span>, stop; if <span class="math inline">\(M=1\)</span>, observe <span class="math inline">\(P\)</span>. This strategy gets us the lowest expected posterior variance of any strategy. Moreover, it is not the highest-cost strategy, which would be to observe both clues no matter what. Once we’ve observed <span class="math inline">\(M=0\)</span>, we get nothing from the additional investment in <span class="math inline">\(P\)</span> since <span class="math inline">\(M=0\)</span> already tells us that <span class="math inline">\(I\)</span> could not have had a positive effect on <span class="math inline">\(D\)</span>.</p>
+<p>Note also that both Strategy 3 and Strategy 4 are <em>conditional</em> two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don’t expect to learn the most by starting with the most probative clue. If we start with the more informative clue, <span class="math inline">\(P\)</span>, observing <span class="math inline">\(M\)</span> only if <span class="math inline">\(P=0\)</span>, we expect to end up with <em>more</em> uncertainty than if we start with the less informative clue, <span class="math inline">\(M\)</span>, and observe <span class="math inline">\(P\)</span> only if <span class="math inline">\(M=1\)</span>.</p>
+<p><img src="ii_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<!-- ## More complex problems -->
+<!-- Illustration of clue inference for a continuous problem. -->
+</div>
+</div>
+<div id="conclusion-2" class="section level2">
+<h2><span class="header-section-number">11.4</span> Conclusion</h2>
+<p>Explicit statement of a causal model—including prior beliefs over roots—allows one to assess what will be inferred from all possible observations. This opens the way for simple strategies for assessing what data is most valuable, and in what order it should be gathered.</p>
+<p>We are conscious that here we are pushing the basic logic to the limits. In practice researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts; the claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data is most useful to gather.</p>
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.<a href="clue.html#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Graphically what is important is that <span class="math inline">\(S\)</span> is informative not because it is <span class="math inline">\(d-\)</span>connected with <span class="math inline">\(Y\)</span>, but because it is <span class="math inline">\(d-\)</span>connected to the query variable—here, simply, to itself.<a href="clue.html#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>We can come to the same conclusion by reasoning with the graphs: if <span class="math inline">\(X=0\)</span> and <span class="math inline">\(C=1\)</span>, we know we are in subfigure <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span>, and <span class="math inline">\(X\)</span> causes <span class="math inline">\(C\)</span> only in panel <span class="math inline">\(B\)</span>. However, <span class="math inline">\(R\)</span> is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.<a href="clue.html#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>It will be recalled that, in single-case inference we must express beliefs about population-level shares of nodal types. This includes expressing beliefs about the parameters defining the confounding.<a href="clue.html#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="elements-of-design.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="wide.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": false,
+"twitter": false,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
