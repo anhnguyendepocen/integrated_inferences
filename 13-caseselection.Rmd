@@ -19,7 +19,7 @@ With a causal model in hand, together with priors over parameters, you can asses
 # Models
  models <- list(
    analysis_model = make_model("X->M->Y"),
-   confound_model <- make_model("X->M->Y; X<->Y"))
+   confound_model = make_model("X->M->Y; X<->Y"))
 
 # Givens
  givens <- list(
@@ -27,22 +27,27 @@ With a causal model in hand, together with priors over parameters, you can asses
   regr   = data.frame(
      X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
      Y = c(0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1)) %>%
-              collapse_data(analysis_model, remove_family = TRUE),
+              collapse_data(models$analysis_model, remove_family = TRUE),
 
   flat   = data.frame(
      X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
      Y = c(0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1)) %>%
-              collapse_data(analysis_model, remove_family = TRUE),
+              collapse_data(models$analysis_model, remove_family = TRUE),
 
   suff   = data.frame(
      X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
      Y = c(0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1)) %>%
-              collapse_data(analysis_model, remove_family = TRUE),
+              collapse_data(models$analysis_model, remove_family = TRUE),
 
   necs   = data.frame(
      X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
      Y = c(0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0)) %>%
-              collapse_data(analysis_model, remove_family = TRUE))
+              collapse_data(models$analysis_model, remove_family = TRUE),
+  
+  conc   = data.frame(
+     X = c(1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
+     Y = c(1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1)) %>%
+              collapse_data(models$analysis_model, remove_family = TRUE))
 
  # Data strategies
 
@@ -100,6 +105,20 @@ With a causal model in hand, together with priors over parameters, you can asses
   }}}
   }
  
+  
+ if(do_diagnosis){
+
+  for(m in  1:length(models)){ for(N in c(2, 4)) {for(g in 5) {	
+    filename <-  paste0("saved/M_", names(models)[m], "_", N, "_", names(givens)[g], ".rds")
+    
+    print(filename)
+    write_rds(case_selection_diagnose(models[[m]], givens[[g]], N), 
+            filename)
+  
+  }}}
+  }
+ 
+  
 ```
 
 
@@ -143,6 +162,147 @@ plot_case_selection(necs, Q = "ProbPos", main = "X necessary for Y", xlim = xl)
 plot_case_selection(suff, Q = "ProbPos", main = "X sufficient for Y", xlim = xl)
 
 ```
+
+
+FOR MODEL WITH CONFOUNDING
+
+Estimand is the average treatment effect:
+
+```{r, echo = FALSE}  
+plot_case_selection <- function(diag, Q = "ATE", main = NULL, xlim = NULL, ylim = xlim) {
+	with(filter(diag$diagnoses_df, Query == Q), plot(MSE, post_var, type = "n", main = main, xlim = xlim, ylim = ylim))
+	with(filter(diag$diagnoses_df, Query == Q), text(MSE, post_var, strategy))
+	abline(0,1)
+ }
+
+par(mfrow = c(2,2))
+reg_confound <- read_rds("saved/M_confound_model_2_regr.rds")
+plot_case_selection(reg, main = "Correlated")
+
+flat <- read_rds("saved/M_confound_model_2_flat.rds")
+plot_case_selection(flat, main = "Flat")
+
+necs <- read_rds("saved/M_confound_model_2_necs.rds")
+plot_case_selection(necs, main = "X necessary for Y")
+
+suff <- read_rds("saved/M_confound_model_2_suff.rds")
+plot_case_selection(suff, main = "X sufficient for Y")
+
+```
+
+Probability of a positive effect:
+
+```{r, echo = FALSE}
+par(mfrow = c(2,2))
+plot_case_selection(reg, Q = "ProbPos", main = "Correlated"
+)
+plot_case_selection(flat, Q = "ProbPos", main = "Flat")
+
+xl = c(.013, .017)
+
+plot_case_selection(necs, Q = "ProbPos", main = "X necessary for Y")
+plot_case_selection(suff, Q = "ProbPos", main = "X sufficient for Y")
+
+```
+
+ADDITIONAL ANALYSES
+
+```{r, eval = FALSE, echo = FALSE}
+
+# Example comparing two data strategies with two queries
+	if(!exists("fit")) fit  <- fitted_model()
+
+# Models
+ models <- list(
+#   analysis_model = make_model("X->M->Y"),
+#   confound_model <- make_model("X->M->Y; X<->Y"),
+   pathways_model <- make_model("X->M->Y; X->Y"))
+
+# Givens
+ givens <- list(
+   
+  regr   = data.frame(
+     X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
+     Y = c(0,0,0,0,0,0,1,1,0,0,1,1,1,1,1,1)) %>%
+              collapse_data(analysis_model, remove_family = TRUE),
+
+  flat   = data.frame(
+     X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
+     Y = c(0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1)) %>%
+              collapse_data(analysis_model, remove_family = TRUE),
+
+  suff   = data.frame(
+     X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
+     Y = c(0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1)) %>%
+              collapse_data(analysis_model, remove_family = TRUE),
+
+  necs   = data.frame(
+     X = c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1), M = NA,
+     Y = c(0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0)) %>%
+              collapse_data(analysis_model, remove_family = TRUE))
+
+ # Data strategies
+
+ data_strats <- function(N = 2) {
+   
+ list(
+ 	off_01 = list(N=N, withins = TRUE, vars = "M", conditions = "X==0 & Y==1"),
+ 	off_10 = list(N=N, withins = TRUE, vars = "M", conditions = "X==1 & Y==0"),
+ 	on_00  = list(N=N, withins = TRUE, vars = "M", conditions = "X==0 & Y==0"),
+ 	on_11  = list(N=N, withins = TRUE, vars = "M", conditions = "X==1 & Y==1"),
+ 	
+ 	all_on = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+ 									 conditions = list("X==0 & Y==0", "X==1 & Y==1")),
+ 	all_off = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+ 									 conditions = list("X==0 & Y==1", "X==1 & Y==0")),
+ 	all_y0 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+ 								conditions = list("X==0 & Y==0", "X==1 & Y==0")),
+ 	all_y1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+ 									 conditions = list("X==0 & Y==1", "X==1 & Y==1")),
+ 	all_x0 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+ 								conditions = list("X==0 & Y==0", "X==0 & Y==1")),
+ 	all_x1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+ 									 conditions = list("X==1 & Y==0", "X==1 & Y==1"))
+ 	)
+ }
+
+ # Queries
+ 
+  queries <- list(ATE = "Y[X=1]-Y[X=0]", ProbPos = "Y[X=1]>Y[X=0]", Path = "(M[X=1] > M[X=0]) & 
+                     (Y[M=M[X=0]] < Y[M=M[X=1]]) & 
+                     (Y[X=1, M=M[I=1]] == Y[X=0, X=X[I=1]])")
+  subsets <- list(ATE = "Y[X=1]-Y[X=0]", ProbPos = "Y[X=1]>Y[X=0]")
+
+ # Diagnosis function 
+  
+  case_selection_diagnose <- function(model, given,  N)
+    
+    diagnose_strategies(
+     analysis_model = model,
+     data_strategies = data_strats(N),
+     given = given,
+     queries = queries,
+     sims = 6000,
+     fit = fit)
+
+
+  
+ if(do_diagnosis){
+
+  for(m in  1:length(models)){ for(N in c(2, 4)) {for(g in 1:length(givens)) {	
+    filename <-  paste0("saved/M_", names(models)[m], "_", N, "_", names(givens)[g], ".rds")
+    
+    print(filename)
+    write_rds(case_selection_diagnose(models[[m]], givens[[g]], N), 
+            filename)
+  
+  }}}
+  }
+ 
+```
+
+
+
 
 A critical decision for scholars employing mixed methods is to determine which cases are most valuable for within-case analysis.  
 
