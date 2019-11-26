@@ -32,6 +32,49 @@ Note that to describe the estimand, the Sample Average Treatment Effect, we also
 
 Represented in this way we can use the tools of Chapters 6 and 7 to fully examine this seemingly multi-case study. In the below we examine a situation in which we consider the value of observing $K$ on one case --- in this set up this is equivalent to observing part of the vector $K$ and making inferences on the full vector $\theta$.
 
+```{r, eval = FALSE}
+library(gbiqq)
+
+model <- make_model("X->Y")
+
+fit <- fitted_model()
+
+updated_1 <- gbiqq(model, data = data.frame(X=1, Y=1), 
+									 chains = 10, iter = 12000, stan_model = fit)
+
+updated_2 <- gbiqq(model, data = data.frame(X=c(1,1,1,1), Y=c(1,1,1,1)), 
+									 chains = 10, iter = 12000, stan_model = fit)
+
+updated_3 <- gbiqq(model, data = data.frame(X=1, Y=NA), 
+									 chains = 10, iter = 12000, stan_model = fit)
+
+# query_model(query = "Y[X=1] - Y[X=0]", )
+
+query_model(updated_1, 
+						query = te("X","Y"), 
+						subsets = c(TRUE, "X==1 & Y==1"), 
+						using = c("parameters", "posteriors"), 
+						expand_grid = TRUE )
+
+query_model(updated_2, 
+						query = te("X","Y"), 
+						subsets = c(TRUE, "X==1 & Y==1"), 
+						using = c("parameters", "posteriors"), 
+						expand_grid = TRUE )
+
+query_model(updated_3, 
+						query = te("X","Y"), 
+						subsets = c(TRUE, "X==1 & Y==1"), 
+						using = c("parameters", "posteriors"), 
+						expand_grid = TRUE )
+
+
+# IMPORTANT TO DISTINGUISH BETWEEN:
+
+# what is the chance that X caused Y given X=1, Y=1 and
+# what is the chance that X causes Y given you have seen a case in which X=1, Y=1 and
+# Only data that your query has not conditioned on is informative (is dta conditionnally independent of teh query)
+```
 
 ## General procedure 
 
