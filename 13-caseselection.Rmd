@@ -121,10 +121,11 @@ gen_given <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
 
 M_base_model_2_regr <- read_rds("saved/M_base_model_2_regr.rds")
 M_base_model_2_flat <- read_rds("saved/M_base_model_2_flat.rds")
+M_base_model_2_conc <- read_rds("saved/M_base_model_2_conc.rds")
 
 
 # install.packages("ggpubr")
-M_base_model_2_flat$diagnoses_df %>%
+M_base_model_2_conc$diagnoses_df %>%
 ggplot(aes(strategy, post_var)) +
   geom_linerange(
     aes(x = strategy, ymin = post_var, ymax = post_var), 
@@ -136,6 +137,24 @@ ggplot(aes(strategy, post_var)) +
   facet_grid(rows = vars(Query))
 ```
 
+
+
+## Learning about confounding
+
+X -> M -> Y with confounding 
+
+M should be very informative for X->Y relationship
+
+
+## Base model, one path
+
+Given = regr
+
+For on regression line cases, you can see cases where M correlates positively with X and Y correlates positively to Y; or cases where M is correlated with neither
+
+For off regression line cases, you can see cases where M correlates negatively with X and positively with Y, or vice versa; and you can see cases where M is correlated with neither. 
+
+With no restrictions, you can't actually learn in a within-case sense because you have flat priors over X->M and M->Y effects. You're only able to learn from correlations. 
 
 
 A critical decision for scholars employing mixed methods is to determine which cases are most valuable for within-case analysis.  
