@@ -179,6 +179,7 @@ if(!exists("fit")) fit <- fitted_model()
 
 # Diagnosis function 
 
+if(do_diagnosis){
 test_corr <- 
   diagnose_strategies(
     analysis_model = model,
@@ -194,6 +195,8 @@ test_corr <-
     fit = fit, 
     refresh = 1000,
     iter = 8000)
+
+write_rds(test_corr, "saved/test_corr.rds")
 
 test_flat <- 
   diagnose_strategies(
@@ -212,7 +215,12 @@ test_flat <-
     iter = 8000)
 
 
-kable(test$diagnoses_df, digits = 3)
+write_rds(test_flat, "saved/test_flat.rds") 
+}
+
+test_corr <- read_rds("saved/test_corr.rds") 
+test_flat <- read_rds("saved/test_flat.rds") 
+
 ```
 
 
