@@ -47,43 +47,22 @@ givens <- list(
 
 # Data strategies
 
-data_strats <- function(N = 4) {
-  if(N%%2 != 0) stop("even Ns only please")
-  
-  
-  out <- list(
-    off_01 = list(N=N, withins = TRUE, vars = "M", conditions = "X==0 & Y==1"),
-    off_10 = list(N=N, withins = TRUE, vars = "M", conditions = "X==1 & Y==0"),
-    on_00  = list(N=N, withins = TRUE, vars = "M", conditions = "X==0 & Y==0"),
-    on_11  = list(N=N, withins = TRUE, vars = "M", conditions = "X==1 & Y==1"),
-    
-    all_on = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                  conditions = list("X==0 & Y==0", "X==1 & Y==1")),
-    all_off = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                   conditions = list("X==0 & Y==1", "X==1 & Y==0")),
-    all_y0 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                  conditions = list("X==0 & Y==0", "X==1 & Y==0")),
-    all_y1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                  conditions = list("X==0 & Y==1", "X==1 & Y==1")),
-    all_x0 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                  conditions = list("X==0 & Y==0", "X==0 & Y==1")),
-    all_x1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                  conditions = list("X==1 & Y==0", "X==1 & Y==1")))
-  
-  if(N==2){message("N<4, fully spread strategy not possible"); return(out)}
-  
-  c(out, spread = list(N=c(N,N,N,N)/4, withins = TRUE, vars = "M",
-                       conditions = list("X==0 & Y==0", "X==0 & Y==1","X==1 & Y==0", "X==1 & Y==1"))
-  )
-}
+data_strats  <- {
 
-given <- gen_given(12,4,4,12)
-model     = make_model("X->M->Y")
-N_wide = 1
-N_deep = 2
-make_possible_data(model = model, given = given, 
-                N = c(N_wide, N_deep), withins = c(FALSE, TRUE), conditions = c(TRUE, c("X==1 & Y==1")), 
-                vars = c(TRUE, "M"))
+  out <- list()
+  j <-1
+  for(N_wide in c(0, 2, 4)) { for(N_deep in c(0,2,4)) {
+    
+  add <- list(N = c(N_wide, N_deep/2, N_deep/2), 
+                     withins = c(FALSE, TRUE, TRUE), 
+                     vars = list(c("X", "Y"), "M", "M"), 
+                     conditions = list(TRUE, c("X==0 & Y==0"), c("X==1 & Y==1")))
+  out[[j]] <- add 
+  names(out)[[j]] <- paste0("w_", N_wide, "_d_", N_deep)
+  j <- j+1
+  }}
+  out
+}
 
 
 # Queries
@@ -102,7 +81,7 @@ case_selection_diagnose <- function(model, given,  N, sims = 4000, ...)
   
   diagnose_strategies(
     analysis_model = model,
-    data_strategies = data_strats(N),
+    data_strategies = data_strats,
     given = given,
     queries = queries,
     subsets = subsets,
@@ -121,15 +100,15 @@ if(do_diagnosis){
   
   {if(!exists("fit")) fit <- fitted_model()}
   
-  for(N in c(2, 4)) { for(m in  1:length(models)) {for(g in 1:length(givens)) {	
-    filename <-  paste0("saved/Ch12_", names(models)[m], "_", N, "_", names(givens)[g], ".rds")
+ for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+    filename <-  paste0("saved/Ch12_", names(models)[m], "_",  names(givens)[g], ".rds")
     
     print(filename)
     
     write_rds(case_selection_diagnose(models[[m]], givens[[g]], N), 
               filename)
     
-  }}}
+  }}
 }
 ```
 
@@ -138,97 +117,18 @@ if(do_diagnosis){
 ```{r, echo = FALSE, eval = FALSE}
 ## Read and display
 
-M_base_model_2_regr <- read_rds("saved/M_base_model_2_regr.rds")
-M_base_model_2_flat <- read_rds("saved/M_base_model_2_flat.rds")
+Ch12_base_model_2_regr <- read_rds("saved/Ch12_base_model_2_regr.rds")
+Ch12_base_model_2_flat <- read_rds("saved/Ch12_base_model_2_flat.rds")
 df <- rbind(data.frame(given = "regr", M_base_model_2_regr$diagnoses_df),
             data.frame(given = "flat", M_base_model_2_flat$diagnoses_df))
 
-# install.packages("ggpubr")
-df %>%
-  ggplot(aes(strategy, post_var)) +
-  geom_linerange(
-    aes(x = strategy, ymin = post_var, ymax = post_var), 
-    color = "lightgray", size = 1.5
-  )+
-  geom_point(aes(color = strategy), size = 2)+
-  ggpubr::color_palette("jco")+
-  #  theme_pubclean()+
-  facet_grid(rows = vars(Query), cols = vars(given))
+# JULIANS'S GRAPH FUNCTION / MAYBE ADD TO _packages_used.R
+
+
 ```
 
 
 
-## Simple walks through
-
-### Learning from mediators on and off the regression line for an X->M->Y model 
-
-```{r, eval = FALSE}
-# source("_packages_used.R")
-
-model <- make_model("X -> M -> Y")
-  
-gen_given <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
-  data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
-    tidyr::uncount(ns) %>%
-    collapse_data(model, remove_family = TRUE)}
-
-
-# Data strategies
-
-data_strats <- function(N = 4) {
-  if(N%%2 != 0) stop("even Ns only please")
-  list(
-    all_on = list(N=c(4,1), withins = c(FALSE, TRUE), vars = list(c("X", "Y"), "M")),
-    all_off = list(N=c(N,N)/2, withins = FALSE, vars = "M",
-                   conditions = list("X==0 & Y==1", "X==1 & Y==0"))
-  )
-}
-
-
-testsdata <- gbiqqtools::make_possible_data(model, given = NULL, N = c(4,4), withins = c(FALSE, TRUE), vars = list(c("X", "Y"), "M"))
-testsdata
-
-# Queries
-
-if(!exists("fit")) fit <- fitted_model()
-
-# Diagnosis function 
-
-test_corr <- 
-  diagnose_strategies(
-    analysis_model = model,
-    data_strategies = data_strats(2),
-#    given = gen_given(6,2,2,6),
-    queries = list(ATE = "Y[X=1]-Y[X=0]", 
-                   a = "Y[X=1]<Y[X=0]", 
-                   b = "Y[X=1]>Y[X=0]", 
-                   c = "(Y[X=1]==0) & (Y[X=0]==0)", 
-                   d = "(Y[X=1]==1) & (Y[X=0]==1)"),
-    subsets = list(TRUE, TRUE, "X==1 & Y==1"),
-    sims = 8000,
-    fit = fit, 
-    refresh = 1000,
-    iter = 8000)
-
-test_flat <- 
-  diagnose_strategies(
-    analysis_model = model,
-    data_strategies = data_strats(2),
-#    given = gen_given(4,4,4,4),
-    queries = list(ATE = "Y[X=1]-Y[X=0]", 
-                   a = "Y[X=1]<Y[X=0]", 
-                   b = "Y[X=1]>Y[X=0]", 
-                   c = "(Y[X=1]==0) & (Y[X=0]==0)", 
-                   d = "(Y[X=1]==1) & (Y[X=0]==1)"),
-    subsets = list(TRUE, TRUE, "X==1 & Y==1"),
-    sims = 8000,
-    fit = fit, 
-    refresh = 1000,
-    iter = 8000)
-
-
-kable(test$diagnoses_df, digits = 3)
-```
 
 How does this approach guide researchers in making choices about research designs?
 
