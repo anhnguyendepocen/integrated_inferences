@@ -17,6 +17,8 @@ Full set of analyses
 # Models
 
 models <- list(
+  chain_model     = make_model("X->M->Y"),
+
   base_model     = make_model("X->M->Y<-X"),
   
   restricted_model = make_model("X->M->Y<-X") %>%
@@ -169,7 +171,11 @@ data_strats <- function(N = 4) {
     all_on = list(N=c(N,N)/2, withins = TRUE, vars = "M",
                   conditions = list("X==0 & Y==0", "X==1 & Y==1")),
     all_off = list(N=c(N,N)/2, withins = TRUE, vars = "M",
-                   conditions = list("X==0 & Y==1", "X==1 & Y==0"))
+                   conditions = list("X==0 & Y==1", "X==1 & Y==0")),
+    all_x1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+                   conditions = list("X==1 & Y==0", "X==1 & Y==1")),
+    all_y1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+                   conditions = list("X==0 & Y==1", "X==1 & Y==1"))
   )
 }
 
@@ -189,8 +195,17 @@ test_corr <-
                    a = "Y[X=1]<Y[X=0]", 
                    b = "Y[X=1]>Y[X=0]", 
                    c = "(Y[X=1]==0) & (Y[X=0]==0)", 
-                   d = "(Y[X=1]==1) & (Y[X=0]==1)"),
-    subsets = list(TRUE, TRUE, "X==1 & Y==1"),
+                   d = "(Y[X=1]==1) & (Y[X=0]==1)",
+                   a1 = "M[X=1]<M[X=0]", 
+                   b1 = "M[X=1]>M[X=0]", 
+                   c1 = "(M[X=1]==0) & (M[X=0]==0)", 
+                   d1 = "(M[X=1]==1) & (M[X=0]==1)",
+                   a2 = "Y[M=1]<Y[M=0]", 
+                   b2 = "Y[M=1]>Y[M=0]", 
+                   c2 = "(Y[M=1]==0) & (Y[M=0]==0)", 
+                   d2 = "(Y[M=1]==1) & (Y[M=0]==1)"
+                   ),
+    subsets = list(TRUE, TRUE,  TRUE,  TRUE),
     sims = 8000,
     fit = fit, 
     refresh = 1000,
@@ -207,12 +222,18 @@ test_flat <-
                    a = "Y[X=1]<Y[X=0]", 
                    b = "Y[X=1]>Y[X=0]", 
                    c = "(Y[X=1]==0) & (Y[X=0]==0)", 
-                   d = "(Y[X=1]==1) & (Y[X=0]==1)"),
-    subsets = list(TRUE, TRUE, "X==1 & Y==1"),
-    sims = 8000,
-    fit = fit, 
-    refresh = 1000,
-    iter = 8000)
+                   d = "(Y[X=1]==1) & (Y[X=0]==1)",
+                   a1 = "M[X=1]<M[X=0]", 
+                   b1 = "M[X=1]>M[X=0]", 
+                   c1 = "(M[X=1]==0) & (M[X=0]==0)", 
+                   d1 = "(M[X=1]==1) & (M[X=0]==1)",
+                   a2 = "Y[M=1]<Y[M=0]", 
+                   b2 = "Y[M=1]>Y[M=0]", 
+                   c2 = "(Y[M=1]==0) & (Y[M=0]==0)", 
+                   d2 = "(Y[M=1]==1) & (Y[M=0]==1)"
+                   ),
+    subsets = list(TRUE, TRUE,  TRUE,  TRUE),
+    sims = 8000, fit = fit, refresh = 1000, iter = 8000)
 
 
 write_rds(test_flat, "saved/test_flat.rds") 
@@ -220,6 +241,11 @@ write_rds(test_flat, "saved/test_flat.rds")
 
 test_corr <- read_rds("saved/test_corr.rds") 
 test_flat <- read_rds("saved/test_flat.rds") 
+
+# key thing to note is for $all_x1[[1]] a2 = b2
+# and for $all_x1[[2]] a1 = b1 
+# so in both cases shareas of a and b remains contstant
+
 
 ```
 
@@ -233,6 +259,12 @@ For flat prior data:
 * if we examine two cases in different quadrants *off the diagonal* (one $X=0, Y=1$ case and one $X=1, Y=0$ case) :
   * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a negative effect  $Y$ (producing a  posterior centered on a small positive effect). 
   * Conversely if we see that $M$ is different in the two cases, then we have a correlation (of different signs) between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general and in particular that it had a negative effect, resulting in a posterior centered on a small negative ATE.
+
+* If we examine data conditioning on the value of $X$ but with variation on $Y$ (for instance $X=1, Y=0$ and   $X=1, Y=1$) 
+data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In teh case with flat data this changes beliefs on positve and negative effects but not the difference between them. The ate then remains unchanged. FLAG work though intuition  more
+
+* If we examine data conditioning on the value of $Y$ but with variation on $X$ (for instance $X=0, Y=1$ and   $X=1, Y=1$) 
+data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In teh case with flat data this changes beliefs on positve and negative effects but not the difference between them. The ate then remains unchanged.
 
 For correlated data:
 
@@ -671,3 +703,46 @@ $$\text{Multinomial}(n_{XY}|w_{XY})\prod_{x\in\{0,1\},y \in\{0,1\}}\text{Binom}(
 
 The multinomial part of this expression gives the probability of observing the particular $X,Y$ combinations; the event probabilities for these depend on $\lambda$ and $\pi$ only | for example  $w_{11} = \lambda_b \pi_b+\lambda_d \pi_d$. The subsequent binomials give the probability of observing the clue patterns conditional on searching for a given number of clues ($k_{xy}(n_{xy})$) and given an event probability $\psi_{xy1}$ for seeing a clue given that the clue is sought for an $x,y$ combination; thus for example:
 $$ \psi_{111} = \frac{\lambda_b \pi_b}{\lambda_b \pi_b+\lambda_d \pi_d} \phi_{b1} + \frac{\lambda_d \pi_d}{\lambda_b \pi_b+\lambda_d \pi_d} \phi_{d1}$$
+
+
+
+## Appendix: Stan uncertainty
+
+```{r, echo = FALSE, eval = FALSE}
+# manual check of base model with refr data and checking off regression line with data pattern 1
+
+data_check <- M_base_model_2_regr$possible_data_list$all_off[,c(1,3)] %>% expand_data(models$base_model)
+update_check <- gbiqq(models$base_model, data_check)
+query_check <- query_model(update_check, "Y[X=1] - Y[X=0]", using = "posteriors")
+
+# Prior check
+
+prior_data <- gen_given(12,4,4,12)  %>% expand_data(models$base_model)
+update_prior <- gbiqq(models$base_model, prior_data, chains = 8, iter = 10000)
+query_prior <- query_model(update_prior, "Y[X=1] - Y[X=0]", using = "posteriors")
+query_prior
+
+
+posterior <- query_distribution(update_prior, "Y[X=1] - Y[X=0]", using = "posteriors")
+
+sd(posterior)
+
+n = 8000
+
+resample <- function(posterior, n) {
+  sample(1:length(posterior), n, replace = TRUE)
+}
+resample(posterior)
+
+
+sds <- replicate(2000, sd(posterior[resample(posterior, n)]))
+
+hist(sds)
+
+
+
+iters <- seq(1:12)*1000
+sdss <- sapply(iters, function(n) sd(replicate(5000, sd(posterior[resample(posterior, n)]))))
+
+plot(iters, sdss, ylim = c(0,.003 ))
+```
