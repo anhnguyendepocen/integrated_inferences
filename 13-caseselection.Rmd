@@ -88,7 +88,9 @@ subsets <- list(TRUE, "X==1 & Y==1", "X==1 & Y==1")
 
 # Diagnosis function 
 
-case_selection_diagnose <- function(model, given,  N, sims = 4000, ...)
+fit <- fitted_model()
+
+case_selection_diagnose <- function(model, given,  N, sims = 4000, fit, ...)
   
   diagnose_strategies(
     analysis_model = model,
@@ -97,7 +99,9 @@ case_selection_diagnose <- function(model, given,  N, sims = 4000, ...)
     queries = queries,
     subsets = subsets,
     sims = sims,
-    fit = fit, 
+    fit = fit,
+    iter = 6000,
+    chains = 6,
     refresh = 1000,
     ...)
 
@@ -111,15 +115,28 @@ if(do_diagnosis){
   
   {if(!exists("fit")) fit <- fitted_model()}
   
-  for(N in c(2, 4)) { for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+#  for(N in c(2, 4)) { for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+  for(N in 4) { for(m in  1:2) {for(g in 1:length(givens)) {	
     filename <-  paste0("saved/M_", names(models)[m], "_", N, "_", names(givens)[g], ".rds")
     
     print(filename)
     
-    write_rds(case_selection_diagnose(models[[m]], givens[[g]], N), 
+    write_rds(case_selection_diagnose(models[[m]], givens[[g]], N = N, fit = fit), 
               filename)
     
   }}}
+
+  #  for(N in c(2, 4)) { for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+  for(N in 4) { for(m in  3:5) {for(g in 1:length(givens)) {	
+    filename <-  paste0("saved/M_", names(models)[m], "_", N, "_", names(givens)[g], ".rds")
+    
+    print(filename)
+    
+    write_rds(case_selection_diagnose(models[[m]], givens[[g]], N = N, fit = fit), 
+              filename)
+    
+  }}}
+    
 }
 ```
 
