@@ -13,7 +13,7 @@ source("_packages_used.R")
 
 Full set of analyses
 
-```{r, echo = FALSE, eval = FALSE}
+```{r, echo = FALSE, eval = TRUE}
 # Models
 
 models <- list(
@@ -77,7 +77,7 @@ subsets <- list(TRUE, "X==1 & Y==1", "X==1 & Y==1")
 
 # Diagnosis function 
 
-case_selection_diagnose <- function(model, given,  N, sims = 4000, ...)
+case_selection_diagnose <- function(model, given,  sims = 4000, ...)
   
   diagnose_strategies(
     analysis_model = model,
@@ -100,12 +100,13 @@ if(do_diagnosis){
   
   {if(!exists("fit")) fit <- fitted_model()}
   
- for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+# for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+ for(m in  1) {for(g in 1) {	
     filename <-  paste0("saved/Ch12_", names(models)[m], "_",  names(givens)[g], ".rds")
     
     print(filename)
     
-    write_rds(case_selection_diagnose(models[[m]], givens[[g]], N), 
+    write_rds(case_selection_diagnose(models[[m]], givens[[g]]), 
               filename)
     
   }}
