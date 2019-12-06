@@ -146,23 +146,92 @@ if(do_diagnosis){
 
 ```{r, echo = FALSE}
 ## Read and display
+## PARAMETERS
+rds_files <- data.frame(name = dir("saved"), stringsAsFactors = F) %>% 
+  filter(str_detect(name,"^M") & str_detect(name,"rds$")) 
 
-M_base_model_2_regr <- read_rds("saved/M_base_model_2_regr.rds")
-M_base_model_2_flat <- read_rds("saved/M_base_model_2_flat.rds")
-df <- rbind(data.frame(given = "regr", M_base_model_2_regr$diagnoses_df),
-            data.frame(given = "flat", M_base_model_2_flat$diagnoses_df))
+## UPLOAD MODEL DIAGNOSIS
+upload_df <- function(file){
+  df <- data.frame()
+  toappend  <- read_rds(paste0("saved/",file))$diagnoses_df %>% 
+    mutate(
+      given = str_match(file,"....(?=\\.rds)"),
+      model = str_match(file, "^M_(.*?)_[:digit:]")[,2],
+      N     = str_match(file,"[:digit:]")
+      ) %>% 
+    mutate_if(is.factor, function(x) as.character(tolower(x))) %>% 
+    mutate_if(is.character, tolower)
+  ifelse(
+    "post_var_sd" %in% colnames(toappend),
+    TRUE,
+    toappend <- mutate(toappend, post_var_sd = NA))
+  df <- bind_rows(df, toappend)
+}
 
-# install.packages("ggpubr")
-df %>%
-  ggplot(aes(strategy, post_var)) +
-  geom_linerange(
-    aes(x = strategy, ymin = post_var, ymax = post_var), 
-    color = "lightgray", size = 1.5
-  )+
-  geom_point(aes(color = strategy), size = 2)+
-  ggpubr::color_palette("jco")+
-  #  theme_pubclean()+
-  facet_grid(rows = vars(Query), cols = vars(given))
+df <- do.call(rbind,lapply(rds_files$name, upload_df))
+
+## TIDY UP DF
+df$strategy2                            <- df$strategy
+df$strategy2[df$strategy == "all_on"]   <- "on_all"
+df$strategy2[df$strategy == "all_off"]  <- "off_all"
+
+df <- df %>% mutate(
+  strategy22 = word(strategy2,2,sep = "_"),
+  strategy21 = word(strategy2,1,sep = "_"),
+  strategy21 = case_when(
+    strategy21 == "on"  ~ "on diagonal",
+    strategy21 == "off" ~ "off diagonal",
+    strategy21 == "all" ~ "on x, on y",
+    TRUE                ~ strategy21),
+  strategy21 = factor(strategy21, levels = c("on diagonal","off diagonal","on x, on y","spread")),
+  given      = factor(given, levels = c("flat","regr","conc","necs","suff"))
+)
+
+
+df  <- df %>%
+  left_join(filter(df,strategy=="prior") %>%  select(given,Query,model,N,prior_var = post_var)) %>%
+  filter(strategy != "prior") %>% 
+  mutate(gain_prior = (post_var/prior_var-1)*100, 
+         gain_prior_upp_ci = ((post_var+2*post_var_sd)/prior_var-1)*100,
+         gain_prior_low_ci = ((post_var-2*post_var_sd)/prior_var-1)*100) %>% 
+  select(model,Query,starts_with("strategy"),given,N,everything()) %>% 
+  arrange(model,Query,strategy,given)
+
+# Lists for loops
+mq <- as.list(as.data.frame(t(df %>% select(model,Query) %>% distinct()), stringsAsFactors = F))
+
+# GRAPHS
+for (i in 1:length(mq)) {
+print(
+  ggplot(df %>%
+         filter(model == mq[[i]][1]   &
+         Query == mq[[i]][2] & 
+         strategy2 != "spread"),
+         aes(x=strategy22, y=gain_prior, group = N, colour = N)) +
+    # Line at 0 
+    geom_hline(yintercept=0, linetype="dashed", size=0.5) +
+    # Add point plot
+    geom_point(position = position_dodge(width = 0.4)) + 
+    # Add error bars
+    geom_errorbar(
+      width=.1, 
+      aes(ymin=gain_prior_upp_ci, ymax=gain_prior_low_ci),
+      position = position_dodge(width = 0.4)) +
+    # Faceting
+    facet_grid(given ~ strategy21, scale = "free_x") +
+    # Labeling & Styling
+    ylab("Gain in posterior variance over prior (%)") +
+    labs(title = paste0("Strategy diagnosis: ",mq[[i]][1]," & ",mq[[i]][2]," estimand"),
+         subtitle = "Grouped by strategy & given") + 
+    theme_bw() + scale_colour_hue(l = 50, c = 50)  + 
+    theme(
+      legend.title.align = 0.5,
+      axis.title.x = element_blank(),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank())
+)
+}
+
 ```
 
 
