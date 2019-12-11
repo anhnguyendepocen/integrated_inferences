@@ -1,27 +1,21 @@
 library(tidyverse)
 
-#Ch12_chain_model_regr <- readRDS("saved/Ch12_chain_model_regr.rds")
-#Ch12_chain_model_suff <- readRDS("saved/Ch12_chain_model_suff.rds")
-#Ch12_chain_model_conc <- readRDS("saved/Ch12_chain_model_conc.rds")
-#Ch12_chain_model_flat <- readRDS("saved/Ch12_chain_model_flat.rds")
-#Ch12_chain_model_necs <- readRDS("saved/Ch12_chain_model_necs.rds")
+givens <- c("regr", "suff")
 
-#givens <- list(Ch12_chain_model_regr,
-#               Ch12_chain_model_suff,
-#               Ch12_chain_model_conc,
-#               Ch12_chain_model_flat,
-#               Ch12_chain_model_necs)
+process <- function(given) {
 
-#process <- function(given) {
-#  given <<- given %>%
-#    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
-#    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
-#    dplyr::filter(!is.na(Deep)) %>%
-#    dplyr::mutate(upper = post_var + post_var_sd) %>%
-#    dplyr::mutate(lower = post_var - post_var_sd)
-#}
+ readRDS(paste0("saved/Ch12_chain_model_", given, ".rds")) %>%
+    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
+    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
+    dplyr::filter(!is.na(Deep)) %>%
+    dplyr::mutate(upper = post_var + 2*post_var_sd,
+                   lower = post_var - 2*post_var_sd.
+                   given = given)
+}
 
-#lapply(givens, process)
+df <- lapply(givens, process) %>% do_apply(rbind)
+
+# Order: flat, regr, conc, necc, suff
 
 given1 <- readRDS("saved/Ch12_chain_model_regr.rds")$diagnoses_df %>%
   mutate(Deep= as.numeric(sub(".*_d_", "", strategy))) %>%
