@@ -65,28 +65,12 @@ given5 <- readRDS("saved/Ch12_chain_model_necs.rds")$diagnoses_df %>%
 
 tograph <- bind_rows(given1, given2, given3, given4, given5)
 
-ggplot(dplyr::filter(tograph, Query=="ATE"), aes(x= Deep, y=post_var)) +
-  geom_point(shape = 15, size  = 2) +
+ggplot(tograph, aes(x= Deep, y=post_var)) +
+  geom_point(aes(shape=Query), size=2) +
+  geom_line(aes(linetype=Query)) +
   facet_grid(vars(given), vars(Wide)) +
   geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
   theme_bw() +
   ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a Chain Model. Query = ATE ")
+  ggtitle("Wide and Deep Stategies for a Chain Model")
 
-
-ggplot(dplyr::filter(tograph, Query=="ProbPos"), aes(x= Deep, y=post_var)) +
-  geom_point(shape = 15, size  = 2) +
-  facet_grid(vars(given), vars(Wide)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
-  theme_bw() +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a Chain Model. Query = ProbPos")
-
-
-ggplot(dplyr::filter(tograph, Query=="via_M"), aes(x= Deep, y=post_var)) +
-  geom_point(shape = 15, size  = 2) +
-  facet_grid(vars(given), vars(Wide)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
-  theme_bw() +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a Chain Model. Query = via_M")
