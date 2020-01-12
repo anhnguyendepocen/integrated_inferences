@@ -105,9 +105,9 @@ In this setting, a causal *explanation* of a given case outcome amounts to a sta
 
 We can also use potential-outcomes reasoning for more complex causal relations. For example, supposing there are two binary causal variables $X_1$ and $X_2$, we can specify any given case's potential outcomes for each of the different possible combinations of causal conditions---there now being four such conditions (as each causal variable may take on $0$ or $1$ when the other is at $0$ or $1$). 
 
-As for notation, we now need to expand $\theta$'s subscript since we need to represent the value that $Y$ takes on under each of the four possible combinations of $X_1$ and $X_2$ values. We construct the four-digit subscript to with the ordering: $\theta^Y_{Y|(X_1=0, X_2=0);Y|(X_1=1, X_2=0);Y|(X_1=0, X_2=1);Y|(X_1=1, X_2=1)}$. Thus, for instance, $\theta_^Y_{0100}$ means that $Y$ is 1 if $X_1=1$ and $X_2=0$ and is 0 otherwise. We now have 16 causal types: 16 different patterns that $Y$ might display in response to changes in $X_1$ and $X_2$. The full set is represented in Table \@ref(tab:PO16), which also makes clear how types are read off of four-digit subscripts. (The type numberings in the first column are, of course, arbitrary here and included for ease of reference.) 
+As for notation, we now need to expand $\theta$'s subscript since we need to represent the value that $Y$ takes on under each of the four possible combinations of $X_1$ and $X_2$ values. We construct the four-digit subscript to with the ordering: $\{Y|(X_1=0, X_2=0),Y|(X_1=1, X_2=0),Y|(X_1=0, X_2=1),Y|(X_1=1, X_2=1)\}$. Thus, for instance, $\theta^Y_{0100}$ means that $Y$ is 1 if $X_1=1$ and $X_2=0$ and is 0 otherwise. We now have 16 causal types: 16 different patterns that $Y$ might display in response to changes in $X_1$ and $X_2$. The full set is represented in Table \@ref(tab:PO16), which also makes clear how types are read off of four-digit subscripts. (The type numberings in the first column are, of course, arbitrary here and included for ease of reference.) 
 
-We can read off this table that a type 4 is a case in which $X_1$ has a positive causal effect on $Y$ but $X_2$ has no effect, whereas a type 6 is case in which $X_2$ has a positive effect but $X_2$ has none. We also capture interactions here. For instance, a type 5 is case in which $X_2$ has a postive causal effect if and only if $X_1$ is 0, and where $X_1$ has a negative causal effect only when $X_2=1$.
+We can read off this table that for nodal type  $\theta^Y_{0101}$,  $X_1$ has a positive causal effect on $Y$ but $X_2$ has no effect, whereas for $\theta^Y_{0011}$, $X_2$ has a positive effect but $X_1$ has none. We also capture interactions here. For instance, $\theta^Y_{0001}$, $X_2$ has a postive causal effect if and only if $X_1$ is 1.
 
 As one might imagine, the number of causal types increases rapidly as the number of considered causal variables increases, as it also would if we allowed $X$ or $Y$ to take on more than 2 possible values. However, the basic principle of representing possible causal relations as patterns of potential outcomes remains unchanged as long as variables are discrete.
 
@@ -115,45 +115,53 @@ As one might imagine, the number of causal types increases rapidly as the number
 
 
 
-get_nodal_types(make_model("X1 -> Y <- X2"), collapse = FALSE)$Y
+```{r PO16, echo = FALSE}
+tab <- get_nodal_types(make_model("X1 -> Y <- X2"), collapse = FALSE)$Y
+
+tab <- cbind(type = paste0("$\\theta^Y_{", rownames(tab), "}$"), tab)
+
+kable(tab, 
+      col.names = c("$\\theta^Y$", "if $X_1=0, X_2=0$",   "if $X_1=1,X_2=0$",  "if $X_1=0,X_2=1$",   "if $X_1=1, X_2=1$" ),
+      row.names = FALSE,
+      caption = "With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the two variables.")
+```
 
 
----------------------------------------------------------------------------------------------
-$\theta^Y$          if $X_1=0, X_2=0$   if $X_1=1,X_2=0$  if $X_1=0,X_2=1$   if $X_1=1, X_2=1$ 
------------------   -----------------   ----------------  -----------------  -----------------
-$\theta^Y_{0000}$         0                0                0                    0      
+<!-- --------------------------------------------------------------------------------------------- -->
+<!-- $\theta^Y$          if $X_1=0, X_2=0$   if $X_1=1,X_2=0$  if $X_1=0,X_2=1$   if $X_1=1, X_2=1$  -->
+<!-- -----------------   -----------------   ----------------  -----------------  ----------------- -->
+<!-- $\theta^Y_{0000}$         0                0                0                    0       -->
 
-$\theta^Y_{0001}$         0                0                0                    1      
+<!-- $\theta^Y_{0001}$         0                0                0                    1       -->
 
-$\theta^Y_{0010}$         0                0                1                    0      
+<!-- $\theta^Y_{0010}$         0                0                1                    0       -->
 
-$\theta^Y_{0011}$         0                0                1                    1      
+<!-- $\theta^Y_{0011}$         0                0                1                    1       -->
 
-$\theta^Y_{0100}$         0                1                0                    0      
+<!-- $\theta^Y_{0100}$         0                1                0                    0       -->
 
-$\theta^Y_{0101}$         0                1                0                    1      
+<!-- $\theta^Y_{0101}$         0                1                0                    1       -->
 
-$\theta^Y_{0110}$         0                1                1                    0      
+<!-- $\theta^Y_{0110}$         0                1                1                    0       -->
 
-$\theta^Y_{0111}$         0                1                1                    1      
+<!-- $\theta^Y_{0111}$         0                1                1                    1       -->
 
-$\theta^Y_{1000}$         1                0                0                    0      
+<!-- $\theta^Y_{1000}$         1                0                0                    0       -->
 
-$\theta^Y_{1001}$         1                0                0                    1      
+<!-- $\theta^Y_{1001}$         1                0                0                    1       -->
 
-$\theta^Y_{1010}$         1                0                1                    0      
+<!-- $\theta^Y_{1010}$         1                0                1                    0       -->
 
-$\theta^Y_{1011}$         1                0                1                    1      
+<!-- $\theta^Y_{1011}$         1                0                1                    1       -->
 
-$\theta^Y_{1100}$         1                1                0                    0      
+<!-- $\theta^Y_{1100}$         1                1                0                    0       -->
 
-$\theta^Y_{1101}$         1                1                0                    1      
+<!-- $\theta^Y_{1101}$         1                1                0                    1       -->
 
-$\theta^Y_{1110}$         1                1                1                    0      
+<!-- $\theta^Y_{1110}$         1                1                1                    0       -->
 
-$\theta^Y_{1111}$         1                1                1                    1      
----------------------------------------------------------------------------------------
-Table: (\#tab:PO16) With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the two variables.
+<!-- $\theta^Y_{1111}$         1                1                1                    1       -->
+<!-- --------------------------------------------------------------------------------------- -->
 
 Readers will note that, in the counterfactual framework, causal relations are conceptualized as deterministic. A given case has a set of potential outcomes. Any randomness enters the analysis as incomplete knowledge of the factors influencing an outcome. But, in principle, if we knew all of the relevant causal conditions and the complete set of potential outcomes for a case, we could perfectly predict the actual outcome in that case. This understanding of causality---as ontologically deterministic, but empirically imperfectly understood---is compatible with views of causation commonly employed by qualitative researchers (see, e.g., @mahoney2008toward), and with understandings of causal determinism going back at least to @laplace1901philosophical. As we will see, we can readily express this kind of incompleteness of knowledge within a causal model framework; indeed, the way in which causal models manage uncertainty is central to how they allow us to pose questions of interest and to learn from evidence.
 
@@ -733,7 +741,7 @@ model <- set_restrictions(model, labels = list(M = "M10", Y="Y10"))
 # Step 4
 # We set priors over the distribution of (remaining) causal types.
 # Here we set "jeffreys priors"
-model <- set_priors(model, prior_distribution = "jeffreys")
+model <- set_priors(model, distribution = "jeffreys")
 
 # We now have a model defined as an R object. 
 # Later we will ask questions of this model and update it using data.
