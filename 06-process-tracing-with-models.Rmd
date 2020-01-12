@@ -9,7 +9,7 @@ output:
 
 ***
 
-We connect the literature on causal models to qualitative inference strategies used in process tracing. We provide a procedure for inference on case level queries from causal models . In addition we extract a set of implications for process tracing. We show how a key result from the causal models literature provides a condition for when clues may be (or certainly will not be) informative. 
+We connect the literature on causal models to qualitative inference strategies used in process tracing. We provide a procedure for inference on case level queries from causal models. In addition we extract a set of implications for process tracing. We show how a key result from the causal models literature provides a condition for when clues may be (or certainly will not be) informative. 
 
 ***
 
@@ -303,14 +303,14 @@ ambiguityXMY  <- get_ambiguities_matrix(XMY)
 
 ```{r, echo = FALSE}
 
-ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = draw_type_prob(XY, using = "parameters")))
+ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = get_type_prob(XY)))
 
 ```
 <!-- For an $X \rightarrow Y$ model: -->
 
 ```{r, echo = FALSE}
 
-ambXMY_with_priors <- data.frame(cbind(ambiguityXMY, prior = draw_type_prob(XMY, using = "parameters")))
+ambXMY_with_priors <- data.frame(cbind(ambiguityXMY, prior = get_type_prob(XMY)))
 
 kable(ambXMY_with_priors, caption = "Ambiguity matrix for X -> M -> Y model. Rows are causal types, columns are data types. Last column shows possible priors over rows.")
 
@@ -518,7 +518,7 @@ XMY <- make_model("X -> M -> Y") %>%
 
 query_model(model = XMY, 
               queries = list(PC = "Y[X=1] > Y[X=0]"), 
-              subsets = list(TRUE, "X==1 & Y==1", "X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
+              given = list(TRUE, "X==1 & Y==1", "X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
               using = "parameters")
 ```
 
@@ -526,8 +526,8 @@ query_model(model = XMY,
 make_model("X -> M -> Y") %>% 
        set_parameters (c(.5, .5, .2, .2, .4, .2, .2, .2, .4, .2)) %>%
        query_model(
-         queries = list(PC = "Y[X=1] > Y[X=0]"), 
-         subsets = list(TRUE, "X==1 & Y==1", "X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
+         query = list(PC = "Y[X=1] > Y[X=0]"), 
+         given = list(TRUE, "X==1 & Y==1", "X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
          using = "parameters") %>%
       kable()
 
