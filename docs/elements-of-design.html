@@ -264,9 +264,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10.1.1" data-path="elements-of-design.html"><a href="elements-of-design.html#defining-a-model"><i class="fa fa-check"></i><b>10.1.1</b> Defining a model</a></li>
 </ul></li>
 <li class="chapter" data-level="10.2" data-path="elements-of-design.html"><a href="elements-of-design.html#evaluating-a-design"><i class="fa fa-check"></i><b>10.2</b> Evaluating a design</a><ul>
-<li class="chapter" data-level="10.2.1" data-path="elements-of-design.html"><a href="elements-of-design.html#expected-variance-almost-always-goes-down"><i class="fa fa-check"></i><b>10.2.1</b> Expected variance (almost) always goes down</a></li>
-<li class="chapter" data-level="10.2.2" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-1"><i class="fa fa-check"></i><b>10.2.2</b> Illustration</a></li>
-<li class="chapter" data-level="10.2.3" data-path="elements-of-design.html"><a href="elements-of-design.html#other-loss-functions"><i class="fa fa-check"></i><b>10.2.3</b> Other loss functions</a></li>
+<li class="chapter" data-level="10.2.1" data-path="elements-of-design.html"><a href="elements-of-design.html#expected-error-and-expected-posterior-variance"><i class="fa fa-check"></i><b>10.2.1</b> Expected error and expected posterior variance</a></li>
+<li class="chapter" data-level="10.2.2" data-path="elements-of-design.html"><a href="elements-of-design.html#expected-variance-almost-always-goes-down"><i class="fa fa-check"></i><b>10.2.2</b> Expected variance (almost) always goes down</a></li>
+<li class="chapter" data-level="10.2.3" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-1"><i class="fa fa-check"></i><b>10.2.3</b> Illustration</a></li>
+<li class="chapter" data-level="10.2.4" data-path="elements-of-design.html"><a href="elements-of-design.html#other-loss-functions"><i class="fa fa-check"></i><b>10.2.4</b> Other loss functions</a></li>
 </ul></li>
 <li class="chapter" data-level="10.3" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-of-design-decaration-in-code"><i class="fa fa-check"></i><b>10.3</b> Illustration of Design Decaration in code</a></li>
 </ul></li>
@@ -450,14 +451,13 @@ D=IE(1-\theta^D)+\theta^DE+(1-E)(1-I)\theta^D
 </div>
 <div id="evaluating-a-design" class="section level2">
 <h2><span class="header-section-number">10.2</span> Evaluating a design</h2>
+<div id="expected-error-and-expected-posterior-variance" class="section level3">
+<h3><span class="header-section-number">10.2.1</span> Expected error and expected posterior variance</h3>
 <p>How do you know if you have a good design?</p>
-<p>One metric is to assess the expected (squared) error resulting from posterior beliefs. In other words: how wrong are you likely to be if you base your best guess on your posterior mean?</p>
-<p>Formally, define the loss function for query <span class="math inline">\(Q\)</span> given data <span class="math inline">\(K\)</span> as:</p>
-<p><span class="math display">\[E_{k, q} \left(\left( \int q&#39; P(q&#39; | k, w)dq&#39; - q\right)^2\right)\]</span></p>
-<p>where the expectation is taken over the joint distribution of <span class="math inline">\(K\)</span> and <span class="math inline">\(Q\)</span>, given <span class="math inline">\(W\)</span>. This is measure of expected loss is sometimes called the <em>Bayes risk</em>. The inner term <span class="math inline">\(P(q&#39;|k, w)\)</span> is the posterior distribution on <span class="math inline">\(q&#39;\)</span> given observation of <span class="math inline">\(k\)</span> and <span class="math inline">\(w\)</span>.</p>
-<p>Another way to think of the gains is as the expected posterior variance: how certain do you expect you will be after you make use of this new information?</p>
-<p>In fact these two quantities are equivalent (see for example <span class="citation">Scharf (<a href="#ref-scharf1991statistical">1991</a>)</span>).</p>
-<p>To see this imagine a situation in which there is an unknown parameter <span class="math inline">\(q\)</span> and we have a data strategy that produces a distribution over data <span class="math inline">\(k\)</span>, given <span class="math inline">\(q\)</span>.</p>
+<p>One metric is to assess the <em>expected (squared) error</em> resulting from posterior beliefs. In other words: how wrong are you likely to be if you base your best guess on your posterior mean?</p>
+<p>Another way to think of the gains is as the <em>expected posterior variance</em>: how certain do you expect you will be after you make use of this new information?</p>
+<p>In fact these two quantities are equivalent (see for example <span class="citation">Scharf (<a href="#ref-scharf1991statistical">1991</a>)</span>) – at least if you assess expectations using the same priors as you use for forming posteriors.</p>
+<p>To see this, imagine a situation in which there is an unknown parameter <span class="math inline">\(q\)</span> and we have a data strategy that produces a distribution over data <span class="math inline">\(k\)</span>, given <span class="math inline">\(q\)</span>.</p>
 <p>Let <span class="math inline">\(p(q,k)\)</span> denote the joint prior distribution over <span class="math inline">\(q\)</span> and <span class="math inline">\(k\)</span> with marginal distributions <span class="math inline">\(p(k)\)</span> and <span class="math inline">\(p(q)\)</span>.</p>
 <p>For any <span class="math inline">\(k\)</span> there is posterior estimate <span class="math inline">\(q_k\)</span> and a posterior variance <span class="math inline">\(v_k\)</span>, both estimated using Bayes rule.</p>
 <p>The expected squared error is then:</p>
@@ -480,14 +480,15 @@ ESE &amp;=&amp; \int_q\int_k \left({q}_k-q\right)^2p(q,k)dkdq \\
 \end{eqnarray}
 \]</span></p>
 <p>Note that the key move is in recognizing that <span class="math inline">\(p(q |k)\)</span> is in fact the posterior distribution on <span class="math inline">\(q\)</span> given <span class="math inline">\(k\)</span>. In using this we assume that the same distribution is used for assessing error and for conducing analysis—that is we take the researcher’s prior to be the relevant one for assessing error.</p>
+</div>
 <div id="expected-variance-almost-always-goes-down" class="section level3">
-<h3><span class="header-section-number">10.2.1</span> Expected variance (almost) always goes down</h3>
+<h3><span class="header-section-number">10.2.2</span> Expected variance (almost) always goes down</h3>
 <p>Moreover, it is easy to see that whenever inferences are sensitive to <span class="math inline">\(K\)</span>, the expected variance of the posterior will be lower than the variance of the prior. This can be seen from the law of total variance, written here to highlight the gains from observation of <span class="math inline">\(K\)</span>, given what is already known from observation of <span class="math inline">\(W\)</span>.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a><br />
 <span class="math display">\[Var(Q|W) = E_{K|W}(Var(Q|K,W)) +Var_{K|W}(E(Q|K,W))\]</span></p>
 <p>However although <em>expected</em> posterior variance goes down, it is still always possible that posterior variance rises. The increase in uncertainty does not however mean you haven’t been learning. Rather you have learned that things aren’t as simple as you thought.</p>
 </div>
 <div id="illustration-1" class="section level3">
-<h3><span class="header-section-number">10.2.2</span> Illustration</h3>
+<h3><span class="header-section-number">10.2.3</span> Illustration</h3>
 <p>For illustration say that it is known that <span class="math inline">\(X=1, Y=1\)</span> and that, given this information (playing the role of <span class="math inline">\(W\)</span>), the posterior probability that a unit is of type <span class="math inline">\(b\)</span>—for whom <span class="math inline">\(Y\)</span> would be 0 were <span class="math inline">\(X=0\)</span> (and not type <span class="math inline">\(d\)</span>, for which <span class="math inline">\(Y\)</span> would be 1 regardless) is <span class="math inline">\(p\)</span>. Say then that that under some theory we have <span class="math inline">\(\phi_b := \Pr(K=1 | Y(0)=0, Y(1)=1, X=1)\)</span>, <span class="math inline">\(\phi_d := \Pr(K=1 | Y(0)=1, Y(1)=1, X=1)\)</span>.</p>
 <p>Then what is the value added of this theory? Define <span class="math inline">\(Q\)</span> here as the query regarding whether the unit is a <span class="math inline">\(b\)</span> type. Then the prior variance, <span class="math inline">\(Var(Q|W)\)</span>, is simply <span class="math inline">\(p(1-p)^2 +(1-p)p^2 = p(1-p)\)</span>.</p>
 <!-- Would be best to  write down the theory as a structural equation that has phi_j as p(K=1|j) -->
@@ -507,7 +508,7 @@ In that case the <em>expected error</em> is:</p>
 <!-- .2 2/3 / .2 2/3 + .8 1/3 ) = .4/ .4 + .8    -->
 </div>
 <div id="other-loss-functions" class="section level3">
-<h3><span class="header-section-number">10.2.3</span> Other loss functions</h3>
+<h3><span class="header-section-number">10.2.4</span> Other loss functions</h3>
 <p>Other loss functions could be used, including functions that take account of the costs of collecting additional data,<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> or to the risks associated with false diagnoses.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
 </div>
 </div>
@@ -522,16 +523,16 @@ In that case the <em>expected error</em> is:</p>
 <a class="sourceLine" id="cb1-6" title="6"></a>
 <a class="sourceLine" id="cb1-7" title="7">reference_model &lt;-<span class="st"> </span>analysis_model <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_priors</span>(<span class="kw">c</span>(.<span class="dv">5</span>, <span class="fl">.5</span>, <span class="dv">1</span>, <span class="dv">1</span>,<span class="dv">7</span>, <span class="dv">1</span>))</a>
 <a class="sourceLine" id="cb1-8" title="8"></a>
-<a class="sourceLine" id="cb1-9" title="9">my_design &lt;-<span class="st"> </span><span class="kw">gbiqq_designer</span>(</a>
-<a class="sourceLine" id="cb1-10" title="10">  </a>
-<a class="sourceLine" id="cb1-11" title="11">  <span class="dt">reference_model =</span> reference_model,</a>
-<a class="sourceLine" id="cb1-12" title="12">  <span class="dt">analysis_model  =</span> analysis_model,</a>
-<a class="sourceLine" id="cb1-13" title="13">  <span class="dt">n     =</span> n,</a>
-<a class="sourceLine" id="cb1-14" title="14">  <span class="dt">query =</span> <span class="kw">list</span>(<span class="dt">PC =</span> <span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>),</a>
-<a class="sourceLine" id="cb1-15" title="15">  <span class="dt">given =</span> <span class="st">&quot;X==1 &amp; Y==1&quot;</span></a>
-<a class="sourceLine" id="cb1-16" title="16"></a>
+<a class="sourceLine" id="cb1-9" title="9">my_design &lt;-</a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="st">  </span></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="st">  </span><span class="kw">gbiqq_designer</span>(</a>
+<a class="sourceLine" id="cb1-12" title="12">    <span class="dt">reference_model =</span> reference_model,</a>
+<a class="sourceLine" id="cb1-13" title="13">    <span class="dt">analysis_model  =</span> analysis_model,</a>
+<a class="sourceLine" id="cb1-14" title="14">    <span class="dt">n               =</span> n,</a>
+<a class="sourceLine" id="cb1-15" title="15">    <span class="dt">query           =</span> <span class="kw">list</span>(<span class="dt">PC =</span> <span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>),</a>
+<a class="sourceLine" id="cb1-16" title="16">    <span class="dt">given           =</span> <span class="st">&quot;X==1 &amp; Y==1&quot;</span></a>
 <a class="sourceLine" id="cb1-17" title="17">  )</a></code></pre></div>
-<p>With this model in hand you can use it to draw likely data, run analyses, and run diagnostics.</p>
+<p>Once declared like this you can use a design to draw likely data, run analyses, and run diagnostics.</p>
 <p>Sample data can be generated with the <code>DeclareDesign</code> function <code>draw_data</code>:</p>
 <table>
 <caption><span id="tab:unnamed-chunk-3">Table 10.1: </span>Sample Data (shown in compact form)</caption>
@@ -546,22 +547,22 @@ In that case the <em>expected error</em> is:</p>
 <tr class="odd">
 <td align="left">X0Y0</td>
 <td align="left">XY</td>
-<td align="right">5</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">X1Y0</td>
 <td align="left">XY</td>
-<td align="right">0</td>
+<td align="right">2</td>
 </tr>
 <tr class="odd">
 <td align="left">X0Y1</td>
 <td align="left">XY</td>
-<td align="right">4</td>
+<td align="right">1</td>
 </tr>
 <tr class="even">
 <td align="left">X1Y1</td>
 <td align="left">XY</td>
-<td align="right">1</td>
+<td align="right">7</td>
 </tr>
 </tbody>
 </table>
@@ -577,7 +578,7 @@ In that case the <em>expected error</em> is:</p>
 <tbody>
 <tr class="odd">
 <td align="left">PC</td>
-<td align="right">0.515</td>
+<td align="right">0.676</td>
 </tr>
 </tbody>
 </table>
@@ -599,8 +600,8 @@ In that case the <em>expected error</em> is:</p>
 <td align="left">PC</td>
 <td align="left">-</td>
 <td align="left">posteriors</td>
-<td align="right">0.247</td>
-<td align="right">0.194</td>
+<td align="right">0.553</td>
+<td align="right">0.22</td>
 <td align="left">est_PC</td>
 </tr>
 </tbody>
