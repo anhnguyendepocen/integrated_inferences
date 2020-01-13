@@ -45,15 +45,13 @@ We can use `gbiqq` to define the model, with these restrictions and this confoun
 <!-- I have changed the confound to create a distinct conditional distribution when I will have a positive effect on M (was for 11 types)_. Seems like we'd expect governments to work harder to reduce inequality in places where it would pose a mobilizational threat than in other places. -->
 
 ```{r, message = FALSE}
-model <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG
+model <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
 
-          set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)")) %>% #Allow I to have a distinct conditional distribution when M's nodal type is \theta_01. 
-  
-          set_priors()
+          set_confound(list(I = "(M[I=1]  > M[I=0])"))  # Allow I to have a distinct conditional distribution when M's nodal type is \theta_01. 
   
 ```
 
@@ -75,7 +73,7 @@ As in Chapter \@ref(ptapp), wewill confront the model with data drawn from codin
 Here is a snapshot of the data:
 
 
-```{r, eval = FALSE, echo = FALSE}
+```{r ch09getdemdata, eval = FALSE, echo = FALSE}
 data <- gbiqq::democracy_data 
 ```
 
@@ -101,7 +99,7 @@ With data and model in hand, we can now update our model to get posteriors on th
 
 The parameters 
 
-```{r}
+```{r dimparammatrix}
 param_mat <- get_parameter_matrix(model)
 dim(param_mat)
 ```
@@ -112,7 +110,8 @@ FLAG: Need to talk a bit through what's happening here.
 
 if(do_diagnosis){
   updated <- gbiqq(model, data)
-  write_rds(updated, "saved/PIMD_updated.rds")}
+  write_rds(updated, "saved/PIMD_updated.rds")
+  }
 
 updated <- read_rds("saved/PIMD_updated.rds")
 
@@ -132,60 +131,77 @@ One set of questions we can ask of the updated model is about the probability th
 
 3. **For cases displaying a given causal state and outcome, and with additional clues present or absent.** What if we have also collected clues on mediating or moderating nodes? For instance, for what proportion of high-inequality, democratizing cases *with* mobilization did inequality cause the outcome? For what proportion *without* mobilization? Likewise for the presence or absence of international pressure?
 
-We ask `gbiqq` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the effect if interest and then "subset" for the relevant conditioning. We present the code and results of these operations below and in Figure \@ref(mixedhist).
+We ask `gbiqq` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the causal types that correspond to the effect of interest and then take the conditional probability of these. We present the code and results of these operations below and in Figure \@ref(mixedhist).
 
 FLAG: Let's graph the priors for each of these queries next to the posteriors.
 
 ```{r, include = FALSE}
-prob_b <- query_distribution(
-                   model = updated, 
-                   using = "posteriors",
-                   query = "D[I=1] > D[I=0]") #For what proportion of cases does inequality have a positive effect on democratization?
 
-PC <- query_distribution(
-                   model = updated, 
-                   using = "posteriors",
-                   query = "D[I=1] > D[I=0]",
-                   subset = "D==1 & I==1") #For what proportion of I=D=1 cases did inequality cause democratization?
+if(do_diagnosis){
+pimd_queries <- list(
+  #For what proportion of cases does inequality have a positive effect on democratization?
+  prob_b = query_distribution(
+    model = updated,
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]"
+  ),
+  
+  #For what proportion of I=D=1 cases did inequality cause democratization?
+  PC =  query_distribution(
+    model = updated,
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]",
+    given = "D==1 & I==1"
+  ),
+  
+  #For what proportion  of I=M=D=1 cases did inequality cause democratization?
+  PC2 = query_distribution(
+    model = updated,
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]",
+    given = "D==1 & I==1 & M==1"
+  ),
+  
+  #And what about for the I=D=1 cases where there was no mobilization?
+  PC3 = query_distribution(
+    model = updated,
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]",
+    given = "D==1 & I==1 & M==0"
+  ),
+  
+  PC4 = query_distribution(
+    model = updated,
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]",
+    given = "D==1 & I==1 & M==1 & P==1"
+  ),
+  
+  # And what about for the I=D=1 cases where there was no mobilization?
+  PC5 = query_distribution(
+    model = updated,
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]",
+    given = "D==1 & I==1 & M==1 & P==0"
+  )
+)
 
+write_rds(pimd_queries, "saved/09_qimdqueries.rds")
+}
 
-PC2 <- query_distribution(
-                   model = updated, 
-                   using = "posteriors",
-                   query = "D[I=1] > D[I=0]",
-                   subset = "D==1 & I==1 & M==1") #For what proportion  of I=M=D=1 cases did inequality cause democratization?
-
-PC3 <- query_distribution(
-                   model = updated, 
-                   using = "posteriors",
-                   query = "D[I=1] > D[I=0]",
-                   subset = "D==1 & I==1 & M==0") #And what about for the I=D=1 cases where there was no mobilizaiton?
-
-PC4 <- query_distribution(
-                   model = updated, 
-                   using = "posteriors",
-                   query = "D[I=1] > D[I=0]",
-                   subset = "D==1 & I==1 & M==1 & P==1") 
-
-PC5 <- query_distribution(
-                   model = updated, 
-                   using = "posteriors",
-                   query = "D[I=1] > D[I=0]",
-                   subset = "D==1 & I==1 & M==1 & P==0") #And what about for the I=D=1 cases where there was no mobilizaiton?
-
-
+pimd_queries <- read_rds("saved/09_qimdqueries.rds")
 
 ```
 
 
 ```{r mixedhist, echo =FALSE}
 par(mfrow = c(3,2))
-hist(prob_b, main = "I=1 causes D=1", xlim = c(0,1))
-hist(PC,     main = "D=1 caused by I=1", xlim = c(0,1))
-hist(PC2,    main = "D=1 caused by I=1 | M = 1", xlim = c(0,1))
-hist(PC3,    main = "D=1 caused by I=1 | M = 0", xlim = c(0,1))
-hist(PC4,    main = "D=1 caused by I=1 | M = 1, P=1", xlim = c(0,1))
-hist(PC5,    main = "D=1 caused by I=1 | M = 1, P=0", xlim = c(0,1))
+hist(pimd_queries$prob_b, main = "I=1 causes D=1", xlim = c(0,1))
+hist(pimd_queries$PC,     main = "D=1 caused by I=1", xlim = c(0,1))
+hist(pimd_queries$PC2,    main = "D=1 caused by I=1 | M = 1", xlim = c(0,1))
+hist(pimd_queries$PC3,    main = "D=1 caused by I=1 | M = 0", xlim = c(0,1))
+hist(pimd_queries$PC4,    main = "D=1 caused by I=1 | M = 1, P=1", xlim = c(0,1))
+hist(pimd_queries$PC5,    main = "D=1 caused by I=1 | M = 1, P=0", xlim = c(0,1))
 
 ```
 
@@ -198,52 +214,62 @@ We can see that the share of cases overall in which inequality causes democratiz
 
 We can undertake the same exercise for a negative causal effect, generating estimates a comparable set of estimands, as shown in Figure \@ref(mixedhist2).
 
-```{r, include = FALSE}
-prob_a <- query_distribution(
+```{r pimdnegqueries, include = FALSE}
+
+if(do_diagnosis){
+  
+pimdneg_queries <- list(
+
+  prob_a = query_distribution(
                    model = updated, 
                    using = "posteriors",
-                   query = "D[I=0] > D[I=1]")
+                   query = "D[I=0] > D[I=1]"),
 
-PCneg <- query_distribution(
+PCneg =  query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
-                   subset = "D==0 & I==1")
+                   given = "D==0 & I==1"),
 
-PC2neg <- query_distribution(
+PC2neg = query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
-                   subset = "D==0 & I==1 & M==1")
+                   given = "D==0 & I==1 & M==1"),
 
-PC3neg <- query_distribution(
+PC3neg = query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
-                   subset = "D==0 & I==1 & M==0")
+                   given = "D==0 & I==1 & M==0"),
 
-PC4neg <- query_distribution(
+PC4neg = query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
-                   subset = "D==0 & I==1 & M==1 & P==1")
+                   given = "D==0 & I==1 & M==1 & P==1"),
 
-PC5neg <- query_distribution(
+PC5neg = query_distribution(
                    model = updated, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
-                   subset = "D==0 & I==1 & M==0 & P==0")
+                   given = "D==0 & I==1 & M==0 & P==0"))
+
+write_rds(pimdneg_queries, "saved/09_pimdnegqueries.rds")
+}
+
+pimdneg_queries <- read_rds("saved/09_pimdnegqueries.rds")
 
 ```
 
 ```{r, mixedhist2, echo = FALSE}
 par(mfrow = c(3,2))
-hist(prob_a, main = "I=1 causes D=0", xlim = c(0,1))
-hist(PCneg,     main = "D=0 caused by I=1", xlim = c(0,1))
-hist(PC2neg,    main = "D=0 caused by I=1 | M = 1", xlim = c(0,1))
-hist(PC3neg,    main = "D=0 caused by I=1 | M = 0", xlim = c(0,1))
-hist(PC4neg,    main = "D=0 caused by I=1 | M = 1, P=1", xlim = c(0,1))
-hist(PC5neg,    main = "D=0 caused by I=1 | M = 1, P=0", xlim = c(0,1))
+hist(pimdneg_queries$prob_a, main = "I=1 causes D=0", xlim = c(0,1))
+hist(pimdneg_queries$PCneg,     main = "D=0 caused by I=1", xlim = c(0,1))
+hist(pimdneg_queries$PC2neg,    main = "D=0 caused by I=1 | M = 1", xlim = c(0,1))
+hist(pimdneg_queries$PC3neg,    main = "D=0 caused by I=1 | M = 0", xlim = c(0,1))
+hist(pimdneg_queries$PC4neg,    main = "D=0 caused by I=1 | M = 1, P=1", xlim = c(0,1))
+hist(pimdneg_queries$PC5neg,    main = "D=0 caused by I=1 | M = 1, P=0", xlim = c(0,1))
 
 ```
 
@@ -255,51 +281,60 @@ Importantly, in the mixed-data setting, we can think of our estimands in both po
 
 Estimands can be calculated for both the prior and posterior distributions.
 
-```{r, include = FALSE}
+```{r ppcomparison, include = FALSE}
 updated <- set_prior_distribution(updated)
 
-subsets <- list(TRUE, "D==1 & I==1", "D==1 & I==1 & M ==1", "D==1 & I==1 & M==0")
+givens11 <- list(TRUE, "D==1 & I==1", "D==1 & I==1 & M ==1", "D==1 & I==1 & M==0")
+givens01 <- list(TRUE, "D==0 & I==1", "D==0 & I==1 & M ==1", "D==0 & I==1 & M==0")
 
-result_priors <- gbiqq::query_model(
+if(do_diagnosis){
+  
+ch09_queryresults <- list(
+  
+result_priors = query_model(
                    model = updated, 
                    using = "priors",
                    queries =  list("D[I=1] > D[I=0]"),
-                   subset = subsets)
+                   given = givens11),
 
-result_posteriors <- gbiqq::query_model(
+result_posteriors = query_model(
                    model = updated, 
                    using = "posteriors",
                    queries =  list("D[I=1] > D[I=0]"),
-                   subsets = subsets)
+                   given = givens11),
 
-subsets <- list(TRUE, "D==0 & I==1", "D==0 & I==1 & M ==1", "D==0 & I==1 & M==0")
-
-prevent_priors <- gbiqq::query_model(
+prevent_priors = query_model(
                    model = updated, 
                    using = "priors",
                    queries =  list("D[I=0] > D[I=1]"),
-                   subsets = subsets)
+                   given = givens01),
 
-prevent_posteriors <- gbiqq::query_model(
+prevent_posteriors = query_model(
                    model = updated, 
                    using = "posteriors",
                    queries =  list("D[I=0] > D[I=1]"),
-                   subsets = subsets)
+                   given = givens01))
+
+write_rds(pimdneg_queries, "saved/ch09_queryresultsqueries.rds")
+}
+
+ch09_queryresults_queries <- read_rds("saved/ch09_queryresultsqueries.rds")
+
 ```
 
 Inequality causes democratization:
 
-```{r, echo = FALSE}
-kable(result_priors, caption = "Prior", digits = 3)
-kable(result_posteriors, caption = "Posterior", digits = 3)
+```{r IcausesDem, echo = FALSE}
+kable(ch09_queryresults_queries$result_priors, caption = "Prior", digits = 3)
+kable(ch09_queryresults_queries$result_posteriors, caption = "Posterior", digits = 3)
 ```
 
 
 Inequality prevents democratization:
 
-```{r, echo  = FALSE}
-kable(prevent_priors, caption = "Prior", digits = 3)
-kable(prevent_posteriors, caption = "Posterior", digits = 3)
+```{r IpreventsDem, echo  = FALSE}
+kable(ch09_queryresults_queries$prevent_priors, caption = "Prior", digits = 3)
+kable(ch09_queryresults_queries$prevent_posteriors, caption = "Posterior", digits = 3)
 ```
 
 
