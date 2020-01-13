@@ -472,76 +472,54 @@ Looking back at our democratization DAG in Figure \@ref(fig:simpleDAG), $M$ is a
 Using these basic principles, conditional independencies can be read off any DAG. We do so by checking every path connecting two variables of interest and ask whether, along those paths, the flow of information is open or blocked, given any other variables whose values are already observed. Conditional independence is established when *all* paths are blocked given what we already know; otherwise, conditional independence is absent.
 
 
-<!-- ### A simple running example -->
+### A simple running example
 
-<!-- We will illistrate these core ideas with a simple running example of a model of government corruption and survival.  -->
+We will illistrate these core ideas with a simple running example of a model of government corruption and survival.
 
-<!-- We begin with two binary features of context. Consider, first, that a country may or may not have a free press ($X$). Second, the country's government may or may not be sensitive to public opinion ($S$).^[Government sensitivity here can be thought of as government sophistication (does it take the actions of others into account when making decisions?) or as a matter of preferences (does it have a dominant strategy to engage in corruption?).] Let us then stipulate what follows from these conditions. The government will engage in corruption ($C=1$) unless it is sensitive to public opinion and there is a free press. Moreover, if and only if there is both government corruption and a free press, the press will report on the corruption ($R=1$). Finally, the government will be removed from office ($Y=1$) if it has acted corruptly and this gets reported in the press; otherwise, the government remains in office.  -->
+We begin with two binary features of context. Consider, first, that a country may or may not have a free press ($X$). Second, the country's government may or may not be sensitive to public opinion ($S$).^[Government sensitivity here can be thought of as government sophistication (does it take the actions of others into account when making decisions?) or as a matter of preferences (does it have a dominant strategy to engage in corruption?).] Let us then stipulate what follows from these conditions. The government will engage in corruption ($C=1$) unless it is sensitive to public opinion and there is a free press. Moreover, if and only if there is both government corruption and a free press, the press will report on the corruption ($R=1$). Finally, the government will be removed from office ($Y=1$) if it has acted corruptly and this gets reported in the press; otherwise, the government remains in office.
 
-<!-- As a set of equations, this simple causal model may be written as follows: -->
+As a set of equations, this simple causal model may be written as follows:
 
-<!-- $\begin{array}{ll} -->
-<!-- C = 1-X\times S &  \mbox{Whether the government is corrupt}\\ -->
-<!-- R = C\times X &  \mbox{Whether the press reports on corruption}\\ -->
-<!-- Y = C\times R & \mbox{Whether the government is removed from office} -->
-<!-- \end{array}$ -->
+$\begin{array}{ll}
+C = 1-X\times S &  \mbox{Whether the government is corrupt}\\
+R = C\times X &  \mbox{Whether the press reports on corruption}\\
+Y = C\times R & \mbox{Whether the government is removed from office}
+\end{array}$
 
-<!-- One thing that these equations make clear is that the variables in our model function in various places as causal-type nodes for one another. For instance, we can see from equation for $C$ that the causal effect of a free press ($X$) on corruption ($C$) depends on whether the government is sensitive to public opinion ($S$): $S$ determines $C$'s response to $X$ (as does $X$ for $S$'s effect on $C$). A similar relationship holds for $C$ and $X$ in their effect on $R$ and for $C$ and $R$ in their effect on $Y$. As we will see below, the model also implies more complex causal-type relationships. We can, further, substitute through the causal processes to write down the functional equation for the outcome in terms of the two initial causal variables: $Y=(1-S)X$.^[Equivalently, in Boolean terms, where $Y$ stands for the occurrence of government removal, $Y= \neg S \land X$; and the function for the outcome "government retained" can be written  $\neg Y = (S\land X) \lor (S\land\neg X) \lor (\neg S \land \neg X)$ or, equivalently, $\neg Y = S + \neg S \neg X$.]  -->
+One thing that these equations make clear is that the variables in our model function in various places as causal-type nodes for one another. For instance, we can see from equation for $C$ that the causal effect of a free press ($X$) on corruption ($C$) depends on whether the government is sensitive to public opinion ($S$): $S$ determines $C$'s response to $X$ (as does $X$ for $S$'s effect on $C$). A similar relationship holds for $C$ and $X$ in their effect on $R$ and for $C$ and $R$ in their effect on $Y$. As we will see below, the model also implies more complex causal-type relationships. We can, further, substitute through the causal processes to write down the functional equation for the outcome in terms of the two initial causal variables: $Y=(1-S)X$.^[In Boolean notation (but preserving a structural equation interpretation), where $Y$ stands for the occurrence of government removal, $Y= \neg S \land X$; and the function for the outcome "government retained" can be written  $\neg Y = (S\land X) \lor (S\land\neg X) \lor (\neg S \land \neg X)$ or, equivalently, $\neg Y = S + \neg S \neg X$.]
 
-<!-- Let us, further, allow our two primary causal variables---the existence of a free press and the existence of a sensitive government---to vary probabilistically. In particular, we represent the probability of a free press with the population parameter $\lambda^X_1$ and the probability of a sensitive government with the parameter $\lambda^S_1$. To generate draws based on these  probabilities, we then introduce two random variables with uniform distributions between 0 and 1, $U_X$ and $U_S$, and posit that we get a free press, $\theta^X=\theta^X_1$ whenever $u_X < \lambda^X_1$ and a sensitive government, $\theta^S=\theta^S_1$, whenever $u_S < \lambda_1^S$.  -->
+Let us, further, allow the two primary causal variables---the existence of a free press and the existence of a sensitive government---to vary probabilistically. In particular, we represent the probability of a free press with the population parameter $\lambda^X_1$ and the probability of a sensitive government with the parameter $\lambda^S_1$. 
 
-<!-- This gives the following equations for $X$ and $S$: -->
-
-<!-- $\begin{array}{ll} -->
-<!-- X = \mathbb{1}(u_X < \lambda^X_1) & \mbox{Whether the press is free}\\ -->
-<!-- S = \mathbb{1}(u_S < \lambda^S_1) & \mbox{Whether the government is sensitive}\\ -->
-<!-- \end{array}$ -->
+Note that in this model, only the most "senior" specified variables, $X$ and $S$, have a stochastic component (i.e., $\lambda^X_1$ and $\lambda^S_1$ lie between 0 and 1). All other endogenous variables are deterministic functions of other specified variables (put differently: each node has only a single nodal type).
 
 
-<!-- <!-- where $\pi^S$ and $\pi^X$ are parameters governing the probability of $S$ and $X$, respectively, taking on the value of 1. --> 
-
-<!-- <!-- To generate a probabilistic causal model, we also need distributions on $\mathcal U = (U_S, U_X)$. These are given by:  --> 
-
-<!-- <!-- $\begin{array}{ll} --> 
-<!-- <!-- u_S \sim \text{Unif}[0,1] &  \mbox{Stochastic component of government type} \\ --> 
-<!-- <!-- u_X \sim \text{Unif}[0,1] &  \mbox{Stochastic component of press freedom} --> 
-<!-- <!-- \end{array}$ --> 
-
-<!-- Note that in this model, only the most "senior" specified variables, $X$ and $S$, have a stochastic component (i.e., $\lambda^X_1$ and $\lambda^S_1$ lie between 0 and 1). All other endogenous variables are deterministic functions of other specified variables. -->
-
-<!-- <!-- Does that work? The term "specified" is quite useful here -- since otherwise really every variable except the U's is a deterministic function. Do we want to just come out and formally distinguish, earlier, between specified and unspecified variables? -->
+```{r running, echo = FALSE, fig.width = 11, fig.height = 11.5, fig.align="center", out.width='\\textwidth', fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other variables determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE}
 
 
+x = c(0,0, 1, 1, 2)
+y = c(2,0, 2, 0, 1)
+
+names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
+
+hj_dag(x =  c(x, 0, 0),
+       y = c(y, 0.25, 1.75),
+       names = c(names, " ", " "),
+       arcs = cbind( c(1,2,2, 3, 4, 3, 6, 7),
+                     c(3,3,4, 5, 5, 4, 2, 1)),
+       title = "Free Press and Government Survival",
+       add_functions = 0,
+       contraction = .15,
+       add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
+       padding = .2)
+
+text(c(0,0), c(.25, 1.75), c(expression(paste(U[X])), expression(paste(U[S]))))
+
+```
 
 
+<!-- In figure above, can we not put proper indicator variable notation in the structural equations for the U's? NOT EASY
 
-<!-- ```{r running, echo = FALSE, fig.width = 11, fig.height = 11.5, fig.align="center", out.width='\\textwidth', fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other variables determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE} -->
-
-
-<!-- x = c(0,0, 1, 1, 2) -->
-<!-- y = c(2,0, 2, 0, 1) -->
-
-<!-- names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced") -->
-
-<!-- hj_dag(x =  c(x, 0, 0), -->
-<!--        y = c(y, 0.25, 1.75), -->
-<!--        names = c(names, " ", " "), -->
-<!--        arcs = cbind( c(1,2,2, 3, 4, 3, 6, 7), -->
-<!--                      c(3,3,4, 5, 5, 4, 2, 1)), -->
-<!--        title = "Free Press and Government Survival", -->
-<!--        add_functions = 0,  -->
-<!--        contraction = .15, -->
-<!--        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS", -->
-<!--        padding = .2) -->
-
-<!-- text(c(0,0), c(.25, 1.75), c(expression(paste(U[X])), expression(paste(U[S])))) -->
-
-<!-- ``` -->
-
-
-<!-- <!-- In figure above, can we not put proper indicator variable notation in the structural equations for the U's? NOT EASY --> 
-
-<!-- The corresponding causal diagram for this model is shown in Figure \@ref(fig:running). The graph explicitly includes the processes determining the two key causal variables variables (the $\lambda$ and $U$ terms).  -->
+The corresponding causal diagram for this model is shown in Figure \@ref(fig:running). The graph explicitly includes the processes determining the two key causal variables variables (the $\lambda$ and $U$ terms).
 
 ## Illustrations
 

@@ -27,18 +27,19 @@ In the remainder of this chapter we discuss a simple evaluative criterion for a 
 We use the MIDA approach (model, inquiry, data strategy, answer strategy) approach to declare a simple process tracing design with an arbitrary model.
 
 
-*  **Model.** We will define a model as introduced in Chapter 2. We outline approaches for this in section X below. 
+* **Model.** We will define a model as introduced in Chapter 2.  
 
 * **Inquiry** As discussed in Chapter 4, an inquiry is a question asked of a model. This is typically a question about the distribution of a variable in some controlled or natural condition, or some summary of such distributions. We refer to the quantity being targeted by a query as the estimand.
 
-* **Data strategy.** The data strategy describes how data will be gathered. In typical  `DeclareDesign` applications this includes both randomization and data gathering (sampling) strategies. We focus on data gathering though we highlight that randomization strategies can be implemented via a modification of the confounds allowed by the model.   A sampling strategy might indicate a sequence of conditional data gathering schemes, for instance: gather data on $X$ and $Y$ for 100 cases, then gather data on $M$ for all cases in which $X=Y$.
-Note that in some cases we might want to think of the estimand as being defined *after* the data strategy. This would be the case for instance if we chose a case and we seek to work out some feature *about that case* rather than about the population.
+* **Data strategy.** The data strategy describes how data will be gathered. In typical  `DeclareDesign` applications this includes both randomization and data gathering (sampling) strategies. We focus on data gathering (though unrestricted randomization schemes are easily accommodated in the workhorse model).   A sampling strategy might indicate a sequence of conditional data gathering schemes, for instance: gather data on $X$ and $Y$ for 100 cases, then gather data on $M$ for all cases in which $X=Y$.
 
-* **Answer strategy**. The answer strategy combines the observed data with a causal model to generate an updated model from which inferences can be drawn. Importantly, the model used in the answer strategy does not need to be the same model as assumed at the model step since we could imagine analysts coming to the data with quite different models in mind. Of course any model used in the answer strategy should generally involve the same variables as in the model itself.
+* **Answer strategy**. The answer strategy combines observed data with a causal model to generate an updated model from which inferences can be drawn. 
 
-A design is a concatenation of these four steps. 
+Importantly, the model used in the answer strategy does not need to be the same model as assumed at the model step since we could imagine analysts coming to the data with quite different models in mind. Of course any model used in the answer strategy should generally involve the same variables as in the model itself.
 
-The concatenated lets us examine instances of the application of a design. A single instance would involve 
+A design is a concatenation of these four components or "steps." 
+
+The concatenation of steps lets us examine instances of `runs` of a design. A single instance would involve: 
 
 1. a single draw of a true parameter vector from the distribution given in the model definition
 2. a calculation of the value of an estimand given this true parameter draw
@@ -49,20 +50,25 @@ With the observation of multiple instances we get to assess the distribution of 
 
 
 
-
 ### Defining a model
 
-For this we need to define our model.  In doing so we declare the set of variables we are interested in and the relations of independence between them. In defining the variables we generally also define the ranges of the  variables---indicating, for example whether  they are binary, categorical, or continuous. In defining the edges we identify the set of parents of any node. 
+#### Five questions
 
-**Which nodes**
+To define a model we declare the set of variables we are interested in and the relations of independence between them. In particular we answer the following five questions:
 
-How much detail? Be aware of implications of uneveness in the level of detail
+**1. What are the nodes?** As discussed in Chapter 2 we have some liberty in selecting which nodes we care about to explain a phenomenon. In defining the nodes (variables) we generally also define the ranges of the  variables---indicating, for example whether  they are binary, categorical, or continuous. In defining the edges we identify the set of parents of any node. 
 
-**Justifying conditional independence claims**
+**2. Where are the arrows?** Can you justify conditional independence claims?
     
-**Justifying restrictions**
+3. Where are there plausible threats of  **unobserved confounding**?  
 
-Refer back to our discussion of the inequality and democracy model in section \@ref(inequalitytheory). There we discussed a theory that unpacked a higher level model but that did not place any restrictions on functional forms --- that is, on causal types. We might imagine such restrictions being justified by theory, however. 
+4. What are the functional relations? What are the parameters? In the general case a model might specify functional relations linking relating parents to children. In the binary world a finite set of parameters can be used to characterize all possible functional relations. What restrictions? Of course restrictions are never required: rather than imposing a qualitative restriction it is possible to allow effects in all directions and let the data determine what patterns appear likely or not. It is important to note however that in general monotonicity claims cannot be inferred from data with full confidence.^[For instance in an $X \rightarrow Y$ model, define $\overline{y}_j = E(Y(X=j))$. Observation of $\overline{y}_0$ and  $\overline{y}_1$ is consistent with a world in which there are positive effects for share $\overline{y}_1 - \overline{y}_0$ of units and negative effects for none; or one with positive effects for $\overline{y}_1$ and negative effects for share $\overline{y}_0$ (provided $\overline{y}_1 + \overline{y}_0 <1$), or anything in between.] 
+
+5. What are your **priors**? When defined as part of the model we think of these priors as being the priors from the vantage point of someone assessing a design and they need not be the same as the priors used in the analysis. There are different approaches to generating priors. One might be to try to generate priors that reflect the state of the literature. A second might be to more formally develop priors on the basis of prior data --- that is, start with a model with uninformative priors and update the model using *past* evidence. A third approach is to gather data from target readers---for example to gather data from policy makers or disciplinary experts.
+
+#### Example
+
+To illustrsate this process of model construction, refer back to our discussion of the inequality and democracy model in section \@ref(inequalitytheory). There we discussed a theory that unpacked a higher level model but that did not place any restrictions on functional forms --- that is, on causal types. We might imagine such restrictions being justified by theory, however. 
 Drawing on @boix2003democracy, for instance, we might theorize that inequality can have a negative effect on democratization by giving the elite more to lose from majority rule, making autocrats less willing to hand over power. Inequality's positive effect, we might further posit, derives from the fact that it gives the poor more to gain from the redistribution that democratization would enable (@acemoglu2005economic). However, this positive effect can only unfold to the extent that the masses are able to mobilize, and the capacity to mobilize will hinge on ethnic homogeneity. Ethnic homogeneity thus defines the causal possibilities in regard to $I$'s effect on $D$. First, homogeneity is necessary for a positive effect of inequality. Second, by enabling mobilization around distributional demands, ethnic homogeneity rules out a net negative effect of inequality (as inequality's mobilizing effects will balance out elite fears of expropriation). Third, by making mass mobilization easier in general, ethnic homogeneity makes possible mobilization and democratization *without* inequality. Under ethnic heterogeneity, on the other hand, inequality can have a negative effect, or it can no effect at all with autocracy entrenched. 
 
 Put differently, under ethnic homogeneity, inequality's effect can only correspond to a $b$ type or a $d$ type, while under heterogeneity the effect can only be of type $a$ or type $c$. $E$ thus allows us to partition the range of causal possibilities that model (a) had lumped together under $\theta^D$. Now we can capture this logic with a functional equation in which $\theta^D$ now takes on just two possible values (0 or 1), rather than four:
@@ -73,60 +79,44 @@ D=IE(1-\theta^D)+\theta^DE+(1-E)(1-I)\theta^D
 
 We can work through the arithmetic to observe $E$'s causal-partitioning effect. Whether $E$ is 0 or 1 determines whether we are in a world of posiitve effects ($b$ types) and democratization regardless ($d$ types), or a world of negative effects ($a$ types) and autocracy regardless ($c$ types). Note that the righthand side is a sum of three expressions. We can think of $E$ as a "switch" that turns these expressions "on" or "off." When $E=1$, the third expression goes to 0, leaving only the first two in play "on." Now, $\theta^D$ determines whether $I$ has a positive effect (when $\theta^D=0$) or no effect with $D$ fixed at $1$ (when $\theta^D=1$). Conversely, when $E=0$, the first two expressions both go to $0$, and $\theta^D$ determines whether $I$ will have a negative effect (when $\theta^D=1$) or no effect with $D$ stuck at 0 (when $\theta^D=0$).
 
+<!-- ### Choosing estimands -->
 
-* A declaration of structures of unobserved confounding.  
+<!-- Estimands are causal statements -->
 
-* Priors. Beliefs about the distribution of shocks. When defined as part of the model we think of these priors as being the priors from the vantage point of someone assessing a design and they need not be the same as the priors used in the analysis. 
-    1. REFELCTING THE LITERATURE
-    2. GATHERING DISCPILINARY PRIORS
-    3. EMPIRICAL APPROACH
+<!-- Estimands under controlled conditions, estimands under observational conditions -->
 
+<!-- Estimands that depend on the cases -->
 
-### Choosing estimands
+<!-- Sample and population level estimands -->
+<!--  / post stratification -->
 
-Estimands are causal statements
+<!-- ### Selecting a data strategy -->
 
-Estimands under controlled conditions, estimands under observational conditions
+<!-- Data strategies can involve: -->
 
-Estimands that depend on the cases
+<!-- * how many cases to examine -->
+<!-- * which cases to examine -->
+<!-- * which clues to examine in which cases -->
 
-Sample and population level estimands
- / post stratification
- 
-### Selecting a data strategy
-
-Data strategies can involve:
-
-* how many cases to examine
-* which cases to examine
-* which clues to examine in which cases
-
-Conditional strategies, dynamic strategies
+<!-- Conditional strategies, dynamic strategies -->
 
 
+<!-- ### Answer strategy -->
 
-```{r, echo = FALSE}
-# detach(package:DeclareDesign, unload=TRUE)
-```
-
-### Answer strategy
-
-We assume throughout that researchers draw inferences by updating on causal models as described in previous chapters. 
+<!-- We assume throughout that researchers draw inferences by updating on causal models as described in previous chapters.  -->
 
 
-## Evaluating a mixed method design
+## Evaluating a design
 
-The  observation that theories vary in their precision points to a method for describing the learning that is attributable to a lower-level theory relative to a higher level theory. When a lower-level theory represents a disaggregation, the lower-level theory identifies a set of potentially observable variables that are not listed by the the higher-level theory. This allows one to assess the gains in precision (for some collection of unobserved variables) that can arise from  learning the values of additional observables in the lower-level theory. 
+How do you know if you have a good design? 
 
-Suppose that the contribution of a lower-level theory is to allow for inferences from new data $K$ about some set of query variables $Q$, after we have already observed variables $W$ from the higher-level model.  
+One metric is to assess the expected (squared) error resulting from posterior beliefs. In other words: how wrong are you likely to be if you base your best guess on your posterior mean?
 
-### Expected loss as a evaluative metric
-
-A useful metric to help assess the gains from a model and data strategy is the expected (squared) error resulting from posterior beliefs. Formally, define the loss function for query $Q$ given data $K$ as:
+Formally, define the loss function for query $Q$ given data $K$ as:
 
 $$E_{k, q} \left(\left( \int q' P(q' | k, w)dq' - q\right)^2\right)$$
-where the expectation is taken over the joint distribution of $K$ and $Q$, given $W$. This is an expected loss---or the *Bayes risk*. The inner term $P(q'|k, w)$ is the posterior distribution on $q'$ given observation of $k$ and $w$. 
 
+where the expectation is taken over the joint distribution of $K$ and $Q$, given $W$. This is measure of expected loss is sometimes called the *Bayes risk*. The inner term $P(q'|k, w)$ is the posterior distribution on $q'$ given observation of $k$ and $w$. 
 
 Another way to think of the gains is as the expected posterior variance: how certain do you expect you will be after you make use of this new information?
 
@@ -171,25 +161,11 @@ Note that the key move is in recognizing that $p(q |k)$ is in fact the posterior
 
 ### Expected variance (almost) always goes down
 
+
 Moreover, it is easy to see that whenever inferences are sensitive to $K$, the expected variance of the posterior will be lower than  the variance of the prior. This can be seen from the law of total variance, written here to highlight the gains from observation of $K$, given what is already known from observation of $W$.^[See @raiffa1961applied. A similar expression can be given for the expected posterior variance from learning $K$ in addition to $W$ when $W$ is not yet known. See, for example, Proposition 3 in @geweke2014analysis.]  
 $$Var(Q|W) = E_{K|W}(Var(Q|K,W)) +Var_{K|W}(E(Q|K,W))$$
 
-
-### Gains
-
-The contribution of a theory can then be defined as the mean reduction in Bayes risk:
-
-$$\text{Gains from theory} = 1- \frac{E_{K|W}(Var(Q|K,W))}{Var(Q|W)}$$
-
-This is a kind of $R^2$ measure (see also @gelman2006bayesian). 
-
-Another approach is to ask: how much better are my guesses now compared to what I would have guessed before, given what I know now. 
-
-Expected wisdom.
-
-$$Wisdom  = \int(q_0 - q)^2 - (q_k - q)^2 p(q | k)dq$$
-This captures how much better off we are with the quess we have made given current data ($q_k$) compared to the guess we woudl have made without it ($q_0$), knowing what we know now ($p(q|k)$. An advantage of this conceptualization is that you can record gains in learning even if posterior variance is larger than prior variance.  Even still the implications for strategy are the same since wisdom is maximized by a strategy that reduces expected squared error. 
-
+However although *expected* posterior variance goes down, it is still always possible that posterior variance rises. The increase in uncertainty does not however mean you haven't been learning. Rather you have learned that things aren't as simple as you thought.
 
 ### Illustration
 
@@ -223,116 +199,14 @@ The gains are then:
 
 $$\text{Gains} =1- \frac{\phi_b\phi_d}{\phi_bp+\phi_d(1-p)} - \frac{(1-\phi_b)(1-\phi_d)}{(1-\phi_b)p+(1-\phi_d)(1-p)}$$
 
-Note that we gain wisdom even if our posterior variance increases. For example say $p = 1/5$, $\phi_d = 1/3$, $\phi_b = 2/3$ and we observe $K=1$. Then our prior variace is $p(1-p) = 4/15$. Our posterior is $1/3$ and our posterior variance is 2/9, an increase. Even still although we are more uncertain we are wiser since we attribute a squared error to the guesses made by our former selves now of $(1/3)(1-1/5)^2 + (2/3)(0 - 1/5)^2 = 6/25$.
+Note that we still learn even if our posterior variance increases. For example say $p = 1/5$, $\phi_d = 1/3$, $\phi_b = 2/3$ and we observe $K=1$. Then our prior variace is $p(1-p) = 4/15$. Our posterior is $1/3$ and our posterior variance is 2/9, an increase. Even still although we are more uncertain we are wiser since we attribute a squared error to the guesses made by our former selves now of $(1/3)(1-1/5)^2 + (2/3)(0 - 1/5)^2 = 6/25$.
 
 <!-- .2 2/3 / .2 2/3 + .8 1/3 ) = .4/ .4 + .8    -->
-
-### In code
-
-Let us consider the same question using a particular model and calculate these quantities given this model.
-
-```{r, message = FALSE}
-model <- make_model("X -> Y <- K") %>%
-         set_parameters(c(
-           .5, .5, 
-           .5, .5, 
-            1,0,0,0, 0,4,0,0, 2,0,0,0, 0,0,1,2))
-# model$parameters
-```
-
-The probability that $K=1$ given $X=Y=1$ is:
-
-```{r}
-query_model(model, 
-            queries = list(phi_b = "K==1", phi_d = "K==1"),
-            using = "parameters", 
-            subset = list("X==1 & Y==1 & (Y[X=0]==0)", "X==1 & Y==1 & (Y[X=0]==1)")) %>%
-            kable
-```
-
-The inferences conditional on the observation of $K$ are:
-
-```{r}
-query_model(
-      model, 
-      queries = "Y[X=1]>Y[X=0]",
-      using = "parameters", 
-      subsets = list("X==1 & Y==1", 
-                     "X==1 & Y==1 & K==1", 
-                     "X==1 & Y==1 & K==0")) %>%
-      kable
-```
 
 
 ### Other loss functions
 
 Other loss functions could be used, including functions that take account of the costs of collecting additional data,^[Further, one might call into question the value of a theory if the gains in precision depend upon data that are practically impossible to gather.] or to the risks associated with false diagnoses.^[For instance, in @heckerman1991toward, an objective function is generated using  expected utility gains from diagnoses generated based on new information over diagnoses based on what is believed already. In their treatment [@heckerman1991toward, Equation 6],  the expected value of new information $K$, given existing information $W$ is: $\sum{K}P(K|W)( EU(d(Q,W,K)|W, K) - EU(d(Q, W)|W, K))$ where $EU$ is expected utility and $d$ is the optimal inference (diagnosis) given available data. Note that the diagnosis can take account of $K$ when it is observed, but the expected utility depends on $K$ whether or not it is observed, as $K$ carries information about the state of interest.] 
-
-
-Other possible measures of gains from theory might include the simple correlation between $K$ and $Q$, or entropy-based measures (see @zhang2003properties for many more possibilities). 
-
-For this problem the correlation is given by (see appendix):
-
-$$\rho_{KQ} = \frac{(\phi_b+\phi_d)(1-2p)(p(1-p))^{.5}}{
-(p\phi_b+(1-p)\phi_d)(1-(p\phi_b+(1-p)\phi_d)))^{.5}}$$
-
-One might also use a measure of "mutual information" from information theory:
-
-$$I(Q,K) = \sum_q \sum_k P(q,k)\log\left(\frac{P(q,k)}{P(q)P(k)}\right)$$
-
-<!-- here: -->
-
-
-<!-- \begin{equation} -->
-<!-- \begin{aligned} -->
-<!-- I(Q,K) ={} & p\phi_b\log\left(\frac{\phi_b}{p\phi_b+(1-p)\phi_d}\right)+ (1-p)\phi_d\log\left(\frac{\phi_d}{p\phi_b+(1-p)\phi_d}\right) \\ -->
-<!--       & +p(1-\phi_b)\log\left(\frac{1-\phi_b}{1-p\phi_b-(1-p)\phi_d}\right)+ -->
-<!-- (1-p)(1-\phi_d)\log\left(\frac{1-\phi_d}{1-p\phi_b-(1-p)\phi_d}\right) -->
-<!-- \end{aligned} -->
-<!-- \end{equation} -->
-
-To express this mutual information as a share of variation explained, we could divide $I(Q,K)$ by the entropy of $Q$, $H(Q)$ where $H(Q) = -\sum_qP(q)\log(P(q))$. The resulting ratio can  be interpreted as 1 minus the ratio of the entropy of $Q$ conditional (on $K$) to the unconditional entropy of $Q$.
-
-For this example, Figure \ref{fig:probative_value} shows gains as a function of $\phi_b$ given a fixed value of $\phi_d$. The figure also shows other possible measures of probative value, with, in this case, the reduction in entropy tracking the reduced posterior variance closely. 
-
-```{r, echo = FALSE, fig.width = 7, fig.height = 5,  fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:probative_value} The solid line shows gains in precision (reduced posterior variance) for different values of $\\phi_b$ given $\\phi_d=0.25$ and $p=.5$ for the example given in the text. Additional measures of probative value are also provided including $|\\phi_b - \\phi_d|$, the correlation of $K$ and $Q$, and the reduction in entropy in $Q$ due to mutual information in $Q$ and $K$."}
-
-
-
-gains = function(p, phi_b, phi_d){
-  1- (phi_b*phi_d)/(phi_b*p +phi_d*(1-p)) - (1-phi_b)*(1-phi_d)/((1-phi_b)*p+(1-phi_d)*(1-p))
-}
-
-corr_qk <- function(p, phi_b, phi_d){
-  ((phi_b-phi_d)*(p*(1-p))^{.5})/
-  (((p*phi_b+(1-p)*phi_d)*(1-(p*phi_b+(1-p)*phi_d)))^{.5})
-  }
-# Mutual Information
-mi_qk <- function(p, phi_b, phi_d, base = 2){
- p*phi_b*        log({phi_b}   / {p*phi_b+(1-p)*phi_d}, base = base)+
-(1-p)*phi_d*     log({phi_d}   / {p*phi_b+(1-p)*phi_d}, base = base)+
-p*(1-phi_b)*     log({1-phi_b} / {1-p*phi_b-(1-p)*phi_d}, base = base)+
-(1-p)*(1-phi_d)* log({1-phi_d}/ {1-p*phi_b-(1-p)*phi_d}, base = base)
-  }
-
-norm_mi_qk <-  function(p, phi_b, phi_d, base = 2){
-    -mi_qk(p, phi_b, phi_d, base = base)/(p*log(p, base = base)+(1-p)*log(1-p, base = base))}
-
-phi_b = seq(0,1,.01)
-
-plot(phi_b, gains(.75, phi_b, .25), type = "l", xlab = expression(paste(phi[b])), ylab = "Probative Value")
-  points(phi_b, abs(corr_qk(.75, phi_b, .25)), type = "l", lty=2)
-  points(phi_b, (norm_mi_qk(.75, phi_b, .25)), type = "l", lty = 3)
-  points(phi_b, abs(phi_b - .25), type = "l", lty = 4)
-  title("Reduced posterior variance, correlation, mutual information")
-text(.8, c(.15, .25, .3, .62, .41), c("I(K,Q)/H(Q)","(Reduced posterior variance)", "Gains",  expression(paste(abs(phi[b]-phi[d]))), "Cor(K,Q)"))
-
-#plot(abs(corr_qk(.75, phi_b, .25)), gains(.75, phi_b, .25), type = "l", xlab = "Probative value")
-#lines(abs(phi_b - .25), gains(.75, phi_b, .25), type = "l", lty=2)
-#lines(norm_mi_qk(.75, phi_b, .25), gains(.75, phi_b, .25), type = "l", lty=2)
-
-
-```
 
 
 ## Illustration of Design Decaration in code
@@ -342,32 +216,78 @@ In the `gbiqq` package there is a single function that lets you declare a full d
 ```{r, include = FALSE}
 library(DeclareDesign)
 library(gbiqq)
-library(dplyr)
 ```
 
-```{r ch10designer, message = FALSE, warning = FALSE, eval = FALSE}
-# A single function can be used to declare a model, an inquiry, a data strategy, and an answer strategy
+```{r ch10designer, message = FALSE, warning = FALSE}
+
+library(DeclareDesign)
+
+n <- 10
+
+analysis_model  <- make_model("X -> Y")  %>% set_priors(distribution = "jeffreys")
+
+reference_model <- analysis_model %>% set_priors(c(.5, .5, 1, 1,7, 1))
 
 my_design <- gbiqq_designer(
   
-   model           = make_model("X -> M -> Y"),
-   inquiry         = list(ATE = "Y[X=1] - Y[X=0]"),
-   data_strat      = list(n_obs = 5, 
-                          vars = list(c("X", "Y"), "M"), 
-                          probs = list(1, .5), 
-                          subsets = list(NULL, "X==1 & Y==0"),
-                          n = NULL),
-   answer_strat  = NULL
-)
+  reference_model = reference_model,
+  analysis_model  = analysis_model,
+  n     = n,
+  query = list(PC = "Y[X=1] > Y[X=0]"),
+  given = "X==1 & Y==1"
+
+  )
+
 
 ```
 
 
-With this model in hand you can use it to draw likely data, run analyses, an drun diagnostics. 
+With this model in hand you can use it to draw likely data, run analyses, and run diagnostics. 
+
+Sample data can be generated with the `DeclareDesign` function `draw_data`:
+
+```{r, echo = FALSE}
+draw_data(my_design) %>% collapse_data(make_model("X -> Y")) %>% kable(caption = "Sample Data (shown in compact form)")
+```
+
+We can look at sample estimands using `draw_estimands`:
+
+```{r, echo = FALSE}
+draw_estimands(my_design)  %>%  head %>% kable(caption = "Sample Estimands")
+```
+
+We can look at sample estimates using `draw_estimates`:
+
+```{r, echo = FALSE, message = FALSE}
+draw_estimates(my_design)  %>%  head %>% kable(caption = "Sample Estimates")
+```
+
+Diagnosis is then implemented using `diagnose_design`.  The function `diagnose_design` simulates the design many times and in each simulation gathers the estimand as well as the estimate and other statistics, and uses these to generate diagnosands -- such as mean squared error or expected posterior variance. Moreoever once a design is declared it is easy to sets of neighboring designs. 
+
+Here's an example in which for the diagnsis we compare the performance of our declared design to those of designs of different sizes.
 
 ```{r, eval = FALSE}
-sample_data      <- draw_data(my_design)
-sample_estimands <- draw_estimands(my_design)
-sample_estimates <- get_estimates(my_design, df)
+
+multiple_designs <- redesign(my_design, n = c(10, 40, 200))
+
+diagnose_design(multiple_designs, sims = 20)
+
 ```
 
+
+```{r, echo = FALSE}
+if(do_diagnosis){
+  multiple_designs <- redesign(my_design, n = c(10, 40, 200))
+  diag <- diagnose_design(multiple_designs, sims = 100)
+  write_rds(diag, "saved/Ch10_diagnosis.rds")
+}
+
+diag <- read_rds("saved/Ch10_diagnosis.rds")
+kable(reshape_diagnosis(diag)[, - c(1,3:5)])
+
+```
+
+
+In this case the reference model is different from the analysis model. This might be the case for a resaercher with beliefs about causal effects contemplating how their analysis performed if they commited to undertaking an analysis using flat priors. Or it might reflect the evaluation of one researcher regarding the analyses of another. In any event the fact that these are out of line means that the MSE and expected posterior variance do not converge. Both however decline with larger designs.
+
+In the chapters that follow we use essentially this procedure, though, for efficiency,  rather than repeatedly iterating the full design we use a procedure in which we store the inferences that we would make given different possible data, figure out the probability that we would observe data of a given type, and then calculate the expected value of different diagnosands given a refernece model and an analysis model.

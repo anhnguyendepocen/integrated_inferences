@@ -876,6 +876,89 @@ Making things more complicated, of course, still makes things more complicated. 
 
 
 
+### Quantifying the gains of a theory
+
+What are the gains of a thoery that introduces a node $K$ relative to one that does not include $K$. What is the value added of the more elaborate theory?
+
+One approach to assessing the contribution of a theory is to calculate  the mean reduction in Bayes risk:
+
+$$\text{Gains from theory} = 1- \frac{E_{K|W}(Var(Q|K,W))}{Var(Q|W)}$$
+
+This is a kind of $R^2$ measure (see also @gelman2006bayesian). 
+
+Another approach is to ask: how much better are my guesses now compared to what I would have guessed before, given what I know now. 
+
+Expected wisdom.
+
+$$Wisdom  = \int(q_0 - q)^2 - (q_k - q)^2 p(q | k)dq$$
+This captures how much better off we are with the guess we have made given current data ($q_k$) compared to the guess we woudl have made without it ($q_0$), knowing what we know now ($p(q|k)$. An advantage of this conceptualization is that you can record gains in learning even if posterior variance is larger than prior variance.  Even still the implications for strategy are the same since wisdom is maximized by a strategy that reduces expected squared error. 
+
+
+Other possible measures of gains from theory might include the simple correlation between $K$ and $Q$, or entropy-based measures (see @zhang2003properties for many more possibilities). 
+
+For this problem the correlation is given by (see appendix):
+
+$$\rho_{KQ} = \frac{(\phi_b+\phi_d)(1-2p)(p(1-p))^{.5}}{
+(p\phi_b+(1-p)\phi_d)(1-(p\phi_b+(1-p)\phi_d)))^{.5}}$$
+
+One might also use a measure of "mutual information" from information theory:
+
+$$I(Q,K) = \sum_q \sum_k P(q,k)\log\left(\frac{P(q,k)}{P(q)P(k)}\right)$$
+
+<!-- here: -->
+
+
+<!-- \begin{equation} -->
+<!-- \begin{aligned} -->
+<!-- I(Q,K) ={} & p\phi_b\log\left(\frac{\phi_b}{p\phi_b+(1-p)\phi_d}\right)+ (1-p)\phi_d\log\left(\frac{\phi_d}{p\phi_b+(1-p)\phi_d}\right) \\ -->
+<!--       & +p(1-\phi_b)\log\left(\frac{1-\phi_b}{1-p\phi_b-(1-p)\phi_d}\right)+ -->
+<!-- (1-p)(1-\phi_d)\log\left(\frac{1-\phi_d}{1-p\phi_b-(1-p)\phi_d}\right) -->
+<!-- \end{aligned} -->
+<!-- \end{equation} -->
+
+To express this mutual information as a share of variation explained, we could divide $I(Q,K)$ by the entropy of $Q$, $H(Q)$ where $H(Q) = -\sum_qP(q)\log(P(q))$. The resulting ratio can  be interpreted as 1 minus the ratio of the entropy of $Q$ conditional (on $K$) to the unconditional entropy of $Q$.
+
+For this example, Figure \ref{fig:probative_value} shows gains as a function of $\phi_b$ given a fixed value of $\phi_d$. The figure also shows other possible measures of probative value, with, in this case, the reduction in entropy tracking the reduced posterior variance closely. 
+
+```{r, echo = FALSE, fig.width = 7, fig.height = 5,  fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:probative_value} The solid line shows gains in precision (reduced posterior variance) for different values of $\\phi_b$ given $\\phi_d=0.25$ and $p=.5$ for the example given in the text. Additional measures of probative value are also provided including $|\\phi_b - \\phi_d|$, the correlation of $K$ and $Q$, and the reduction in entropy in $Q$ due to mutual information in $Q$ and $K$."}
+
+
+
+gains = function(p, phi_b, phi_d){
+  1- (phi_b*phi_d)/(phi_b*p +phi_d*(1-p)) - (1-phi_b)*(1-phi_d)/((1-phi_b)*p+(1-phi_d)*(1-p))
+}
+
+corr_qk <- function(p, phi_b, phi_d){
+  ((phi_b-phi_d)*(p*(1-p))^{.5})/
+  (((p*phi_b+(1-p)*phi_d)*(1-(p*phi_b+(1-p)*phi_d)))^{.5})
+  }
+# Mutual Information
+mi_qk <- function(p, phi_b, phi_d, base = 2){
+ p*phi_b*        log({phi_b}   / {p*phi_b+(1-p)*phi_d}, base = base)+
+(1-p)*phi_d*     log({phi_d}   / {p*phi_b+(1-p)*phi_d}, base = base)+
+p*(1-phi_b)*     log({1-phi_b} / {1-p*phi_b-(1-p)*phi_d}, base = base)+
+(1-p)*(1-phi_d)* log({1-phi_d}/ {1-p*phi_b-(1-p)*phi_d}, base = base)
+  }
+
+norm_mi_qk <-  function(p, phi_b, phi_d, base = 2){
+    -mi_qk(p, phi_b, phi_d, base = base)/(p*log(p, base = base)+(1-p)*log(1-p, base = base))}
+
+phi_b = seq(0,1,.01)
+
+plot(phi_b, gains(.75, phi_b, .25), type = "l", xlab = expression(paste(phi[b])), ylab = "Probative Value")
+  points(phi_b, abs(corr_qk(.75, phi_b, .25)), type = "l", lty=2)
+  points(phi_b, (norm_mi_qk(.75, phi_b, .25)), type = "l", lty = 3)
+  points(phi_b, abs(phi_b - .25), type = "l", lty = 4)
+  title("Reduced posterior variance, correlation, mutual information")
+text(.8, c(.15, .25, .3, .62, .41), c("I(K,Q)/H(Q)","(Reduced posterior variance)", "Gains",  expression(paste(abs(phi[b]-phi[d]))), "Cor(K,Q)"))
+
+#plot(abs(corr_qk(.75, phi_b, .25)), gains(.75, phi_b, .25), type = "l", xlab = "Probative value")
+#lines(abs(phi_b - .25), gains(.75, phi_b, .25), type = "l", lty=2)
+#lines(norm_mi_qk(.75, phi_b, .25), gains(.75, phi_b, .25), type = "l", lty=2)
+
+
+```
+
 ## Chapter Appendices
 
 ### Summary Boxes
@@ -1046,3 +1129,5 @@ hj_dag(x =  x,
 These lower level graphs can themselves provide clues for assessing relations in the higher level graphs. For instance, the lower level model might specify that the value of $b$ in the game affects the actions of the government only through their beliefs about the behavior of voters, $E$. These beliefs may themselves have a stochastic component, $U_E$. Thus  $b$ high  might be thought to reduce the effect of media on corruption. For instance if $b \in \mathbb{R}_+$, we have $C= 1-FG(1-\mathbb{1}(b>1))$. If $X$ is unobserved and one is interested in whether $S=0$ caused corruption, knowledge of $b$ is informative. It is a root node in the causal estimand. If $b>1$ then $S=0$ did not cause corruption. However if $b$ matters only because of its effect on $E$ then the query depends on $U_E$.  In this case, while knowing $b$ is informative about whether $S=0$ caused $C=1$, knowing $E$ from the lower level graph is more informative.
 
 Note that the  model we have examined here involves no terms for $U_C$, $U_R$ and $U_Y$---that is, shocks to outcomes given action. Yet clearly any of these could exist. One could imagine a version of this game with "trembling hands," such that errors are always made with some small probability, giving rise to a much richer set of predictions.  These can be  represented in the game tree as moves by nature between actions chosen and outcomes realized. Importantly in a strategic environment such noise could give rise to different types of conditional independence. For instance say that a Free Press only published its report on corruption with  probability $\pi^R$, then with $\pi^R$ high enough the sensitive government might decide it is worth engaging in corruption even if there is a free press; in this case the arrow from $X$ to $C$ would be removed. Interestingly in this case as the error rate rises, $R$ becomes less likely, meaning that the effect of a $S$ on $Y$ becomes gradually weaker (since governments that are not sensitive become  more likely to survive) and then drops to 0 as sensitive governments start acting just like nonsensitive governments. 
+
+
