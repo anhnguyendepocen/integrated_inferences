@@ -15,13 +15,13 @@ We draw out the implications of the causal model approach for clue selection str
 
 Consider now the problem of determining what qualitative data to gather on a case. Evidently it makes sense to gather information on clues that have large probative value, but whether or not clues have probative value can depend on what clues have already been collected: Finding out that the butler had no motive may be informative for the claim that he is innocent, but it may not be useful if you already know he had no opportunity. 
 
-To motivate our thinking about clue-selection, consider again our running example with the free press and government removal. We can use this toy example to see, intuitively, how researchers may have a choice among observations that could be informative, and how the informativeness of an observation can depend on what is already known. In Figure \ref{fig:running}, we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the exogenous nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see which collection of exogenous nodes constitutes---gives the answer to---a given query, or estimand.  Turning things around, we can also see, given a query, which nodes are informative about the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
+## Core logic
 
-FLAG: Where is the running example figure currently? Need to reference it.
+To motivate our thinking about clue-selection, consider again our running example with the free press and government removal. We can use this toy example to see, intuitively, how researchers may have a choice among observations that could be informative, and how the informativeness of an observation can depend on what is already known. In Figure \@ref(fig:running), we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the exogenous nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see what the answer to a particular query is in a particular context. Turning things around, we can also see, *given a query*, which nodes are informative about the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
 
-FLAG: I'm having trouble getting the logical progression here. Seems somewhat broken in the sense that it's incomplete. Conceptually, we might think of informativeness situations as taking four possible forms of interest: a clue is always informative; never informative; informative only conditional on something else (obviously, what the something else is can vary); conditional only in the absence of something else. We seem to be covering always informative and conditionally uninformative. Seems odd not to also show always uninformative and informative only conditional on something else. But not sure if we can do this with this example.
+<!-- FLAG: I'm having trouble getting the logical progression here. Seems somewhat broken in the sense that it's incomplete. Conceptually, we might think of informativeness situations as taking four possible forms of interest: a clue is always informative; never informative; informative only conditional on something else (obviously, what the something else is can vary); conditional only in the absence of something else. We seem to be covering always informative and conditionally uninformative. Seems odd not to also show always uninformative and informative only conditional on something else. But not sure if we can do this with this example. -->
 
-For example, suppose that one can see that $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in panel $A$, $B$, or $C$ but do not know which of these we are in. Would it be helpful to collect the clue $S$ if one has no other information? Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $P(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$. Given the structural equation for $S$, $P(S|X=0,Y=0) = P(S|X=0)$, and given independence of $X$ and $S$, $P(S=1|X=0)= \pi^S$ (the simple assignment propensity).  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
+For example, suppose that one can see that $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in panel $A$, $B$, or $C$ but do not know which of these we are in. Would it be helpful to collect the clue $S$ if one has no other information? Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $\Pr(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$. Given the structural equation for $S$, $\Pr(S|X=0,Y=0) = \Pr(S|X=0)$, and given independence of $X$ and $S$, $\Pr(S=1|X=0)= \lambda^S_1$ (the simple assignment propensity).  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
 
 We can also see instances in this example of  how existing data can make clues *uninformative*. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$). Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
 
@@ -57,7 +57,7 @@ A still more sophisticated strategy would, for multiple clues, take sequence int
 
 We provide tools for both of these approaches and illustrate them below for both the running example and the democracy application.
 
-## Clue selection with a simple example
+### Clue selection with a simple example
 
 Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present and that corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
 
@@ -164,9 +164,6 @@ As the foregoing discussion already suggests, optimal clue strategies can depend
 Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
 
 ```{r, warning = FALSE}
-
-# Expand nodal types for C.
-
 model <- 
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
@@ -227,20 +224,13 @@ This exercise also suggests a further interesting principle of clue-selection: t
 
 #Set priors for S with more weight on S=1. Should make S less informative -- the more informative value for S is expected to be less likely??
 
-model_priors <- 
+model_priors <-  model %>%
   
-  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+  set_priors(node = "S",
+             statement = "S==1",
+             alphas = 10) %>%
   
-  set_restrictions(labels = list(
-    C = c("1110", "1111"), 
-    R = c("0001", "0000"), 
-    Y = c("0001")), 
-    keep = TRUE) %>%
-  
- set_priors(node = "S", statement = "S==1", alphas = 10) %>%
-   
- set_parameters(type = "prior_mean")
-  
+  set_parameters(type = "prior_mean")
 
 ```
 
@@ -280,7 +270,7 @@ We see the results of this new set of diagnoses, with informative priors on $S$'
 While not shown here, we get essentially the same result if we flip our priors and put much greater weight on $S=0$, rather than on $S=1$. 
 
 
-## Clue selection for the democratization model 
+### Clue selection for the democratization model 
 
 We now apply this approach to the model of democratization that we worked with in Chapters \ref(ptapp) and \ref(mixingapp).
 
@@ -598,7 +588,7 @@ pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
 
 FLAG: actual cause and notable cause ??
 
-### Dynamic Strategies
+## Dynamic Strategies
 
 The clue-collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their strategies as they go along. However, the expected informativeness of a clue may depend on the values of other clues that we see first, implying that an optimal strategy will be dynamic, taking into account earlier observations in selecting later ones. 
 
@@ -761,8 +751,6 @@ Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strateg
 
 
 ```{r, echo = FALSE, message = FALSE, eval = FALSE}
-
-## DYNAMIC STRATGIEZ WITH CONFOUNDED MODEL IS NOT BEING DONE (SEE EVAL = FALSE ABOVE)
 
 confound = list(P = "(D[P=1] == 1)")
 

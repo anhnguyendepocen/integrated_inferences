@@ -6,7 +6,7 @@ source("_packages_used.R")
 ```
 
 ```{r, include=FALSE}
-# do_diagnosis = FALSE
+# do_diagnosis = TRUE
 ```
 
 ***
@@ -95,7 +95,7 @@ kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
 
 ## Inference
 
-With data and model in hand, we can now update our model to get posteriors on the distribution of all admissible causal types. In practice this is done by constructing a `stan` model that maps from a set of parameters to a distribution on causal types, which in turn provide a likelihood function for observable data. (Using the `gbiqq` package the posterior is calculated by `gbiqq(model, data)`.)
+With data and model in hand, we can now update our model to get posteriors on the distribution of all admissible causal types. In practice this is done by constructing a `stan` model that maps from a set of parameters to a distribution on causal types, which in turn provide a likelihood function for observable data. (Using the `gbiqq` package the posterior is calculated by `update_model(model, data)`.)
 
 The parameters 
 
@@ -106,10 +106,10 @@ dim(param_mat)
 
 FLAG: Need to talk a bit through what's happening here. 
 
-```{r, include = FALSE}
+```{r ch9updatePIMD, include = FALSE}
 
 if(do_diagnosis){
-  updated <- gbiqq(model, data)
+  updated <- update_model(model, data)
   write_rds(updated, "saved/PIMD_updated.rds")
   }
 
