@@ -25,7 +25,7 @@ The approach we have  described to inference always involve updating beliefs giv
 
 We see two broad responses to this problem.
 
-One is *emphasize the contingent nature of claims*. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then the simple $X\rightarrowY$ DAG in chapter 4 (FIGURE REF) is more of a representation of beliefs about the world  than it is a model of the world, in the sense of a simplified representation.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable invovlves a form of modelling.] But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is unquetionanly a model and hard to think of as a faithful summary of beliefs. 
+One is *emphasize the contingent nature of claims*. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then the simple $X \rightarrow Y$ DAG in chapter 4 (FIGURE REF) is more of a representation of beliefs about the world  than it is a model of the world, in the sense of a simplified representation.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable invovlves a form of modelling.] But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is unquetionanly a model and hard to think of as a faithful summary of beliefs. 
 
 Recognizing in this way that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. That is the subject of Chapter 15.
 
@@ -556,7 +556,7 @@ model3 <- make_model("X1 -> Y <- X2") %>%
 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "DAGs from Data", fig.width = 5, fig.height = 10,results='hide',fig.keep='all'}
-par(mfrow = c(3,2))
+par(mfrow = c(2,3))
 par(mar = rep(3, 4))
 plot_dag(model1); title("True model")
 recover_model(model1)
@@ -567,8 +567,58 @@ recover_model(model3)
 ```
 
 
+### A model of models
+
+In the following mode there is an unknown, $Q$, which determines the relevant causal model. 
+If $Q=1$ then we have $A \rightarrow B \rightarrow C2$; if $Q=0$ then $A \rightarrow B \leftarrow C1$. In this case the temporal order of $C1$ and $C2$ is observable, so there is not confusion there; what is not clear however is which is the important node to include in the model. 
+
+```{r}
+
+model <- make_model("A -> B -> C2 <- C1 -> B <- Q -> C2") %>%
+  # These restrictions capture the role of Q in turning parentage on or off 
+  set_restrictions(c(
+    "(B[C1=1, Q=1] != B[C1=0, Q=1])",
+    "(C2[B=1, Q=0] != C2[B=0, Q=0])")) %>%
+  
+  # These restrictions are for simplification: monotonicity and complementarity 
+  set_restrictions(c(
+    "(C2[B=1] < C2[B=0])",
+    "(C2[C1=1] < C2[C1=0])",
+    "(B[A=1]  < B[A=0])",
+    "(B[C1=1] < B[C1=0])",
+    "((B[A=1, C1=1] - B[A=0, C1=1]) < (B[A=1, C1=0] - B[A=0, C1=0]))"))
+                   
+model
+                   
+plot(model)
+
+if(do_diagnosis){
+  model_Q0 <- set_parameters(model, node = "Q", alphas = c(1,0))
+  model_Q1 <- set_parameters(model, node = "Q", alphas = c(0,1))
+  
+  data_0 <- make_data(model_Q0, 100, vars = c("A", "B", "C1", "C2"))
+  data_1 <- make_data(model_Q1, 100, vars = c("A", "B", "C1", "C2"))
+  
+  model_Q0 <- update_model(model, data_0)
+  model_Q1 <- update_model(model, data_1)
+
+Qu0 <- query_model(model_Q0, "Q==1", using = "posteriors")
+Qu1 <- query_model(model_Q1, "Q==1", using = "posteriors")
+
+  write_rds(list(model_Q0, model_Q1, Qu0, Qu1), "saved/ch14_Qornot.rds")
+}
+
+Qornot <- read_rds("saved/ch14_Qornot.rds")
+
+kable(Qornot[[3]])
+kable(Qornot[[4]])
 
 
+
+
+```
+
+[Ideally here however $\lambda^Q$ is either 0 or 1 --- we want to know which world we are in]
 
 
 

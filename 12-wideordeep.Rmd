@@ -31,18 +31,18 @@ models <- list(
   
   unobs_confound = make_model("X->M->Y<-X; X<->Y"))
 
-gen_given <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
+gen_observed <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
   data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
     tidyr::uncount(ns) %>%
     collapse_data(models$base_model, remove_family = TRUE)}
 
 # Givens
-givens <- list(
-  regr   = gen_given(12,4,4,12),
-  flat   = gen_given(8,8,8,8),
-  suff   = gen_given(8,8,4,12),
-  necs   = gen_given(12,4,8,8),
-  conc   = gen_given(8,4,4,16))
+observed <- list(
+  regr   = gen_observed(12,4,4,12),
+  flat   = gen_observed(8,8,8,8),
+  suff   = gen_observed(8,8,4,12),
+  necs   = gen_observed(12,4,8,8),
+  conc   = gen_observed(8,4,4,16))
 
 
 # Data strategies
@@ -73,18 +73,18 @@ queries <- list(
   via_M = "(Y[X=1] > Y[X=0]) & (M[X=1] > M[X=0]) & (Y[M=M[X=1]] > Y[M=M[X=0]]) & (Y[X=1, M=M[X=1]] == Y[X=0, M=M[X=1]])"
 )
 
-subsets <- list(TRUE, "X==1 & Y==1", "X==1 & Y==1")
+given <- list(TRUE, "X==1 & Y==1", "X==1 & Y==1")
 
 # Diagnosis function 
 
-case_selection_diagnose <- function(model, given,  sims = 4000, ...)
+case_selection_diagnose <- function(model, observed,  sims = 4000, ...)
   
   diagnose_strategies(
     analysis_model = model,
     data_strategies = data_strats,
-    given = given,
+    observed = observed,
     queries = queries,
-    subsets = subsets,
+    given = given,
     sims = sims,
     fit = fit, 
     iter = 4000,
@@ -101,13 +101,13 @@ if(do_diagnosis){
   
   {if(!exists("fit")) fit <- fitted_model()}
   
-for(m in  1:length(models)) {for(g in 1:length(givens)) {	
+for(m in  1:length(models)) {for(g in 1:length(observed)) {	
 #  for(m in  1) {for(g in 1) {	
-    filename <-  paste0("saved/Ch12_", names(models)[m], "_",  names(givens)[g], ".rds")
+    filename <-  paste0("saved/Ch12_", names(models)[m], "_",  names(observed)[g], ".rds")
     
     print(filename)
     
-    write_rds(case_selection_diagnose(models[[m]], givens[[g]]), 
+    write_rds(case_selection_diagnose(models[[m]], observed[[g]]), 
               filename)
     
   }}
@@ -129,7 +129,7 @@ df <- rbind(data.frame(given = "regr", M_base_model_2_regr$diagnoses_df),
 #Graph
 library(tidyverse)
 
-givens <- c("regr", "suff", "conc", "flat", "necs")
+observed <- c("regr", "suff", "conc", "flat", "necs")
 
 process <- function(given) {
 
@@ -142,21 +142,9 @@ process <- function(given) {
                    given = given)
 }
 
-df <- lapply(givens, process) %>%
+df <- lapply(observed, process) %>%
   bind_rows()
 
-
-# Trying to make it more general
-#df <- list()
-#k <- 1
-#for(i in 1:length(models)){
-#  for(j in 1:length(givens)){
-#    
-#    df[[k]] <- process(givens[j], models[i])
-#    k <- k + 1
-#    
-#  }
-#}
 
 df$given<- factor(df$given,levels=c("flat","regr","conc", "necs", "suff"))
 
@@ -215,7 +203,7 @@ We see that prior beliefs are for a 0 average effect which rises to approximatel
 kable(
   query_model(model, queries = list(ATE = "Y[X=1] - Y[X=0]"), 
               using =  "priors", 
-              subsets = list(TRUE, "K==1", "K==0")))
+              given = list(TRUE, "K==1", "K==0")))
 ```
 
 We see little  difference in the prior on estimands. Despite this an important difference is that the model that allows for confounding also allows for updating on confounding, which the simple model does not.
@@ -227,7 +215,7 @@ model_confound <-   set_confound(model, list(X = "(Y[X=1] > Y[X=0])")) %>%
   q2 <- query_model(model_confound, 
               queries = list(ATE = "Y[X=1] - Y[X=0]"), 
               using = "priors",
-              subsets = list(TRUE, "K==1", "K==0"))
+              given = list(TRUE, "K==1", "K==0"))
 kable(q2)
 
 #x <- (get_types(model_confound, query = "Y[X=1] - Y[X=0]", join_by = "|")$types)
@@ -238,7 +226,7 @@ We now examine inferences given different data strategies:
 
 ```{r , echo = FALSE, message = FALSE}
 
-given_fold <- function(n_fold) 
+obs_fold <- function(n_fold) 
   data.frame(X = c(0,0,0,1,1,1), Y = c(0,0,1,0,1,1), K = NA) %>%
         slice(rep(row_number(), n_fold)) %>%
         collapse_data(model, remove_family = TRUE)
@@ -250,7 +238,7 @@ wd <- function(n_fold=2, sims = 600)  {
     
    analysis_model = model,
    
-   given = given_fold(n_fold),
+   observed = obs_fold(n_fold),
 
    data_strategies = list(
      QL1 =  list(N = 1, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
