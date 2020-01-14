@@ -81,38 +81,44 @@ Approaches using simulated data from the posterior predictive distribution  are 
 The graphs below compare (using tools in the `bayesplot`) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
 
 
-```{r, echo = FALSE}
-sims = 1000
+```{r ch15simulations, echo = FALSE}
+
+sims <- 1000
 
 if(do_diagnosis){
-  write_rds(gbiqq(reference_model, data, stan_model = fit), "saved/ref_update.rds") 
-  write_rds(gbiqq(analyst_model, data, stan_model = fit), "saved/ana_update.rds") 
-  ana_update <- gbiqq(analyst_model, data, stan_model = fit)}
+  
+  write_rds(update_model(reference_model, data, fit = fit), "saved/ch15_ref_update.rds") 
+  write_rds(update_model(analyst_model, data, fit = fit), "saved/ch15_ana_update.rds") 
+  
+  replicates_ana <- 
+  t(replicate(sims, make_data(ana_update, n = nrow(data), param_type = "posterior_draw")$Y))
+  write_rds(replicates_ana, "saved/ch15_replicates_ana.rds") 
 
-  ref_update <-   read_rds("saved/ref_update.rds") 
-  ana_update <-   read_rds("saved/ana_update.rds") 
+  replicates_ref <- 
+  t(replicate(sims, make_data(ref_update, n = nrow(data), param_type = "posterior_draw")$Y))
+  write_rds(replicates_ref, "saved/ch15_replicates_ref.rds") 
+
+  }
+
+  ref_update     <- read_rds("saved/ch15_ref_update.rds") 
+  ana_update     <- read_rds("saved/ch15_ana_update.rds") 
+  replicates_ana <- read_rds("saved/ch15_replicates_ana.rds") 
+  replicates_ref <- read_rds("saved/ch15_replicates_ref.rds") 
+
 ```
 
 
 How does the researcher's model do?
 
 ```{r, fig.cap= "Posterior distribution of test statistics under researcher's model"}
-# Updated researcher model
-w_ana <- draw_event_prob(ana_update, using = "posteriors")
-# Distribution of Y outcomes from analyst's model
-replicates_ana <- 
-  t(replicate(sims, simulate_data(ana_update, n = nrow(data), w = w_ana)$Y))
 ppc_stat(data$Y, replicates_ana)
 
 ```
 
-How would we evaluate the less constrained (true) model?
+How would we evaluate the less constrained ("true") model?
 
 ```{r, echo = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
 # Updated alternative model
-w_ref <- draw_event_prob(ref_update, using = "posteriors")
-replicates_ref <- 
-  t(replicate(sims, simulate_data(ref_update, n = nrow(data), w = w_ref)$Y))
 ppc_stat(data$Y, replicates_ref)
 ```
 

@@ -9,6 +9,7 @@ pacman::p_load(
   ggplot2,
   StanHeaders,
   rstan,
+  rstanarm,
   knitr,
   expm,
   dagitty,
