@@ -2,13 +2,64 @@
 
 ***
 
-Researchers often need to choose between collecting data on more cases or collecting more data within cases. We discuss the tradeoffs and communicate an intuition that clue data, even on a small number of cases, can be informative even when there is $X, Y$ data on a very large number of cases, but only if it provides information that cannot be gathered from $X,Y$ data, such as selection into treatment. Simulations suggest that going deep is especially valuable for observational research, situations with homogeneous treatment effects, and, of course, when there is strong probative value.
+Researchers often need to choose between collecting data on a greater number of cases or collecting more data within a given set of cases. This is a choice, we might say, between going "wide" and going "deep." We discuss the tradeoffs and communicate an intuition that clue data, even on a small number of cases, can be informative even when there is $X, Y$ data on a very large number of cases, but only if it provides information that cannot be gathered from $X,Y$ data, such as selection into treatment. Simulations suggest that going deep is especially valuable for observational research, situations with homogeneous treatment effects, and, of course, when clues have strong probative value.
 
 ***
 
 ```{r, include = FALSE}
 source("_packages_used.R")
 ```
+
+## Motivation
+
+Let us continue our journey through the space of research-design choices. Suppose, now, that we have identified those clues that will be most informative, given our beliefs about the world. A further question that we face is the quintessential dilemma of *mixing* methods: what mixture of quantitative and qualitative evidence is optimal? We have, of course, argued in in Chapter \ref(mixing) that the distinction between quantitative and qualitative inference is, in a causal-model framework, without much of a difference. But here we are framing a more precise question: given finite resources, how should we trade off between studying a larger number of cases and drilling down to learn more about some subset of the cases in our sample? How should we decide between going "wide" and going "deep"?
+
+As we did for clue selection, we will show that this is a question that we can use our causal model to answer. In other words, how much we should expect to learn from going wide versus going deep will *depend* on how we think the world works --- that is, on the beliefs embedded in our model. It is straightforward to use the `gbiqq` machinery to estimate the expected learning that will arise from different strategies.
+
+For the most part, the question of going wide versus going deep is one that applies to population-level estimands. If our goals are defined by case-level estimands, then going deep within the cases of interest will generally be the best approach. We can also show, however, the existence of gains from extensive analysis for case-level estimands: knowing more about the population can help us get individual cases right.
+
+
+## Developing some intuitions
+
+To build up our intuitions about how the optimal mix of strategies might depend on how the world works, let us explore a simple example. We focus here on the question of how much we can learn from drilling deeper, given an initial set of $X,Y$ data and beliefs about the world. To simplify the exposition, we revert here to using our four basic causal types from Chapter \ref(models): $a, b, c, and d$.^[For this illustration, we just need to keep track of $b$ (positive effect), $a$ (negative effect), and $d$ (no effect, $Y$ fixed at $1$).]
+
+<!-- e begin by considering the learning that occurs upon observing outcomes from varying numbers of cases given different $XY$ data ranging from small to quite large.  -->
+
+<!-- The goal here is to build up intuitions on how beliefs change given different observations and how this affects posterior variance. We address the question in a very controlled setting in which  -->
+
+Suppose that:
+
+* a researcher is confronted with $X,Y$ data that exhibits no correlation; observations are balanced across the 4 cells defined by possible combinations of $X, Y$ values.
+* the researcher can seek information on a highly informative ("doubly decisive") clue, $K$, within cases in the $X=Y=1$ cell; thus, we are imagining a scenaior in which the information we will get about the case in question is about as informative about that case as it could possibly be.
+* although not known in advance, each time the researcher collects a within-case clue, she finds evidence suggesting that the case is a $b$ type.
+
+We consider two different data-generating processes: 
+
+1 There may be unobserved confounding between $X$ and $Y$, and we have flat priors over this confounding. Put differently, assignment propensities are unknown.
+
+2 There is no confounding; $X$ can be treated as randomly assigned. 
+
+We consider what happens as the number of cases on which we collect $K$ increases from 0 to 5. We also consider different amounts of initial $X,Y$ data, considering situations in which we have 5, 10, 50, and 5000 observations in each $X,Y$ cell.
+
+We would expect that seeking a clue in a case---which, in this simulation, always delivers evidence consistent with a positive causal effect in that case---will lead the researcher to believe there are more $b$ types and that there is thus a higher average causal effect. But how strong will these shifts be? And how does the amount of belief change depend on the amount of $X, Y$ data available and the underlying data-generating process? When does the signal from the $X,Y$ data drown out any signal from the $K$ data, and when does $K$ data add value?
+
+Figure \ref{morn} reports answers to these questions. In the top row, we report the average causal effect that we will estimate for different combinations of $X,Y$ and $K$ data. In the bottom row, we show the reductions in uncertainty (posterior variance) that we get with each strategy. On the left, we allow for unobserved confounding, and on the right we have random assignment. Each curve represents a different sample size for which we have $X,Y$ data. The number of cases in which we go "deep," collecting $K$ data, is represented on the horizontal axis. 
+
+1. With unobserved confounding, we see clear gains to collecting clues on a greater number of cases across the 1 to 5 range. Collecting clue information on a greater number of cases shifts our beliefs about the average causal effect and reduces our uncertainty about that quantity. Moreover, with unobserved confounding, the value of the clue information is *independent* of how many $X,Y$ cases there are. 
+
+What is happening here is that the clues are providing information on assignment propensities, which are informative about the share of each type in each cell. With flat priors over assignment propensities, our beliefs are centered around equal propensities for all types (though we're also very uncertain about this). Moreover, given equal assignment propensities, the flat data $X,Y$ pattern has us believing that there the average treatment effect is 0 (also with great uncertainty). For every additional $X=1, Y=1$ for which we observe $K=1$, however, we shift upward our belief about the share of $b$'s in the cell. We are, thus, now learning about assignment propensities: now it looks like $b$ types were more commonly assigned to $X=1$, implying that $d$'s must have been more commonly assigned to $X=0$. Put differently, we are learning that the flat data pattern has arisen via confounding that is "suppressing" a positive treatment effect. 
+
+The value of the clue data, moreover, does not depend on how many $X,Y$ cases we've observed because no amount of $X,Y$ data can tell us about $X$<->$Y$ confounding. As we see in the bottom-left graph, we end up more certain, the more $X, Y$ data we have. But there's just as much to be *gained* from a given amount of clue data whether we've started with 5 $X,Y$ cases or 5000.
+
+2. When assignment propensities are known (and so we can treat the data as experimental), the learning from clue data depends heavily on how many $X,Y$ cases we start out with. Where we have a large amount of $X,Y$ data, clue evidence adds little to nothing to our inferences about average treatment effects. There is nothing to be learned from the clues about assignment propensities since these are already known. And, with assignment propensities known, $X,Y$ information alone are sufficient for convergence on the average treatment effect as sample size increases. Clue information shifts beliefs about the types of the particular cases for which clue data is gathered --- i.e., for this case-level-estimand --- but has almost no effect on estimates of the population estimand. 
+
+Interestingly, we don't actually learn from $X,Y$ data about the distribution of types, even with a large $X,Y$ sample. We learn about the difference between the proportion of $b$'s and the proportion of $a$'s ($\lambda_b- \lambda_a$), which is the average causal effect. But we do not learn, for instance, what proportion of $X=1, Y=1$ cases are $b$'s as compared to $d$'s. 
+
+It is for this reason that we can learn about average effects from clue data when we have few $X,Y$ cases. While we can infer the average causal effect from a known $X,Y$ distribution (and known assignment propensities), we have a lot of uncertainty about that distribution when we only have a handful of $X,Y$ cases. Thus, clue data help us by uniquely providing information about the types of individual cases. It is still only from observing $K=1$ in a case that we can learn that that case is a $b$ type, allowing us to update upwardly on the relative proportions of $b$'s and $d$'s. With little other information on the average effect, this pushes our belief about average effects upward.^[We also, by implication, update upwardly on the share of $a$'s relative to $d$'s in the $X=0, Y=1$ cell; but the direct learning about the $X=1, Y=1$ cell will be sharper than the indirect learning about the $a$'s, generating a net increase in the estimated average causal effect.] And, in the absence of a large amount of of $X,Y$ data, knowing there is one more $b$ and one less $d$ type still benefits from learning  
+
+3. Though not visible from the figure, clue data help us learn about a different population-level estimand --- the *distribution* of causal effects in the population --- even when we have a large $N$ and known propensities. The same average causal effect could be consistent with a large share of $a$'s and $b$'s combined, with few no-effect cases, or with a small share of $a$'s and $b$'s combined, with many no-effect cases. Observation of $b$ types in the $X=Y=1$ cell, where it does not change estimates of *average* treatment effects, tells us that there is greater *heterogeneity* of effects in the population. More $b$ types, holding the average effect constant, means that there must also be more $a$ types. Thus, we have learned that there are more offsetting effects playing out in the population --- positive effects alongside negative effects --- than we knew before we saw the clue data. In fact, we learn *more* about heterogeneity from clue data where the average causal effect is already known than where we are highly uncertain about the average effect.
+
+FLAG: Can we show the heterogenity point graphically, too? Seems odd to say it's not visible when we could make it so.
 
 
 Full set of analyses
@@ -169,26 +220,6 @@ How does this approach guide researchers in making choices about research design
 We address this question with a focus  on characterizing the kind of learning that emerges from gathering different sorts of data---such ,  *under different research conditions*. We report the results here of simulation-based experiments designed to tell us under what research conditions different mixes of methods can be expected to yield more accurate inferences. We also discuss, at a high level, the implications of the framework for strategies of qualitative case-selection.  
 
 
-## Intuitions: Does a sufficiently large $N$ always trump $K$?
-
-We begin by considering the learning that occurs upon observing outcomes from varying numbers of cases given different $XY$ data ranging from small to quite large. 
-
-The goal here is to build up intuitions on how beliefs change given different observations and how this affects posterior variance. We address the question is a very controlled setting in which 
-
-* a researcher is confronted with balanced $X,Y$ data that exhibits no correlation
-* the  researcher can seek information on a highly informative ("doubly decisive") clue, $K$, on cases in the $X=Y=1$ cell 
-* though not known in advance, it turns out that each time the researcher finds evidence suggesting that the case in question is a $b$ type (that is, indeed $X$ causes $Y$)
-* the selection probabilities are either unknown or known with near certainty
-
-In this case, we can expect that seeing evidence of $b$ types will shift the researcher to increase her beliefs on the average causal effect. But how strong will these shifts be and how does this depend on the amount of $X, Y$ data available? Does the signal from the $XY$ data drown out any signal from the  $K$ data?
-
-Figure \ref{morn} reports answers to these questions. For the simulations we varied the size of the $XY$ data from 5  observations in each cell to 5000. The key features of the simulations are:
-
-1. When assignment propensities are unknown---as for example with observational data---the clue information shifts beliefs independent of how many $XY$ cases there are. The key insight is that the clue provides information on assignment propensities which are informative about the share of each type in each cell and these shares determine treatment effects no matter how large or small the cells are.
-
-2. When assignment propensities are known with large data there is a lot of learning over the distribution of types in a population (at least up to differences in types rather than the distribution of fundamental types). Clue information shifts beliefs about the types of the particular cases for which clue data is gathered but has almost no effect on estimates of the population estimand. 
-
-3. Not visible from the figure however: in the case with large $N$ and known propensities, observation on many $b$ types in the $X=Y=1$ cell, while not changing estimates of *average* treatment effects ($\lambda_b- \lambda_s$) does affect beliefs on *heterogeneity*, because the data is more consistent with a world with many $a$s and $b$s than one with many $c$s and $d$s.  For example if there were 10,000 data points in each $X,Y$ and clue information on  20 cases in the $X=Y=1$ cell suggest that these are all $b$ types, then the conclusion would be that 95% of the cases are $a$ and $b$ types, in equal proportion.   
 
 
 ```{r}
