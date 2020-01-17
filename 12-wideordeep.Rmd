@@ -81,8 +81,10 @@ The basic procedure, in `gbiqq`, is as follows.
 4. **Formulate queries.** As our discussion in the last section already suggests, the optimal mix may depend on the causal question we are interested in answering. We assess learning about three distinct causal queries:
 
 * Average treatment effect
-* Probability of positive causation: did $X=1$ cause $Y=1$ in an $X=Y=1$ case? 
-* Probability of mediated positive causation: did $X=1$ cause $Y=1$ through $M$ (where $M$ is a mediator) in an $X=Y=1$ case?
+* Probability of positive causation: the probability that $X=1$ caused $Y=1$ in an $X=Y=1$ case? 
+* Probability of mediated positive causation: the probability that $X=1$ caused $Y=1$ through a particular mechanism --- a positive effect of $X$ on $M$ and a positive effect of $M$ on $Y$ --- in an $X=Y=1$ case.
+
+It is worth noting that the second two queries are conditioned on particular $X,Y$ values but that the data strategies we are examining in these analyses do not limit our inquiry to those values. The "wide" component of any strategy is a random draw from the population; and the "deep" componeny involves looking *both* in the $X=Y=1$ cell *and* in the $X=Y=0$ cell. Of course, it is not hard to imagine that seeing what is going on in an $X=Y=0$ case could be informative about causal relations in an $X=Y=1$ case.
 
 5. **Diagnose each strategy, conditional on model and given data.** For each strategy, we implement a separate diagnosis under each combination of model and given data, using `gbiqq`'s `diagnose_strategy` function. For each strategy, model, and given data pattern, the function:
 
@@ -93,6 +95,17 @@ The basic procedure, in `gbiqq`, is as follows.
 * uses the expected posteriors on parameters to generate expected posterior distributions on each of the specified queries.
 
 What we are interested in is the variance of the expected posteriors, which tells us how uncertain we expect to be about our estimate after implementing the strategy, given the model and the given data.^[While we also might expect the posterior mean to change depending on what data-realization we encounter, the *expected* posterior will be equal to the prior mean since any beliefs about what we are most likely to find are already reflected in the prior.] A greater reduction in expected posterior variance implies greater expected learning from the strategy. 
+
+Error bars = sim error
+
+Findings:
+
+**Chain model**
+
+*ATE*
+
+Flat given: If you know there’s nothing going on here, then not much we can learn about ATE from wide or deep. 
+
 
 
 
