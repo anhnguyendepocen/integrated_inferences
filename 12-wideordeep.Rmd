@@ -66,9 +66,34 @@ The stylized example above is intended to help us see how our choices about dept
 
 The basic procedure, in `gbiqq`, is as follows. 
 
-1. **Define a model.** Specify the causal graph (possibly with unobserved confounding), any restrictions on causal effects, and any priors over parameters. 
+1. **Define a model.** Specify the causal graph (possibly with unobserved confounding), any restrictions on causal effects, and any priors over parameters. We consider five different models: 
 
-2. **Specify wide and deep data strategies.** In examples below, we assume a baseline set of $X, Y$ data that have already been observed. We pose the wide-vs.-deep question at the margins: how much do we expect to gain from adding a given number of additional $X,Y$ cases versus 
+* Chain model, with a single, mediated path
+* Two-path model, with a direct and an indirect path 
+* Restricted model, the two-path model with monotonicity restrictions, excluding negative effects at each step
+* Observed-confound model, in which there is only a direct $X \rightarrow Y$ path and the clue is a confound 
+* Unobserved-confound model, the chain model with unobserved $X$ <-> $Y$ confounding
+
+2. **Specify the given data.** We imagine starting with a certain amount of $X,Y$ data, from 32 cases, and we vary the pattern in those data. The given data patterns we examine are a strong positive $X,Y$ relationship; the absence of any $X,Y$ relationship; a pattern suggestive of $X=1$ being almost sufficient for $Y=1$; and a pattern suggestive of $X=1$ being almost necessary for $Y=1$.
+
+3. **Specify wide and deep data strategies.** In examples below, we assume a baseline set of $X, Y$ data that have already been observed. We pose the wide-vs.-deep question at the margins: how much do we expect to gain from collecting $X,Y$ data for a given number of additional, randomly selected cases, and how much from looking for a clue, $M$, within a given number of cases in our sample (for which we already have $X,Y$ data)? To simplify the analysis, we assume that clue data are sought on a positive regression line, with half sought in the $X=0, Y=0$ cell and half in the $X=1, Y=1$ cell. A data strategy is defined as a combination of width and depth: adding $X,Y$ data on 0, 2, or 4 cases, and hunting for a clue within 0, 2, or 4 cases.
+
+4. **Formulate queries.** As our discussion in the last section already suggests, the optimal mix may depend on the causal question we are interested in answering. We assess learning about three distinct causal queries:
+
+* Average treatment effect
+* Probability of positive causation: did $X=1$ cause $Y=1$ in an $X=Y=1$ case? 
+* Probability of mediated positive causation: did $X=1$ cause $Y=1$ through $M$ (where $M$ is a mediator) in an $X=Y=1$ case?
+
+5. **Diagnose each strategy, conditional on model and given data.** For each strategy, we implement a separate diagnosis under each combination of model and given data, using `gbiqq`'s `diagnose_strategy` function. For each strategy, model, and given data pattern, the function:
+
+* identifies all possible new data realizations
+* calculates the probability of each possible data realization
+* updates posteriors on all parameters for each possible data realization
+* calculates expected posteriors on all parameters by averaging across posteriors from all possible data-realizations, weighted by their probability of arising
+* uses the expected posteriors on parameters to generate expected posterior distributions on each of the specified queries.
+
+What we are interested in is the variance of the expected posteriors, which tells us how uncertain we expect to be about our estimate after implementing the strategy, given the model and the given data.^[While we also might expect the posterior mean to change depending on what data-realization we encounter, the *expected* posterior will be equal to the prior mean since any beliefs about what we are most likely to find are already reflected in the prior.] A greater reduction in expected posterior variance implies greater expected learning from the strategy. 
+
 
 
 Full set of analyses
