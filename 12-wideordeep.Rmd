@@ -214,42 +214,68 @@ for(m in  1:length(models)) {for(g in 1:length(observed)) {
 
  Graph full set
 
-```{r, echo = FALSE, eval = FALSE}
-## Read and display
-
-Ch12_base_model_2_regr <- read_rds("saved/Ch12_base_model_2_regr.rds")
-Ch12_base_model_2_flat <- read_rds("saved/Ch12_base_model_2_flat.rds")
-df <- rbind(data.frame(given = "regr", M_base_model_2_regr$diagnoses_df),
-            data.frame(given = "flat", M_base_model_2_flat$diagnoses_df))
-
-
+```{r base_model, echo = FALSE, eval = FALSE}
 
 #Graph
 library(tidyverse)
 
 observed <- c("regr", "suff", "conc", "flat", "necs")
 
-process <- function(given) {
+process <- function(observed) {
 
- readRDS(paste0("saved/Ch12_chain_model_", given, ".rds"))$diagnoses_df %>%
-    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
+ readRDS(paste0("saved/Ch12_base_model_", observed, ".rds"))$diagnoses_df %>%
     dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
+    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
     dplyr::filter(!is.na(Deep)) %>%
     dplyr::mutate(upper = post_var + 2*post_var_sd,
                    lower = post_var - 2*post_var_sd,
-                   given = given)
+                   observed = observed)
 }
 
 df <- lapply(observed, process) %>%
   bind_rows()
 
 
-df$given<- factor(df$given,levels=c("flat","regr","conc", "necs", "suff"))
+df$observed<- factor(df$observed,levels=c("flat","regr","conc", "necs", "suff"))
 
 ggplot(df, aes(x= Deep, y=post_var)) +
   geom_point(aes(shape=Query), size=2) +
   geom_line(aes(linetype=Query)) +
-  facet_grid(vars(given), vars(Wide)) +
+  facet_grid(vars(observed), vars(Wide)) +
+  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
+  theme_bw() +
+  ylab("Expected Posterior Variance") +
+  ggtitle("Wide and Deep Stategies for a Base Model")
+
+
+
+```
+
+```{r chain_model, echo = FALSE, eval = FALSE}
+
+#Graph
+
+process <- function(observed) {
+
+ readRDS(paste0("saved/Ch12_chain_model_", observed, ".rds"))$diagnoses_df %>%
+    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
+    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
+    dplyr::filter(!is.na(Deep)) %>%
+    dplyr::mutate(upper = post_var + 2*post_var_sd,
+                   lower = post_var - 2*post_var_sd,
+                   observed = observed)
+}
+
+df <- lapply(observed, process) %>%
+  bind_rows()
+
+
+df$observed<- factor(df$observed,levels=c("flat","regr","conc", "necs", "suff"))
+
+ggplot(df, aes(x= Deep, y=post_var)) +
+  geom_point(aes(shape=Query), size=2) +
+  geom_line(aes(linetype=Query)) +
+  facet_grid(vars(observed), vars(Wide)) +
   geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
   theme_bw() +
   ylab("Expected Posterior Variance") +
@@ -260,6 +286,42 @@ ggplot(df, aes(x= Deep, y=post_var)) +
 ```
 
 
+```{r chain_model, echo = FALSE, eval = FALSE}
+
+#Graph
+
+observed <- c("regr", "suff", "flat", "necs")
+
+process <- function(observed) {
+
+ readRDS(paste0("saved/Ch12_restricted_model_", observed, ".rds"))$diagnoses_df %>%
+    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
+    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
+    dplyr::filter(!is.na(Deep)) %>%
+    dplyr::mutate(upper = post_var + 2*post_var_sd,
+                   lower = post_var - 2*post_var_sd,
+                   observed = observed)
+}
+
+
+df <- lapply(observed, process) %>%
+  bind_rows()
+
+
+df$observed<- factor(df$observed,levels=c("flat","regr", "necs", "suff"))
+
+ggplot(df, aes(x= Deep, y=post_var)) +
+  geom_point(aes(shape=Query), size=2) +
+  geom_line(aes(linetype=Query)) +
+  facet_grid(vars(observed), vars(Wide)) +
+  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
+  theme_bw() +
+  ylab("Expected Posterior Variance") +
+  ggtitle("Wide and Deep Stategies for a Restricted Model")
+
+
+
+```
 
 
 How does this approach guide researchers in making choices about research designs?
