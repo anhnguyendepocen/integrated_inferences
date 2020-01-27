@@ -3,7 +3,7 @@
 # Elements of Design
 
 
-```{r, include = FALSE}
+```{r packagesused10, include = FALSE}
 source("_packages_used.R")
 ```
 
@@ -209,7 +209,7 @@ Other loss functions could be used, including functions that take account of the
 
 In the `gbiqq` package there is a single function that lets you declare a full design in one go by letting you supply arguments to declare a model, an inquiry, a data strategy, and an answer strategy
 
-```{r, include = FALSE}
+```{r packs, include = FALSE}
 library(DeclareDesign)
 library(gbiqq)
 ```
@@ -242,19 +242,19 @@ Once declared like this you can use a design  to draw likely data, run analyses,
 
 Sample data can be generated with the `DeclareDesign` function `draw_data`:
 
-```{r, echo = FALSE}
+```{r data, echo = FALSE}
 draw_data(my_design) %>% collapse_data(make_model("X -> Y")) %>% kable(caption = "Sample Data (shown in compact form)")
 ```
 
 We can look at sample estimands using `draw_estimands`:
 
-```{r, echo = FALSE}
+```{r estimands, echo = FALSE}
 draw_estimands(my_design)  %>%  head %>% kable(caption = "Sample Estimands")
 ```
 
 We can look at sample estimates using `draw_estimates`:
 
-```{r, echo = FALSE, message = FALSE}
+```{r estimates, echo = FALSE, message = FALSE}
 draw_estimates(my_design)  %>%  head %>% kable(caption = "Sample Estimates")
 ```
 
@@ -262,7 +262,7 @@ Diagnosis is then implemented using `diagnose_design`.  The function `diagnose_d
 
 Here's an example in which for the diagnsis we compare the performance of our declared design to those of designs of different sizes.
 
-```{r, eval = FALSE}
+```{r design, eval = FALSE}
 
 multiple_designs <- redesign(my_design, n = c(10, 40, 200))
 
@@ -271,7 +271,7 @@ diagnose_design(multiple_designs, sims = 20)
 ```
 
 
-```{r, echo = FALSE}
+```{r diagnosedesign, echo = FALSE}
 if(do_diagnosis){
   multiple_designs <- redesign(my_design, n = c(10, 40, 200))
   diag <- diagnose_design(multiple_designs, sims = 100)

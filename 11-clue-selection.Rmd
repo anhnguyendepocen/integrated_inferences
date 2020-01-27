@@ -2,7 +2,7 @@
 
 
 
-```{r, include = FALSE}
+```{r packagesused11, include = FALSE}
 source("_packages_used.R")
 #  do_diagnosis <- TRUE
 ```
@@ -65,7 +65,7 @@ To summarize the intuition, then, governments will fall only if there is both co
 
 This model is formally defined in `gbiqq` as follows:
 
-```{r ch11define_running_model_1, warning = FALSE}
+```{r ch11definerunningmodel1, warning = FALSE}
 model <- 
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
@@ -77,13 +77,13 @@ model <-
 
 ```
 
-```{r, echo = FALSE, include = FALSE}
+```{r plot, echo = FALSE, include = FALSE}
 plot_dag(model)
 ```
 
 Suppose that our query is whether $X$ has a positive effect on $Y$. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that $Y=0$. 
 
-```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+```{r cinfers, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
 possible_inferences <-  
   
   conditional_inferences(model, 
@@ -163,7 +163,7 @@ As the foregoing discussion already suggests, optimal clue strategies can depend
 
 Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
 
-```{r, warning = FALSE}
+```{r model, warning = FALSE}
 model <- 
   
   make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
@@ -176,7 +176,7 @@ model <-
 ```
 
 
-```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+```{r cinfer2, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
 possible_inferences <-  
   
   conditional_inferences(model, 
@@ -236,7 +236,7 @@ model_priors <-  model %>%
 
 These priors put roughly a 0.91 probability on $S=1$. 
 
-```{r, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+```{r cinfer3, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
 possible_inferences <-  
   
   conditional_inferences(model_priors, 
@@ -276,7 +276,7 @@ We now apply this approach to the model of democratization that we worked with i
 
 We start by specifying the democratization model, with negative effects ruled for $I \rightarrow M$, $M \rightarrow D$, and $P \rightarrow D$ and a positive direct effect ruled out for $I \rightarrow D$.
 
-```{r, echo = FALSE, message = FALSE}
+```{r model2, echo = FALSE, message = FALSE}
 
 pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
@@ -288,7 +288,7 @@ pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
 
 Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables --- mobilization or international pressure --- we should collect data on: we could observe nothing further; observe $P$ only; observe $M$ only; or observe both $P$ and $M$. In Table \@ref(possible_outcomespimd_i1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditionining on $I=D=1$.)
 
-```{r, echo = FALSE}
+```{r cinfer4, echo = FALSE}
 
 inferences_pimd <-
   conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
@@ -305,7 +305,7 @@ We also see that the mediator is much more informative when the causal effect we
 
 
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r explearning, echo = FALSE, message = FALSE, warning = FALSE}
 
 ELpimd1 <-
   rbind(
@@ -322,7 +322,7 @@ kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = "\\label{pimdlearn_i
 
 We turn next to considering those cases with low inequality that democratized, asking whether democratization occurred because of a *negative* effect of inequality. The possible data realizations, resulting inferences, and data probabilities are shown in Table \@ref(possible_outcomespimd_i0), while the expected learning estimates for each clue strategy are given in Table \@ref(pimdlearn_i0d1). The pattern here is similar, though somewhat starker: substantially greater gains to observing the moderator, $P$, than the mediator $M$. The gains to observing $M$ here are very small indeed. We can already see from comparing the relevant rows in the data-possibilities table how little our posterior beliefs shift depending on $M$'s realized value. $M$ is far less informative for assessing $I$'s causal effect for an $I=0, D=1$ case than for a $I=1, D=1$ case. The reason is that, in the former situation, we are looking for a positive effect while in the latter situation, we are looking for a negative effects; but only positive effects can operate through the mobilization pathway under the model restrictions. Thus, $M$ is uninformative as a mediator of $I$'s effect in an $I=0, D=1$ (though it is informative as a moderator for such a case, but less so).
 
-```{r, echo = FALSE}
+```{r cinfer5, echo = FALSE}
 
 inferences2_pimd <-
   conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
@@ -333,7 +333,7 @@ kable(inferences2_pimd, caption = "\\label{possible_outcomespimd_i0} Table shows
 
 
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r pimdlearn, echo = FALSE, message = FALSE, warning = FALSE}
 
 ELpimd2 <-
   rbind(
@@ -428,7 +428,7 @@ Now, let us see what happens as we revise the model, making it less restrictive.
 
 Having set the confound condition, we can then express beliefs (parameter values) that $P=1$ is more common relative to $P=0$ when the condition is met than otherwise.^[It will be recalled that, in single-case inference we must express beliefs about population-level shares of nodal types. This includes expressing beliefs about the parameters defining the confounding.] We keep all other parameter values flat across the nodal types that are not excluded.
 
-```{r, echo = FALSE, message = FALSE}
+```{r pimdconfound, echo = FALSE, message = FALSE}
 
 pimd_confound2 <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
@@ -453,7 +453,7 @@ set_parameters(type = "prior_mean")
 
 
 
-```{r, echo = FALSE}
+```{r possoutpimdconf, echo = FALSE}
 
 inferences_pimdconf <-
   conditional_inferences(pimd_confound2, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
@@ -462,7 +462,7 @@ kable(inferences_pimdconf, caption = "\\label{possible_outcomespimd_conf} Table 
 
 ```
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r pimdlearni1d1con, echo = FALSE, message = FALSE, warning = FALSE}
 ELpimdconfound4 <-
   rbind(
     expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
@@ -483,7 +483,7 @@ Working backwards, we can readily identify the reason for this in Table \@ref(po
 We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the *pathway* through which an effect occurs. We need to adjust the model to allow allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of $I$ on $M$ and instead use `set_priors` to state a belief that such a negative effect is less likely than $M$'s other nodal types. 
 
 
-```{r, echo = FALSE, message = FALSE}
+```{r model3, echo = FALSE, message = FALSE}
 
 pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
@@ -504,7 +504,7 @@ Starting with Table \@(possible_outcomespimd_priors_effect), a comparison with t
 So how informative overall is $M$ as compared to $P$? In the model allowing negative $I \rightarrow M$ effects, we are now learning in two ways from $M$ rather than one; so our intuition might be that $M$ has become more informative than it was in our original model. In Table \@ref(tab:pimdlearn_priors_effect), we see that this is not at all the case! Much as in Table \@ref(pimdlearn_i0d1), for the same query and given data but under our original model, we still see very little---indeed, slightly less---reduction in expected posterior variance from the search for $M$. $M$ may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect *undoes* some of the learning from the moderation by pushing our inferences in the opposing directions.
 
 
-```{r table_inferences_priors_effect, echo = FALSE}
+```{r tableinferencespriors_effect, echo = FALSE}
 
 inferences_priors_effect <-
   conditional_inferences(pimd_priors, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
@@ -513,7 +513,7 @@ kable(inferences_priors_effect, caption = "\\label{possible_outcomespimd_priors_
 
 ```
 
-```{r pimdlearn_priors_effect, echo = FALSE, message = FALSE, warning = FALSE}
+```{r pimdlearnpriorseffect, echo = FALSE, message = FALSE, warning = FALSE}
 ELpimd_priors_effect <-
   rbind(
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = NULL,       given = "I==0 & D==1"),
@@ -537,7 +537,7 @@ Inferences conditional on data strategies and realizations are displayed in Tabl
 Turning to expected learning from alternative strategies, shown in Table \@ref(pimdlearn_path), we can see clearly -- by comparison to Table \ref@(tab:pimdlearn_priors_effect) -- how optimal clue strategies depend on the query of interest. Whereas $M$ is only slight informative about $I$'s causal effect--with $P$ the more informative clue--we expect to learn much more from $M$ about the pathway-specific query, and $M$ is far more informative than $P$.
 
 
-```{r, echo = FALSE}
+```{r possibleoutcomespimdpath, echo = FALSE}
 
 inferences_pimdpath <-
   conditional_inferences(pimd_priors, query = "(M[I=1] < M[I=0]) & 
@@ -548,7 +548,7 @@ kable(inferences_pimdpath, caption = "\\label{possible_outcomespimd_path} Table 
 
 ```
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r pimdlearnpath, echo = FALSE, message = FALSE, warning = FALSE}
 ELpimd_path <-
   rbind(
     expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
@@ -573,7 +573,7 @@ Now, what if we already know that $I$ has a negative effect on $D$ and we want t
 
 FLAG
 
-```{r, echo = FALSE, message = FALSE, eval = FALSE}
+```{r model6, echo = FALSE, message = FALSE, eval = FALSE}
 
 pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
@@ -604,7 +604,7 @@ To illustrate with the running example, we imagine a situation in which it is kn
 Suppose that we observe that $Y=0$: the government was not replaced. We then want to know whether this is because the government was sophisticated ($S=1$). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
 
 
-```{r ch11define_running_model_3, warning = FALSE}
+```{r ch11definerunningmodel3, warning = FALSE}
 
 # Make model
 model <-
@@ -618,7 +618,7 @@ model <-
 ```
 
 
-```{r, echo = FALSE}
+```{r runexam, echo = FALSE}
 # Implement for running examples
 
 
@@ -685,7 +685,7 @@ Figure \@ref(fig:tradeoffs) plots a collection of strategies based on two criter
 Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.
 
 
-```{r, echo = FALSE, message = FALSE}
+```{r model7, echo = FALSE, message = FALSE}
 
 pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
@@ -696,7 +696,7 @@ pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
 ```
 
 
-```{r, echo = FALSE}
+```{r strategies, echo = FALSE}
 
 strategies <- two_step_strategies(pimd) %>% 
   filter((one %in% c("P", "M"))) %>% 
@@ -750,7 +750,7 @@ We can see here that four strategies are non-dominated by any alternative. These
 Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don't expect to learn the most by starting with the most probative clue. If we start with the more informative clue, $P$, observing $M$ only if $P=0$, we expect to end up with *more* uncertainty than if we start with the less informative clue, $M$, and observe $P$ only if $M=1$. 
 
 
-```{r, echo = FALSE, message = FALSE, eval = FALSE}
+```{r tradeoffspimdconfound, echo = FALSE, message = FALSE, eval = FALSE}
 
 confound = list(P = "(D[P=1] == 1)")
 

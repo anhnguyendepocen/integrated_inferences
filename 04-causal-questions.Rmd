@@ -11,7 +11,7 @@ Although a lot  of empirical work focuses on identifying average causal effects,
 
 ***
 
-```{r, include = FALSE}
+```{r packagesused04, include = FALSE}
 source("_packages_used.R")
 ```
 
@@ -76,7 +76,7 @@ We can easily represent this kind of query in the context of a causal model. We 
 
 <!-- We then need to specify the values that $Q$ can take on, $Q$'s range. With a binary causal variable of interest, we can write down a value of $Q$ as $q_{ij}$. The pair of subscripts simply conveys the type's potential outcomes: $i$ represents the value that $Y$ takes on if $X=0$ while $j$ represents the value that $Y$ takes on if  $X=1$. Thus, in a binary framework, $Q$ can take on four values, corresponding to our original four types: $q_{00}$ (a $c$ type), $q_{10}$ (an $a$ type), $q_{01}$ (a $b$ type) and $q_{11}$ (a $d$ type). This setup also allows us to write down a simple, closed-form functional equation for å$Y$ in terms of its parents, $X$ and $Q$: $Y(x,q_{ij}) =  i(1-x) + jx$.^[To generate this closed-form function, we decompose $q_{ij}$ into its component parts, $i$ and $j$. Note that there is no loss of generality in the functional form linking $X$ and $Q$ to $Y$. In a causal model framework, the structural equations, such as those linking $X$ and $Y$ conditional on another node, can be entirely non-parametric.] -->
 
-```{r, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:casequery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's causal type, represented by $\\theta^Y$. With a single binary causal variable of interest, we let $\\theta_Y$ take on values $\\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\\theta^Y$ ranges over the four values: $\\theta^Y_{00}$, $\\theta^Y_{10}$, $\\theta^Y_{01}$ and $\\theta^Y_{11}$."}
+```{r casequery, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:casequery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's causal type, represented by $\\theta^Y$. With a single binary causal variable of interest, we let $\\theta_Y$ take on values $\\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\\theta^Y$ ranges over the four values: $\\theta^Y_{00}$, $\\theta^Y_{10}$, $\\theta^Y_{01}$ and $\\theta^Y_{11}$."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 1, 1),
        y = c(1, 1, 2),
@@ -223,7 +223,7 @@ Using our two-cause notation (with $H^S$ on the horizontal axis, and $H^B$ on th
 It is also the case, as we have said, that all counterfactual causes are actual causes. They are, quite simply, counterfactual causes when we hold _nothing_ fixed ($\mathcal W$ is the empty set). Thus, in fact, any $\theta^S$, $\theta^{H^S}$ and $\theta^C$ values in which $S$ has a positive effect when $B=1$ will do. This includes, for instance, a $\theta^C$ value in which Billy's hitting has no effect on the bottle (perhaps Billy doesn't throw hard enough!): e.g., $\theta^{01}_{01}$. Here, Sally's throw is both a counterfactual cause and an actual cause of the bottle's cracking. The larger point is that actual cause queries can, like all other causal queries, be defined as questions about the values of nodes in a causal model.
 
 
-```{r, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's causal type, represented by $\\theta^Y$. With a single binary causal variable of interest, we let $\\theta_Y$ take on values $\\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\\theta^Y$ ranges over the four values: $\\theta^Y_{00}$, $\\theta^Y_{10}$, $\\theta^Y_{01}$ and $\\theta^Y_{11}$."}
+```{r actualquery, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's causal type, represented by $\\theta^Y$. With a single binary causal variable of interest, we let $\\theta_Y$ take on values $\\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\\theta^Y$ ranges over the four values: $\\theta^Y_{00}$, $\\theta^Y_{10}$, $\\theta^Y_{01}$ and $\\theta^Y_{11}$."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 0, 1, 1, 1, 1, 3, 3),
        y = c(2, 0, 2, 3, 0, -1, 1, 2),
@@ -310,7 +310,7 @@ In this model, our causal query---about $X$'s average causal effect---is thus de
 
 
 
-```{r, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:DAGace} This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different causal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\\lambda$ is a vector representing the multinomial distribution of causal types in the population while $U_\\theta$ is a random variable representing the draw of each case from the distribution defined by $\\lambda$. A case's causal type, $\\theta^Y$, is thus a joint function of $\\lambda^Y$ and $U^{\\theta_Y}$."}
+```{r DAGace, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:DAGace} This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different causal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\\lambda$ is a vector representing the multinomial distribution of causal types in the population while $U_\\theta$ is a random variable representing the draw of each case from the distribution defined by $\\lambda$. A case's causal type, $\\theta^Y$, is thus a joint function of $\\lambda^Y$ and $U^{\\theta_Y}$."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 2, 2, 1, 3),
        y = c(1, 1, 2, 3, 3),
@@ -340,7 +340,7 @@ Rather, the question of whether the top (mediated) causal path is operative is a
 \theta^Y) - Y(X = 1, M = M(X=0, \theta^M), \theta^Y))$$, which captures the difference to $Y$ if $M$ were to change in the way that it would change due to a change in $X$, but without an actual change in $X$ [@pearl2009causality p 132, @imai2010general].] Framing the query in this way makes clear that asking whether a causal effect operated via a given path is in fact asking about a specific set of causal effects lying along that path.
 
 
-```{r, echo = FALSE, fig.width = 5, fig.height = 3,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:DAGpaths} Here $X$ has effects on $Y$ both indirectly through $M$ and directly."}
+```{r DAGpaths, echo = FALSE, fig.width = 5, fig.height = 3,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:DAGpaths} Here $X$ has effects on $Y$ both indirectly through $M$ and directly."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 1, 2, 1, 2),
        y = c(2, 3, 2, 4, 3),

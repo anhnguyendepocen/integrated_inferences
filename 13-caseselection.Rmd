@@ -1,6 +1,6 @@
 # Case selection as a Decision Problem {#caseselection}
 
-```{r, include = FALSE}
+```{r packagesused13, include = FALSE}
 source("_packages_used.R")
 do_diagnosis = FALSE
 ```
@@ -56,7 +56,7 @@ Despite these various differences, our results will agree in key ways with those
 
 ## Logic of strategy comparison
 
-```{r selection_code, echo = FALSE}
+```{r selectioncode, echo = FALSE}
 
 # We define a model
 model <- make_model("X->M->Y")  %>%
@@ -88,7 +88,7 @@ names(C_X1Y1_only)[-c(1:2)] <- c("C1", "C2", "C3")
 
 Consider a situation in which one has access to $X,Y$ data on just six cases of the form:
 
-```{r, echo = FALSE}
+```{r observed, echo = FALSE}
 kable(observed)
 ```
 
@@ -101,7 +101,7 @@ We want to examine data on $M$ for two of these cases and are wondering about wh
 Different strategies yield different possible types of data. Each one of these is likely to arise with a different probability and is associated with a different inference. Drawing on the prior beliefs embedded in a causal model, we can thus assess the *expected* posterior variance associated with each strategy. 
 
 
-```{r, echo = FALSE}
+```{r dtypes, echo = FALSE}
 # Combine data types
 df <- A_on_regression_line[,-2] %>% 
   merge(B_off_regression_line[,-2], by = "event", all = TRUE) %>%
@@ -113,7 +113,7 @@ df <- A_on_regression_line[,-2] %>%
 
 For each of these possible strategies we can assess the posterior that we would obtain for each type of data we might observe.
 
-```{r, echo = FALSE}
+```{r illustration, echo = FALSE}
 
 if(do_diagnosis){
   
@@ -166,7 +166,7 @@ kable(df, caption = "Each column shows a possible distribution of data that can 
 Each of the first two strategies generates one of four different data patterns. The third data strategy generates up to three data patterns. None of these data patterns overlap across strategies. 
 From the calculated  probability of each data type, given the data seen so far, and the posterior variance given each data realization, the implied *expected* variance is  easily calculated. These are summarized below:
 
-```{r, echo = FALSE}
+```{r exppostvar, echo = FALSE}
 expected_posterior_var <- sapply(1:3, function(i) 
   sum(probabilities[[i]]*unlist(lapply(estimates_db[[i]], function(x) x$sd^2)))
  )
@@ -179,7 +179,7 @@ In this example, we see that we would expect to be better off---in the sense of 
 Why is this?
 
 
-```{r, include = FALSE}
+```{r test, include = FALSE}
 # source("_packages_used.R")
 
 model <- make_model("X -> M -> Y")
@@ -296,7 +296,7 @@ For correlated data similar logics apply, but the effects are stronger for evide
 
 
 
-```{r, include = FALSE}
+```{r cinfer, include = FALSE}
 # Make sense given process tracing approach
 
 long_data <-  expand_data(gen_observed_data(4,2,2,4), model)
@@ -384,7 +384,7 @@ diagnose_strategies(
 
 ```
 
-```{r , echo = FALSE, message = FALSE}
+```{r ch13diagnosis387, echo = FALSE, message = FALSE}
 
 if(do_diagnosis){
   
@@ -421,7 +421,7 @@ kable(diagnosis$diagnoses_df[, c(1, 4:7)], digits = 4, caption = "The estimand a
 
 
 
-```{r, echo = FALSE}
+```{r diagprep, echo = FALSE}
 # Models
 
 models <- list(
@@ -516,7 +516,7 @@ case_selection_diagnose <- function(model, given,  N, sims = 4000, fit, ...)
 ```
 
 
-```{r, echo = FALSE}  
+```{r diagn, echo = FALSE}  
 ## Implement
 
 if(do_diagnosis){
@@ -552,7 +552,7 @@ if(do_diagnosis){
 
  Graph full set
 
-```{r, echo = FALSE}
+```{r graph, echo = FALSE}
 ## Read and display
 ## PARAMETERS
 rds_files <- data.frame(name = dir("saved"), stringsAsFactors = F) %>% 
@@ -680,7 +680,7 @@ While it is common practice for mixed-method researchers to perform their proces
 
 <!-- ## Appendix: Stan uncertainty -->
 
-```{r, echo = FALSE, eval = FALSE}
+```{r appendix, echo = FALSE, eval = FALSE}
 # manual check of base model with refr data and checking off regression line with data pattern 1
 
 data_check <- M_base_model_2_regr$possible_data_list$all_off[,c(1,3)] %>% expand_data(models$base_model)

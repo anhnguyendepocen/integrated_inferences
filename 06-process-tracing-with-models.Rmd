@@ -15,7 +15,7 @@ We connect the literature on causal models to qualitative inference strategies u
 
 FLAG: Change causal type to unit type throughout (though note I've introduced this already in the **"unit causal type"** paragraph.)
 
-```{r, include = FALSE}
+```{r packagesused06, include = FALSE}
 source("_packages_used.R")
 ```
 
@@ -64,7 +64,7 @@ Given a causal model, we form posteriors over estimands as follows:
 
 <!-- 7. **Map from causal types to query**. As any causal query can be formulated as a question about causal types (see Chapter \@ref(questions)), we can now map from our posteriors on causal types to a posterior probability on the estimand of interest: whether a causal effect, a causal pathway, causakl attribution, or some other case-level causal quantity. -->
 
-```{r, include = FALSE}
+```{r plotrix, include = FALSE}
 library(plotrix)
 ```
 
@@ -286,7 +286,7 @@ Again, the ambiguities arising from data patterns are apparent. For instance, if
 Our priors here derive from a set of parameter values, much like in the previous example, in which the $X$ types are equally common (0.5 each); a positive effect of $X$ on $M$ is twice as common (0.4) as the other $M$ types (all set to 0.2); and a positive effect of $M$ on $Y$ is twice as common (0.4) as all other $Y$ types (all at 0.2). We can then easily see why we thus get priors on some causal types are higher than those on others: for instance, the two causal types with priors of 0.08 both have two positive effects (at the $X \rightarrow Y$ and $M \rightarrow Y$ stages) while the causal types with priors of 0.02 include no positive effects at either stage.
 
 
-```{r, echo = FALSE}
+```{r model289, echo = FALSE}
 XY <- make_model("X -> Y") %>% set_parameters(c(.5, .5, .2, .2, .4, .2))
 ambiguityXY  <- get_ambiguities_matrix(XY)
 
@@ -301,14 +301,14 @@ ambiguityXMY  <- get_ambiguities_matrix(XMY)
 <!-- ``` -->
 
 
-```{r, echo = FALSE}
+```{r ambiguityXY, echo = FALSE}
 
 ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = get_type_prob(XY)))
 
 ```
 <!-- For an $X \rightarrow Y$ model: -->
 
-```{r, echo = FALSE}
+```{r ambiguityXMY, echo = FALSE}
 
 ambXMY_with_priors <- data.frame(cbind(ambiguityXMY, prior = get_type_prob(XMY)))
 
@@ -355,7 +355,7 @@ Table: (\#tab:ambigmedupdate). An updated version of the ambiguity matrix in Tab
 
 A notable feature of the logic of single-case process tracing is that the relative probabilities on the retained causal types never change. If we start out believing that causal type $A$ is twice as likely as causal type $B$, and both $A$ and $B$ are retained once we see the data, then $A$ will be twice as likely as $B$ in our posteriors. All updating occurs by *eliminating* causal types from consideration and zeroing in on those that remain.
 
-```{r, echo = FALSE}
+```{r ambXMYwpriors, echo = FALSE}
 ambXMY_with_priors%>%
     mutate(type = rownames(ambXMY_with_priors)) %>%
     select(type, X1M0Y0, prior) %>%
@@ -392,7 +392,7 @@ A similar logic applies if partial data are observed: that is, if we do not coll
 Table: (\#tab:ambigmedupdatepartial). An updated version of the ambiguity matrix in Table \@ref(tab:ambigmatrixmed), after observing partial data in case: $X=1, Y=0$, with $M$ unobserved.
 
 
-```{r, echo = FALSE}
+```{r ambXMYwpriors2, echo = FALSE}
 ambXMY_with_priors%>%
     mutate(type = rownames(ambXMY_with_priors)) %>%
     select(type, X1M0Y0, X1M1Y0, prior) %>%
@@ -440,7 +440,7 @@ If we observe only the partial data, $X=1, Y=1$, then we update to the ambiguity
 FLAG: Briefly discuss other estimand(s) one could do, though don't show in detail here. Will do pathways in Chap. 7.
 
 
-```{r, echo = FALSE}
+```{r ambXMYwithpriors, echo = FALSE}
 ambXMY_with_priors%>%
     mutate(type = rownames(ambXMY_with_priors)) %>%
     select(type, X1M1Y1, prior) %>%
@@ -496,7 +496,7 @@ For more complex models and estimands, it can be more difficult to eyeball the c
 <!-- ``` -->
 
 
-```{r, echo = FALSE, comment = ""}
+```{r typesXMY, echo = FALSE, comment = ""}
 types <- get_types(XMY, "Y[X=1] != Y[X=0]")
 cat(paste0(names(types$types[types$types]), collapse = ", "))
 ```
@@ -511,7 +511,7 @@ This completes the abstract representation of the process tracing procedure. We 
 
 ### Illustration with code
 
-```{r, eval = FALSE}
+```{r XMY, eval = FALSE}
 
 XMY <- make_model("X -> M -> Y") %>% 
        set_parameters (c(.5, .5, .2, .2, .4, .2, .2, .2, .4, .2))
@@ -522,7 +522,7 @@ query_model(model = XMY,
               using = "parameters")
 ```
 
-```{r, echo = FALSE}
+```{r XMY2, echo = FALSE}
 make_model("X -> M -> Y") %>% 
        set_parameters (c(.5, .5, .2, .2, .4, .2, .2, .2, .4, .2)) %>%
        query_model(
@@ -672,7 +672,7 @@ Let us examine Proposition 1 in practice. We begin with the simplest case possib
 
 The very simplest probabilistic causal graph has $X$ influencing $Y$, with $X$ determined by a coin flip. Assuming that there is some causal heterogeneity---that is, it is unknown in any particular case whether $X$ causes $Y$---we also include a response-type variable, $Q$, pointing into $Y$, as shown in Figure \ref{fig:d-sepsimple}. Here, $Q^Y$ determines the value of $Y$ that will be generated by $X$. Asking about the causal effect of $X$ in a case thus means learning the value of $Q^Y$ in that case. As will be recalled, in a binary setup with one causal variable, a response-type variable can take on one of four values, $q^Y_{00}$, $q^Y_{10}$, $q^Y_{01}$ and $q^Y_{11}$,^[As a reminder, we read $q^Y_{ij}$ (when $X$ is binary) as meaning that $Y$ will take on value $i$ when $X=0$ and value $j$ when $X=1$.] corresponding to the four possible causal types in this setting.
 
-```{r, echo = FALSE, fig.width = 5, fig.height = 3,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:d-sepsimple} A simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's response type for $Y$."}
+```{r sepsimple, echo = FALSE, fig.width = 5, fig.height = 3,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:d-sepsimple} A simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's response type for $Y$."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 1, 1),
        y = c(1, 1, 2),
@@ -721,7 +721,7 @@ Suppose now, having observed $Y$, that we were to consider also observing $X$. W
 Finally, what if we observe $X$ first and are considering whether to seek information about $Y$? Would doing so be informative? $X$ does not $d-$separate $Q^Y$ from $Y$; thus, observing $Y$ will be informative about $Q^Y$. In fact, observing $Y$ if we have already seen $X$ is *more* informative than observing $Y$ alone. The reasoning follows the logic of collision discussed just above. If we observe $Y$ having already seen $X$, not only do we reap the information about $Q^Y$ provided by $Y$'s correlation with $Q^Y$; we simultaneously open up the path between $X$ and $Q^Y$, learning additionally from the conditional dependence between $X$ and $Q^Y$ given $Y$. 
 
 
-```{r, echo = FALSE, include = FALSE, errors = FALSE}
+```{r kinformative, echo = FALSE, include = FALSE, errors = FALSE}
 # Graphing all dags in some class, X,Y,K,Q
 
 
@@ -801,7 +801,7 @@ We put Proposition 1 to work in a slightly more complex set of models in Figure 
 
 <!-- Above footnote: do we want to say "faithful" rather than stable, as we do earlier? -->
 
-```{r, echo = FALSE, fig.width = 11, fig.height = 12, fig.cap = "\\label{fig:34graphs} All connected directed acyclic graphs over $X,Y,K,Q$, in which $Q$ is an exogenous variable that directly causes $Y$, and $X$ is a direct or indirect cause of $Y$. The title of each graph indicates the conditions under which $K$ can be informative about (i.e., is not $d$-separated from) $Q$, given the prior observation of $X$, $Y$, both, or neither (...).", errors = FALSE, warning = FALSE, message = FALSE, comment = FALSE}
+```{r 34graphs, echo = FALSE, fig.width = 11, fig.height = 12, fig.cap = "\\label{fig:34graphs} All connected directed acyclic graphs over $X,Y,K,Q$, in which $Q$ is an exogenous variable that directly causes $Y$, and $X$ is a direct or indirect cause of $Y$. The title of each graph indicates the conditions under which $K$ can be informative about (i.e., is not $d$-separated from) $Q$, given the prior observation of $X$, $Y$, both, or neither (...).", errors = FALSE, warning = FALSE, message = FALSE, comment = FALSE}
 
 
 par(mfrow = c(6, 6) )

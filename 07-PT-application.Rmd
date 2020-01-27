@@ -1,7 +1,7 @@
 # Application: Process Tracing with a Causal Model {#ptapp}
 
 
-```{r, include = FALSE}
+```{r packagesused07, include = FALSE}
 source("_packages_used.R")
 ```
 
@@ -80,7 +80,7 @@ We represent in Figure \ref{fig:lowdem} one possible lower-level model consisten
 2.  We specify a second influence on democratization, international pressure ($P$). Like $\theta^M$, $P$ has also been extracted from $\theta^D$; it represents that part of $D$'s response to $I$ that is conditioned by international pressures.
 
 
-```{r, echo = FALSE, fig.width = 8, fig.height = 5, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:lowdem} A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type."}
+```{r lowdem, echo = FALSE, fig.width = 8, fig.height = 5, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:lowdem} A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type."}
 
 hj_dag(x = c(1,1.5,3,3, 1.5, 2.2),
        y = c(1,2,2,3, 3, 3),
@@ -250,7 +250,7 @@ kable(cbind(row = 1:nrow(UDs), UDs), caption = "Mapping from admissible types to
 ```
 
 
-```{r, include = FALSE}
+```{r cinfer253, include = FALSE}
 I1D1 <- conditional_inferences(model, 
                             query = "D[I=1] > D[I=0]", 
                             parameters = model$lambda, 
@@ -263,7 +263,7 @@ I0D1 <- conditional_inferences(model,
 
 ```
 
-```{r, echo = FALSE}
+```{r pinferences, echo = FALSE}
 
 ## Functions to extract key inferences given different data strategies
 
@@ -416,7 +416,7 @@ How is this model defined and used in practice?
 
 Using the `gbiqq` package we can set this model up, along with restrictions, in a few lines a follows.
 
-```{r, eval = FALSE}
+```{r restrictedmodelch7, eval = FALSE}
 model <- 
   make_model("I -> M -> D <- P; I -> D") %>%
   set_restrictions("(M[I=1] < M[I=0])") %>%
@@ -425,7 +425,7 @@ model <-
 
 We can then calculate conditional inferences as follows:
 
-```{r, eval = FALSE}
+```{r cinfer428, eval = FALSE}
 conditional_inferences(model, 
                        query = "D[I=0]==0",
                        given = "D==1 & I==1")

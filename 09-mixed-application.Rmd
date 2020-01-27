@@ -1,11 +1,11 @@
 # Mixed-Method Application: Inequality and Democracy Revisited {#mixingapp}
 
 
-```{r, include = FALSE}
+```{r packagesused09, include = FALSE}
 source("_packages_used.R")
 ```
 
-```{r, include=FALSE}
+```{r diagnosis, include=FALSE}
 # do_diagnosis = TRUE
 ```
 
@@ -44,7 +44,7 @@ We can use `gbiqq` to define the model, with these restrictions and this confoun
 
 <!-- I have changed the confound to create a distinct conditional distribution when I will have a positive effect on M (was for 11 types)_. Seems like we'd expect governments to work harder to reduce inequality in places where it would pose a mobilizational threat than in other places. -->
 
-```{r, message = FALSE}
+```{r model47, message = FALSE}
 model <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c( 
@@ -79,7 +79,7 @@ data <- gbiqq::democracy_data
 
 Note that this is not a rectangular dataset in that Haggard and Kaufman's collection of clues was conditional on the outcome, $D=1$: they gathered qualitative data on the presence of international pressure and the presence of mass-mobilization *only* for those cases that democratized. This is not an uncommon case-selection principle. The analyst often reasons that more can be learned about how an outcome arises by focusing in on cases where the outcome of interest has in fact occurred. (We assess this case-selection intuition, in the context of model-based inferences, in Chapter \@ref(caseselection).)
 
-```{r, echo = FALSE, warning = FALSE}
+```{r data82, echo = FALSE, warning = FALSE}
 data <- gbiqq::democracy_data 
 kable(head(data))
 
@@ -135,7 +135,7 @@ We ask `gbiqq` now to query $\lambda$'s posterior distribution to generate poste
 
 FLAG: Let's graph the priors for each of these queries next to the posteriors.
 
-```{r, include = FALSE}
+```{r pimdqueries, include = FALSE}
 
 if(do_diagnosis){
 pimd_queries <- list(

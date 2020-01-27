@@ -6,7 +6,7 @@ Researchers often need to choose between collecting data on a greater number of 
 
 ***
 
-```{r, include = FALSE}
+```{r packagesused12, include = FALSE}
 source("_packages_used.R")
 ```
 
@@ -166,7 +166,7 @@ D is no more helpful here because you've still got the other path that M doesn't
 
 Full set of analyses
 
-```{r, echo = FALSE, eval = TRUE}
+```{r modelsprepdiag, echo = FALSE, eval = TRUE}
 # Models
 
 models <- list(
@@ -247,7 +247,7 @@ case_selection_diagnose <- function(model, observed,  sims = 4000, ...)
 ```
 
 
-```{r, echo = FALSE, eval = FALSE}  
+```{r dodiagnosis, echo = FALSE, eval = FALSE}  
 ## Implement
 
 if(do_diagnosis){
@@ -269,7 +269,7 @@ for(m in  1:length(models)) {for(g in 1:length(observed)) {
 
  Graph full set
 
-```{r base_model, echo = FALSE, eval = FALSE}
+```{r basemodel, echo = FALSE, eval = FALSE}
 
 #Graph
 library(tidyverse)
@@ -307,7 +307,7 @@ ggplot(df, aes(x= Deep, y=post_var)) +
 
 ```
 
-```{r chain_model, echo = FALSE, eval = FALSE}
+```{r chainmodel, echo = FALSE, eval = FALSE}
 
 #Graph
 
@@ -343,7 +343,7 @@ ggplot(df, aes(x= Deep, y=post_var)) +
 ```
 
 
-```{r restricted_model, echo = FALSE, eval = FALSE}
+```{r restrictedmodel, echo = FALSE, eval = FALSE}
 
 #Graph
 
@@ -390,7 +390,7 @@ We address this question with a focus  on characterizing the kind of learning th
 
 
 
-```{r}
+```{r model393}
 model <- make_model("X -> Y <- K") %>%
   set_restrictions("(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)") %>%
   set_parameters(c(0.01, .99, .5, .5, .25, .25, .25, .25))
@@ -398,7 +398,7 @@ model <- make_model("X -> Y <- K") %>%
 
 We see that prior beliefs are for a 0 average effect which rises to approximately .5 for cases in which $K=1$ is observed and falls to -.5 for cases in which $K=0$ is observed.  
 
-```{r, echo = FALSE}
+```{r querymodel, echo = FALSE}
 kable(
   query_model(model, queries = list(ATE = "Y[X=1] - Y[X=0]"), 
               using =  "priors", 
@@ -423,7 +423,7 @@ kable(q2)
 We now examine inferences given different data strategies:
 
 
-```{r , echo = FALSE, message = FALSE}
+```{r ch12diagnosiswd, echo = FALSE, message = FALSE}
 
 obs_fold <- function(n_fold) 
   data.frame(X = c(0,0,0,1,1,1), Y = c(0,0,1,0,1,1), K = NA) %>%
@@ -463,7 +463,7 @@ if(do_diagnosis) {
 # plot(0:4, diagnosis$diagnoses_df$MSE, ylim = c(0, max(diagnosis$diagnoses_df$MSE)), ylab = "MSE", xlab = "Cases with within case data", type = "b")
 ```
 
-```{r, eval = FALSE}
+```{r wdXMY2, eval = FALSE}
 if(do_diagnosis){
   wd_1_2 <- wide_or_deep(model, 1, 2)
   write_rds( wd_1_2, "saved/wd_1_2.rds")
@@ -552,7 +552,7 @@ What are the marginal gains from additional pieces of correlational and process-
 
 
 
-```{r, echo = FALSE}
+```{r ch13diagnosis, echo = FALSE}
 
 model <- make_model("K-> X -> Y <- K")
 

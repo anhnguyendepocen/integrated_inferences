@@ -7,7 +7,7 @@ Model based inference takes the model seriously. But deep down we know that all 
 ***
 
 
-```{r, include = FALSE}
+```{r packagesused15, include = FALSE}
 source("_packages_used.R")
 if(do_diagnosis) if(!exists("fit"))  fit <- fitted_model()
 library("bayesplot")
@@ -36,7 +36,7 @@ Second, you might engage in qualitative inference. There is a literature on prob
 
 Claims of conditional independence - Show for whether there's a direct effect of X on Y
 
-```{r}
+```{r modelsch15}
 reference_model <- make_model("X -> M -> Y <- X") %>%
   set_parameters(c(.5, .5, .1, .1, .7, .1, rep(.05, 8), .25, rep(.05, 7)))
 analyst_model   <- make_model("X -> M -> Y")
@@ -54,7 +54,7 @@ approach 2 -- say actual confound is q~=0; but model  assumes q = 0. Draw data f
 
 Say we have model
 
-```{r}
+```{r confmodel}
 model <- make_model("X -> M1 -> M2 -> Y ") %>% set_confound(list(M1 = "Y[M2=1]>Y[M2=0]"))
 ```
 
@@ -110,14 +110,14 @@ if(do_diagnosis){
 
 How does the researcher's model do?
 
-```{r, fig.cap= "Posterior distribution of test statistics under researcher's model"}
+```{r distributio113, fig.cap= "Posterior distribution of test statistics under researcher's model"}
 ppc_stat(data$Y, replicates_ana)
 
 ```
 
 How would we evaluate the less constrained ("true") model?
 
-```{r, echo = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
+```{r distribution2, echo = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
 # Updated alternative model
 ppc_stat(data$Y, replicates_ref)
 ```
@@ -144,7 +144,7 @@ Check look package for rstan
 ### Prior check
 In a second iteration of the analysis, we show what happens if we loosen the monotonicity restriction on $I$'s effect on $M$. Here we  consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.25$, $p(\theta^M=\theta^M_{11})=0.25$, and $p(\theta^M=\theta^M_{01})=0.4$. We show the results for the inferences given different findings in tables \ref{tab:HK8cases1quant} and \ref{tab:HK8cases2quant}. The mapping into expected posterior variance associated with each strategy is shown by the numbers in parentheses in  Table \ref{CaseLearn}.
 
-```{r, echo = FALSE, eval = FALSE}
+```{r casestable, echo = FALSE, eval = FALSE}
 I0D12 <- some_results(i=0, d=1, example = example_a2)
 I0D12 <- round(I0D12, 3)
 kable(cases_table(I0D12,  cases = cases1), caption = "\\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use priors assuming quantitative restrictions.")
