@@ -68,7 +68,7 @@ The basic procedure, in `gbiqq`, is as follows.
 
 1. **Define a model.** Specify the causal graph (possibly with unobserved confounding), any restrictions on causal effects, and any priors over parameters. We consider five different models: 
 
-* Chain model, with a single, mediated path
+* One-path model, with a single, mediated path
 * Two-path model, with a direct and an indirect path 
 * Restricted model, the two-path model with monotonicity restrictions, excluding negative effects at each step
 * Observed-confound model, in which there is only a direct $X \rightarrow Y$ path and the clue is a confound 
@@ -90,22 +90,38 @@ It is worth noting that the second two queries are conditioned on particular $X,
 
 * identifies all possible new data realizations
 * calculates the probability of each possible data realization
-* updates posteriors on all parameters for each possible data realization
+* updates posterior distributions on all parameters for each possible data realization
 * calculates expected posteriors on all parameters by averaging across posteriors from all possible data-realizations, weighted by their probability of arising
 * uses the expected posteriors on parameters to generate expected posterior distributions on each of the specified queries.
 
-What we are interested in is the variance of the expected posteriors, which tells us how uncertain we expect to be about our estimate after implementing the strategy, given the model and the given data.^[While we also might expect the posterior mean to change depending on what data-realization we encounter, the *expected* posterior will be equal to the prior mean since any beliefs about what we are most likely to find are already reflected in the prior.] A greater reduction in expected posterior variance implies greater expected learning from the strategy. 
+What we are interested in is the expected variance of the posteriors, which tells us how uncertain we expect to be about our estimate after implementing the strategy, given the model and the given data.^[While we also might expect the posterior mean to change depending on what data-realization we encounter, the *expected* posterior will be equal to the prior mean since any beliefs about what we are most likely to find are already reflected in the prior.] A greater reduction in expected posterior variance implies greater expected learning from the strategy. 
 
-Error bars = sim error
+The results of these diagnoses are represented in Figures **flag: labels here**. In each figure, we consider learning about all three queries under a single model, with each row of subplots considering a different pattern of given data as the starting point. The "wide" data strategies (collecting $X, Y$ data for an additionl 0, 2, or 4 randomly selected cases) are represented by movement across the columns of subplots; the "deep" strategies (collecting a clue for 0, 2, or 4 $X=Y$ cases within the sample) are represented within each subplot. Within each subplot, we provide the expected posterior variance for a particular level of "width" and given data, providing error bars representing 95 percent of the simulation variability.
+
+
 
 Findings:
 
-**Chain model**
+**1-path model**
+
+Learning from clues is hard because you don't have any prior on whether M=0 or M=1 is more consistent with a b type. Could be linked positive effects or linked negative effects. However, when you see, say, a pattern of multiple M=1's in X=1, Y=1 cases, which cannot be a types, this shifts you toward the joint beliefs that b types operate via linked *positive* effects and that there are more b types in this cell. 
 
 *ATE*
 
-Flat given: If you know there’s nothing going on here, then not much we can learn about ATE from wide or deep. 
+Regr: Comparable learning from adding 2D than adding 2W Hints that 4D may be better than 4W, and that 2W+2D may be better than 4W.
 
+Learning about ATE much weaker for other given data patterns, with no learning from flat and slight learning with necs/suff. You are already quite certain there's an ATE of 0 with flat data (and flat priors on the original model). So even if you see a b type, so you now think there are more b's than d's, you also upwardly update your beliefs about a types. You have a much more dispersed prior given regr data and flat original priors on the model, which allows the data to move your beliefs much more.
+
+*ProbPos*
+
+Regr: For W, similar to ATE. For D, more learning than for ATE. Much steeper learning from D than from W. Also, there a much stronger case for investing in depth (on the regression line) over width if you're estimating ProbPos than if you're estimating ATE. Probably because we can learn directly about case type (is it a b?) from clues, but getting a case's type gives us only indirect leveage on the ATE, which is share of b's minus share of a's. In fact, given beliefs about the ATE from the given data, once you see a couple of b's, you're likely to think there are also more a's.
+
+Learning much more muted for nec and suff, and almost undetectable for flat data. Note slightly more learning for nec given, probably simply because you start out with a higher estimate (fewer X=0, Y=1 cases than with suff given), so more uncertainty.
+
+
+*Via-M* 
+
+Regr: Massive learning from D. Moderate learning from W; but more learning from W about Via-M than about the ATE. (Probably because we can learn directly about positive effects, but more indirectly about ATE.)
 
 
 
