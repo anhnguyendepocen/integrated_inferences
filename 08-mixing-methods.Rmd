@@ -292,12 +292,10 @@ The results are given in table \@ref(tab:XYresultstable).
 
 model <- make_model("X->Y") %>% set_parameter_matrix()
 
-if(!exists("fit")) fit <- fitted_model()
-
 if(do_diagnosis){
 types_inferences <- function(model, data = data.frame(X = 0, Y = 1), stan_model, label){
 
-  M <- gbiqq::gbiqq(model, data = data, stan_model = stan_model)
+  M <- gbiqq::gbiqq(model, data = data, fit = stan_model)
 
   a <- get_estimands(M, using = "posteriors", queries = "Y[X=1]<Y[X=0]")
   b <- get_estimands(M, using = "posteriors", queries = "Y[X=1]>Y[X=0]")
