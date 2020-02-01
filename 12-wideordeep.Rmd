@@ -99,26 +99,34 @@ What we are interested in is the expected variance of the posteriors, which tell
 
 The results of these diagnoses are represented in Figures **flag: labels here**. In each figure, we consider learning about all three queries under a single model, with each row of subplots considering a different pattern of given data as the starting point. The "wide" data strategies (collecting $X, Y$ data for an additionl 0, 2, or 4 randomly selected cases) are represented by movement across the columns of subplots; the "deep" strategies (collecting a clue for 0, 2, or 4 $X=Y$ cases within the sample) are represented within each subplot. Within each subplot, we provide the expected posterior variance for a particular level of "width" and given data, providing error bars representing 95 percent of the simulation variability.
 
+We summarize key features of the results, and suggest some intuitions that might explain them, for each model in turn. Whemn referring to unit types, we continue here to use our simpler $a, b, c, d$ notation to help simplfy the discussion.
 
 
-Findings:
+### 1-path model
 
-**1-path model**
+**$ATE$**
 
-Learning from clues is hard because you don't have any prior on whether M=0 or M=1 is more consistent with a b type. Could be linked positive effects or linked negative effects. However, when you see, say, a pattern of multiple M=1's in X=1, Y=1 cases, which cannot be a types, this shifts you toward the joint beliefs that b types operate via linked *positive* effects and that there are more b types in this cell. 
+One striking feature of the simulations with a 1-path model is how difficult it is to learn about the ATE from either additional depth or additional breadth. We see less learning about the ATE than about other queries for all mixes examined here. 
 
-*ATE*
+We learn the most about the $ATE$ when we start with data consistent with a strong treatment effect (regr). If we examine the tradeoffs here, we see that -- if we're going to collect more data on two cases -- process tracing two cases already in the sample yields about as much expected gain as expanding the sample by two cases on which we collect only $X, Y$ data. There are hints that the tradeoff shifts slightly as we move to the right: process tracing 4 cases may be marginally better than expanding the $X,Y$ sample by 4 cases. Likewise, a mix of 4-deep and 2-wide looks slightly better than the reverse (4 wide and 2 deep). For both comparisons, however, the apparent difference are well within the simulation error bars. We do not see clear evidence here of gains from mixing *per se* -- i.e., that we learn more about the ATE from mixing forms of data than from concentrating our efforts on either depth or breadth. 
 
-Regr: Comparable learning from adding 2D than adding 2W Hints that 4D may be better than 4W, and that 2W+2D may be better than 4W.
+The potential for learning weakens as the given data pattern weakens. The opportunity to learn, from either greater extensive or greater intensive data-collection, is weaker for given data suggestive of necessity or sufficiency (which are, essentially, both moderately strong positive correlations) and essentially disappears when we start with completely flat data. This effect is likely driven by the level of uncertainty that the model plus the given data leave us with. At the extreme, flat priors on the original model plus flat data together make us quite certain that the $ATE$ is 0; this very low uncertainty is evident from the position of the ATE line in the row of graphs for flat given data. This leaves very little expected scope for additional learning. 
 
-Learning about ATE much weaker for other given data patterns, with no learning from flat and slight learning with necs/suff. You are already quite certain there's an ATE of 0 with flat data (and flat priors on the original model). So even if you see a b type, so you now think there are more b's than d's, you also upwardly update your beliefs about a types. You have a much more dispersed prior given regr data and flat original priors on the model, which allows the data to move your beliefs much more.
+Suppose, for instance, that we were to collect clue data on two $X=Y=1$ cases that yielded evidence that these cases were likely $b$ types. We would now update our beliefs toward thinking that there are more $b$'s than $d$'s in the $X=Y=1$ cell. However, given our high level of certainty that the $ATE=0$, we would then also upwardly update our beliefs about the share of $a$ types, preserving our original $ATE$ estimate. In principle, observing new $X,Y$ data that deviated from a flat pattern could shift our beliefs about the ATE. But, given current beliefs, we strongly expect *not* to observe such a data pattern, and so this hypothetical outcome has little effect on the learning we expect to reap from collecting more data.
 
-*ProbPos*
+On the other hand, when we start with flat priors and then observe a strong positive correlation in the given data (regr), such that the priors and given data pull in opposite directions, we bring a more dispersed posterior distribution to the design problem. This greater uncertainty allows the new data to move our beliefs much more.
 
-Regr: For W, similar to ATE. For D, more learning than for ATE. Much steeper learning from D than from W. Also, there a much stronger case for investing in depth (on the regression line) over width if you're estimating ProbPos than if you're estimating ATE. Probably because we can learn directly about case type (is it a b?) from clues, but getting a case's type gives us only indirect leveage on the ATE, which is share of b's minus share of a's. In fact, given beliefs about the ATE from the given data, once you see a couple of b's, you're likely to think there are also more a's.
+**ProbPos**
 
-Learning much more muted for nec and suff, and almost undetectable for flat data. Note slightly more learning for nec given, probably simply because you start out with a higher estimate (fewer X=0, Y=1 cases than with suff given), so more uncertainty.
+When it comes to estimating the probability of causation -- is there a positive causal effect in an $X=Y=1$ case? -- the tradeoffs shift somewhat. Starting with given data falling along a positive regression line, the gains to going wide appear about the same for the probability of causation as they do for estimating the $ATE$. However, depth has a distinct advantage in estimating the probability of causation that it did not have for the $ATE$: the gains to process tracing 2 (or 4) cases are much greater than the gains to collecting $X,Y$ data on an additional 2 (or 4) cases. In fact, we expect to be better off going deep into 2 cases than expanding the sample by 4 cases. 
 
+Why might depth be of greater value in assessing the probability of causation than in estimating the $ATE$? The reason is likely that process tracing helps us estimate the share of types in a manner more directly related to the probability of causation than to the $ATE$. When we conduct process tracing on an $X=Y$ case, we are learning about the probability that that case is a $b$ type, rather than an $c$ (for $X=Y=0$ cases) or a $d$ (for $X=Y=1$ cases). Whether we are in the $X=Y=0$ cell or the $X=Y=1$ cell, we can then update our beliefs about the share of cases in the $X=Y=1$ that are $b$'s.^[Since the model assumes exogenous assignment of $X$, the updating for the two cells will in fact be identical.] This is exactly the quantity of interest for the probability of causation question: if I see an $X=Y=1$ case, what are the chances $X=1$ caused $Y=1$ (is it a $b$?)? 
+
+On the other hand, updating on the share of $b$'s versus $c$'s and $d$'s gives us only indirect leverage on the $ATE$ (the share of $b$'s minus the share in $a$'s) since it contains no direct information about the share of $a$'s. If we observe evidence of an additional handful of $b$ cases, any upward shift in our beliefs about the $ATE$ will be constrained by our prior beliefs (given the existing data) about the $ATE$. Our updating will be some combination of upward movement in the $ATE$ estimate and upward movement in our estimate of the share of $a$'s (which moderates the change in the $ATE$ estimate).
+
+We also see here hints of substitution effects between depth and breadth. As the amount of process-tracing data increases, it appears that the gains to adding $X,Y$ data diminishes.^[This does not seem to simply be a function of generic diminishing returns to data as the gains appear linear within a given type of data.]
+
+As for the $ATE$, flatter prior data in combination with our initial flat priors also limits learning about the probability of causation, for all kinds of data. We do, however, continue to see an advantage of depth over breadth, regardless of the given dara pattern. And we expect slightly more learning from additional data given a "necessity" pattern in the prior data than given a "sufficiency" pattern. This probably because, given the necessity pattern, we start out with a higher estimate of the probability of causation and more uncertainty.^[The necessity pattern has fewer $X=0, Y=1$ cases than does the sufficiency pattern, implying a lower likelihood that an $X=Y=1$ case *would* still have $Y=1$ if $X$ were 0.]
 
 *Via_M* 
 
@@ -162,6 +170,8 @@ Most surprising results are here: in contrast to 1-path model, the learning abou
 
 D is no more helpful here because you've still got the other path that M doesn't tell you anything about.
 
+
+Learning from clues is hard because you don't have any prior on whether M=0 or M=1 is more consistent with a b type. Could be linked positive effects or linked negative effects. However, when you see, say, a pattern of multiple M=1's in X=1, Y=1 cases, which cannot be a types, this shifts you toward the joint beliefs that b types operate via linked *positive* effects and that there are more b types in this cell. 
 
 
 
