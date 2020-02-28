@@ -12,6 +12,7 @@ pacman::p_load(
   rstanarm,
   knitr,
   expm,
+  reshape2,
   dagitty,
   stargazer,
   partitions)

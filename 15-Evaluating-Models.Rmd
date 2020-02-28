@@ -13,37 +13,246 @@ do_diagnosis = FALSE
 library("bayesplot")
 library("ggplot2")
 library("rstanarm")
+library(DeclareDesign)
 ```
 
 
 Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these may be wrong. 
 
-## Inferences when you don;t buy your priors
+
+## Can we spot a bad model?
+
+Sometimes a model is just not able to fit the observed data well. 
+
+Imagine a situation in which in fact $X$ has an effect on $Y$ but researchers wrongly assume that the effect runs entirely through $M$. They assume a model was of the form $X \rightarrow M \rightarrow Y$. In fact none of the effect runs through $M$ and in the data we see that although $X$ correlates with $Y$, $X$ does not correlate with $M$ and $M$ does not correlate with $Y$. 
+
+This data is inconsistent with the model since under this model if $X$ doesn't cause $M$ and $M$ doesn't cause $Y$ there is no other way for $X$ to cause $Y$. 
+
+Will we notice?
+
+We are able to update using this model and the data but the updated model can produce wildly inaccurate inferences.  In Figure \@ref(modelsch15) we imagine a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$ with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$. The figure show the inferences on the treatment effect for an updated  $X \rightarrow M \rightarrow Y$ model and an updated 
+$X \rightarrow M \rightarrow Y \leftarrow X$ model, both starting with flat priors.
+
+```{r modelsch15, echo = FALSE}
+
+model <- 
+  make_model("X -> M -> Y <- X") %>%
+  set_parameters(
+    statement = c("M[X=1] != M[X=0]", "(Y[X=1] < Y[X=0])"),
+    parameters = c(0, 0)
+    ) 
+
+
+if(do_diagnosis){
+data <- simulate_data(make_model("X -> M -> Y <- X"), 
+                      using = "parameters", n = 50)
+write_rds(data, "saved/ch15_XMYdata.rds") 
+  
+ make_model("X -> M -> Y") %>%
+   update_model(data, keep_fit = TRUE) %>%
+   write_rds("saved/ch15_restricted_model.rds") 
+
+ make_model("X -> M -> Y <- X") %>%
+   update_model(data, keep_fit = TRUE) %>%
+   write_rds("saved/ch15_unrestricted_model.rds") 
+
+ ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+
+ write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
+           "saved/ch15_ates.rds")
+
+}
+
+ates <- read_rds("saved/ch15_ates.rds") 
+data <-   read_rds("saved/ch15_XMYdata.rds") 
+restricted_model <-   read_rds("saved/ch15_restricted_model.rds") 
+unrestricted_model <-   read_rds("saved/ch15_unrestricted_model.rds") 
+
+```
+
+```{r 15badmodels, echo = FALSE, fig.cap = "A restricted model yields a credibility interval that does not contain the actual average effect."}
+par(mfrow = 1:2)
+hist(ates$restricted_ate, xlim = c(-.1, .6), main = "Restricted model", xlab = "Effect of X on Y") 
+abline(v = .33, col = "red")
+hist(ates$unrestricted_ate, xlim = c(-.1, .6), main = "Unrestricted model", xlab = "Effect of X on Y")
+abline(v = .33, col = "red")
+
+```
+
+
+### Check conditional independence
+
+
+First, even before engaging in updating we can look to see whether data is consistent with our causal model. In particular we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  nodes are *conditionally independent* of their nondescendants, conditional on their parents. In this case, given $M$, $Y$ should be independent of $X$. Is it? One way to check is to look at the covariance of  $X$ and $Y$ given $M=1$ and again given $M=0$.
+
+```{r, echo = FALSE}
+estimatr::lm_robust(Y~X*M, data = data) %>% tidy %>% kable(digits = 2)
+```
+
+We see right way we have a problem. Here, note, we ran a classical test. WE hypothesized that our model was correct and looked to see whether the data was unusual given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
+
+
+### Computational clues
+
+Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error (`Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`)
+
+
+### Check fit
+
+Approaches using simulated data from the posterior predictive distribution  are described in @gabry2019visualization.
+
+The graphs below compare (using tools in the `bayesplot`) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
+
+First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution. We see here not too much difference. 
+
+```{r ch15simulations, echo = FALSE}
+
+if(do_diagnosis){
+  
+ sims <- 1000
+ n <- nrow(data)
+ 
+ # Outcome prediction
+ ############################################# 
+ t(replicate(sims, make_data(restricted_model, n = n, 
+                        param_type = "posterior_draw")$Y)) %>%
+  write_rds("saved/ch15_replicates_restricted.rds") 
+
+  t(replicate(sims, make_data(unrestricted_model, n = n, param_type = "posterior_draw")$Y)) %>%
+  write_rds("saved/ch15_replicates_unrestricted.rds") 
+  
+  # Distribution of cor X, Y in data
+  #############################################
+  replicate(sims, {
+    df <- make_data(restricted_model, n = n, param_type = "posterior_draw")
+    cor(df$X, df$Y)}) %>%
+  write_rds("saved/ch15_replicates_restricted_b.rds") 
+
+    replicate(sims, {
+    df <- make_data(unrestricted_model, n = n, param_type = "posterior_draw")
+    cor(df$X, df$Y)}) %>%
+  write_rds("saved/ch15_replicates_unrestricted_b.rds") 
+
+  }
+
+
+```
+
+
+```{r, fig.cap = "Distribution of" }
+x <- data.frame(
+  unrestricted = read_rds("saved/ch15_replicates_unrestricted_b.rds"),
+  restricted   = read_rds("saved/ch15_replicates_restricted_b.rds") 
+)
+reshape2::melt(x) %>%
+ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
+```
+
+
+How does the researcher's model do?
+
+```{r distributio113, fig.cap= "Posterior distribution of test statistics under researcher's model"}
+
+replicates_restricted <-   read_rds("saved/ch15_replicates_restricted.rds") 
+
+bayesplot::ppc_stat(data$Y, replicates_restricted)
+
+```
+
+How would we evaluate the less constrained ("true") model?
+
+```{r distribution2, echo = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
+# Updated alternative model
+replicates_unrestricted <-   read_rds("saved/ch15_replicates_unrestricted.rds") 
+bayesplot::ppc_stat(data$Y, replicates_unrestricted)
+```
+
+
+### Bayes factors: COmparing model likelihoods under different models
+
+<!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
+<!-- BIC involves a penalty for more parameters -->
+
+
+
+```{r, echo = FALSE}
+
+if(do_diagnosis) {
+observed_data <- collapse_data(data, restricted_model)
+
+likely <- function(model, s, posterior = TRUE) {
+  if(posterior)  pars <- model$posterior_distribution[1:s,]
+  if(!posterior) pars <- get_prior_distribution(model, s)[1:s,]
+  L <- apply(pars, 1,  function(par) make_data_probabilities(model, pars = par, observed_data, normalize = FALSE))
+  mean(L)
+  }
+
+s <- 500
+L_prior <- likely(restricted_model, s, posterior = FALSE)
+L_restricted <- likely(restricted_model, s)
+L_unrestricted <- likely(unrestricted_model, s)
+
+df <- data.frame(L = (c(L_unrestricted/L_prior, L_restricted/L_prior, L_unrestricted/L_restricted)))
+
+rownames(df) <- c("Unrestricted / Prior", "Restricted / Prior", "Unrestricted / Restricted")
+
+write_rds(df, "saved/ch15_likelihoodsdf.rds") 
+}
+
+df <- read_rds("saved/ch15_likelihoodsdf.rds") 
+
+kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another")
+```
+
+Compare likelihoods of the data under different models
+Check look package for rstan
+
+
+## Sensitivity approaches
+
+### Qualitative inference
 
 You need to provide priors in order to get Bayesian updating off the ground. But seeing your priors reported as hard cold numbers may make them feel like forced confessions. What if you just don't believe them?
 
-Even in this case there are still two strategies for inference.
+Even in this case you might still engage in a form of "qualitative inference." There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see @parsons2001qualitative. Under this kind of approach  a researcher might willing to say that they think some probability $p$ is not plausibly  greater than .5,  but unwilling to make a statement about their beliefs about where in the $0$ to $0.5$ range it lies. Such incomplete statements can be enough to rule our classes of conclusion.
 
-First you might take a bounding approach. MANSKI stuff.
+Consider first process tracing models for which you are unsure Say for instance in our running example 
 
-Second, you might engage in qualitative inference. There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see @parsons2001qualitative. Under this kind of approach  a researcher might willing to say that they think some probability $p$ is not plausibly  greater than .5,  but unwilling to make a statement about their beliefs about where in the $0$ to $0.5$ range it lies. Such incomplete statements can be enough to rule our classes of conclusion.
+```{r, fig.cap = "Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1", echo = FALSE}
 
+model <- make_model("X -> M -> Y") 
 
+adverse1 <- adverse2 <- seq(0, .25, .05)
 
-## Tools for evaluating models
+out <-  
+  sapply(adverse1, function(a1) {
+      sapply(adverse2, function(a2) 
+  
+  query_model(
+  set_parameters(model, 
+                 param_names = c("M.10", "M.01", "Y.10", "Y.01"), 
+                 parameters = c(a1, .5+a1, a2, .5+a2)),
+  query = c("Y[X=1] > Y[X=0]"),
+  given = c("X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
+  using = "parameters",
+  expand_grid = TRUE)$mean, simplify = FALSE)})
+out2 <- do.call(rbind, out) %>% data.frame
+names(out2) <- c("M0", "M1")
+out2 <- arrange(out2,M0, M1)
 
-### Check conditional independencies
+plot(out2$M1, xlim = c(0,1), type = "n", xlab = "possible ranges", ylim = c(0, nrow(out2)), ylab = "")
+segments(out2$M0, 1:nrow(out2), out2$M1, 1:nrow(out2), col = "red")
 
-Claims of conditional independence - Show for whether there's a direct effect of X on Y
-
-```{r modelsch15}
-reference_model <- make_model("X -> M -> Y <- X") %>%
-  set_parameters(c(.5, .5, .1, .1, .7, .1, rep(.05, 8), .25, rep(.05, 7)))
-analyst_model   <- make_model("X -> M -> Y")
-
-data <- simulate_data(reference_model, using = "parameters", n = 1000)
-# summary(lm(Y~X*M, data = data))
 ```
+
+- A graph showing how some conclusions changes as we relax one of the restrictions.
+
+How much do our conclusions depend on qual restrictions?
+
+- How do conclusions differ if we drop all restrictions
+
+
 
 ### Check confounding assumptions
 
@@ -65,77 +274,6 @@ Can we check that there is no direct path from $X$ to $Y$?
 Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.
  
  
-### Check prior dependence
-
-
-- A graph showing how some conclusions changes as we relax one of the restrictions.
-
-How much do our conclusions depend on qual restrictions?
-
-- How do conclusions differ if we drop all restrictions
-
-### Check fit
-
-Approaches using simulated data from the posterior predictive distribution  are described in @gabry2019visualization
-
-The graphs below compare (using tools in the `bayesplot`) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
-
-
-```{r ch15simulations, echo = FALSE}
-
-sims <- 1000
-
-if(do_diagnosis){
-  
-  write_rds(update_model(reference_model, data, fit = fit), "saved/ch15_ref_update.rds") 
-  write_rds(update_model(analyst_model, data, fit = fit), "saved/ch15_ana_update.rds") 
-  
-  replicates_ana <- 
-  t(replicate(sims, make_data(ana_update, n = nrow(data), param_type = "posterior_draw")$Y))
-  write_rds(replicates_ana, "saved/ch15_replicates_ana.rds") 
-
-  replicates_ref <- 
-  t(replicate(sims, make_data(ref_update, n = nrow(data), param_type = "posterior_draw")$Y))
-  write_rds(replicates_ref, "saved/ch15_replicates_ref.rds") 
-
-  }
-
-  ref_update     <- read_rds("saved/ch15_ref_update.rds") 
-  ana_update     <- read_rds("saved/ch15_ana_update.rds") 
-  replicates_ana <- read_rds("saved/ch15_replicates_ana.rds") 
-  replicates_ref <- read_rds("saved/ch15_replicates_ref.rds") 
-
-```
-
-
-How does the researcher's model do?
-
-```{r distributio113, fig.cap= "Posterior distribution of test statistics under researcher's model"}
-ppc_stat(data$Y, replicates_ana)
-
-```
-
-How would we evaluate the less constrained ("true") model?
-
-```{r distribution2, echo = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
-# Updated alternative model
-ppc_stat(data$Y, replicates_ref)
-```
-
-<!-- - Generate equivalent of an R^2. Using posterior, make predictions for all the cases, say, on Y. How much lower is the error from that prediction than from the  -->
-
-Compare out of sample fit between model with posteriors and priors. 
-
-Reality checks -- posterior fits. Predict data from the posterior. Look at whether the data you see are similar to the data you actually have. 
-
-### Assess likelihoods under different models
-
-Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.]
-BIC involves a penalty for more parameters
-
-
-Compare likelihoods of the data under different models
-Check look package for rstan
 
 
 ## Evaluating the Democracy-Inequality model
