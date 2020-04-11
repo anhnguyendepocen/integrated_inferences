@@ -37,7 +37,9 @@ Imagine a situation in which researchers believe that the effect of $X$ on $Y$ r
 We are perfectly able to update using this overly restrictive model and the data --- but the updated model can produce wildly inaccurate inferences.  In Figure \@ref(modelsch15), we show the results of an analysis in which the data are generated from a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$, with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$. In the figure, we show the inferences on the average treatment effect for two different updated models, both starting with flat priors: the more restricted, $X \rightarrow M \rightarrow Y$ model and the less restricted,
 $X \rightarrow M \rightarrow Y \leftarrow X$ model. We represent the true average effect with the vertical line in each graph.
 
-As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go in with the restricted model, we have a problem. But will we notice?
+As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go in with the restricted model, we have a problem. 
+
+But will we notice?
 
 ```{r modelsch15, echo = FALSE}
 
@@ -90,18 +92,22 @@ abline(v = .33, col = "red")
 ### Check conditional independence
 
 
-First, even before engaging in updating we can look to see whether data is consistent with our causal model. In particular we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  nodes are *conditionally independent* of their nondescendants, conditional on their parents. In this case, given $M$, $Y$ should be independent of $X$. Is it? One way to check is to look at the covariance of  $X$ and $Y$ given $M=1$ and again given $M=0$.
+First, even before engaging in updating we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its nondescendants, given its parents. In this case, given $M$, $Y$ should be independent of $X$. Is it? One way to check is to look at the covariance of  $X$ and $Y$ given $M=1$ and again given $M=0$.
+
+<!-- MH: Not clear how this table makes the point. Doesn't show M=0 and M=1 conditions, and there isn't an X,Y correlation given M. -->
 
 ```{r, echo = FALSE}
 estimatr::lm_robust(Y~X*M, data = data) %>% tidy %>% kable(digits = 2)
 ```
 
-We see right way we have a problem. Here, note, we ran a classical test. WE hypothesized that our model was correct and looked to see whether the data was unusual given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
+We see right way we have a problem. Here, note, we ran a classical test in the frequentist sense. We hypothesized that our model was correct and looked to see whether the data were unlikely given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
 
 
 ### Computational clues
 
 Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error (`Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`)
+
+<!-- MH: Needs elaboration: why is this error a function of problems with the model? -->
 
 
 ### Check fit
@@ -111,6 +117,8 @@ Approaches using simulated data from the posterior predictive distribution  are 
 The graphs below compare (using tools in the `bayesplot`) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
 
 First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution. We see here not too much difference. 
+
+<!-- MH: I am having trouble seeing the progression here. -->
 
 ```{r ch15simulations, echo = FALSE}
 
