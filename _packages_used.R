@@ -4,7 +4,6 @@ library("pacman")
 pacman::p_load(
   tidyverse,
   gbiqq,
-  gbiqqtools,
   bindrcpp,
   ggplot2,
   StanHeaders,
@@ -17,9 +16,9 @@ pacman::p_load(
   stargazer,
   partitions)
 
-do_diagnosis = FALSE
+library(gbiqqtools)
 
-if(do_diagnosis) {if(!exists("fit")) fit <- fitted_model()}
+do_diagnosis = FALSE
 
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)

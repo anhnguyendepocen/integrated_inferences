@@ -44,8 +44,8 @@ model <-
 
 
 if(do_diagnosis){
-data <- simulate_data(make_model("X -> M -> Y <- X"), 
-                      using = "parameters", n = 50)
+data <- simulate_data(model, 
+                      using = "parameters", n = 100)
 write_rds(data, "saved/ch15_XMYdata.rds") 
   
  make_model("X -> M -> Y") %>%
@@ -56,18 +56,21 @@ write_rds(data, "saved/ch15_XMYdata.rds")
    update_model(data, keep_fit = TRUE) %>%
    write_rds("saved/ch15_unrestricted_model.rds") 
 
- ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
-ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
-
- write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
-           "saved/ch15_ates.rds")
-
 }
 
-ates <- read_rds("saved/ch15_ates.rds") 
 data <-   read_rds("saved/ch15_XMYdata.rds") 
 restricted_model <-   read_rds("saved/ch15_restricted_model.rds") 
 unrestricted_model <-   read_rds("saved/ch15_unrestricted_model.rds") 
+
+if(do_diagnosis){
+  ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+  ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+
+ write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
+           "saved/ch15_ates.rds")
+}
+
+ates <- read_rds("saved/ch15_ates.rds") 
 
 ```
 
@@ -169,7 +172,20 @@ bayesplot::ppc_stat(data$Y, replicates_unrestricted)
 ```
 
 
+```{r ch15predY, fig.cap = "Predicted outcomes"}
+
+x <- data.frame(
+  unrestricted = read_rds("saved/ch15_replicates_unrestricted.rds") %>% apply(2, mean),
+  restricted   = read_rds("saved/ch15_replicates_restricted_b.rds") %>% apply(2, mean) 
+)
+reshape2::melt(x) %>%
+ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
+
+```
+
 ### Bayes factors: COmparing model likelihoods under different models
+
+NEED TO DO THIS WITH HOLDOUT OR COPLETELY NEW DATA
 
 <!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
 <!-- BIC involves a penalty for more parameters -->
@@ -208,6 +224,12 @@ kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: th
 Compare likelihoods of the data under different models
 Check look package for rstan
 
+## LOO
+
+DO THE LONG WAY
+POINT TO TECHNIQUES
+
+(Maybe look at WAIC)
 
 ## Sensitivity approaches
 
@@ -300,8 +322,6 @@ Moreover, it is possible for the two effects of observing $M$ on our beliefs to 
 We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, $M$, made only a small difference to our inferences. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively. 
 
 
-### Monotonic restrictions
-
-Compare fit between model with and without monotonic restrictions
+** GENERATE A TABLE SHOWING HOW PIMD DOES ON 6 CRITEREA ** 
 
 

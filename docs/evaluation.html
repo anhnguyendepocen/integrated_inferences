@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="" xml:lang="">
 <head>
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 15 Evaluating models | Integrated Inferences</title>
   <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
-  <meta name="generator" content="bookdown 0.11 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 15 Evaluating models | Integrated Inferences" />
   <meta property="og:type" content="book" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="justifying-models.html">
-<link rel="next" href="final-words.html">
+<link rel="prev" href="justifying-models.html"/>
+<link rel="next" href="final-words.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -39,6 +39,9 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
 
 
 
@@ -54,7 +57,6 @@ a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
@@ -331,13 +333,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="15.1.3" data-path="evaluation.html"><a href="evaluation.html#check-fit"><i class="fa fa-check"></i><b>15.1.3</b> Check fit</a></li>
 <li class="chapter" data-level="15.1.4" data-path="evaluation.html"><a href="evaluation.html#bayes-factors-comparing-model-likelihoods-under-different-models"><i class="fa fa-check"></i><b>15.1.4</b> Bayes factors: COmparing model likelihoods under different models</a></li>
 </ul></li>
-<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#sensitivity-approaches"><i class="fa fa-check"></i><b>15.2</b> Sensitivity approaches</a><ul>
-<li class="chapter" data-level="15.2.1" data-path="evaluation.html"><a href="evaluation.html#qualitative-inference"><i class="fa fa-check"></i><b>15.2.1</b> Qualitative inference</a></li>
-<li class="chapter" data-level="15.2.2" data-path="evaluation.html"><a href="evaluation.html#check-confounding-assumptions"><i class="fa fa-check"></i><b>15.2.2</b> Check confounding assumptions</a></li>
+<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#loo"><i class="fa fa-check"></i><b>15.2</b> LOO</a></li>
+<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#sensitivity-approaches"><i class="fa fa-check"></i><b>15.3</b> Sensitivity approaches</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="evaluation.html"><a href="evaluation.html#qualitative-inference"><i class="fa fa-check"></i><b>15.3.1</b> Qualitative inference</a></li>
+<li class="chapter" data-level="15.3.2" data-path="evaluation.html"><a href="evaluation.html#check-confounding-assumptions"><i class="fa fa-check"></i><b>15.3.2</b> Check confounding assumptions</a></li>
 </ul></li>
-<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.3</b> Evaluating the Democracy-Inequality model</a><ul>
-<li class="chapter" data-level="15.3.1" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.3.1</b> Prior check</a></li>
-<li class="chapter" data-level="15.3.2" data-path="evaluation.html"><a href="evaluation.html#monotonic-restrictions"><i class="fa fa-check"></i><b>15.3.2</b> Monotonic restrictions</a></li>
+<li class="chapter" data-level="15.4" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.4</b> Evaluating the Democracy-Inequality model</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.4.1</b> Prior check</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>16</b> Final Words</a><ul>
@@ -461,15 +463,15 @@ Figure 15.1: A restricted model yields a credibility interval that does not cont
 </div>
 <div id="check-fit" class="section level3">
 <h3><span class="header-section-number">15.1.3</span> Check fit</h3>
-<p>Approaches using simulated data from the posterior predictive distribution are described in <span class="citation">Gabry et al. (<a href="#ref-gabry2019visualization">2019</a>)</span>.</p>
+<p>Approaches using simulated data from the posterior predictive distribution are described in <span class="citation">Gabry et al. (<a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>)</span>.</p>
 <p>The graphs below compare (using tools in the <code>bayesplot</code>) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it.</p>
 <p>First we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution compares to the predicted distribution. We see here not too much difference.</p>
-<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
-  <span class="dt">unrestricted =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_unrestricted_b.rds&quot;</span>),
-  <span class="dt">restricted   =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted_b.rds&quot;</span>) 
-)
-reshape2<span class="op">::</span><span class="kw">melt</span>(x) <span class="op">%&gt;%</span>
-<span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_density</span>(<span class="dt">alpha=</span><span class="fl">0.25</span>)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">x &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb1-2" title="2">  <span class="dt">unrestricted =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_unrestricted_b.rds&quot;</span>),</a>
+<a class="sourceLine" id="cb1-3" title="3">  <span class="dt">restricted   =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted_b.rds&quot;</span>) </a>
+<a class="sourceLine" id="cb1-4" title="4">)</a>
+<a class="sourceLine" id="cb1-5" title="5">reshape2<span class="op">::</span><span class="kw">melt</span>(x) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_density</span>(<span class="dt">alpha=</span><span class="fl">0.25</span>)</a></code></pre></div>
 <pre><code>## No id variables; using all as measure variables</code></pre>
 <div class="figure"><span id="fig:unnamed-chunk-2"></span>
 <img src="ii_files/figure-html/unnamed-chunk-2-1.png" alt="Distribution of" width="672" />
@@ -478,9 +480,9 @@ Figure 15.2: Distribution of
 </p>
 </div>
 <p>How does the researcher’s model do?</p>
-<pre class="sourceCode r"><code class="sourceCode r">replicates_restricted &lt;-<span class="st">   </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted.rds&quot;</span>) 
-
-bayesplot<span class="op">::</span><span class="kw">ppc_stat</span>(data<span class="op">$</span>Y, replicates_restricted)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">replicates_restricted &lt;-<span class="st">   </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted.rds&quot;</span>) </a>
+<a class="sourceLine" id="cb3-2" title="2"></a>
+<a class="sourceLine" id="cb3-3" title="3">bayesplot<span class="op">::</span><span class="kw">ppc_stat</span>(data<span class="op">$</span>Y, replicates_restricted)</a></code></pre></div>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <div class="figure"><span id="fig:distributio113"></span>
 <img src="ii_files/figure-html/distributio113-1.png" alt="Posterior distribution of test statistics under researcher's model" width="672" />
@@ -499,6 +501,7 @@ Figure 15.4: Distribution of <span class="math inline">\(Y\)</span> under the (d
 </div>
 <div id="bayes-factors-comparing-model-likelihoods-under-different-models" class="section level3">
 <h3><span class="header-section-number">15.1.4</span> Bayes factors: COmparing model likelihoods under different models</h3>
+<p>NEED TO DO THIS WITH HOLDOUT OR COPLETELY NEW DATA</p>
 <!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
 <!-- BIC involves a penalty for more parameters -->
 <table>
@@ -528,12 +531,18 @@ Figure 15.4: Distribution of <span class="math inline">\(Y\)</span> under the (d
 Check look package for rstan</p>
 </div>
 </div>
+<div id="loo" class="section level2">
+<h2><span class="header-section-number">15.2</span> LOO</h2>
+<p>DO THE LONG WAY
+POINT TO TECHNIQUES</p>
+<p>(Maybe look at WAIC)</p>
+</div>
 <div id="sensitivity-approaches" class="section level2">
-<h2><span class="header-section-number">15.2</span> Sensitivity approaches</h2>
+<h2><span class="header-section-number">15.3</span> Sensitivity approaches</h2>
 <div id="qualitative-inference" class="section level3">
-<h3><span class="header-section-number">15.2.1</span> Qualitative inference</h3>
+<h3><span class="header-section-number">15.3.1</span> Qualitative inference</h3>
 <p>You need to provide priors in order to get Bayesian updating off the ground. But seeing your priors reported as hard cold numbers may make them feel like forced confessions. What if you just don’t believe them?</p>
-<p>Even in this case you might still engage in a form of “qualitative inference.” There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see <span class="citation">Parsons (<a href="#ref-parsons2001qualitative">2001</a>)</span>. Under this kind of approach a researcher might willing to say that they think some probability <span class="math inline">\(p\)</span> is not plausibly greater than .5, but unwilling to make a statement about their beliefs about where in the <span class="math inline">\(0\)</span> to <span class="math inline">\(0.5\)</span> range it lies. Such incomplete statements can be enough to rule our classes of conclusion.</p>
+<p>Even in this case you might still engage in a form of “qualitative inference.” There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see <span class="citation">Parsons (<a href="#ref-parsons2001qualitative" role="doc-biblioref">2001</a>)</span>. Under this kind of approach a researcher might willing to say that they think some probability <span class="math inline">\(p\)</span> is not plausibly greater than .5, but unwilling to make a statement about their beliefs about where in the <span class="math inline">\(0\)</span> to <span class="math inline">\(0.5\)</span> range it lies. Such incomplete statements can be enough to rule our classes of conclusion.</p>
 <p>Consider first process tracing models for which you are unsure Say for instance in our running example</p>
 <div class="figure"><span id="fig:unnamed-chunk-4"></span>
 <img src="ii_files/figure-html/unnamed-chunk-4-1.png" alt="Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1" width="672" />
@@ -550,28 +559,25 @@ Figure 15.5: Possible inferences on <code>X caused Y</code> given observation of
 </ul>
 </div>
 <div id="check-confounding-assumptions" class="section level3">
-<h3><span class="header-section-number">15.2.2</span> Check confounding assumptions</h3>
+<h3><span class="header-section-number">15.3.2</span> Check confounding assumptions</h3>
 <p>approach 2 – say actual confound is q~=0; but model assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.</p>
 <p>(Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions.</p>
 <p>Say we have model</p>
-<pre class="sourceCode r"><code class="sourceCode r">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; M1 -&gt; M2 -&gt; Y &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">M1 =</span> <span class="st">&quot;Y[M2=1]&gt;Y[M2=0]&quot;</span>))</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; M1 -&gt; M2 -&gt; Y &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">M1 =</span> <span class="st">&quot;Y[M2=1]&gt;Y[M2=0]&quot;</span>))</a></code></pre></div>
 <p>Can we check that there is no direct path from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>?</p>
 <p>Pearl (1995) gives conditions for assessing for discrete data whether <span class="math inline">\(Z\)</span> has a direct effect on <span class="math inline">\(Y\)</span>. (Involves inequalities)</p>
 <p>Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.</p>
 </div>
 </div>
 <div id="evaluating-the-democracy-inequality-model" class="section level2">
-<h2><span class="header-section-number">15.3</span> Evaluating the Democracy-Inequality model</h2>
+<h2><span class="header-section-number">15.4</span> Evaluating the Democracy-Inequality model</h2>
 <div id="prior-check" class="section level3">
-<h3><span class="header-section-number">15.3.1</span> Prior check</h3>
+<h3><span class="header-section-number">15.4.1</span> Prior check</h3>
 <p>In a second iteration of the analysis, we show what happens if we loosen the monotonicity restriction on <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(M\)</span>. Here we consider negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> <em>unlikely</em>, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as “quantitative priors” in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.1\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.25\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.25\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.4\)</span>. We show the results for the inferences given different findings in tables  and . The mapping into expected posterior variance associated with each strategy is shown by the numbers in parentheses in Table .</p>
 <p>The results differ in various modest ways. However, the biggest difference we observe is in the degree to which the mobilization clue matters when we are looking for negative effects of inequality. As discussed, if we assumed monotonic positive effects of inequality on mobilization and monotonic positive effects of mobilization on inequality, then the mediator clue is uninformative about the indirect pathway since that pathway can only generate a positive effect. However, if we allow for the possibility of a negative effect of inequality on mobilization, we now make <span class="math inline">\(M\)</span> informative as a mediator even when the effect of inequality that we are interested in is negative: it is now possible that inequality has a negative effect on democratization via a negative effect on mobilization, followed by a positive effect of mobilization on democratization. So now, observing whether mobilization occurred adds information about whether a negative effect could have occurred via the mobilization pathway.</p>
 <p>Moreover, it is possible for the two effects of observing <span class="math inline">\(M\)</span> on our beliefs to work in opposite ways. What we learn from observing <span class="math inline">\(M\)</span> about the <span class="math inline">\(I \rightarrow M \rightarrow D\)</span> pathway may push in a different direction from what we learn from observing <span class="math inline">\(M\)</span> about the direct <span class="math inline">\(I \rightarrow D\)</span> pathway. We see this dynamic at work in a case with low inequality and democratization. Where we are only learning about <span class="math inline">\(M\)</span> as a moderator of <span class="math inline">\(I\)</span>’s direct effect (monotonicity assumption in place), observing <span class="math inline">\(M=0\)</span> shifts our beliefs in favor of <span class="math inline">\(I\)</span>’s negative effect. But where we are learning about <span class="math inline">\(M\)</span> as both mediator and moderator, observing <span class="math inline">\(M=0\)</span> shifts our beliefs <em>against</em> <span class="math inline">\(I\)</span>’s negative effect. The reason for this latter result is straightforward: if <span class="math inline">\(I=0\)</span> and we then see <span class="math inline">\(M=0\)</span>, then we have just learned that inequality’s possible indirect negative effect, running via the mobilization pathway, has <em>not</em> in fact occurred; and this has a considerable downward effect on our beliefs in an overall negative effect of inequality. This learning outweighs the small positive impact of observing <span class="math inline">\(M=0\)</span> on our confidence that <span class="math inline">\(I\)</span> had a direct negative effect on <span class="math inline">\(D\)</span>.</p>
 <p>We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, <span class="math inline">\(M\)</span>, made only a small difference to our inferences. However, if we allow for a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively.</p>
-</div>
-<div id="monotonic-restrictions" class="section level3">
-<h3><span class="header-section-number">15.3.2</span> Monotonic restrictions</h3>
-<p>Compare fit between model with and without monotonic restrictions</p>
+<p>** GENERATE A TABLE SHOWING HOW PIMD DOES ON 6 CRITEREA **</p>
 
 </div>
 </div>
@@ -602,11 +608,13 @@ Figure 15.5: Possible inferences on <code>X caused Y</code> given observation of
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -614,12 +622,12 @@ gitbook.start({
 "github": false,
 "facebook": false,
 "twitter": false,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
 "all": false,
+"google": false,
 "instapper": false
 },
 "fontsettings": {
@@ -632,6 +640,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
@@ -653,8 +665,9 @@ gitbook.start({
     script.type = "text/javascript";
     var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
