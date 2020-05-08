@@ -17,7 +17,7 @@ library(DeclareDesign)
 Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense. 
 
 
-## Can we spot a bad model?
+## Five Strategies
 
 Sometimes a model is just not able to fit the observed data well. 
 
@@ -112,6 +112,22 @@ rbind(
 We see right way we have a problem. Here, note, we ran a classical test in the frequentist sense. We hypothesized that our model was correct and looked to see whether the data were unlikely given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
 
 
+
+
+ROUGH TEXT:
+
+approach 2 -- say actual confound is q~=0; but model  assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.  
+
+
+(Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions.
+
+
+ Pearl (1995) gives conditions for assessing for discrete data whether $Z$ has a  direct effect on $Y$. (Involves inequalities)
+ 
+Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.
+ 
+
+
 ### Computational clues
 
 Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error (`Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`)
@@ -121,11 +137,15 @@ Second we may be lucky and run into computation issues. In this example there is
 <!-- AJ: I agree; do feel free to look into it; I will try -->
 
 
-### Check fit
+### Bayesian $p$ value: Is the data unusual given your model?
+
+
+THIS IS NOT COMPARING TO ANOTHER MODEL
+QUESTION: DO CHARACTERISTICS FO THE ACTUAL DATA LOOK LIKE WHAT SORT OF DATA WE EXPECT TO SEE GIVEN OUR MODEL
 
 Approaches using simulated data from the posterior predictive distribution  are described in @gabry2019visualization.
 
-The graphs below compare (using tools in the `bayesplot`) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
+Using tools in the `bayesplot` package, the graphs below show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
 
 First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution. We see here not too much difference. 
 
@@ -205,47 +225,47 @@ ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
 
 ```
 
-### Bayes factors: COmparing model likelihoods under different models
 
 <!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
 <!-- BIC involves a penalty for more parameters -->
 
 
-```{r, echo = FALSE}
+<!-- ```{r, echo = FALSE} -->
 
-if(do_diagnosis) {
-observed_data <- collapse_data(data, restricted_model)
+<!-- if(do_diagnosis) { -->
+<!-- observed_data <- collapse_data(data, restricted_model) -->
 
-likely <- function(model, s, posterior = TRUE) {
-  if(posterior)  pars <- model$posterior_distribution[1:s,]
-  if(!posterior) pars <- get_prior_distribution(model, s)[1:s,]
-  L <- apply(pars, 1,  function(par) make_data_probabilities(model, pars = par, observed_data, normalize = FALSE))
-  mean(L)
-  }
+<!-- likely <- function(model, s, posterior = TRUE) { -->
+<!--   if(posterior)  pars <- model$posterior_distribution[1:s,] -->
+<!--   if(!posterior) pars <- get_prior_distribution(model, s)[1:s,] -->
+<!--   L <- apply(pars, 1,  function(par) make_data_probabilities(model, pars = par, observed_data, normalize = FALSE)) -->
+<!--   mean(L) -->
+<!--   } -->
 
-s <- 500
-L_prior         <- likely(restricted_model, s, posterior = FALSE)
-L_restricted    <- likely(restricted_model, s)
-L_unrestricted  <- likely(unrestricted_model, s)
+<!-- s <- 500 -->
+<!-- L_prior         <- likely(restricted_model, s, posterior = FALSE) -->
+<!-- L_restricted    <- likely(restricted_model, s) -->
+<!-- L_unrestricted  <- likely(unrestricted_model, s) -->
 
-df <- data.frame(L = (c(L_unrestricted/L_prior, L_restricted/L_prior, L_unrestricted/L_restricted)))
+<!-- df <- data.frame(L = (c(L_unrestricted/L_prior, L_restricted/L_prior, L_unrestricted/L_restricted))) -->
 
-rownames(df) <- c("Unrestricted / Prior", "Restricted / Prior", "Unrestricted / Restricted")
+<!-- rownames(df) <- c("Unrestricted / Prior", "Restricted / Prior", "Unrestricted / Restricted") -->
 
-write_rds(df, "saved/ch15_likelihoodsdf.rds") 
-}
+<!-- write_rds(df, "saved/ch15_likelihoodsdf.rds")  -->
+<!-- } -->
 
-df <- read_rds("saved/ch15_likelihoodsdf.rds") 
+<!-- df <- read_rds("saved/ch15_likelihoodsdf.rds")  -->
 
-kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another")
-```
+<!-- kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another") -->
+<!-- ``` -->
 
-Compare likelihoods of the data under different models
-Check look package for rstan
+<!-- Compare likelihoods of the data under different models -->
+<!-- Check look package for rstan -->
 
 
 ### Leave one out
 
+COMPARE ONE TO ANOTHER IN TERMS OF LOO
 
 ```{r}
 #Leave one out
@@ -277,8 +297,27 @@ loo_lik(data, unrestricted_model, 1000) %>% write_rds("saved/ch15_loo_unrestrict
 loo_restricted   <- read_rds("saved/ch15_loo_restricted.rds") 
 loo_unrestricted <- read_rds("saved/ch15_loo_unrestricted.rds")  
 
+plot(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood)
+text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
+
+par(mfrow = c(1,2))
+plot(loo_restricted$data$count, loo_restricted$case_likelihood, col = "red")
+text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
+
+plot(loo_unrestricted$data$count, loo_unrestricted$case_likelihood)
+
+with(loo_restricted,
+     {
+  plot(loo_restricted$data$count, case_likelihood, col = "red")
+  text(case_likelihood, case_likelihood, loo_restricted$data$event)
+     }
+)
 
 ```
+
+DO THE SAME BUT THE OTHER WAY AROUND, WHERE DATA COMES FROM TEH RESTRICTED MODEL
+
+ALS DO WITH CONFOUNDING X<-->Y X->M->Y
 
 The LOO estimate of out-of sample predictive fit:
 
@@ -288,9 +327,8 @@ likelihood of the data under the restricted model is `r  formatC(loo_restricted$
 and under the unrestricted models:  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)`. An improvement on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
 
 
-## Sensitivity approaches
 
-### Qualitative inference
+### Sensitivity: Qualitative inference
 
 You need to provide priors in order to get Bayesian updating off the ground. But seeing your priors reported as hard cold numbers may make them feel like forced confessions. What if you just don't believe them?
 
@@ -333,29 +371,13 @@ How much do our conclusions depend on qual restrictions?
 
 
 
-### Check confounding assumptions
-
-approach 2 -- say actual confound is q~=0; but model  assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.  
-
-
-(Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions.
-
-Say we have model
-
-```{r confmodel}
-model <- make_model("X -> M1 -> M2 -> Y ") %>% set_confound(list(M1 = "Y[M2=1]>Y[M2=0]"))
-```
-
-Can we check that there is no direct path from $X$ to $Y$?
-
- Pearl (1995) gives conditions for assessing for discrete data whether $Z$ has a  direct effect on $Y$. (Involves inequalities)
- 
-Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.
- 
  
 
 
 ## Evaluating the Democracy-Inequality model
+
+** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITEREA ** 
+
 
 
 ### Prior check
@@ -378,7 +400,5 @@ Moreover, it is possible for the two effects of observing $M$ on our beliefs to 
 
 We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, $M$, made only a small difference to our inferences. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively. 
 
-
-** GENERATE A TABLE SHOWING HOW PIMD DOES ON 6 CRITEREA ** 
 
 
