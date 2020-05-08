@@ -204,9 +204,45 @@ reshape2::melt(x) %>%
 ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
 
 ```
+
 ### Bayes factors: COmparing model likelihoods under different models
+
 <!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
 <!-- BIC involves a penalty for more parameters -->
+
+
+```{r, echo = FALSE}
+
+if(do_diagnosis) {
+observed_data <- collapse_data(data, restricted_model)
+
+likely <- function(model, s, posterior = TRUE) {
+  if(posterior)  pars <- model$posterior_distribution[1:s,]
+  if(!posterior) pars <- get_prior_distribution(model, s)[1:s,]
+  L <- apply(pars, 1,  function(par) make_data_probabilities(model, pars = par, observed_data, normalize = FALSE))
+  mean(L)
+  }
+
+s <- 500
+L_prior         <- likely(restricted_model, s, posterior = FALSE)
+L_restricted    <- likely(restricted_model, s)
+L_unrestricted  <- likely(unrestricted_model, s)
+
+df <- data.frame(L = (c(L_unrestricted/L_prior, L_restricted/L_prior, L_unrestricted/L_restricted)))
+
+rownames(df) <- c("Unrestricted / Prior", "Restricted / Prior", "Unrestricted / Restricted")
+
+write_rds(df, "saved/ch15_likelihoodsdf.rds") 
+}
+
+df <- read_rds("saved/ch15_likelihoodsdf.rds") 
+
+kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another")
+```
+
+Compare likelihoods of the data under different models
+Check look package for rstan
+
 
 ### Leave one out
 
@@ -248,41 +284,8 @@ The LOO estimate of out-of sample predictive fit:
 
 $$\prod_1^np(y_i|y_{-i}, \text{model})$$
 
-likelihood of the data under the restricted model is `r,  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)`
-and under the unrestricted models:  `r,  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)`. An improvement on the order of   `r,  formatC(loo_restricted$loo_likelihood/loo_unrestricted$loo_likelihood, format = "e", digits = 2)`. 
-
-
-```{r, echo = FALSE}
-
-if(do_diagnosis) {
-observed_data <- collapse_data(data, restricted_model)
-
-likely <- function(model, s, posterior = TRUE) {
-  if(posterior)  pars <- model$posterior_distribution[1:s,]
-  if(!posterior) pars <- get_prior_distribution(model, s)[1:s,]
-  L <- apply(pars, 1,  function(par) make_data_probabilities(model, pars = par, observed_data, normalize = FALSE))
-  mean(L)
-  }
-
-s <- 500
-L_prior         <- likely(restricted_model, s, posterior = FALSE)
-L_restricted    <- likely(restricted_model, s)
-L_unrestricted  <- likely(unrestricted_model, s)
-
-df <- data.frame(L = (c(L_unrestricted/L_prior, L_restricted/L_prior, L_unrestricted/L_restricted)))
-
-rownames(df) <- c("Unrestricted / Prior", "Restricted / Prior", "Unrestricted / Restricted")
-
-write_rds(df, "saved/ch15_likelihoodsdf.rds") 
-}
-
-df <- read_rds("saved/ch15_likelihoodsdf.rds") 
-
-kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another")
-```
-
-Compare likelihoods of the data under different models
-Check look package for rstan
+likelihood of the data under the restricted model is `r  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)`
+and under the unrestricted models:  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)`. An improvement on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
 
 
 ## Sensitivity approaches
