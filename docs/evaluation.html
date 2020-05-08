@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 15 Evaluating models | Integrated Inferences</title>
   <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 15 Evaluating models | Integrated Inferences" />
   <meta property="og:type" content="book" />
@@ -215,7 +215,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="6.2" data-path="pt.html"><a href="pt.html#five-principles"><i class="fa fa-check"></i><b>6.2</b> Five principles</a><ul>
 <li class="chapter" data-level="6.2.1" data-path="pt.html"><a href="pt.html#classic-qualitative-tests-are-special-cases-of-updating-on-a-model"><i class="fa fa-check"></i><b>6.2.1</b> Classic qualitative tests are special cases of updating on a model</a></li>
-<li class="chapter" data-level="6.2.2" data-path="pt.html"><a href="pt.html#conditional-independence-alone-does-not-provide-probative-value"><i class="fa fa-check"></i><b>6.2.2</b> Conditional independence alone does not provide probative value</a></li>
+<li class="chapter" data-level="6.2.2" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-get-you-probative-value"><i class="fa fa-check"></i><b>6.2.2</b> A DAG alone does not get you probative value</a></li>
 <li class="chapter" data-level="6.2.3" data-path="pt.html"><a href="pt.html#uncertainty-does-not-alter-inference-for-single-case-causal-inference"><i class="fa fa-check"></i><b>6.2.3</b> Uncertainty does not alter inference for single case causal inference</a></li>
 <li class="chapter" data-level="6.2.4" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>6.2.4</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
 <li class="chapter" data-level="6.2.5" data-path="pt.html"><a href="pt.html#probative-value"><i class="fa fa-check"></i><b>6.2.5</b> Probative value</a></li>
@@ -332,14 +332,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="15.1.2" data-path="evaluation.html"><a href="evaluation.html#computational-clues"><i class="fa fa-check"></i><b>15.1.2</b> Computational clues</a></li>
 <li class="chapter" data-level="15.1.3" data-path="evaluation.html"><a href="evaluation.html#check-fit"><i class="fa fa-check"></i><b>15.1.3</b> Check fit</a></li>
 <li class="chapter" data-level="15.1.4" data-path="evaluation.html"><a href="evaluation.html#bayes-factors-comparing-model-likelihoods-under-different-models"><i class="fa fa-check"></i><b>15.1.4</b> Bayes factors: COmparing model likelihoods under different models</a></li>
+<li class="chapter" data-level="15.1.5" data-path="evaluation.html"><a href="evaluation.html#leave-one-out"><i class="fa fa-check"></i><b>15.1.5</b> Leave one out</a></li>
 </ul></li>
-<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#loo"><i class="fa fa-check"></i><b>15.2</b> LOO</a></li>
-<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#sensitivity-approaches"><i class="fa fa-check"></i><b>15.3</b> Sensitivity approaches</a><ul>
-<li class="chapter" data-level="15.3.1" data-path="evaluation.html"><a href="evaluation.html#qualitative-inference"><i class="fa fa-check"></i><b>15.3.1</b> Qualitative inference</a></li>
-<li class="chapter" data-level="15.3.2" data-path="evaluation.html"><a href="evaluation.html#check-confounding-assumptions"><i class="fa fa-check"></i><b>15.3.2</b> Check confounding assumptions</a></li>
+<li class="chapter" data-level="15.2" data-path="evaluation.html"><a href="evaluation.html#sensitivity-approaches"><i class="fa fa-check"></i><b>15.2</b> Sensitivity approaches</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="evaluation.html"><a href="evaluation.html#qualitative-inference"><i class="fa fa-check"></i><b>15.2.1</b> Qualitative inference</a></li>
+<li class="chapter" data-level="15.2.2" data-path="evaluation.html"><a href="evaluation.html#check-confounding-assumptions"><i class="fa fa-check"></i><b>15.2.2</b> Check confounding assumptions</a></li>
 </ul></li>
-<li class="chapter" data-level="15.4" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.4</b> Evaluating the Democracy-Inequality model</a><ul>
-<li class="chapter" data-level="15.4.1" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.4.1</b> Prior check</a></li>
+<li class="chapter" data-level="15.3" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>15.3</b> Evaluating the Democracy-Inequality model</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="evaluation.html"><a href="evaluation.html#prior-check"><i class="fa fa-check"></i><b>15.3.1</b> Prior check</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="16" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>16</b> Final Words</a><ul>
@@ -376,96 +376,70 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr />
 <p>Model based inference takes the model seriously. But deep down we know that all of these models are wrong, in myriad ways. We examine strategies for figuring out whether a model is likely doing more harm than good.</p>
 <hr />
-<p>Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these may be wrong.</p>
+<p>Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense.</p>
 <div id="can-we-spot-a-bad-model" class="section level2">
 <h2><span class="header-section-number">15.1</span> Can we spot a bad model?</h2>
 <p>Sometimes a model is just not able to fit the observed data well.</p>
-<p>Imagine a situation in which in fact <span class="math inline">\(X\)</span> has an effect on <span class="math inline">\(Y\)</span> but researchers wrongly assume that the effect runs entirely through <span class="math inline">\(M\)</span>. They assume a model was of the form <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. In fact none of the effect runs through <span class="math inline">\(M\)</span> and in the data we see that although <span class="math inline">\(X\)</span> correlates with <span class="math inline">\(Y\)</span>, <span class="math inline">\(X\)</span> does not correlate with <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span> does not correlate with <span class="math inline">\(Y\)</span>.</p>
-<p>This data is inconsistent with the model since under this model if <span class="math inline">\(X\)</span> doesn’t cause <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span> doesn’t cause <span class="math inline">\(Y\)</span> there is no other way for <span class="math inline">\(X\)</span> to cause <span class="math inline">\(Y\)</span>.</p>
-<p>Will we notice?</p>
-<p>We are able to update using this model and the data but the updated model can produce wildly inaccurate inferences. In Figure <a href="#modelsch15"><strong>??</strong></a> we imagine a true model of the form <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span> with an average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of <span class="math inline">\(1/3\)</span> but no effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> or <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>. The figure show the inferences on the treatment effect for an updated <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model and an updated
-<span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span> model, both starting with flat priors.</p>
+<p>Imagine a situation in which researchers believe that the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> runs entirely through <span class="math inline">\(M\)</span>, positing a model of the form <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. However, in fact <span class="math inline">\(X\)</span> has <em>only</em> a direct effect on <span class="math inline">\(Y\)</span>. The problem with the model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.</p>
+<p>We are perfectly able to update using this overly restrictive model and the data — but the updated model can produce wildly inaccurate inferences. In Figure <a href="#modelsch15"><strong>??</strong></a>, we show the results of an analysis in which the data are generated from a true model of the form <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span>, with an average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of <span class="math inline">\(1/3\)</span> but no effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> or <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>.</p>
+<p>In the figure, we show the inferences on the average treatment effect for two different updated models, both starting with flat priors: the more restricted, <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model and the less restricted,
+<span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span> model. We represent the true average effect with the vertical line in each graph.</p>
+<p>As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go in with the restricted model, we have a problem.</p>
+<p>But will we notice?</p>
 <div class="figure"><span id="fig:15badmodels"></span>
 <img src="ii_files/figure-html/15badmodels-1.png" alt="A restricted model yields a credibility interval that does not contain the actual average effect." width="672" />
 <p class="caption">
 Figure 15.1: A restricted model yields a credibility interval that does not contain the actual average effect.
 </p>
 </div>
+<!-- * $X$ correlates with $Y$ -->
+<!-- * $X$ does not correlate with $M$  -->
+<!-- * $M$ does not correlate with $Y$.  -->
+<!-- These data are inconsistent with the model: under this model, if $X$ doesn't cause $M$ and $M$ doesn't cause $Y$, then there is no other way for $X$ to cause $Y$.  -->
 <div id="check-conditional-independence" class="section level3">
 <h3><span class="header-section-number">15.1.1</span> Check conditional independence</h3>
-<p>First, even before engaging in updating we can look to see whether data is consistent with our causal model. In particular we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2: nodes are <em>conditionally independent</em> of their nondescendants, conditional on their parents. In this case, given <span class="math inline">\(M\)</span>, <span class="math inline">\(Y\)</span> should be independent of <span class="math inline">\(X\)</span>. Is it? One way to check is to look at the covariance of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> given <span class="math inline">\(M=1\)</span> and again given <span class="math inline">\(M=0\)</span>.</p>
+<p>First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2: that every node is <em>conditionally independent</em> of its nondescendants, given its parents. In this case, given <span class="math inline">\(M\)</span>, <span class="math inline">\(Y\)</span> should be independent of <span class="math inline">\(X\)</span>. Is it?</p>
+<p>One way to check is to look at the covariance of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> given <span class="math inline">\(M=1\)</span> and again given <span class="math inline">\(M=0\)</span>. In the tabel below we report the regression coefficient on <span class="math inline">\(X\)</span> given <span class="math inline">\(M=0\)</span> an <span class="math inline">\(M=1\)</span>.</p>
+<!-- MH: Not clear how this table makes the point. Doesn't show M=0 and M=1 conditions, and there isn't an X,Y correlation given M. -->
 <table>
+<caption><span id="tab:unnamed-chunk-1">Table 15.1: </span>Regression coefficient on <span class="math inline">\(X\)</span> given <span class="math inline">\(M=0\)</span> and <span class="math inline">\(M=1\)</span></caption>
 <thead>
 <tr class="header">
-<th align="left">term</th>
+<th align="right">M</th>
 <th align="right">estimate</th>
 <th align="right">std.error</th>
-<th align="right">statistic</th>
 <th align="right">p.value</th>
-<th align="right">conf.low</th>
-<th align="right">conf.high</th>
-<th align="right">df</th>
-<th align="left">outcome</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.45</td>
-<td align="right">0.16</td>
-<td align="right">2.89</td>
-<td align="right">0.01</td>
-<td align="right">0.14</td>
-<td align="right">0.77</td>
-<td align="right">46</td>
-<td align="left">Y</td>
+<td align="right">0</td>
+<td align="right">0.462</td>
+<td align="right">0.085</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="left">X</td>
-<td align="right">0.05</td>
-<td align="right">0.25</td>
-<td align="right">0.18</td>
-<td align="right">0.85</td>
-<td align="right">-0.45</td>
-<td align="right">0.54</td>
-<td align="right">46</td>
-<td align="left">Y</td>
-</tr>
-<tr class="odd">
-<td align="left">M</td>
-<td align="right">-0.12</td>
-<td align="right">0.20</td>
-<td align="right">-0.60</td>
-<td align="right">0.55</td>
-<td align="right">-0.53</td>
-<td align="right">0.28</td>
-<td align="right">46</td>
-<td align="left">Y</td>
-</tr>
-<tr class="even">
-<td align="left">X:M</td>
-<td align="right">0.18</td>
-<td align="right">0.30</td>
-<td align="right">0.60</td>
-<td align="right">0.55</td>
-<td align="right">-0.43</td>
-<td align="right">0.80</td>
-<td align="right">46</td>
-<td align="left">Y</td>
+<td align="right">1</td>
+<td align="right">0.395</td>
+<td align="right">0.098</td>
+<td align="right">0</td>
 </tr>
 </tbody>
 </table>
-<p>We see right way we have a problem. Here, note, we ran a classical test. WE hypothesized that our model was correct and looked to see whether the data was unusual given the model.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>We see right way we have a problem. Here, note, we ran a classical test in the frequentist sense. We hypothesized that our model was correct and looked to see whether the data were unlikely given the model.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 </div>
 <div id="computational-clues" class="section level3">
 <h3><span class="header-section-number">15.1.2</span> Computational clues</h3>
 <p>Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted model <code>stan</code> will throw an error (<code>Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.</code>)</p>
+<!-- MH: Needs elaboration: why is this error a function of problems with the model? -->
+<!-- AJ: I agree; do feel free to look into it; I will try -->
 </div>
 <div id="check-fit" class="section level3">
 <h3><span class="header-section-number">15.1.3</span> Check fit</h3>
 <p>Approaches using simulated data from the posterior predictive distribution are described in <span class="citation">Gabry et al. (<a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>)</span>.</p>
 <p>The graphs below compare (using tools in the <code>bayesplot</code>) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it.</p>
 <p>First we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution compares to the predicted distribution. We see here not too much difference.</p>
+<!-- MH: I am having trouble seeing the progression here. -->
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">x &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
 <a class="sourceLine" id="cb1-2" title="2">  <span class="dt">unrestricted =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_unrestricted_b.rds&quot;</span>),</a>
 <a class="sourceLine" id="cb1-3" title="3">  <span class="dt">restricted   =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted_b.rds&quot;</span>) </a>
@@ -483,29 +457,62 @@ Figure 15.2: Distribution of
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">replicates_restricted &lt;-<span class="st">   </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted.rds&quot;</span>) </a>
 <a class="sourceLine" id="cb3-2" title="2"></a>
 <a class="sourceLine" id="cb3-3" title="3">bayesplot<span class="op">::</span><span class="kw">ppc_stat</span>(data<span class="op">$</span>Y, replicates_restricted)</a></code></pre></div>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<div class="figure"><span id="fig:distributio113"></span>
-<img src="ii_files/figure-html/distributio113-1.png" alt="Posterior distribution of test statistics under researcher's model" width="672" />
-<p class="caption">
-Figure 15.3: Posterior distribution of test statistics under researcher’s model
-</p>
-</div>
 <p>How would we evaluate the less constrained (“true”) model?</p>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<div class="figure"><span id="fig:distribution2"></span>
-<img src="ii_files/figure-html/distribution2-1.png" alt="Distribution of $Y$ under the (data updated) true model" width="672" />
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">x &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb4-2" title="2">  <span class="dt">unrestricted =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_unrestricted.rds&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">apply</span>(<span class="dv">2</span>, mean),</a>
+<a class="sourceLine" id="cb4-3" title="3">  <span class="dt">restricted   =</span> <span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_replicates_restricted.rds&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">apply</span>(<span class="dv">2</span>, mean) </a>
+<a class="sourceLine" id="cb4-4" title="4">)</a>
+<a class="sourceLine" id="cb4-5" title="5">reshape2<span class="op">::</span><span class="kw">melt</span>(x) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>value, <span class="dt">fill=</span>variable)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_density</span>(<span class="dt">alpha=</span><span class="fl">0.25</span>)</a></code></pre></div>
+<pre><code>## No id variables; using all as measure variables</code></pre>
+<div class="figure"><span id="fig:ch15predY"></span>
+<img src="ii_files/figure-html/ch15predY-1.png" alt="Predicted outcomes" width="672" />
 <p class="caption">
-Figure 15.4: Distribution of <span class="math inline">\(Y\)</span> under the (data updated) true model
+Figure 15.3: Predicted outcomes
 </p>
 </div>
 </div>
 <div id="bayes-factors-comparing-model-likelihoods-under-different-models" class="section level3">
 <h3><span class="header-section-number">15.1.4</span> Bayes factors: COmparing model likelihoods under different models</h3>
-<p>NEED TO DO THIS WITH HOLDOUT OR COPLETELY NEW DATA</p>
 <!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
 <!-- BIC involves a penalty for more parameters -->
+</div>
+<div id="leave-one-out" class="section level3">
+<h3><span class="header-section-number">15.1.5</span> Leave one out</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co">#Leave one out</span></a>
+<a class="sourceLine" id="cb6-2" title="2"></a>
+<a class="sourceLine" id="cb6-3" title="3">loo_lik &lt;-<span class="st"> </span><span class="cf">function</span>(data, model, sims){</a>
+<a class="sourceLine" id="cb6-4" title="4">  </a>
+<a class="sourceLine" id="cb6-5" title="5">  short_data &lt;-<span class="st"> </span><span class="kw">collapse_data</span>(data, model)</a>
+<a class="sourceLine" id="cb6-6" title="6">  rows       &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(short_data)</a>
+<a class="sourceLine" id="cb6-7" title="7">  </a>
+<a class="sourceLine" id="cb6-8" title="8">  case_likelihood &lt;-<span class="st"> </span><span class="kw">lapply</span>(rows, </a>
+<a class="sourceLine" id="cb6-9" title="9">        <span class="cf">function</span>(j) {</a>
+<a class="sourceLine" id="cb6-10" title="10">        loo_data &lt;-<span class="st">  </span><span class="kw">mutate</span>(short_data, <span class="dt">count =</span> <span class="kw">ifelse</span>(count<span class="op">&gt;</span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>rows <span class="op">==</span><span class="st"> </span>j, count<span class="dv">-1</span>, count))</a>
+<a class="sourceLine" id="cb6-11" title="11">        loo_left &lt;-<span class="st">  </span><span class="kw">mutate</span>(short_data, <span class="dt">count =</span> <span class="kw">ifelse</span>(count<span class="op">&gt;</span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>rows <span class="op">==</span><span class="st"> </span>j, <span class="dv">1</span>, <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb6-12" title="12">        loo_post &lt;-<span class="st">  </span><span class="kw">update_model</span>(model, loo_data, <span class="dt">data_type =</span> <span class="st">&quot;compact&quot;</span>)</a>
+<a class="sourceLine" id="cb6-13" title="13">        loo_prob &lt;-<span class="st">  </span><span class="kw">apply</span>(loo_post<span class="op">$</span>posterior_distribution[<span class="dv">1</span><span class="op">:</span>sims, ], <span class="dv">1</span>, <span class="cf">function</span>(pars)</a>
+<a class="sourceLine" id="cb6-14" title="14">                     <span class="kw">get_data_probs</span>(model, loo_left, <span class="dt">parameters =</span> pars)[j])</a>
+<a class="sourceLine" id="cb6-15" title="15">        <span class="kw">mean</span>(loo_prob)}</a>
+<a class="sourceLine" id="cb6-16" title="16">        )</a>
+<a class="sourceLine" id="cb6-17" title="17">  </a>
+<a class="sourceLine" id="cb6-18" title="18">  <span class="kw">list</span>(<span class="dt">data =</span> short_data, <span class="dt">model =</span> model, <span class="dt">case_likelihood =</span> case_likelihood, </a>
+<a class="sourceLine" id="cb6-19" title="19">       <span class="dt">loo_likelihood =</span> <span class="kw">prod</span>((case_likelihood <span class="op">%&gt;%</span><span class="st"> </span>unlist)<span class="op">^</span>(short_data<span class="op">$</span>count)))</a>
+<a class="sourceLine" id="cb6-20" title="20">  }</a>
+<a class="sourceLine" id="cb6-21" title="21">  </a>
+<a class="sourceLine" id="cb6-22" title="22"><span class="cf">if</span>(do_diagnosis){</a>
+<a class="sourceLine" id="cb6-23" title="23"><span class="kw">loo_lik</span>(data, restricted_model, <span class="dv">1000</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">write_rds</span>(<span class="st">&quot;saved/ch15_loo_restricted.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb6-24" title="24"><span class="kw">loo_lik</span>(data, unrestricted_model, <span class="dv">1000</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">write_rds</span>(<span class="st">&quot;saved/ch15_loo_unrestricted.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb6-25" title="25">}</a>
+<a class="sourceLine" id="cb6-26" title="26"></a>
+<a class="sourceLine" id="cb6-27" title="27">loo_restricted   &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_loo_restricted.rds&quot;</span>) </a>
+<a class="sourceLine" id="cb6-28" title="28">loo_unrestricted &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch15_loo_unrestricted.rds&quot;</span>)  </a></code></pre></div>
+<p>The LOO estimate of out-of sample predictive fit:</p>
+<p><span class="math display">\[\prod_1^np(y_i|y_{-i}, \text{model})\]</span></p>
+<p>likelihood of the data under the restricted model is <code>r,  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)</code>
+and under the unrestricted models: <code>r,  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)</code>. An improvement on the order of <code>r,  formatC(loo_restricted$loo_likelihood/loo_unrestricted$loo_likelihood, format = "e", digits = 2)</code>.</p>
 <table>
-<caption><span id="tab:unnamed-chunk-3">Table 15.1: </span>Posterior odds: the relative likelihood of one model over another</caption>
+<caption><span id="tab:unnamed-chunk-4">Table 15.2: </span>Posterior odds: the relative likelihood of one model over another</caption>
 <thead>
 <tr class="header">
 <th></th>
@@ -531,23 +538,17 @@ Figure 15.4: Distribution of <span class="math inline">\(Y\)</span> under the (d
 Check look package for rstan</p>
 </div>
 </div>
-<div id="loo" class="section level2">
-<h2><span class="header-section-number">15.2</span> LOO</h2>
-<p>DO THE LONG WAY
-POINT TO TECHNIQUES</p>
-<p>(Maybe look at WAIC)</p>
-</div>
 <div id="sensitivity-approaches" class="section level2">
-<h2><span class="header-section-number">15.3</span> Sensitivity approaches</h2>
+<h2><span class="header-section-number">15.2</span> Sensitivity approaches</h2>
 <div id="qualitative-inference" class="section level3">
-<h3><span class="header-section-number">15.3.1</span> Qualitative inference</h3>
+<h3><span class="header-section-number">15.2.1</span> Qualitative inference</h3>
 <p>You need to provide priors in order to get Bayesian updating off the ground. But seeing your priors reported as hard cold numbers may make them feel like forced confessions. What if you just don’t believe them?</p>
 <p>Even in this case you might still engage in a form of “qualitative inference.” There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see <span class="citation">Parsons (<a href="#ref-parsons2001qualitative" role="doc-biblioref">2001</a>)</span>. Under this kind of approach a researcher might willing to say that they think some probability <span class="math inline">\(p\)</span> is not plausibly greater than .5, but unwilling to make a statement about their beliefs about where in the <span class="math inline">\(0\)</span> to <span class="math inline">\(0.5\)</span> range it lies. Such incomplete statements can be enough to rule our classes of conclusion.</p>
 <p>Consider first process tracing models for which you are unsure Say for instance in our running example</p>
-<div class="figure"><span id="fig:unnamed-chunk-4"></span>
-<img src="ii_files/figure-html/unnamed-chunk-4-1.png" alt="Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1" width="672" />
+<div class="figure"><span id="fig:unnamed-chunk-5"></span>
+<img src="ii_files/figure-html/unnamed-chunk-5-1.png" alt="Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1" width="672" />
 <p class="caption">
-Figure 15.5: Possible inferences on <code>X caused Y</code> given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1
+Figure 15.4: Possible inferences on <code>X caused Y</code> given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1
 </p>
 </div>
 <ul>
@@ -559,20 +560,20 @@ Figure 15.5: Possible inferences on <code>X caused Y</code> given observation of
 </ul>
 </div>
 <div id="check-confounding-assumptions" class="section level3">
-<h3><span class="header-section-number">15.3.2</span> Check confounding assumptions</h3>
+<h3><span class="header-section-number">15.2.2</span> Check confounding assumptions</h3>
 <p>approach 2 – say actual confound is q~=0; but model assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.</p>
 <p>(Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions.</p>
 <p>Say we have model</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; M1 -&gt; M2 -&gt; Y &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">M1 =</span> <span class="st">&quot;Y[M2=1]&gt;Y[M2=0]&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; M1 -&gt; M2 -&gt; Y &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">M1 =</span> <span class="st">&quot;Y[M2=1]&gt;Y[M2=0]&quot;</span>))</a></code></pre></div>
 <p>Can we check that there is no direct path from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>?</p>
 <p>Pearl (1995) gives conditions for assessing for discrete data whether <span class="math inline">\(Z\)</span> has a direct effect on <span class="math inline">\(Y\)</span>. (Involves inequalities)</p>
 <p>Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.</p>
 </div>
 </div>
 <div id="evaluating-the-democracy-inequality-model" class="section level2">
-<h2><span class="header-section-number">15.4</span> Evaluating the Democracy-Inequality model</h2>
+<h2><span class="header-section-number">15.3</span> Evaluating the Democracy-Inequality model</h2>
 <div id="prior-check" class="section level3">
-<h3><span class="header-section-number">15.4.1</span> Prior check</h3>
+<h3><span class="header-section-number">15.3.1</span> Prior check</h3>
 <p>In a second iteration of the analysis, we show what happens if we loosen the monotonicity restriction on <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(M\)</span>. Here we consider negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> <em>unlikely</em>, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as “quantitative priors” in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.1\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.25\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.25\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.4\)</span>. We show the results for the inferences given different findings in tables  and . The mapping into expected posterior variance associated with each strategy is shown by the numbers in parentheses in Table .</p>
 <p>The results differ in various modest ways. However, the biggest difference we observe is in the degree to which the mobilization clue matters when we are looking for negative effects of inequality. As discussed, if we assumed monotonic positive effects of inequality on mobilization and monotonic positive effects of mobilization on inequality, then the mediator clue is uninformative about the indirect pathway since that pathway can only generate a positive effect. However, if we allow for the possibility of a negative effect of inequality on mobilization, we now make <span class="math inline">\(M\)</span> informative as a mediator even when the effect of inequality that we are interested in is negative: it is now possible that inequality has a negative effect on democratization via a negative effect on mobilization, followed by a positive effect of mobilization on democratization. So now, observing whether mobilization occurred adds information about whether a negative effect could have occurred via the mobilization pathway.</p>
 <p>Moreover, it is possible for the two effects of observing <span class="math inline">\(M\)</span> on our beliefs to work in opposite ways. What we learn from observing <span class="math inline">\(M\)</span> about the <span class="math inline">\(I \rightarrow M \rightarrow D\)</span> pathway may push in a different direction from what we learn from observing <span class="math inline">\(M\)</span> about the direct <span class="math inline">\(I \rightarrow D\)</span> pathway. We see this dynamic at work in a case with low inequality and democratization. Where we are only learning about <span class="math inline">\(M\)</span> as a moderator of <span class="math inline">\(I\)</span>’s direct effect (monotonicity assumption in place), observing <span class="math inline">\(M=0\)</span> shifts our beliefs in favor of <span class="math inline">\(I\)</span>’s negative effect. But where we are learning about <span class="math inline">\(M\)</span> as both mediator and moderator, observing <span class="math inline">\(M=0\)</span> shifts our beliefs <em>against</em> <span class="math inline">\(I\)</span>’s negative effect. The reason for this latter result is straightforward: if <span class="math inline">\(I=0\)</span> and we then see <span class="math inline">\(M=0\)</span>, then we have just learned that inequality’s possible indirect negative effect, running via the mobilization pathway, has <em>not</em> in fact occurred; and this has a considerable downward effect on our beliefs in an overall negative effect of inequality. This learning outweighs the small positive impact of observing <span class="math inline">\(M=0\)</span> on our confidence that <span class="math inline">\(I\)</span> had a direct negative effect on <span class="math inline">\(D\)</span>.</p>

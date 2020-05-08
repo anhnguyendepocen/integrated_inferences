@@ -35,8 +35,6 @@ But will we notice?
 ```{r modelsch15, echo = FALSE}
 n = 200
 
-
-
 if(do_diagnosis){
   
  unrestricted_model <- 
@@ -179,7 +177,7 @@ ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
 
 How does the researcher's model do?
 
-```{r distributio113, fig.cap= "Posterior distribution of test statistics under researcher's model"}
+```{r distributio113, eval = FALSE, fig.cap= "Posterior distribution of test statistics under researcher's model"}
 
 replicates_restricted <-   read_rds("saved/ch15_replicates_restricted.rds") 
 
@@ -189,7 +187,7 @@ bayesplot::ppc_stat(data$Y, replicates_restricted)
 
 How would we evaluate the less constrained ("true") model?
 
-```{r distribution2, echo = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
+```{r distribution2, echo = FALSE, eval = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
 # Updated alternative model
 replicates_unrestricted <-   read_rds("saved/ch15_replicates_unrestricted.rds") 
 bayesplot::ppc_stat(data$Y, replicates_unrestricted)
@@ -200,21 +198,18 @@ bayesplot::ppc_stat(data$Y, replicates_unrestricted)
 
 x <- data.frame(
   unrestricted = read_rds("saved/ch15_replicates_unrestricted.rds") %>% apply(2, mean),
-  restricted   = read_rds("saved/ch15_replicates_restricted_b.rds") %>% apply(2, mean) 
+  restricted   = read_rds("saved/ch15_replicates_restricted.rds") %>% apply(2, mean) 
 )
 reshape2::melt(x) %>%
 ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
 
 ```
+### Bayes factors: COmparing model likelihoods under different models
+<!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
+<!-- BIC involves a penalty for more parameters -->
 
 ### Leave one out
 
-### Bayes factors: COmparing model likelihoods under different models
-
-NEED TO DO THIS WITH HOLDOUT OR COPLETELY NEW DATA
-
-<!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
-<!-- BIC involves a penalty for more parameters -->
 
 ```{r}
 #Leave one out
@@ -289,12 +284,6 @@ kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: th
 Compare likelihoods of the data under different models
 Check look package for rstan
 
-## LOO
-
-DO THE LONG WAY
-POINT TO TECHNIQUES
-
-(Maybe look at WAIC)
 
 ## Sensitivity approaches
 
