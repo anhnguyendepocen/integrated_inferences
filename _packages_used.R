@@ -1,9 +1,13 @@
 
 library("pacman")
 
+# devtools::install_github("tidyverse/dplyr")
+
 pacman::p_load(
   tidyverse,
-  gbiqq,
+  bayesplot,
+  rstanarm,
+  CausalQueries,
   bindrcpp,
   ggplot2,
   StanHeaders,
@@ -16,7 +20,7 @@ pacman::p_load(
   stargazer,
   partitions)
 
-library(gbiqqtools)
+library(CQtools)
 
 do_diagnosis = FALSE
 

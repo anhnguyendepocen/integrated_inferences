@@ -144,7 +144,7 @@ Placeholder
 ### Illustration with code
 ## Five principles
 ### Classic qualitative tests are special cases of updating on a model
-### Conditional independence alone does not provide probative value 
+### A DAG alone does not get you probative value 
 ### Uncertainty does not alter inference for single case causal inference
 ### Probative value requires $d-$connection
 ### Probative value 
@@ -314,29 +314,34 @@ Model based inference takes the model seriously. But deep down we know that all 
 
 ```{r packagesused15, include = FALSE}
 source("_packages_used.R")
-do_diagnosis = TRUE
-library("bayesplot")
-library("ggplot2")
-library("rstanarm")
+do_diagnosis = FALSE
 library(DeclareDesign)
 ```
 
 
-Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these may be wrong. 
+Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense. 
 
 
 ## Can we spot a bad model?
 
 Sometimes a model is just not able to fit the observed data well. 
 
-Imagine a situation in which in fact $X$ has an effect on $Y$ but researchers wrongly assume that the effect runs entirely through $M$. They assume a model was of the form $X \rightarrow M \rightarrow Y$. In fact none of the effect runs through $M$ and in the data we see that although $X$ correlates with $Y$, $X$ does not correlate with $M$ and $M$ does not correlate with $Y$. 
+Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. However, in fact $X$ has *only* a direct effect on $Y$. The problem with the model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.
 
-This data is inconsistent with the model since under this model if $X$ doesn't cause $M$ and $M$ doesn't cause $Y$ there is no other way for $X$ to cause $Y$. 
+<!-- MH: Have commented out because I don't think this passage fits in the flow. We're presenting here a data pattern that *obviously* doesn't fit the model, and then asking "Will we notice?" Well, of course, you just showed us!  I think this all works much better if we jump straight to the simulations. 
 
-Will we notice?
+<!-- * $X$ correlates with $Y$ -->
+<!-- * $X$ does not correlate with $M$  -->
+<!-- * $M$ does not correlate with $Y$.  -->
 
-We are able to update using this model and the data but the updated model can produce wildly inaccurate inferences.  In Figure \@ref(modelsch15) we imagine a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$ with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$. The figure show the inferences on the treatment effect for an updated  $X \rightarrow M \rightarrow Y$ model and an updated 
-$X \rightarrow M \rightarrow Y \leftarrow X$ model, both starting with flat priors.
+<!-- These data are inconsistent with the model: under this model, if $X$ doesn't cause $M$ and $M$ doesn't cause $Y$, then there is no other way for $X$ to cause $Y$.  -->
+
+We are perfectly able to update using this overly restrictive model and the data --- but the updated model can produce wildly inaccurate inferences.  In Figure \@ref(modelsch15), we show the results of an analysis in which the data are generated from a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$, with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$. In the figure, we show the inferences on the average treatment effect for two different updated models, both starting with flat priors: the more restricted, $X \rightarrow M \rightarrow Y$ model and the less restricted,
+$X \rightarrow M \rightarrow Y \leftarrow X$ model. We represent the true average effect with the vertical line in each graph.
+
+As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go in with the restricted model, we have a problem. 
+
+But will we notice?
 
 ```{r modelsch15, echo = FALSE}
 
@@ -349,8 +354,8 @@ model <-
 
 
 if(do_diagnosis){
-data <- simulate_data(make_model("X -> M -> Y <- X"), 
-                      using = "parameters", n = 50)
+data <- simulate_data(model, 
+                      using = "parameters", n = 100)
 write_rds(data, "saved/ch15_XMYdata.rds") 
   
  make_model("X -> M -> Y") %>%
@@ -361,18 +366,21 @@ write_rds(data, "saved/ch15_XMYdata.rds")
    update_model(data, keep_fit = TRUE) %>%
    write_rds("saved/ch15_unrestricted_model.rds") 
 
- ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
-ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
-
- write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
-           "saved/ch15_ates.rds")
-
 }
 
-ates <- read_rds("saved/ch15_ates.rds") 
 data <-   read_rds("saved/ch15_XMYdata.rds") 
 restricted_model <-   read_rds("saved/ch15_restricted_model.rds") 
 unrestricted_model <-   read_rds("saved/ch15_unrestricted_model.rds") 
+
+if(do_diagnosis){
+  ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+  ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+
+ write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
+           "saved/ch15_ates.rds")
+}
+
+ates <- read_rds("saved/ch15_ates.rds") 
 
 ```
 
@@ -389,18 +397,22 @@ abline(v = .33, col = "red")
 ### Check conditional independence
 
 
-First, even before engaging in updating we can look to see whether data is consistent with our causal model. In particular we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  nodes are *conditionally independent* of their nondescendants, conditional on their parents. In this case, given $M$, $Y$ should be independent of $X$. Is it? One way to check is to look at the covariance of  $X$ and $Y$ given $M=1$ and again given $M=0$.
+First, even before engaging in updating we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its nondescendants, given its parents. In this case, given $M$, $Y$ should be independent of $X$. Is it? One way to check is to look at the covariance of  $X$ and $Y$ given $M=1$ and again given $M=0$.
+
+<!-- MH: Not clear how this table makes the point. Doesn't show M=0 and M=1 conditions, and there isn't an X,Y correlation given M. -->
 
 ```{r, echo = FALSE}
 estimatr::lm_robust(Y~X*M, data = data) %>% tidy %>% kable(digits = 2)
 ```
 
-We see right way we have a problem. Here, note, we ran a classical test. WE hypothesized that our model was correct and looked to see whether the data was unusual given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
+We see right way we have a problem. Here, note, we ran a classical test in the frequentist sense. We hypothesized that our model was correct and looked to see whether the data were unlikely given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
 
 
 ### Computational clues
 
 Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error (`Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`)
+
+<!-- MH: Needs elaboration: why is this error a function of problems with the model? -->
 
 
 ### Check fit
@@ -410,6 +422,8 @@ Approaches using simulated data from the posterior predictive distribution  are 
 The graphs below compare (using tools in the `bayesplot`) package, show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
 
 First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution. We see here not too much difference. 
+
+<!-- MH: I am having trouble seeing the progression here. -->
 
 ```{r ch15simulations, echo = FALSE}
 
@@ -473,6 +487,17 @@ replicates_unrestricted <-   read_rds("saved/ch15_replicates_unrestricted.rds")
 bayesplot::ppc_stat(data$Y, replicates_unrestricted)
 ```
 
+
+```{r ch15predY, fig.cap = "Predicted outcomes"}
+
+x <- data.frame(
+  unrestricted = read_rds("saved/ch15_replicates_unrestricted.rds") %>% apply(2, mean),
+  restricted   = read_rds("saved/ch15_replicates_restricted_b.rds") %>% apply(2, mean) 
+)
+reshape2::melt(x) %>%
+ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
+
+```
 
 ### Bayes factors: COmparing model likelihoods under different models
 
