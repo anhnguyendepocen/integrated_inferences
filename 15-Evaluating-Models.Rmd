@@ -14,23 +14,25 @@ library(DeclareDesign)
 ```
 
 
-Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense. 
+Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly wrong. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense. How can we evaluate the usefulness of our models?
 
 
 ## Can we spot a bad model?
 
 Sometimes a model is just not able to fit the observed data well. 
 
-Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. However, in fact $X$ has *only* a direct effect on $Y$. The problem with the model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.
+Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. Imagine that, however, in fact $X$ has *only* a direct effect on $Y$. The problem with the model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.
 
-We are perfectly able to update using this overly restrictive model and the data --- but the updated model can produce wildly inaccurate inferences.  In Figure \@ref(modelsch15), we show the results of an analysis in which the data are generated from a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$, with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$. 
+We are perfectly able to update using this overly restrictive model and the data --- but the updated model can produce wildly inaccurate causal inferences.  In Figure \@ref(modelsch15), we show the results of an analysis in which the data are generated from a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$, with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$, and thus no indirect effect. 
 
 In the figure, we show the inferences on the average treatment effect for two different updated models, both starting with flat priors: the more restricted, $X \rightarrow M \rightarrow Y$ model and the less restricted,
 $X \rightarrow M \rightarrow Y \leftarrow X$ model. We represent the true average effect with the vertical line in each graph.
 
-As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go in with the restricted model, we have a problem. 
+As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go into the analysis with the restricted model, we have a problem. 
 
 But will we notice?
+
+In the remainder of this section, we explore a range of diagnostics that researchers can undertake to evaluate the usefulness of their models or to compare models with one another: checking assumptions of conditional independence built into a model; attending to computational clues; checking the model's fit; comparing model likelihoods; and "leave-one-out" cross-validation.
 
 ```{r modelsch15, echo = FALSE}
 n = 200
@@ -92,12 +94,15 @@ abline(v = .33, col = "red")
 
 ### Check conditional independence
 
+First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its non-descendants, given its parents. In this case, if the restricted model is right, then given $M$, $Y$ should be independent of $X$. 
 
-First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its nondescendants, given its parents. In this case, given $M$, $Y$ should be independent of $X$. Is it? 
+Is it? 
 
-One way to check is to look at the covariance of  $X$ and $Y$ given $M=1$ and again given $M=0$. In the tabel below we report the regression coefficient on $X$ given $M=0$ an $M=1$.
+One way to check is to assess the covariance of $X$ and $Y$ given $M$ in the data. Specifically, we regress $Y$ on $X$ for each value of $M$, once for $M=1$ and again for $M=0$; a correlation between $X$ and $Y$ at either value of $M$ would be problematic for the conditional independence assumption embedded in the restricted model. 
 
-<!-- MH: Not clear how this table makes the point. Doesn't show M=0 and M=1 conditions, and there isn't an X,Y correlation given M. -->
+Note that this form of diagnostic test is a classical one in the frequentist sense: we start by hypothesizing that our model is correct and then ask whether the data were unlikely given the model.
+
+
 
 ```{r, echo = FALSE}
 rbind(
@@ -109,7 +114,9 @@ rbind(
 
 ```
 
-We see right way we have a problem. Here, note, we ran a classical test in the frequentist sense. We hypothesized that our model was correct and looked to see whether the data were unlikely given the model.^[Confounding has implications for the application of the Markov condition. For instance say that there was confounding between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $Y$. Intuitively the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another onuobserved cause of $Y$ and so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause.] 
+We report the regression coefficients on $X$ in the table below. It is immediately apparent that we have a problem. At both values of $M$, there is a strong correlation between $X$ and $Y$, evidence of a violation of the Markov condition implied by the restricted model.^[In applying the Markov condition, we also need to take into account any unobserved confounding. For instance, suppose that there was an unobserved confounder of the relationship between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $M$. Intuitively, the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another unobserved cause of $Y$; so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause, and thus between $X$ and $Y$.] 
+
+<!-- AJ: I do not follow the sentence starting with "Intuitively" in the above. -->
 
 
 ### Computational clues
@@ -117,8 +124,9 @@ We see right way we have a problem. Here, note, we ran a classical test in the f
 Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error (`Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`)
 
 
-<!-- MH: Needs elaboration: why is this error a function of problems with the model? -->
-<!-- AJ: I agree; do feel free to look into it; I will try -->
+<!-- AJ: Needs elaboration: why is this error a function of problems with the model? -->
+<!-- MH: I agree; do feel free to look into it; I will try -->
+<!-- AJ: I have done some digging and not found anything helpful on this -->
 
 
 ### Check fit
@@ -129,7 +137,7 @@ The graphs below compare (using tools in the `bayesplot`) package, show how typi
 
 First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution. We see here not too much difference. 
 
-<!-- MH: I am having trouble seeing the progression here. -->
+<!-- AJ: I am having trouble seeing the progression here. -->
 
 ```{r ch15simulations, echo = FALSE}
 
@@ -244,8 +252,11 @@ Compare likelihoods of the data under different models
 Check look package for rstan
 
 
-### Leave one out
+### Leave-one-out cross-validation
 
+A further class of model-validation methods involve cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict data that have not yet been seen. 
+
+One approach to cross-validation is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one; ask how well the model performs in predicting the left-out observation; repeat for every data point in the dataset; and aggrgeate predictive performance across all iterations. In the standard implementation, the measure of predictive success in each iteration is the residual error, typically on an outcome variable. In a CausalQuery
 
 ```{r}
 #Leave one out
