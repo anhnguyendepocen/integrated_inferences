@@ -21,7 +21,9 @@ Throughout this book we have maintained the conceit that you believe your model.
 
 Sometimes a model is just not able to fit the observed data well. 
 
-Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. Imagine that, however, in fact $X$ has *only* a direct effect on $Y$. The problem with the model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.
+Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. Imagine that, however, that the true model is $X \rightarrow  M \rightarrow Y \leftarrow X$, with $X$ *only* having a direct effect on $Y$. The problem with the posited model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.
+
+<!-- AJ: "Restrictedness" seems a bit off here insofar as the "unrestricted" model is also restricted in essentially assuming no operative $X -> M$ arrow, as well as no negative direct effects.  -->
 
 We are perfectly able to update using this overly restrictive model and the data --- but the updated model can produce wildly inaccurate causal inferences.  In Figure \@ref(modelsch15), we show the results of an analysis in which the data are generated from a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$, with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$, and thus no indirect effect. 
 
@@ -275,10 +277,21 @@ ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
 
 A further class of model-validation methods involve cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict data that have not yet been seen. 
 
-One approach to cross-validation is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one; ask how well the model performs in predicting the left-out observation; repeat for every data point in the dataset; and aggrgeate predictive performance across all iterations. In the standard implementation, the measure of predictive success in each iteration is the residual error, typically on an outcome variable. In a CausalQuery
+One approach to cross-validation is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one; ask how well the model performs in predicting the left-out observation; repeat for every data point in the dataset; and aggrgeate predictive performance across all iterations. 
 
-COMPARE ONE TO ANOTHER IN TERMS OF LOO
- 3d7572d6abe89f9a89bd4de4d8cc1f1aa4ef5c9b
+In the standard implementation, the measure of predictive success for each data point is the residual error, typically on an outcome variable. In a \CausalQuery\ framework, however, we may be interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, instead of calculating residual error as the measure of predictive success for each data point, we calculate the posterior probability of each data point, using the model updated with all of the other observations. We then aggregate by taking the product of the posterior probabilities across all data points.
+
+The LOO estimate of out-of-sample predictive fit, for a dataset with $n$ observations, is then:
+
+$$\prod_1^np(y_i|y_{-i}, \text{model})$$
+where $y_{-i}$ is the data pattern with observation $y_i$ left out, and $y_i$ represents the values of all nodes of interest for observation $i$. 
+
+First, we implement LOO cross-validation of the two models using 200 data points generated from the unrestricted model. The likelihood of the data under the restricted model is `r  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)`
+the likelihood if  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)` under the unrestricted models. Thus, the unrestricted model represents an estimated improvement in out-of-sample prediction on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
+
+We can visualize the pattern 
+
+
 
 ```{r}
 #Leave one out
@@ -332,12 +345,7 @@ DO THE SAME BUT THE OTHER WAY AROUND, WHERE DATA COMES FROM TEH RESTRICTED MODEL
 
 ALS DO WITH CONFOUNDING X<-->Y X->M->Y
 
-The LOO estimate of out-of sample predictive fit:
 
-$$\prod_1^np(y_i|y_{-i}, \text{model})$$
-
-likelihood of the data under the restricted model is `r  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)`
-and under the unrestricted models:  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)`. An improvement on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
 
 
 
