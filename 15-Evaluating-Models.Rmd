@@ -34,7 +34,7 @@ As we can see, the more restrictive model that excludes direct effects generates
 
 But will we notice?
 
-In the remainder of this section, we explore a range of diagnostics that researchers can undertake to evaluate the usefulness of their models or to compare models with one another: checking assumptions of conditional independence built into a model; attending to computational clues; checking the model's fit; comparing model likelihoods; and "leave-one-out" cross-validation.
+In the remainder of this section, we explore a range of diagnostics that researchers can undertake to evaluate the usefulness of their models or to compare models with one another: checking assumptions of conditional independence built into a model; attending to computational clues; checking the model's fit; using "leave-one-out" cross-validation; and assessing model sensitivity.
 
 ```{r modelsch15, echo = FALSE}
 n = 200
@@ -47,11 +47,20 @@ if(do_diagnosis){
       statement = c("M[X=1] != M[X=0]", "(Y[X=1] < Y[X=0])"),
       parameters = c(0, 0)
       ) 
-
- simulate_data(unrestricted_model, using = "parameters", n = n) %>%
-    write_rds("saved/ch15_XMYdata.rds") 
+ 
+ restricted_model <- make_model("X -> M -> Y")%>%
+    set_parameters(
+      statement = c("M[X=1] < M[X=0]", "(Y[M=1] <= Y[M=0])"),
+      parameters = c(0, 0)
+      ) 
+ 
+ data <- simulate_data(unrestricted_model, using = "parameters", n = n) 
+     write_rds(data, "saved/ch15_data.rds") 
   
- make_model("X -> M -> Y") %>%
+ XMYdata <- simulate_data(restricted_model, using = "parameters", n = n) 
+     write_rds(data, "saved/ch15_XMYdata.rds") 
+  
+ restricted_model %>%
    update_model(data, keep_fit = TRUE) %>%
    write_rds("saved/ch15_restricted_model.rds") 
 
@@ -61,7 +70,8 @@ if(do_diagnosis){
 
 }
 
-data               <-   read_rds("saved/ch15_XMYdata.rds") 
+data               <-   read_rds("saved/ch15_data.rds") 
+XMYdata            <-   read_rds("saved/ch15_XMYdata.rds") 
 restricted_model   <-   read_rds("saved/ch15_restricted_model.rds") 
 unrestricted_model <-   read_rds("saved/ch15_unrestricted_model.rds") 
 
@@ -123,118 +133,85 @@ We report the regression coefficients on $X$ in the table below. It is immediate
 
 
 
-ROUGH TEXT:
+<!-- ROUGH TEXT: -->
 
-approach 2 -- say actual confound is q~=0; but model  assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.  
-
-
-(Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions.
+<!-- approach 2 -- say actual confound is q~=0; but model  assumes q = 0. Draw data from priors, draw data; given data type (001, 100 etc) plot (a) the posterior distribution under no confounding nad (b) the distribution of estimands that gave rise to the data.   -->
 
 
- Pearl (1995) gives conditions for assessing for discrete data whether $Z$ has a  direct effect on $Y$. (Involves inequalities)
- 
-Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality.
+<!-- (Verma and Pearl, 1990) identify conditions under which we can check some independence assumptions. -->
+
+
+<!--  Pearl (1995) gives conditions for assessing for discrete data whether $Z$ has a  direct effect on $Y$. (Involves inequalities) -->
+
+<!-- Evans (Graphical methods for inequality constraints in marginalized DAGs) generalizes the instrumental inequality. -->
  
 
 
 ### Computational clues
 
-Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error (`Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`)
+Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error: 
+
+> `Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`
 
 
 <!-- AJ: Needs elaboration: why is this error a function of problems with the model? -->
 <!-- MH: I agree; do feel free to look into it; I will try -->
 <!-- AJ: I have done some digging and not found anything helpful on this -->
+<!-- MH: Well that's just great -->
 
 
 ### Bayesian $p$ value: Is the data unusual given your model?
 
+A third approach asks whether features of the data you observe are in some sense unusual given your model. For instance if a model assumed no adverse effects of $X$ on $Y$ and no confounding, then a strong negative correlation between $X$ and $Y$ would be unusual even for the model updated with this data.
 
-THIS IS NOT COMPARING TO ANOTHER MODEL
-QUESTION: DO CHARACTERISTICS FO THE ACTUAL DATA LOOK LIKE WHAT SORT OF DATA WE EXPECT TO SEE GIVEN OUR MODEL
+In fact this approach is quite classical: we are looking to see whether we should "reject" our model in light of inconistent data.  
 
-Approaches using simulated data from the posterior predictive distribution  are described in @gabry2019visualization.
+An approach for doing this using simulated data from the posterior predictive distribution is described in @gabry2019visualization.^[Tools in the `bayesplot` package can be used to show how typical the data we observe is for different models] 
 
-Using tools in the `bayesplot` package, the graphs below show how typical the data we observe is for the model that correctly assumes a direct effect and the model that incorrectly excludes it. 
+We consider two test statistics. First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution, second we look at the correlation between $X$ and $Y$ and see how this compares to the predicted distribution. 
 
-First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution. We see here not too much difference. 
+We see here the the distribution of the outcome $Y$ is similar for both models, and the actual mean outcome is within the distribution of predicted mean outcomes. However the predicted correlation between $X$ and $Y$ is very different. The restricted model does not in fact predict any correlation and the strong correlation in the data is unusual. The unrestricted model does  predict a strong correlation and the observed correlation is comfortably in the normal range. A frequentist looking at the observed correlation between $X$ and $Y$ should feel comfortable rejecting the restricted model.
 
-<!-- AJ: I am having trouble seeing the progression here. -->
 
 ```{r ch15simulations, echo = FALSE}
 
 if(do_diagnosis){
   
- sims <- 1000
+ sims <- 500
  n <- nrow(data)
  
  # Outcome prediction
  ############################################# 
- t(replicate(sims, make_data(restricted_model, n = n, 
-                        param_type = "posterior_draw")$Y)) %>%
+ t(replicate(sims, {
+   dd <- make_data(restricted_model, n = n, param_type = "posterior_draw")
+   c(Y=mean(dd$Y), C = cor(dd$Y, dd$X))})) %>%  data.frame %>%
   write_rds("saved/ch15_replicates_restricted.rds") 
 
-  t(replicate(sims, make_data(unrestricted_model, n = n, param_type = "posterior_draw")$Y)) %>%
+ t(replicate(sims, {
+   dd <- make_data(unrestricted_model, n = n, param_type = "posterior_draw")
+   c(Y=mean(dd$Y), C = cor(dd$Y, dd$X))})) %>% data.frame %>%
   write_rds("saved/ch15_replicates_unrestricted.rds") 
   
-  # Distribution of cor X, Y in data
-  #############################################
-  replicate(sims, {
-    df <- make_data(restricted_model, n = n, param_type = "posterior_draw")
-    cor(df$X, df$Y)}) %>%
-  write_rds("saved/ch15_replicates_restricted_b.rds") 
-
-    replicate(sims, {
-    df <- make_data(unrestricted_model, n = n, param_type = "posterior_draw")
-    cor(df$X, df$Y)}) %>%
-  write_rds("saved/ch15_replicates_unrestricted_b.rds") 
-
   }
 
-
-```
-
-
-```{r, fig.cap = "Distribution of" }
-x <- data.frame(
-  unrestricted = read_rds("saved/ch15_replicates_unrestricted_b.rds"),
-  restricted   = read_rds("saved/ch15_replicates_restricted_b.rds") 
-)
-reshape2::melt(x) %>%
-ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
-```
-
-
-How does the researcher's model do?
-
-```{r distributio113, eval = FALSE, fig.cap= "Posterior distribution of test statistics under researcher's model"}
-
 replicates_restricted <-   read_rds("saved/ch15_replicates_restricted.rds") 
-
-bayesplot::ppc_stat(data$Y, replicates_restricted)
-
-```
-
-How would we evaluate the less constrained ("true") model?
-
-```{r distribution2, echo = FALSE, eval = FALSE, fig.cap = "Distribution of $Y$ under the (data updated) true model"}
-# Updated alternative model
 replicates_unrestricted <-   read_rds("saved/ch15_replicates_unrestricted.rds") 
-bayesplot::ppc_stat(data$Y, replicates_unrestricted)
+
+par(mfrow = c(2,2))
+xlimY <- range(c(replicates_restricted$Y, replicates_unrestricted$Y))
+xlimC <- range(c(replicates_restricted$C, replicates_unrestricted$C))
+
+hist(replicates_restricted$Y, main = "Y mean | restricted", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+hist(replicates_restricted$C, main = "X, Y covariance | restricted", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+hist(replicates_unrestricted$Y, main = "Y mean | unrestricted", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+hist(replicates_unrestricted$C, main = "X, Y covariance | unrestricted", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+
+
+# FLAG: WOULD LIKE THIS DONE WITH GGPLOT
 ```
 
 
-```{r ch15predY, fig.cap = "Predicted outcomes"}
-
-x <- data.frame(
-  unrestricted = read_rds("saved/ch15_replicates_unrestricted.rds") %>% apply(2, mean),
-  restricted   = read_rds("saved/ch15_replicates_restricted.rds") %>% apply(2, mean) 
-)
-reshape2::melt(x) %>%
-ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
-
-```
-
+<!-- ## Model likelihoods -->
 
 <!-- Bayesian information criterion (BIC)^[$BIC = \ln(n)k - 2\ln(\hat{L})$ where $\hat{L}$ is the maximized likelhood, $k$ is the number of parameters, and $n$ the number of data points.] -->
 <!-- BIC involves a penalty for more parameters -->
@@ -275,11 +252,47 @@ ggplot(aes(x=value, fill=variable)) + geom_density(alpha=0.25)
 
 ### Leave-one-out cross-validation
 
-A further class of model-validation methods involve cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict data that have not yet been seen. 
+A further class of model-validation methods involves cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict actual data that have not yet been seen. 
 
-One approach to cross-validation is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one; ask how well the model performs in predicting the left-out observation; repeat for every data point in the dataset; and aggrgeate predictive performance across all iterations. 
+One approach to cross-validation is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one and then ask how well the model performs in predicting the left-out observation. We repeat this for every data point in the dataset to assess how well we can predict the entire data set. 
 
-In the standard implementation, the measure of predictive success for each data point is the residual error, typically on an outcome variable. In a \CausalQuery\ framework, however, we may be interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, instead of calculating residual error as the measure of predictive success for each data point, we calculate the posterior probability of each data point, using the model updated with all of the other observations. We then aggregate by taking the product of the posterior probabilities across all data points.
+Often this approach is used to predict a particular outcome variable. In a \CausalQuery\ framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
+
+
+
+
+```{r, echo = FALSE}
+#Leave one out
+
+
+if(do_diagnosis){
+  
+  get_loo_likelihood(data, restricted_model, 1000) %>% write_rds("saved/ch15_loo_restricted.rds")
+    
+  get_loo_likelihood(data, unrestricted_model, 1000) %>% write_rds("saved/ch15_loo_unrestricted.rds")
+
+}
+
+loo_restricted   <- read_rds("saved/ch15_loo_restricted.rds") 
+loo_unrestricted <- read_rds("saved/ch15_loo_unrestricted.rds")  
+
+plot(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood)
+text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
+
+par(mfrow = c(1,2))
+  plot(loo_restricted$data$count, loo_restricted$case_likelihood, col = "red")
+  text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
+  
+  plot(loo_unrestricted$data$count, loo_unrestricted$case_likelihood)
+
+with(loo_restricted,
+     {
+  plot(loo_restricted$data$count, case_likelihood, col = "red")
+  text(case_likelihood, case_likelihood, loo_restricted$data$event)
+     }
+)
+
+```
 
 The LOO estimate of out-of-sample predictive fit, for a dataset with $n$ observations, is then:
 
@@ -304,109 +317,79 @@ In Figure XXXX, we then see how the likelihoods of each data type line up with t
 
 
 
+```{r, echo = FALSE}
 
-```{r}
-#Leave one out
-
-loo_lik <- function(data, model, sims){
-  
-  short_data <- collapse_data(data, model)
-  rows       <- 1:nrow(short_data)
-  
-  case_likelihood <- lapply(rows, 
-        function(j) {
-        loo_data <-  mutate(short_data, count = ifelse(count>0 & rows == j, count-1, count))
-        loo_left <-  mutate(short_data, count = ifelse(count>0 & rows == j, 1, 0))
-        loo_post <-  update_model(model, loo_data, data_type = "compact")
-        loo_prob <-  apply(loo_post$posterior_distribution[1:sims, ], 1, function(pars)
-                     get_data_probs(model, loo_left, parameters = pars)[j])
-        mean(loo_prob)}
-        )
-  
-  list(data = short_data, model = model, case_likelihood = case_likelihood, 
-       loo_likelihood = prod((case_likelihood %>% unlist)^(short_data$count)))
-  }
-  
 if(do_diagnosis){
-loo_lik(data, restricted_model, 1000) %>% write_rds("saved/ch15_loo_restricted.rds")
-loo_lik(data, unrestricted_model, 1000) %>% write_rds("saved/ch15_loo_unrestricted.rds")
+  
+  get_loo_likelihood(XMYdata, restricted_model, 1000) %>% write_rds("saved/ch15_loo_restricted_2.rds")
+    
+  get_loo_likelihood(XMYdata, unrestricted_model, 1000) %>% write_rds("saved/ch15_loo_unrestricted_2.rds")
+
 }
 
-loo_restricted   <- read_rds("saved/ch15_loo_restricted.rds") 
-loo_unrestricted <- read_rds("saved/ch15_loo_unrestricted.rds")  
+loo_restricted_2   <- read_rds("saved/ch15_loo_restricted_2.rds") 
+loo_unrestricted_2 <- read_rds("saved/ch15_loo_unrestricted_2.rds")  
 
-plot(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood)
-text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
+plot(loo_restricted_2$case_likelihood, loo_unrestricted_2$case_likelihood, type = "n")
+text(loo_restricted_2$case_likelihood, loo_unrestricted_2$case_likelihood, loo_restricted_2$data$event)
 
 par(mfrow = c(1,2))
-plot(loo_restricted$data$count, loo_restricted$case_likelihood, col = "red")
-text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
+  plot(loo_restricted_2$data$count, loo_restricted_2$case_likelihood, col = "red")
+  text(loo_restricted_2$case_likelihood, loo_unrestricted_2$case_likelihood, loo_restricted_2$data$event)
 
-plot(loo_unrestricted$data$count, loo_unrestricted$case_likelihood)
-
-with(loo_restricted,
-     {
-  plot(loo_restricted$data$count, case_likelihood, col = "red")
-  text(case_likelihood, case_likelihood, loo_restricted$data$event)
-     }
-)
-
+  
 ```
 
-DO THE SAME BUT THE OTHER WAY AROUND, WHERE DATA COMES FROM TEH RESTRICTED MODEL
-
-ALS DO WITH CONFOUNDING X<-->Y X->M->Y
+<!-- ALS DO WITH CONFOUNDING X<-->Y X->M->Y -->
 
 
 
+Second, we implement LOO cross-validation of the two models using 200 data points generated from the restricted model. The likelihood of the data under the restricted model is now `r  formatC(loo_restricted_2$loo_likelihood, format = "e", digits = 2)`, compared to 
+the likelihood of  `r  formatC(loo_unrestricted_2$loo_likelihood, format = "e", digits = 2)` under the unrestricted models. Thus, the unrestricted model represents an estimated improvement in out-of-sample prediction on the order of   `r  formatC(loo_unrestricted_2$loo_likelihood/loo_restricted_2$loo_likelihood, format = "e", digits = 2)`. 
 
 
-### Sensitivity: Qualitative inference
 
-You need to provide priors in order to get Bayesian updating off the ground. But seeing your priors reported as hard cold numbers may make them feel like forced confessions. What if you just don't believe them?
+### Sensitivity
 
-Even in this case you might still engage in a form of "qualitative inference." There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see @parsons2001qualitative. Under this kind of approach, a researcher might willing to say that they think some probability $p$ is not plausibly  greater than .5,  but unwilling to make a statement about their beliefs about where in the $0$ to $0.5$ range it lies. Such incomplete statements can be enough to rule our classes of conclusion.
+The last approach we consider asks: how much do your conclusions depend on your assumptions? You can worry less about model assumptions if the conclusions are not strongly dependent on them.
 
-Consider first process tracing models for which you are unsure Say for instance in our running example 
+To illustrate using a process tracing example, consider a case in  which you are unsure about posited parameter values. Say for instance we have an $X \rightarrow M \rightarrow Y$ model. Say we think  it is unlikely that $M$ has an adverse effect on $Y$, but we are not sure how unlikely this is. We assume all other types are equally likely. How much does our updating on $X$ causing  $Y$ when we see $M=1$ or $M=1$ depend on this second stage assumption?
 
-<!-- AJ: Am having some trouble reading off the code what exactly is varying along the axes of the graph. Seems to be something related to M10, M01, Y10, Y01, but not sure how this maps to the graph. Can you explain? -->
+We answer the question by looking at the inferences we would make for a range of possible values. We give an example in Table  REF. We see here that our inference in the case that $M=1$ does *not* depend on these beliefs about adverse effects. The reason is that in this case we only need to distinguish between cases with positive effects at both stages and other cases that yield $M=1$. Our inferences hen $M=0$ do depend on this however since in this case we are trying to assess specifically the share of cases with a positive effect of $X$ on $Y$ that operate via negative effects at each stage.
 
 
 ```{r, fig.cap = "Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1", echo = FALSE}
 
-model <- make_model("X -> M -> Y") 
+model <- make_model("X -> M -> Y") %>%
+    set_parameters(
+      param_names = c("M.10"), 
+      parameters = .25)
 
-adverse1 <- adverse2 <- seq(0, .25, .05)
+
+adverse2 <- seq(0, .25, .05)
 
 out <-  
-  sapply(adverse1, function(a1) {
-      sapply(adverse2, function(a2) 
+  sapply(adverse2, function(a) {
   
   query_model(
   set_parameters(model, 
-                 param_names = c("M.10", "M.01", "Y.10", "Y.01"), 
-                 parameters = c(a1, .5+a1, a2, .5+a2)),
+                 param_names = c("Y.10"), 
+                 parameters = c(a)),
   query = c("Y[X=1] > Y[X=0]"),
   given = c("X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
   using = "parameters",
-  expand_grid = TRUE)$mean, simplify = FALSE)})
-out2 <- do.call(rbind, out) %>% data.frame
+  expand_grid = TRUE)$mean})
+out2 <- t(out)  %>% data.frame
 names(out2) <- c("M0", "M1")
 out2 <- arrange(out2,M0, M1)
 
-plot(out2$M1, xlim = c(0,1), type = "n", xlab = "possible ranges", ylim = c(0, nrow(out2)), ylab = "")
-segments(out2$M0, 1:nrow(out2), out2$M1, 1:nrow(out2), col = "red")
+kable(cbind(adverse2, out2), col.names = c("$\\lambda^M_{01}$", "$M=0$", "$M=1$"), caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^M_{01}$")
 
 ```
 
-- A graph showing how some conclusions changes as we relax one of the restrictions.
+In the same way we can ask how our conclusions change if we relax assumptions on rstrictions, on confounds, or on causal structure. 
 
-How much do our conclusions depend on qual restrictions?
-
-- How do conclusions differ if we drop all restrictions
-
-
-
+We note that in cases in which you cannot quantify uncertainty about parameters you might still be able to engage in a form of "qualitative inference." There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see @parsons2001qualitative. Under this kind of approach, a researcher might willing to say that they think some probability $p$ is not plausibly  greater than .5,  but unwilling to make a statement about their beliefs about where in the $0$ to $0.5$ range it lies. Such incomplete statements can be enough to rule our classes of conclusion.
  
 
 
