@@ -376,18 +376,21 @@ out <-
                  param_names = c("Y.10"), 
                  parameters = c(a)),
   query = c("Y[X=1] > Y[X=0]"),
-  given = c("X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
+  given = c("X==1 & Y==1", "X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
   using = "parameters",
   expand_grid = TRUE)$mean})
 out2 <- t(out)  %>% data.frame
-names(out2) <- c("M0", "M1")
+names(out2) <- c("No data", "M0", "M1")
 out2 <- arrange(out2,M0, M1)
 
-kable(cbind(adverse2, out2), col.names = c("$\\lambda^M_{01}$", "$M=0$", "$M=1$"), caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^M_{01}$")
+kable(cbind(adverse2, out2), col.names = c("$\\lambda^Y_{10}$", "Prior", "$M=0$", "$M=1$"), caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^Y_{10}$")
 
 ```
 
-In the same way we can ask how our conclusions change if we relax assumptions on rstrictions, on confounds, or on causal structure. 
+
+The *amount* we update when $M=1$ does depend on $\lambda^Y_{10}$ because  $\lambda^Y_{10}$ affects our belief, prior to seeing $M$, that $X=1$ caused $Y=1$. However the conclusion we reach given $M$ is observed, does not depend on  $\lambda^Y_{10}$.
+
+In the same way we can ask how our conclusions change if we relax assumptions on restrictions, on confounds, or on causal structure. 
 
 We note that in cases in which you cannot quantify uncertainty about parameters you might still be able to engage in a form of "qualitative inference." There is a literature on probabilistic causal models that assesses the scope for inferences when researchers provide ranges of plausible values for parameters (perhaps intervals, perhaps only signs, positive negative, zero), rather than specifying a probability distribution. For a comprehensive treatment of qualitative algebras, see @parsons2001qualitative. Under this kind of approach, a researcher might willing to say that they think some probability $p$ is not plausibly  greater than .5,  but unwilling to make a statement about their beliefs about where in the $0$ to $0.5$ range it lies. Such incomplete statements can be enough to rule our classes of conclusion.
  
