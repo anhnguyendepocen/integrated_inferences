@@ -19,18 +19,21 @@ Throughout this book we have maintained the conceit that you believe your model.
 
 ## Five Strategies
 
-Sometimes a model is just not able to fit the observed data well. 
+Sometimes a model is just a poor representation of the underlying causal processes. 
 
-Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. Imagine that, however, that the true model is $X \rightarrow  M \rightarrow Y \leftarrow X$, with $X$ *only* having a direct effect on $Y$. The problem with the posited model, then, is that it is too restrictive: it does not allow for a direct effect that is in fact operating.
+Imagine a situation in which researchers believe that the effect of $X$ on $Y$ runs entirely through $M$, positing a model of the form $X \rightarrow M \rightarrow Y$. Imagine, however, that the true causal process is one in which $X$ affects $Y$ *directly*;  $X$ has no effect on $M$, so that there is no indirect effect of $X$ on $Y$; and $M$ never has a negative effect on $Y$. 
+
+The problem with the posited model, then, is that it represents overly strong beliefs about independence relations: it does not allow for a direct effect that is in fact operating.
 
 <!-- AJ: "Restrictedness" seems a bit off here insofar as the "unrestricted" model is also restricted in essentially assuming no operative $X -> M$ arrow, as well as no negative direct effects.  -->
 
-We are perfectly able to update using this overly restrictive model and the data --- but the updated model can produce wildly inaccurate causal inferences.  In Figure \@ref(modelsch15), we show the results of an analysis in which the data are generated from a true model of the form $X \rightarrow M \rightarrow Y \leftarrow X$, with an average effect of $X$ on $Y$ of $1/3$ but no effect of $X$ on $M$ or $M$ on $Y$, and thus no indirect effect. 
+We are perfectly able to update using this too-strong $X \rightarrow M \rightarrow Y$ model and the data --- but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a "true" model with direct effects only and an average effect of $X$ on $Y$ of $1/3$.^[Specifically, the data-generating model is $X \rightarrow M \rightarrow Y \leftarrow X$, with no effect of $X$ on $M$ and thus no indirect effect, and no negative effect of $X$ on $Y$, and an otherwise flat parameter space.] In the left panel of Figure \@ref(modelsch15), we show the estimated average treatment effect of $X$ on $Y$ when using these data to update the $X \rightarrow M \rightarrow Y$ model.
 
-In the figure, we show the inferences on the average treatment effect for two different updated models, both starting with flat priors: the more restricted, $X \rightarrow M \rightarrow Y$ model and the less restricted,
-$X \rightarrow M \rightarrow Y \leftarrow X$ model. We represent the true average effect with the vertical line in each graph.
+In the righthand panel of the figure, we show the inferences using the same data but a model that makes weaker assumptions by allowing for direct effects: a $X \rightarrow M \rightarrow Y \leftarrow X$ model. With both models, we start with flat priors over nodal types.^[Note that the "true" model here involves restrictions on nodal types (no $X \rightarrow M$ effects and no negative $X \rightarrow Y$ effects) while the analysis models are both unrestricted.] 
 
-As we can see, the more restrictive model that excludes direct effects generates a posterior credibility interval that excludes the right answer. So, if we go into the analysis with the restricted model, we have a problem. 
+We represent the true average effect with the vertical line in each graph.
+
+As we can see, the weaker (i.e., more permissive) model performs OK: the true effect falls well within the posterior predictive distribution on the ATE. However, the stronger model, which excludes direct effects, generates a posterior predictive distribution that essentially excludes the right answer. So, if we go into the analysis with the stronger model, we have a problem. 
 
 But will we notice?
 
@@ -90,9 +93,9 @@ ates <- read_rds("saved/ch15_ates.rds")
 
 ```{r 15badmodels, echo = FALSE, fig.cap = "A restricted model yields a credibility interval that does not contain the actual average effect."}
 par(mfrow = 1:2)
-hist(ates$restricted_ate, xlim = c(-.1, .6), main = "Restricted model", xlab = "Effect of X on Y") 
+hist(ates$restricted_ate, xlim = c(-.1, .6), main = "Stronger model", xlab = "Effect of X on Y") 
 abline(v = .33, col = "red")
-hist(ates$unrestricted_ate, xlim = c(-.1, .6), main = "Unrestricted model", xlab = "Effect of X on Y")
+hist(ates$unrestricted_ate, xlim = c(-.1, .6), main = "Weaker model", xlab = "Effect of X on Y")
 abline(v = .33, col = "red")
 
 ```
@@ -106,11 +109,11 @@ abline(v = .33, col = "red")
 
 ### Check conditional independence
 
-First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its non-descendants, given its parents. In this case, if the restricted model is right, then given $M$, $Y$ should be independent of $X$. 
+First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its non-descendants, given its parents. In this case, if the stronger model is right, then given $M$, $Y$ should be independent of $X$. 
 
 Is it? 
 
-One way to check is to assess the covariance of $X$ and $Y$ given $M$ in the data. Specifically, we regress $Y$ on $X$ for each value of $M$, once for $M=1$ and again for $M=0$; a correlation between $X$ and $Y$ at either value of $M$ would be problematic for the conditional independence assumption embedded in the restricted model. 
+One way to check is to assess the covariance of $X$ and $Y$ given $M$ in the data. Specifically, we regress $Y$ on $X$ for each value of $M$, once for $M=1$ and again for $M=0$; a correlation between $X$ and $Y$ at either value of $M$ would be problematic for the conditional independence assumption embedded in the stronger model. 
 
 Note that this form of diagnostic test is a classical one in the frequentist sense: we start by hypothesizing that our model is correct and then ask whether the data were unlikely given the model.
 
@@ -126,7 +129,7 @@ rbind(
 
 ```
 
-We report the regression coefficients on $X$ in the table below. It is immediately apparent that we have a problem. At both values of $M$, there is a strong correlation between $X$ and $Y$, evidence of a violation of the Markov condition implied by the restricted model.^[In applying the Markov condition, we also need to take into account any unobserved confounding. For instance, suppose that there was an unobserved confounder of the relationship between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $M$. Intuitively, the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another unobserved cause of $Y$; so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause, and thus between $X$ and $Y$.] 
+We report the regression coefficients on $X$ in the table below. It is immediately apparent that we have a problem. At both values of $M$, there is a strong correlation between $X$ and $Y$, evidence of a violation of the Markov condition implied by the stronger model.^[In applying the Markov condition, we also need to take into account any unobserved confounding. For instance, suppose that there was an unobserved confounder of the relationship between $M$ and $Y$ in the $X \rightarrow M \rightarrow Y$ model. Then we would *not* expect $Y$ to be independent of $X$ conditional on $M$. Intuitively, the data pattern we described could be consistent with such a model in which on average $X$ does not cause $M$ but still *in those cases in which $X=M$* we have $Y=X$. Another way to think about this is that $M$ now acts as a collider between $X$ and another unobserved cause of $Y$; so conditioning on $M$ introduces a correlation between $X$ and this unobserved cause, and thus between $X$ and $Y$.] 
 
 <!-- AJ: I do not follow the sentence starting with "Intuitively" in the above. -->
 
@@ -149,7 +152,7 @@ We report the regression coefficients on $X$ in the table below. It is immediate
 
 ### Computational clues
 
-Second we may be lucky and run into computation issues. In this example there is a good chance that when you run the restricted  model `stan` will throw an error: 
+Second, we may be lucky and run into computation issues. In this example there is a good chance that when you fit the stronger  model, `stan` will throw an error: 
 
 > `Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`
 
@@ -158,19 +161,26 @@ Second we may be lucky and run into computation issues. In this example there is
 <!-- MH: I agree; do feel free to look into it; I will try -->
 <!-- AJ: I have done some digging and not found anything helpful on this -->
 <!-- MH: Well that's just great -->
+<!-- AJ: Looked a little more - still nothing! Whence did you get a sense there might be something to this? -->
 
 
 ### Bayesian $p$ value: Is the data unusual given your model?
 
-A third approach asks whether features of the data you observe are in some sense unusual given your model. For instance if a model assumed no adverse effects of $X$ on $Y$ and no confounding, then a strong negative correlation between $X$ and $Y$ would be unusual even for the model updated with this data.
+A third approach asks whether features of the data you observe are in some sense unusual given your model, or more unusual given your model than another model. For instance, if one model assumed no adverse effects of $X$ on $Y$ and no confounding, then a strong negative correlation between $X$ and $Y$ would be unusual, even for the model updated with this data; and this negative correlation would *more* unusual for this model than for a model that allowed for adverse effects.
 
-In fact this approach is quite classical: we are looking to see whether we should "reject" our model in light of inconistent data.  
+In fact, this approach is quite classical: we are looking to see whether we should "reject" our model in light of inconistent data.  
+
+<!-- AJ: But it can also be done in a comparative sense as we do below, right? Which is then not about "rejection", right? I've actually adjusted the text two paragraphs up to make the idea of comparison more prominent. This works?-->
 
 An approach for doing this using simulated data from the posterior predictive distribution is described in @gabry2019visualization.^[Tools in the `bayesplot` package can be used to show how typical the data we observe is for different models] 
 
-We consider two test statistics. First we look just at the distribution of the outcome $Y$ to see how the actual distribution compares to the predicted distribution, second we look at the correlation between $X$ and $Y$ and see how this compares to the predicted distribution. 
+We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome $Y$ to see how the actual distribution in the data compares to the predicted  distribution from the updated model. Second, we look at the actual correlation between $X$ and $Y$ and see how this compares to the predicted distribution. 
 
-We see here the the distribution of the outcome $Y$ is similar for both models, and the actual mean outcome is within the distribution of predicted mean outcomes. However the predicted correlation between $X$ and $Y$ is very different. The restricted model does not in fact predict any correlation and the strong correlation in the data is unusual. The unrestricted model does  predict a strong correlation and the observed correlation is comfortably in the normal range. A frequentist looking at the observed correlation between $X$ and $Y$ should feel comfortable rejecting the restricted model.
+For the first test, we see that the predicted distribution of the outcome $Y$ is similar for both updated models; and the actual mean outcome is within the distribution of predicted mean outcomes. The two models are thus equally good at "learning" from the data about the observed distribution of the outcome. 
+
+When it comes to the correlation between $X$ and $Y$, however, the two models perform very differently. The posterior predictive distribution from the stronger model is centered around a $0$ correlation. Thus, from the perspective of the stronger model the strong $X,Y$ correlation in the data is unexpected. The updated weaker model, in contrast, predicts a strong correlation, and the observed correlation is comfortably within the posterior predictive distribution. A frequentist looking at the observed correlation between $X$ and $Y$ should feel comfortable rejecting the stronger model.
+
+At first blush, the abysmal performance of the stronger model may seem paradoxical. Even after this model has *seen* the $X,Y$ correlations in the data, those correlations are still highly surprising. What keeps the  $X \rightarrow M \rightarrow Y$ model  from learning, however, is the strength of the assumptions it contains. The problem is that $M$ is uncorrelated with $X$ in the true data-generating process, so the stronger model learns that there is no indirect effect. But, at the same time, this model does not *allow* for a direct effect. Despite what would seem to be overwhelming evidence of a systematic $X,Y$ correlation, a causal relationship connecting $X$ to $Y$ remains extremely unlikely given the $X,M$ data pattern and the impossibility of direct effects. The stronger model just can't handle the truth. The weaker model, on the other hand, readily learns about the direct $X \rightarrow Y$ effect.
 
 
 ```{r ch15simulations, echo = FALSE}
@@ -201,10 +211,10 @@ par(mfrow = c(2,2))
 xlimY <- range(c(replicates_restricted$Y, replicates_unrestricted$Y))
 xlimC <- range(c(replicates_restricted$C, replicates_unrestricted$C))
 
-hist(replicates_restricted$Y, main = "Y mean | restricted", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
-hist(replicates_restricted$C, main = "X, Y covariance | restricted", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
-hist(replicates_unrestricted$Y, main = "Y mean | unrestricted", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
-hist(replicates_unrestricted$C, main = "X, Y covariance | unrestricted", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+hist(replicates_restricted$Y, main = "Y mean | stronger", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+hist(replicates_restricted$C, main = "X, Y covariance | stronger", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+hist(replicates_unrestricted$Y, main = "Y mean | weaker", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+hist(replicates_unrestricted$C, main = "X, Y covariance | weaker", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
 
 
 # FLAG: WOULD LIKE THIS DONE WITH GGPLOT
