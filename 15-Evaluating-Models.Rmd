@@ -180,7 +180,7 @@ For the first test, we see that the predicted distribution of the outcome $Y$ is
 
 When it comes to the correlation between $X$ and $Y$, however, the two models perform very differently. The posterior predictive distribution from the stronger model is centered around a $0$ correlation. Thus, from the perspective of the stronger model the strong $X,Y$ correlation in the data is unexpected. The updated weaker model, in contrast, predicts a strong correlation, and the observed correlation is comfortably within the posterior predictive distribution. A frequentist looking at the observed correlation between $X$ and $Y$ should feel comfortable rejecting the stronger model.
 
-At first blush, the abysmal performance of the stronger model may seem paradoxical. Even after this model has *seen* the $X,Y$ correlations in the data, those correlations are still highly surprising. What keeps the  $X \rightarrow M \rightarrow Y$ model  from learning, however, is the strength of the assumptions it contains. The problem is that $M$ is uncorrelated with $X$ in the true data-generating process, so the stronger model learns that there is no indirect effect. But, at the same time, this model does not *allow* for a direct effect. Despite what would seem to be overwhelming evidence of a systematic $X,Y$ correlation, a causal relationship connecting $X$ to $Y$ remains extremely unlikely given the $X,M$ data pattern and the impossibility of direct effects. The stronger model just can't handle the truth. The weaker model, on the other hand, readily learns about the direct $X \rightarrow Y$ effect.
+At first blush, the abysmal performance of the stronger model may seem paradoxical. Even after this model has *seen* the $X,Y$ correlations in the data, the model still finds those correlations highly surprising. What keeps the  $X \rightarrow M \rightarrow Y$ model  from learning, however, is the strength of the assumptions it contains. The problem is that $M$ is uncorrelated with $X$ in the true data-generating process, so the stronger model learns that there is no indirect effect. But, at the same time, this model does not *allow* for a direct effect. Despite what would seem to be overwhelming evidence of a systematic $X,Y$ correlation, a causal relationship connecting $X$ to $Y$ remains extremely unlikely given the $X,M$ data pattern and the impossibility of direct effects. The stronger model just can't handle the truth. The weaker model, on the other hand, readily learns about the direct $X \rightarrow Y$ effect.
 
 
 ```{r ch15simulations, echo = FALSE}
@@ -262,12 +262,15 @@ hist(replicates_unrestricted$C, main = "X, Y covariance | weaker", xlim = xlimC,
 
 ### Leave-one-out cross-validation
 
-A further class of model-validation methods involves cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict actual data that have not yet been seen. 
+A further class of model-validation methods involves cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict new data that have not yet been seen. One way to do this is to split the available data, using one subsample to update and then assessing predictions using the other subsample. We focus here, however, on approaches that uses the *all* of the available data to estimate out-of-sample predictive performance.
 
-One approach to cross-validation is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one and then ask how well the model performs in predicting the left-out observation. We repeat this for every data point in the dataset to assess how well we can predict the entire data set. 
+One such approach is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one and then ask how well the model performs in predicting the left-out observation. We repeat this for every data point in the dataset to assess how well we can predict the entire dataset. 
 
-Often this approach is used to predict a particular outcome variable. In a \CausalQuery\ framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
+Often, the LOO approach is used to predict a particular outcome variable. In a \CausalQuery\ framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
 
+<!-- AJ: Is the "predict all nodes" using a sledghammer here?Should we be setting this up in a more query-dependent way, I wonder? Could the same model be good for some kind of queries but not for others? Not quite sure how to think about that -- about *what* we'd be predicting conditional on what the query is, and maybe this isn't a coherent notion. -->
+
+<!-- AJ: Change figure labels to stronger/weaker models. Also, need to make x-axes "data count" (without referring to a model) -->
 
 
 
@@ -309,18 +312,21 @@ The LOO estimate of out-of-sample predictive fit, for a dataset with $n$ observa
 $$\prod_1^np(y_i|y_{-i}, \text{model})$$
 where $y_{-i}$ is the data pattern with observation $y_i$ left out, and $y_i$ represents the values of all nodes of interest for observation $i$. 
 
-First, we implement LOO cross-validation of the two models using 200 data points generated from the unrestricted model. The likelihood of the data under the restricted model is `r  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)`
-the likelihood if  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)` under the unrestricted models. Thus, the unrestricted model represents an estimated improvement in out-of-sample prediction on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
+<!-- AJ: Any reason not to use a log in the above equation? Would this make some of the outputs easier to read? -->
 
-We can visualize the pattern in Figure XXXX, where we plot the likelihood of each possible data type under the restricted model against the likelihood of that data type under the unrestricted model. Looking at the scales of the two axes---which is much more compressed on the horizontal than on the vertical---one can see that the restricted model is not able to differentiate as much across the data types as the unrestricted. 
+We implement LOO cross-validation of the stronger and weaker models using 200 observations generated from the same data-generating model employed above. We find that the LOO likelihood of the data under the stronger model is `r  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)` while
+the likelihood is  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)` under the weaker model. Thus, the weaker model represents an estimated improvement in out-of-sample prediction on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
+
+We can visualize the pattern in Figure XXXX, where we plot the likelihood of each possible data type under the stronger model against the likelihood of that data type under the weaker model. Looking at the scales of the two axes---which is much more compressed on the horizontal than on the vertical---one can see that the stronger model is not able to differentiate as much across the data types as the weaker. 
 
 <!-- AJ: What are these likelihoods exactly? They are informed by updating, I assume? But updating using what data exactly -- what's left out? Generally unsure if my text above is right.-->
 
-Notably, the restricted model is not able to "learn" from the data about the (*in fact*, operative) relationship between $X$ and $Y$. We can see that, for any given $X, M$ combination, the two possible values of $Y$ are predicted with essentially the same likelihood. The restricted model also seems to have "learned" that different values $X,M$ combinations are differentially likely, even though they are not under the true model. The unrestricted model, on the other hand, essentially divides the data types into two groups: those with a positive $X,Y$ correlation and those with a negative $X,Y$ correlation and has correctly (given the true model) learned that the former is more likely than the latter.
+Notably, the stronger model is not able to "learn" from the data about the (*in fact*, operative) relationship between $X$ and $Y$. We can see that, for any given $X, M$ combination, the two possible values of $Y$ are predicted with essentially the same likelihood. The stronger model also seems to have "learned" from chance correlations in the data that different values $X,M$ combinations are differentially likely---even though they are uncorrelated under the true model. The weaker model, on the other hand, basically divides the data types into two groups: those with a positive $X,Y$ correlation and those with a negative $X,Y$ correlation and has correctly (given the true model) learned that the former is more likely than the latter.
 
-In Figure XXXX, we then see how the likelihoods of each data type line up with the actual count of each data type. As we can see, the unrestricted model updates to likelihoods that fit the actual data pattern well while the restricted model does not.
+In Figure XXXX, we then see how the likelihoods of each data type line up with the actual count of each data type. As we can see, the weaker model updates to likelihoods that fit the actual data pattern well while the stronger model does not.
 
-<!-- AJ: The x-axis labels confuse me. What's the meaning of a data count for a restricted or unrestricted model? The data are what they are.  -->
+
+
 
 
 
@@ -350,13 +356,18 @@ par(mfrow = c(1,2))
   
 ```
 
-<!-- ALS DO WITH CONFOUNDING X<-->Y X->M->Y -->
+<!-- ALSO DO WITH CONFOUNDING X<-->Y X->M->Y -->
 
 
 
-Second, we implement LOO cross-validation of the two models using 200 data points generated from the restricted model. The likelihood of the data under the restricted model is now `r  formatC(loo_restricted_2$loo_likelihood, format = "e", digits = 2)`, compared to 
-the likelihood of  `r  formatC(loo_unrestricted_2$loo_likelihood, format = "e", digits = 2)` under the unrestricted models. Thus, the unrestricted model represents an estimated improvement in out-of-sample prediction on the order of   `r  formatC(loo_unrestricted_2$loo_likelihood/loo_restricted_2$loo_likelihood, format = "e", digits = 2)`. 
+We can also turn the tables and imagine that the *stronger* model represents the true data-generating process. We  implement LOO cross-validation of the two models using 200 data points generated from the stronger model. In Figure XXXX, we see a comparison of the likelihoods of the data types under the two updated models and note that they are extremely similar. This represents an important asymmetry: the model that makes weaker assumptions performs far better in handling data generated by a "stronger" true model than does the stronger model in learning about a process that violates one of its assumptions. Since the weaker model allows for both direct and indirect effects, the weaker *can* learn about the parameters of the true process in the first situation; but the strong model cannot do so in the second situation because it has by assumption ruled out a key feature of that process (the direct effect). 
 
+While it is difficult to see this in Figure XXXX, the stronger model still performs better here than the weaker model. The likelihood of the data under the stronger model is now `r  formatC(loo_restricted_2$loo_likelihood, format = "e", digits = 2)`, compared to 
+the likelihood of  `r  formatC(loo_unrestricted_2$loo_likelihood, format = "e", digits = 2)` under the weaker model. Thus, the weaker model represents an estimated loss to out-of-sample prediction on the order of   `r  formatC(loo_unrestricted_2$loo_likelihood/loo_restricted_2$loo_likelihood, format = "e", digits = 2)`. This is not surprising insofar as the stronger model *precisely* models the data-generating process while the extra parameters in the weaker model allow for "learning" from chance features of the data.
+
+These examples display features of model evaluation familiar from model-validation in a regression context.
+
+<!-- AJ: Last graph here doesn't seem right, with the data-type labels all stacked vertically. And no graph for unrestricted model. -->
 
 
 ### Sensitivity
