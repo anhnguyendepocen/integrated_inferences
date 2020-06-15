@@ -429,7 +429,62 @@ We also note that in cases in which you cannot quantify uncertainty about parame
 
 ## Evaluating the Democracy-Inequality model
 
-** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITEREA ** 
+** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA ** 
+
+
+```{r pimdmodelsch15, echo = FALSE}
+
+if(do_diagnosis){
+  
+ pimd <- make_model("I -> M -> D <- P; I -> D") %>%
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])",
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])")) %>%
+  
+         set_priors()   
+      
+ 
+
+ data <- CausalQueries::democracy_data 
+     write_rds(data, "saved/ch15_pimddata.rds") 
+  
+  
+pimd %>%
+   update_model(data, keep_fit = TRUE) %>%
+   write_rds("saved/ch15_pimd_model.rds") 
+
+
+}
+
+data               <-   read_rds("saved/ch15_pimddata.rds") 
+pimd_model <-   read_rds("saved/ch15_pimd_model.rds") 
+
+if(do_diagnosis){
+  
+  ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+  ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+
+ write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
+           "saved/ch15_ates.rds")
+}
+
+ates <- read_rds("saved/ch15_ates.rds") 
+
+```
+
+
+
+
+```{r, echo = FALSE}
+rbind(
+  estimatr::lm_robust(Y~X, data = filter(data, M==0)) %>% tidy %>% filter(term == "X"), 
+  estimatr::lm_robust(Y~X, data = filter(data, M==1)) %>% tidy %>% filter(term == "X")) %>%
+  mutate(M = 0:1) %>%
+  select(M, estimate, std.error, p.value) %>% 
+  kable(digits = 3, caption =  "Regression coefficient on $X$ given $M=0$ and $M=1$")
+
+```
 
 
 
