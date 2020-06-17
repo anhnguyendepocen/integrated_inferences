@@ -164,7 +164,7 @@ Second, we may be lucky and run into computation issues. In this example there i
 <!-- AJ: Looked a little more - still nothing! Whence did you get a sense there might be something to this? -->
 
 
-### Bayesian $p$ value: Is the data unusual given your model?
+### Bayesian $p$ value: Are the data unusual given your model?
 
 A third approach asks whether features of the data you observe are in some sense unusual given your model, or more unusual given your model than another model. For instance, if one model assumed no adverse effects of $X$ on $Y$ and no confounding, then a strong negative correlation between $X$ and $Y$ would be unusual, even for the model updated with this data; and this negative correlation would *more* unusual for this model than for a model that allowed for adverse effects.
 
@@ -432,6 +432,8 @@ We also note that in cases in which you cannot quantify uncertainty about parame
 ** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA ** 
 
 
+###Estimating the model
+
 ```{r pimdmodelsch15, echo = FALSE}
 
 if(do_diagnosis){
@@ -451,41 +453,131 @@ if(do_diagnosis){
   
   
 pimd %>%
-   update_model(data, keep_fit = TRUE) %>%
+   update_model(data, keep_fit = TRUE, iter = 8000) %>%
    write_rds("saved/ch15_pimd_model.rds") 
 
 
 }
 
 data               <-   read_rds("saved/ch15_pimddata.rds") 
-pimd_model <-   read_rds("saved/ch15_pimd_model.rds") 
+pimd <-   read_rds("saved/ch15_pimd_model.rds") 
 
 if(do_diagnosis){
   
-  ateXY1 <- query_distribution(restricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
-  ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
+  ate_id <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
+ 
 
- write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
-           "saved/ch15_ates.rds")
-}
+ write_rds(data.frame(pimd_ateID = ate_id),
+           "saved/ch15_ateID.rds")
 
-ates <- read_rds("saved/ch15_ates.rds") 
+
+ write_rds(data.frame(pimd_ateID = ate_id),
+           "saved/ch15_ateID.rds")
+ 
+ }
+
+ateid <- read_rds("saved/ch15_ateID.rds") 
+
+
+
 
 ```
 
+```{r 15pimdgraphs, echo = FALSE, fig.cap = "ATE of I on D."}
+
+hist(ateid$pimd_ateID, xlim = c(-1, .6), main = "Posterior Distribution from PIMD Model", xlab = "Effect of I on D") 
+
+```
+
+### Check assumptions of conditional independence
+
+```{r, echo=FALSE}
+
+with(CausalQueries::democracy_data, lm(P ~ I)) %>% summary()
+
+with(CausalQueries::democracy_data, lm(P ~ M)) %>% summary()
 
 
+
+```
+
+### Bayesian $p$-value
+
+```{r ch15pvalue_pimd, echo = FALSE}
+
+if(do_diagnosis){
+  
+ sims <- 500
+ n <- nrow(data)
+ 
+ # Outcome prediction
+ ############################################# 
+ t(replicate(sims, {
+   pimd_sim <- make_data(pimd, n = n, param_type = "posterior_draw")
+   c(D=mean(pimd_sim$D), C = cor(pimd_sim$I, pimd_sim$M))})) %>%  data.frame %>%
+  write_rds("saved/ch15_replicates_pimd.rds") 
+
+  
+  }
+
+replicates_pimd <-   read_rds("saved/ch15_replicates_pimd.rds") 
+
+par(mfrow = c(1,2))
+xlimD <- range(c(replicates_pimd$D))
+xlimC <- range(c(replicates_pimd$C))
+
+hist(replicates_pimd$D, main = "D mean | pimd", xlim = xlimD, xlab = "predictions"); abline(v = mean(data$D), col = "red")
+hist(replicates_pimd$C, main = "I, M covariance | pimd", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$M, data$I, use = "complete.obs"), col = "blue")
+
+
+# FLAG: WOULD LIKE THIS DONE WITH GGPLOT
+```
+
+<!-- AJ: Should we also calculate a p-value? -->
 
 ```{r, echo = FALSE}
-rbind(
-  estimatr::lm_robust(Y~X, data = filter(data, M==0)) %>% tidy %>% filter(term == "X"), 
-  estimatr::lm_robust(Y~X, data = filter(data, M==1)) %>% tidy %>% filter(term == "X")) %>%
-  mutate(M = 0:1) %>%
-  select(M, estimate, std.error, p.value) %>% 
-  kable(digits = 3, caption =  "Regression coefficient on $X$ given $M=0$ and $M=1$")
+#Leave one out
+
+#make an alternative model that permits negative I->M effects
+
+pimd_negmed <- make_model("I -> M -> D <- P; I -> D") %>%
+  
+         set_restrictions(c( 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])")) %>%
+  
+         set_priors()   
+
+
+if(do_diagnosis){
+  
+  get_loo_likelihood(CausalQueries::democracy_data, pimd, 1000) %>% write_rds("saved/ch15_loo_pimd.rds")
+    
+  get_loo_likelihood(CausalQueries::democracy_data, pimd_negmed, 1000) %>% write_rds("saved/ch15_loo_pimdnegmed.rds")
+
+}
+
+loo_pimd   <- read_rds("saved/ch15_loo_pimd.rds") 
+loo_pimdnegmed <- read_rds("saved/ch15_loo_pimdnegmed.rds")  
+
+plot(loo_pimd$case_likelihood, loo_pimdnegmed$case_likelihood)
+text(loo_pimd$case_likelihood, loo_pimdnegmed$case_likelihood, loo_pimd$data$event)
+
+#Is last term above correct?
+
+par(mfrow = c(1,2))
+  plot(loo_pimd$data$count, loo_pimd$case_likelihood, col = "red")
+  text(loo_pimd$case_likelihood, loo_pimdnegmed$case_likelihood, loo_pimd$data$event)
+  
+  plot(loo_pimdnegmed$data$count, loo_pimdnegmed$case_likelihood)
+
+with(loo_pimd,
+     {
+  plot(loo_pimd$data$count, case_likelihood, col = "red")
+  text(case_likelihood, case_likelihood, loo_pimd$data$event)
+     }
+)
 
 ```
-
 
 
 ### Prior check
