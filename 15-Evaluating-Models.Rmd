@@ -295,15 +295,16 @@ plot(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood,
      xlab = "Likelihood | restricted", ylab = "Likelihood | unrestricted")
 text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
 
+plot_loo <- function(loo, name = "restricted model")
+  with(loo, {
+  plot(case_likelihood, data$count, 
+       xlab =  paste("Case likelihood  |", name), 
+       ylab =  "Actual number of cases", type = "n")
+  text(case_likelihood, data$count, data$event)})
+
 par(mfrow = c(1,2))
-  plot(loo_restricted$case_likelihood, loo_restricted$data$count, 
-       xlab =  "Case likelihood  | restricted model", ylab =  "Actual number of cases", type = "n")
-text(loo_restricted$case_likelihood, loo_restricted$data$count, loo_restricted$data$event)
-
-  plot(loo_unrestricted$case_likelihood, loo_unrestricted$data$count, 
-       xlab =  "Case likelihood  | unrestricted model", ylab =  "Actual number of cases", type = "n")
-text(loo_unrestricted$case_likelihood, loo_unrestricted$data$count, loo_unrestricted$data$event)
-
+plot_loo(loo_restricted, name = "restricted model")
+plot_loo(loo_unrestricted, name = "unrestricted model")
 
 ```
 
@@ -347,16 +348,11 @@ if(do_diagnosis){
 loo_restricted_2   <- read_rds("saved/ch15_loo_restricted_2.rds") 
 loo_unrestricted_2 <- read_rds("saved/ch15_loo_unrestricted_2.rds")  
 
+
 par(mfrow = c(1,2))
-  plot(loo_restricted_2$case_likelihood, loo_restricted_2$data$count, 
-       xlab =  "Case likelihood  | restricted model", ylab =  "Actual number of cases", type = "n")
-text(loo_restricted_2$case_likelihood, loo_restricted_2$data$count, loo_restricted$data$event)
-
-  plot(loo_unrestricted_2$case_likelihood, loo_unrestricted_2$data$count, 
-       xlab =  "Case likelihood  | unrestricted model", ylab =  "Actual number of cases", type = "n")
-text(loo_unrestricted_2$case_likelihood, loo_unrestricted_2$data$count, loo_unrestricted_2$data$event)
-
-  
+plot_loo(loo_restricted_2, name = "restricted model")
+plot_loo(loo_unrestricted_2, name = "unrestricted model")
+    
 ```
 
 BETTER: PLOT CASES ON BOTTOM AND TWO LIKELIHOODS AS POINTS; HAVE TYPES AS LABELS X AI IF POSSIBLE
@@ -573,9 +569,9 @@ pimd_negmed <- make_model("I -> M -> D <- P; I -> D") %>%
 
 if(do_diagnosis){
   
-  get_loo_likelihood(CausalQueries::democracy_data, pimd, 20) %>% write_rds("saved/ch15_loo_pimd.rds")
+  get_loo_likelihood(CausalQueries::democracy_data, pimd, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimd.rds")
     
-  get_loo_likelihood(CausalQueries::democracy_data, pimd_negmed, 20) %>% write_rds("saved/ch15_loo_pimdnegmed.rds")
+  get_loo_likelihood(CausalQueries::democracy_data, pimd_negmed, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimdnegmed.rds")
 
 }
 
@@ -589,17 +585,8 @@ abline(a = 0, b = 1, col = "red")
 #Is last term above correct?
 
 par(mfrow = c(1,2))
-  plot(loo_pimd$data$count, loo_pimd$case_likelihood, col = "red")
-  text(loo_pimd$case_likelihood, loo_pimdnegmed$case_likelihood, loo_pimd$data$event)
-  
-  plot(loo_pimdnegmed$data$count, loo_pimdnegmed$case_likelihood)
-
-with(loo_pimd,
-     {
-  plot(loo_pimd$data$count, case_likelihood, col = "red")
-  text(case_likelihood, case_likelihood, loo_pimd$data$event)
-     }
-)
+plot_loo(loo_pimd, name = "restricted model")
+plot_loo(loo_pimdnegmed, name = "unrestricted model")
 
 ```
 
