@@ -295,12 +295,13 @@ plot(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood,
      xlab = "Likelihood | restricted", ylab = "Likelihood | unrestricted")
 text(loo_restricted$case_likelihood, loo_unrestricted$case_likelihood, loo_restricted$data$event)
 
-plot_loo <- function(loo, name = "restricted model")
+plot_loo <- function(loo, name = "restricted model", cex = .5)
   with(loo, {
-  plot(case_likelihood, data$count, 
+  plot(case_likelihood[data$count>0], data$count[data$count>0], 
        xlab =  paste("Case likelihood  |", name), 
        ylab =  "Actual number of cases", type = "n")
-  text(case_likelihood, data$count, data$event)})
+  text(case_likelihood, data$count, data$event, cex = cex)
+  abline(a=0, b = sum(data$count[data$count>0]), col = "lightgrey")})
 
 par(mfrow = c(1,2))
 plot_loo(loo_restricted, name = "restricted model")
@@ -578,9 +579,14 @@ if(do_diagnosis){
 loo_pimd       <- read_rds("saved/ch15_loo_pimd.rds") 
 loo_pimdnegmed <- read_rds("saved/ch15_loo_pimdnegmed.rds")  
 
-plot(loo_pimd$case_likelihood, loo_pimdnegmed$case_likelihood, xlab = "likelihood under monotonic model", ylab = "likelihood under unrestricted model", type = "n")
-text(loo_pimd$case_likelihood, loo_pimdnegmed$case_likelihood, loo_pimd$data$event, cex = .7)
-abline(a = 0, b = 1, col = "red")
+plot(loo_pimd$case_likelihood[loo_pimd$data$count>0],
+     loo_pimdnegmed$case_likelihood[loo_pimd$data$count>0], 
+     xlab = "likelihood under monotonic model", 
+     ylab = "likelihood under unrestricted model", type = "n")
+text(loo_pimd$case_likelihood[loo_pimd$data$count>0],
+     loo_pimdnegmed$case_likelihood[loo_pimd$data$count>0], 
+     loo_pimd$data$event[loo_pimd$data$count>0], cex = .7)
+abline(a = 0, b = 1, col = "lightgrey")
 
 #Is last term above correct?
 
@@ -591,7 +597,7 @@ plot_loo(loo_pimdnegmed, name = "unrestricted model")
 ```
 
 
-### 5 : Sensitivity Prior check
+### Sensitivity to priors
 
 In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this? Here we  consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.25$, $p(\theta^M=\theta^M_{11})=0.25$, and $p(\theta^M=\theta^M_{01})=0.4$. We show the results for the inferences given different findings in tables \ref{tab:HK8cases1quant} and \ref{tab:HK8cases2quant}. The mapping into expected posterior variance associated with each strategy is shown by the numbers in parentheses in  Table \ref{CaseLearn}.
 
