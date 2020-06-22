@@ -315,6 +315,7 @@ $$\prod_1^np(y_i|y_{-i}, \text{model})$$
 where $y_{-i}$ is the data pattern with observation $y_i$ left out, and $y_i$ represents the values of all nodes of interest for observation $i$. 
 
 <!-- AJ: Any reason not to use a log in the above equation? Would this make some of the outputs easier to read? -->
+<!-- MH it would get a more humnan scale but think raw numbers are more intuitive? -->
 
 We implement LOO cross-validation of the stronger and weaker models using 200 observations generated from the same data-generating model employed above. We find that the LOO likelihood of the data under the stronger model is `r  formatC(loo_restricted$loo_likelihood, format = "e", digits = 2)` while
 the likelihood is  `r  formatC(loo_unrestricted$loo_likelihood, format = "e", digits = 2)` under the weaker model. Thus, the weaker model represents an estimated improvement in out-of-sample prediction on the order of   `r  formatC(loo_unrestricted$loo_likelihood/loo_restricted$loo_likelihood, format = "e", digits = 2)`. 
@@ -429,60 +430,37 @@ We also note that in cases in which you cannot quantify uncertainty about parame
 ** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA ** 
 
 
-###Estimating the model
-
 ```{r pimdmodelsch15, echo = FALSE}
 
-if(do_diagnosis){
-  
- pimd <- make_model("I -> M -> D <- P; I -> D") %>%
+pimd <- make_model("I -> M -> D <- P; I -> D") %>%
   
          set_restrictions(c( 
            "(M[I=1] < M[I=0])",
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])")) %>%
-  
-         set_priors()   
-      
- 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))
 
- data <- CausalQueries::democracy_data 
-     write_rds(data, "saved/ch15_pimddata.rds") 
+# make an alternative model that permits negative I->M effects
+
+pimd_negmed <- make_model("I -> M -> D <- P; I -> D") %>%
   
+         set_restrictions(c( 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))
+
+
+if(do_diagnosis){
   
 pimd %>%
    update_model(data, keep_fit = TRUE, iter = 8000) %>%
    write_rds("saved/ch15_pimd_model.rds") 
 
-
+pimd_negmed %>%
+   update_model(data, keep_fit = TRUE, iter = 8000) %>%
+   write_rds("saved/ch15_pimd_negmed_model.rds") 
 }
 
-data               <-   read_rds("saved/ch15_pimddata.rds") 
+data <- CausalQueries::democracy_data 
 pimd <-   read_rds("saved/ch15_pimd_model.rds") 
+pimd_negmed <-   read_rds("saved/ch15_pimd_negmed_model.rds")
 
-if(do_diagnosis){
-  
-  ate_id <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
- 
-
- write_rds(data.frame(pimd_ateID = ate_id),
-           "saved/ch15_ateID.rds")
-
-
- write_rds(data.frame(pimd_ateID = ate_id),
-           "saved/ch15_ateID.rds")
- 
- }
-
-ateid <- read_rds("saved/ch15_ateID.rds") 
-
-
-
-
-```
-
-```{r 15pimdgraphs, echo = FALSE, fig.cap = "ATE of I on D."}
-
-hist(ateid$pimd_ateID, xlim = c(-1, .6), main = "Posterior Distribution from PIMD Model", xlab = "Effect of I on D") 
 
 ```
 
@@ -490,7 +468,7 @@ hist(ateid$pimd_ateID, xlim = c(-1, .6), main = "Posterior Distribution from PIM
 
 Our model presupposes that $P$ and $I$ are independent and that $P$ and $M$ are independent. Note that the model is consistent with the possibility that, conditional on $D$, there is a correlation betwen $M$ and $P$ or between $I$ and $P$, as in these cases $D$ acts as a collider. 
 
-The relations in the first two rows of Table @\ref(tab:ch15cipimd) are  consistent with this assumption. 
+The relations in the first two rows of Table \@ref(tab:ch15cipimd) are  consistent with this assumption. 
 
 <!-- MH: Realize we actually have a big iussue here: we only have M,P data in cases with D = 1 so we are in fact condtiioining on D and so we do *not* expect independence  -->
 
@@ -560,12 +538,6 @@ Turning to leave one out model assessment we now consider comparing the base mod
 ```{r, echo = FALSE}
 # Leave one out
 
-# make an alternative model that permits negative I->M effects
-
-pimd_negmed <- make_model("I -> M -> D <- P; I -> D") %>%
-  
-         set_restrictions(c( 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))
 
 
 if(do_diagnosis){
@@ -599,22 +571,117 @@ plot_loo(loo_pimdnegmed, name = "unrestricted model")
 
 ### Sensitivity to priors
 
-In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this? Here we  consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.25$, $p(\theta^M=\theta^M_{11})=0.25$, and $p(\theta^M=\theta^M_{01})=0.4$. We show the results for the inferences given different findings in tables \ref{tab:HK8cases1quant} and \ref{tab:HK8cases2quant}. The mapping into expected posterior variance associated with each strategy is shown by the numbers in parentheses in  Table \ref{CaseLearn}.
+In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this?  We answer the question by comparing our conclusion to what we woudl conclude withiout this assumption. Our answers depend on the quantity examined.
 
-```{r casestable, echo = FALSE, eval = FALSE}
-I0D12 <- some_results(i=0, d=1, example = example_a2)
-I0D12 <- round(I0D12, 3)
-kable(cases_table(I0D12,  cases = cases1), caption = "\\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use priors assuming quantitative restrictions.")
-I1D12 <- some_results(i=1, d=1, example = example_b2)
-I1D12 <- round(I1D12, 3)
-kable(cases_table(I1D12, cases = cases2), caption = "\\label{tab:HK8cases2} Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use priors assuming quantitative restrictions.")
+We first show results for population inference from a mixed methods analysis. As seen in Table XX our inferences regarging the overall effect of $I$ on $D$ are not very sensitive to this assumption. Our conditional inferences are however. In particular, in cases with $I=0, D=1$ we are more likley to think that democratization was due to *low* inequality given the  unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. 
+
+AJ: Check intuition here!
+
+In the non-monotonic model you entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produce by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is *not* due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel. 
+
+
+
+```{r 15pimdgraphs, echo = FALSE, fig.cap = "ATE of I on D."}
+
+if(do_diagnosis){
+  
+  ate_id  <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
+  ate_id2 <- query_distribution(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors")
+ 
+
+  q_ate_id  <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
+                           given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
+  q_ate_id2 <- query_model(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors", 
+                           given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
+
+  out <- cbind(q_ate_id, q_ate_id2[, c("mean", "sd")])
+  names(out) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)") 
+  out <- out %>% select(-c(q, u))
+
+ write_rds(out, "saved/ch15_ateID.rds")
+
+ }
+
+ateid <- read_rds("saved/ch15_ateID.rds") 
+
+kable(ateid, caption = "Posteriors on the effect of I on D depending on whether the to M relation is assumed to be monotonic (M1) or not (M2)", digits = 2)
+
+```
+
+We now  consider case level analysis. For this we we  consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$ in comparison to the 0, 1/3,1/3,1/3 distribution. We show the results for the inferences given different findings in Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant). 
+
+
+
+```{r HK8cases1quant, echo = FALSE, eval = TRUE}
+
+
+pimd_negmed_1 <- set_parameters(pimd_negmed, label = "10", node = "M", parameters = 0)
+pimd_negmed_2 <- set_parameters(pimd_negmed, label = "10", node = "M", parameters = .1)
+
+f_given <- function(i, d) {
+  a = paste("I ==", i,  " & D == ", d)
+  list(a, paste(a, "& M == 0 & P == 0"), paste(a, "& M == 0 & P == 1"), paste(a, "& M == 1 & P == 0"),   paste(a, "& M == 1 & P == 1"))}
+
+q_01_1 <- query_model(
+  pimd_negmed_1, 
+  query = "D[I=1] != D[I=0]", 
+  using = "parameters", 
+  given = f_given(0,1)
+) 
+
+q_01_2 <- query_model(
+  pimd_negmed_2, 
+  query = "D[I=1] != D[I=0]", 
+  using = "parameters", 
+  given = f_given(0,1)
+) 
+
+q_01 <- select(q_01_1, Given) %>% 
+  mutate(
+    Restricted   = q_01_1$mean,
+    Unrestricted = q_01_2$mean)
+
+
+q_01 %>%
+  mutate(Example = c(" ", "Mexico (2000)", "Taiwan (1996)", 
+                  "Albania (1991)", "Nicaragua (1984)")) %>%
+kable(caption = "\\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).")
+
+
+
+```
+
+```{r HK8cases2quant, echo= FALSE}
+
+q_11_1 <- query_model(
+  pimd_negmed_1, 
+  query = "D[I=1] != D[I=0]", 
+  using = "parameters", 
+  given = f_given(1,1)
+) 
+
+q_11_2 <- query_model(
+  pimd_negmed_2, 
+  query = "D[I=1] != D[I=0]", 
+  using = "parameters", 
+  given = f_given(1,1)
+) 
+
+q_11 <- select(q_11_1, Given) %>% 
+  mutate(
+    Restricted    = q_11_1$mean,
+    Unrestricted  = q_11_2$mean)
+q_11 %>%
+  mutate(Example = c(" ", "Mongolia (1990)", "Paraguay (1989)", "Sierra Leone (1996)", "Malawi (1994)")) %>%
+  kable(caption = "\\label{tab:HK8cases2} Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).")
 
 ```
 
 
-The results differ in various modest ways. However, the biggest difference we observe is in the degree to which the mobilization clue matters when we are looking for negative effects of inequality. As discussed, if we assumed monotonic positive effects of inequality on mobilization and monotonic positive effects of mobilization on inequality, then the mediator clue is uninformative about the indirect pathway since that pathway can only generate a positive effect. However, if we allow for the possibility of a negative effect of inequality on mobilization, we now make $M$ informative as a mediator even when the effect of inequality that we are interested in is negative: it is now possible that inequality has a negative effect on democratization via a negative effect on mobilization, followed by a positive effect of mobilization on democratization. So now, observing whether mobilization occurred adds information about whether a negative effect could have occurred via the mobilization pathway. 
+The results differ in various modest ways. In the case in which $I=D=1$ conditional inferences are unaffected by the  assumption on the effect of $I$ on $M$. The reason is that since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$ the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$ we know that there was no (indirect) effect if $M$ were 0. If however $M$ were 1 then $I$ did not have  anegative effect on $M$ and teh only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative size ot $\theta^M_{11}$ and $\theta^M_{01}$.
 
-Moreover, it is possible for the two effects of observing $M$ on our beliefs to work in opposite ways. What we learn from observing $M$ about the $I \rightarrow M \rightarrow D$ pathway may push in a different direction from what we learn from observing $M$ about the direct $I \rightarrow D$ pathway. We see this dynamic at work in a case with low inequality and democratization. Where we are only learning about $M$ as a moderator of $I$'s direct effect (monotonicity assumption in place), observing $M=0$ shifts our beliefs in favor of $I$'s negative effect. But where we are learning about $M$ as both mediator and moderator, observing $M=0$ shifts our beliefs *against* $I$'s negative effect. The reason for this latter result is straightforward: if $I=0$ and we then see $M=0$, then we have just learned that inequality's possible indirect negative effect, running via the mobilization pathway, has *not* in fact occurred; and this has a considerable downward effect on our beliefs in an overall negative effect of inequality. This learning outweighs the small positive impact of observing $M=0$ on our confidence that $I$ had a direct negative effect on $D$.
+There are bigger differences when we are looking for negative effects of inequality, but even in this case the ordering of inferences does not change. As before in cases where $M=0$, the monotinicity of  of M in D is not relevant since htere is no question of a negative effect anyhow. However if $M=1$ then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows non monotonicity and so we put more weight on the possibility that $I=0$ was the cause. 
+
 
 We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, $M$, made only a small difference to our inferences. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively. 
 

@@ -436,6 +436,7 @@ Figure 15.1: A restricted model yields a credibility interval that does not cont
 <p><span class="math display">\[\prod_1^np(y_i|y_{-i}, \text{model})\]</span>
 where <span class="math inline">\(y_{-i}\)</span> is the data pattern with observation <span class="math inline">\(y_i\)</span> left out, and <span class="math inline">\(y_i\)</span> represents the values of all nodes of interest for observation <span class="math inline">\(i\)</span>.</p>
 <!-- AJ: Any reason not to use a log in the above equation? Would this make some of the outputs easier to read? -->
+<!-- MH it would get a more humnan scale but think raw numbers are more intuitive? -->
 <p>We implement LOO cross-validation of the stronger and weaker models using 200 observations generated from the same data-generating model employed above. We find that the LOO likelihood of the data under the stronger model is 1.64e-182 while
 the likelihood is 4.33e-175 under the weaker model. Thus, the weaker model represents an estimated improvement in out-of-sample prediction on the order of 2.64e+07.</p>
 <p>We can visualize the pattern in Figure XXXX, where we plot the likelihood of each possible data type under the stronger model against the likelihood of that data type under the weaker model. Looking at the scales of the two axes—which is much more compressed on the horizontal than on the vertical—one can see that the stronger model is not able to differentiate as much across the data types as the weaker.</p>
@@ -518,17 +519,10 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <div id="evaluating-the-democracy-inequality-model" class="section level2">
 <h2><span class="header-section-number">15.2</span> Evaluating the Democracy-Inequality model</h2>
 <p>** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA **</p>
-<p>###Estimating the model</p>
-<div class="figure"><span id="fig:15pimdgraphs"></span>
-<img src="ii_files/figure-html/15pimdgraphs-1.png" alt="ATE of I on D." width="672" />
-<p class="caption">
-Figure 15.2: ATE of I on D.
-</p>
-</div>
 <div id="check-assumptions-of-conditional-independence" class="section level3">
 <h3><span class="header-section-number">15.2.1</span> Check assumptions of conditional independence</h3>
 <p>Our model presupposes that <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> are independent and that <span class="math inline">\(P\)</span> and <span class="math inline">\(M\)</span> are independent. Note that the model is consistent with the possibility that, conditional on <span class="math inline">\(D\)</span>, there is a correlation betwen <span class="math inline">\(M\)</span> and <span class="math inline">\(P\)</span> or between <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>, as in these cases <span class="math inline">\(D\)</span> acts as a collider.</p>
-<p>The relations in the first two rows of Table @(tab:ch15cipimd) are consistent with this assumption.</p>
+<p>The relations in the first two rows of Table <a href="evaluation.html#tab:ch15cipimd">15.3</a> are consistent with this assumption.</p>
 <!-- MH: Realize we actually have a big iussue here: we only have M,P data in cases with D = 1 so we are in fact condtiioining on D and so we do *not* expect independence  -->
 <table>
 <caption><span id="tab:ch15cipimd">Table 15.3: </span>Regression coefficients to assess conditional independence</caption>
@@ -590,9 +584,134 @@ Figure 15.2: ATE of I on D.
 </div>
 <div id="sensitivity-to-priors" class="section level3">
 <h3><span class="header-section-number">15.2.3</span> Sensitivity to priors</h3>
-<p>In our model we assumed that <span class="math inline">\(M\)</span> is monotonic in <span class="math inline">\(I\)</span>. How much do conclusions depend on this? Here we consider negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> <em>unlikely</em>, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as “quantitative priors” in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.1\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.25\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.25\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.4\)</span>. We show the results for the inferences given different findings in tables  and . The mapping into expected posterior variance associated with each strategy is shown by the numbers in parentheses in Table .</p>
-<p>The results differ in various modest ways. However, the biggest difference we observe is in the degree to which the mobilization clue matters when we are looking for negative effects of inequality. As discussed, if we assumed monotonic positive effects of inequality on mobilization and monotonic positive effects of mobilization on inequality, then the mediator clue is uninformative about the indirect pathway since that pathway can only generate a positive effect. However, if we allow for the possibility of a negative effect of inequality on mobilization, we now make <span class="math inline">\(M\)</span> informative as a mediator even when the effect of inequality that we are interested in is negative: it is now possible that inequality has a negative effect on democratization via a negative effect on mobilization, followed by a positive effect of mobilization on democratization. So now, observing whether mobilization occurred adds information about whether a negative effect could have occurred via the mobilization pathway.</p>
-<p>Moreover, it is possible for the two effects of observing <span class="math inline">\(M\)</span> on our beliefs to work in opposite ways. What we learn from observing <span class="math inline">\(M\)</span> about the <span class="math inline">\(I \rightarrow M \rightarrow D\)</span> pathway may push in a different direction from what we learn from observing <span class="math inline">\(M\)</span> about the direct <span class="math inline">\(I \rightarrow D\)</span> pathway. We see this dynamic at work in a case with low inequality and democratization. Where we are only learning about <span class="math inline">\(M\)</span> as a moderator of <span class="math inline">\(I\)</span>’s direct effect (monotonicity assumption in place), observing <span class="math inline">\(M=0\)</span> shifts our beliefs in favor of <span class="math inline">\(I\)</span>’s negative effect. But where we are learning about <span class="math inline">\(M\)</span> as both mediator and moderator, observing <span class="math inline">\(M=0\)</span> shifts our beliefs <em>against</em> <span class="math inline">\(I\)</span>’s negative effect. The reason for this latter result is straightforward: if <span class="math inline">\(I=0\)</span> and we then see <span class="math inline">\(M=0\)</span>, then we have just learned that inequality’s possible indirect negative effect, running via the mobilization pathway, has <em>not</em> in fact occurred; and this has a considerable downward effect on our beliefs in an overall negative effect of inequality. This learning outweighs the small positive impact of observing <span class="math inline">\(M=0\)</span> on our confidence that <span class="math inline">\(I\)</span> had a direct negative effect on <span class="math inline">\(D\)</span>.</p>
+<p>In our model we assumed that <span class="math inline">\(M\)</span> is monotonic in <span class="math inline">\(I\)</span>. How much do conclusions depend on this? We answer the question by comparing our conclusion to what we woudl conclude withiout this assumption. Our answers depend on the quantity examined.</p>
+<p>We first show results for population inference from a mixed methods analysis. As seen in Table XX our inferences regarging the overall effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span> are not very sensitive to this assumption. Our conditional inferences are however. In particular, in cases with <span class="math inline">\(I=0, D=1\)</span> we are more likley to think that democratization was due to <em>low</em> inequality given the unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model.</p>
+<p>AJ: Check intuition here!</p>
+<p>In the non-monotonic model you entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produce by low inequality via demonstrations—but nevertheless entertain the possibility of mobilization that is <em>not</em> due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel.</p>
+<table>
+<caption><span id="tab:15pimdgraphs">Table 15.4: </span>Posteriors on the effect of I on D depending on whether the to M relation is assumed to be monotonic (M1) or not (M2)</caption>
+<thead>
+<tr class="header">
+<th align="left">Given</th>
+<th align="right">Mean (M1)</th>
+<th align="right">sd (M1)</th>
+<th align="right">Mean (M2)</th>
+<th align="right">sd (M2)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-</td>
+<td align="right">-0.23</td>
+<td align="right">0.06</td>
+<td align="right">-0.25</td>
+<td align="right">0.06</td>
+</tr>
+<tr class="even">
+<td align="left">I==0 &amp; D==1</td>
+<td align="right">-0.44</td>
+<td align="right">0.07</td>
+<td align="right">-0.50</td>
+<td align="right">0.08</td>
+</tr>
+<tr class="odd">
+<td align="left">I==0 &amp; M==0 &amp; D==1</td>
+<td align="right">-0.48</td>
+<td align="right">0.10</td>
+<td align="right">-0.41</td>
+<td align="right">0.11</td>
+</tr>
+</tbody>
+</table>
+<p>We now consider case level analysis. For this we we consider negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> <em>unlikely</em>, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as “quantitative priors” in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.1\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.3\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.3\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.3\)</span> in comparison to the 0, 1/3,1/3,1/3 distribution. We show the results for the inferences given different findings in Tables <a href="evaluation.html#tab:HK8cases1quant">15.5</a> and <a href="evaluation.html#tab:HK8cases2quant">15.6</a>.</p>
+<table>
+<caption><span id="tab:HK8cases1quant">Table 15.5: </span> Four cases with low inequality and democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on <span class="math inline">\(M\)</span> or <span class="math inline">\(P\)</span>. Data from Haggard and Kaufman (2012).</caption>
+<thead>
+<tr class="header">
+<th align="left">Given</th>
+<th align="right">Restricted</th>
+<th align="right">Unrestricted</th>
+<th align="left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">I == 0 &amp; D == 1</td>
+<td align="right">0.438</td>
+<td align="right">0.484</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">I == 0 &amp; D == 1 &amp; M == 0 &amp; P == 0</td>
+<td align="right">0.667</td>
+<td align="right">0.667</td>
+<td align="left">Mexico (2000)</td>
+</tr>
+<tr class="odd">
+<td align="left">I == 0 &amp; D == 1 &amp; M == 0 &amp; P == 1</td>
+<td align="right">0.393</td>
+<td align="right">0.393</td>
+<td align="left">Taiwan (1996)</td>
+</tr>
+<tr class="even">
+<td align="left">I == 0 &amp; D == 1 &amp; M == 1 &amp; P == 0</td>
+<td align="right">0.571</td>
+<td align="right">0.661</td>
+<td align="left">Albania (1991)</td>
+</tr>
+<tr class="odd">
+<td align="left">I == 0 &amp; D == 1 &amp; M == 1 &amp; P == 1</td>
+<td align="right">0.263</td>
+<td align="right">0.368</td>
+<td align="left">Nicaragua (1984)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:HK8cases2quant">Table 15.6: </span> Four cases with high inequality and democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on <span class="math inline">\(M\)</span> or <span class="math inline">\(P\)</span>. Data from Haggard and Kaufman (2012).</caption>
+<thead>
+<tr class="header">
+<th align="left">Given</th>
+<th align="right">Restricted</th>
+<th align="right">Unrestricted</th>
+<th align="left">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">I == 1 &amp; D == 1</td>
+<td align="right">0.128</td>
+<td align="right">0.122</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">I == 1 &amp; D == 1 &amp; M == 0 &amp; P == 0</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="left">Mongolia (1990)</td>
+</tr>
+<tr class="odd">
+<td align="left">I == 1 &amp; D == 1 &amp; M == 0 &amp; P == 1</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="left">Paraguay (1989)</td>
+</tr>
+<tr class="even">
+<td align="left">I == 1 &amp; D == 1 &amp; M == 1 &amp; P == 0</td>
+<td align="right">0.250</td>
+<td align="right">0.250</td>
+<td align="left">Sierra Leone (1996)</td>
+</tr>
+<tr class="odd">
+<td align="left">I == 1 &amp; D == 1 &amp; M == 1 &amp; P == 1</td>
+<td align="right">0.107</td>
+<td align="right">0.107</td>
+<td align="left">Malawi (1994)</td>
+</tr>
+</tbody>
+</table>
+<p>The results differ in various modest ways. In the case in which <span class="math inline">\(I=D=1\)</span> conditional inferences are unaffected by the assumption on the effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. The reason is that since we still maintain a monotonicity assumption for the direct effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span> the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(D\)</span> we know that there was no (indirect) effect if <span class="math inline">\(M\)</span> were 0. If however <span class="math inline">\(M\)</span> were 1 then <span class="math inline">\(I\)</span> did not have anegative effect on <span class="math inline">\(M\)</span> and teh only question is whether <span class="math inline">\(M=1\)</span> because of <span class="math inline">\(I\)</span> or independent of it — which depends only on the relative size ot <span class="math inline">\(\theta^M_{11}\)</span> and <span class="math inline">\(\theta^M_{01}\)</span>.</p>
+<p>There are bigger differences when we are looking for negative effects of inequality, but even in this case the ordering of inferences does not change. As before in cases where <span class="math inline">\(M=0\)</span>, the monotinicity of of M in D is not relevant since htere is no question of a negative effect anyhow. However if <span class="math inline">\(M=1\)</span> then it is possible that <span class="math inline">\(I=0\)</span> caused <span class="math inline">\(D=1\)</span> via mobilization in the model that allows non monotonicity and so we put more weight on the possibility that <span class="math inline">\(I=0\)</span> was the cause.</p>
 <p>We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, <span class="math inline">\(M\)</span>, made only a small difference to our inferences. However, if we allow for a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively.</p>
 
 </div>
