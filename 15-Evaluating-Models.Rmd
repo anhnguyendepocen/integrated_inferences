@@ -466,6 +466,7 @@ pimd_nonmon %>%
 data <- CausalQueries::democracy_data 
 pimd <-   read_rds("saved/ch15_pimd_model.rds") 
 pimd_negmed <-   read_rds("saved/ch15_pimd_negmed_model.rds")
+pimd_nonmon <-   read_rds("saved/ch15_pimd_nonmon_model.rds")
 
 
 ```
@@ -551,11 +552,15 @@ if(do_diagnosis){
   get_loo_likelihood(CausalQueries::democracy_data, pimd, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimd.rds")
     
   get_loo_likelihood(CausalQueries::democracy_data, pimd_negmed, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimdnegmed.rds")
+  
+  get_loo_likelihood(CausalQueries::democracy_data, pimd_nonmon, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimdnonmon.rds")
 
 }
 
 loo_pimd       <- read_rds("saved/ch15_loo_pimd.rds") 
-loo_pimdnegmed <- read_rds("saved/ch15_loo_pimdnegmed.rds")  
+loo_pimdnegmed <- read_rds("saved/ch15_loo_pimdnegmed.rds")
+loo_pimdnonmon <- read_rds("saved/ch15_loo_pimdnonmon.rds")
+
 
 plot(loo_pimd$case_likelihood[loo_pimd$data$count>0],
      loo_pimdnegmed$case_likelihood[loo_pimd$data$count>0], 
@@ -583,7 +588,7 @@ We first show results for population inference from a mixed methods analysis. As
 
 AJ: Check intuition here!
 
-In the non-monotonic model you entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produce by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is *not* due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel. 
+In the non-monotonic model you entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produced by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is *not* due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel. 
 
 
 
