@@ -37,7 +37,7 @@ Further, we impose the same set of qualitative restrictions, ruling out a negati
 
 Finally, we allow for confounding. The theoretical intuition we want to instantiate in the model is that the level of inequality could be endogenous to inequality's effect on mobilization. In particular, in places where mobilization would pose a mobilizational threat, governments may work harder to reduce inequality. To allow for this possibility, we need to create distinct elements of $\lambda$ representing the conditional distribution of $I$'s nodal types given $M$'s: one parameter for $\theta^I$'s distribution when $M$'s nodal type is $\theta^M_{01}$, and another parameter for $\theta^I$'s distribution when $M$'s nodal type is something else. 
 
-We can use `gbiqq` to define the model, with these restrictions and this confounding possibility, as follows.
+We can use `CausalQueries` to define the model, with these restrictions and this confounding possibility, as follows.
 
 <!-- I have changed the confound to create a distinct conditional distribution when I will have a positive effect on M (was for 11 types)_. Seems like we'd expect governments to work harder to reduce inequality in places where it would pose a mobilizational threat than in other places. -->
 
@@ -71,13 +71,13 @@ Here is a snapshot of the data:
 
 
 ```{r ch09getdemdata, eval = FALSE, echo = FALSE}
-data <- gbiqq::democracy_data 
+data <- CausalQueries::democracy_data 
 ```
 
 Note that this is not a rectangular dataset in that Haggard and Kaufman's collection of clues was conditional on the outcome, $D=1$: they gathered qualitative data on the presence of international pressure and the presence of mass-mobilization *only* for those cases that democratized. This is not an uncommon case-selection principle. The analyst often reasons that more can be learned about how an outcome arises by focusing in on cases where the outcome of interest has in fact occurred. (We assess this case-selection intuition, in the context of model-based inferences, in Chapter \@ref(caseselection).)
 
 ```{r data82, echo = FALSE, warning = FALSE}
-data <- gbiqq::democracy_data 
+data <- CausalQueries::democracy_data 
 kable(head(data))
 
 ```
@@ -92,7 +92,7 @@ kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
 
 ## Inference
 
-With data and model in hand, we can now update our model to get posteriors on the distribution of all admissible causal types. In practice this is done by constructing a `stan` model that maps from a set of parameters to a distribution on causal types, which in turn provide a likelihood function for observable data. (Using the `gbiqq` package the posterior is calculated by `update_model(model, data)`.)
+With data and model in hand, we can now update our model to get posteriors on the distribution of all admissible causal types. In practice this is done by constructing a `stan` model that maps from a set of parameters to a distribution on causal types, which in turn provide a likelihood function for observable data. (Using the `CausalQueries` package the posterior is calculated by `update_model(model, data)`.)
 
 The parameters 
 
@@ -118,7 +118,7 @@ updated <- read_rds("saved/PIMD_updated.rds")
 
 ### Did inequality *cause* democracy?
 
-We have used the data to update on $\lambda$: our beliefs about the distributions of nodal types, including about their joint distributions (i.e., confounding). We can now ask `gbiqq` to use the updated parameters to calculate any estimand of interest. 
+We have used the data to update on $\lambda$: our beliefs about the distributions of nodal types, including about their joint distributions (i.e., confounding). We can now ask `CausalQueries` to use the updated parameters to calculate any estimand of interest. 
 
 One set of questions we can ask of the updated model is about the probability that high inequality causes democratization. We can pose this question at different levels of conditioning. For instance, we can ask:
 
@@ -128,7 +128,7 @@ One set of questions we can ask of the updated model is about the probability th
 
 3. **For cases displaying a given causal state and outcome, and with additional clues present or absent.** What if we have also collected clues on mediating or moderating nodes? For instance, for what proportion of high-inequality, democratizing cases *with* mobilization did inequality cause the outcome? For what proportion *without* mobilization? Likewise for the presence or absence of international pressure?
 
-We ask `gbiqq` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the causal types that correspond to the effect of interest and then take the conditional probability of these. We present the code and results of these operations below and in Figure \@ref(mixedhist).
+We ask `CausalQueries` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the causal types that correspond to the effect of interest and then take the conditional probability of these. We present the code and results of these operations below and in Figure \@ref(mixedhist).
 
 FLAG: Let's graph the priors for each of these queries next to the posteriors.
 
