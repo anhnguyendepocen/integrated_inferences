@@ -8,9 +8,11 @@ output:
 
 ## Different models for different sites  
 
-In the last example we assumed that the same model operated in the same wayat all sites. This is a strong assumption, though sometimes justifiable (for instance if sites were randomly allocated across studies). 
+In the last example we assumed that the same model operated in the same way at all sites. This is a strong assumption, though sometimes justifiable (for instance if sites were randomly allocated across studies). 
 
-If the same model does not operate at different sites it might still be possible to update in this way. For this, however, we need to be able to specify *how* sites differ  Consider  a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the same. As a simple example we might imagine that $X$ is differentially likely to produce $M$ in two sites, but if it does the relation between $M$ and $Y$ is common across sites.
+If the same model does not operate at different sites it might still be possible to update in this way. For this, however, we need to be able to specify *how* sites differ.  Consider a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the same. As a simple example we might imagine that $X$ is differentially likely to produce $M$ in two sites, but if it does the relation between $M$ and $Y$ is common across sites.
+
+<!-- Confusing: do we really mean that the relaiton between M and Y depends on whetehr X causes M? -->
 
 ```{r samemechanism}
 # In this model you are more likely to have an M=1 type regardless if Y = 1 regardless 
@@ -29,11 +31,16 @@ if(do_diagnosis){
   
   df_1 <- simulate_data(model_1, n = 20000, using = "parameters")
   
+  
+  #Next line doesn't seem right. Doesn't run for me. Tried rewriting below but got errors about simplexes
+   
   posterior_1 <- CausalQueries(model_1, df_1, stan_model = fit)
   
+  #  posterior_1 <- update_model(model_1, df_1, data_type = "long", keep_fit = TRUE)
   
   
   # In this model you are more likely to have an M=1 regardless if Y = 1 regardless 
+  # DO WE MEAN Y=0 REGARDLESS?
   # This produces a negative confound
   model_2 <- make_model("X->M->Y") %>%
               set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
@@ -43,7 +50,7 @@ if(do_diagnosis){
                                .2, .2, .4, .2))
   df_2 <- simulate_data(model_2, n = 20000, using = "parameters")
   
-  posterior_2 <- CausalQueries(model_2, df_2, stan_model = fit)
+  posterior_2 <- update_model(model_2, df_2, stan_model = fit)
   
   out1 <- query_model(posterior_1, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
   
