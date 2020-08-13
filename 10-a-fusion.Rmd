@@ -1,0 +1,174 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Fusing Models
+
+## Different models for different sites  
+
+In the last example we assumed that the same model operated in the same wayat all sites. This is a strong assumption, though sometimes justifiable (for instance if sites were randomly allocated across studies). 
+
+If the same model does not operate at different sites it might still be possible to update in this way. For this, however, we need to be able to specify *how* sites differ  Consider  a problem where the models partially differ across sites: for instance we believe that although treatment effects are different in two sites yet the mechanisms linking treatment to outcomes are the same. As a simple example we might imagine that $X$ is differentially likely to produce $M$ in two sites, but if it does the relation between $M$ and $Y$ is common across sites.
+
+```{r samemechanism}
+# In this model you are more likely to have an M=1 type regardless if Y = 1 regardless 
+# This produces a positive confound
+
+model_1 <- make_model("X->M->Y") %>%
+            set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
+            set_parameters(c(.1, 0, .2, .7, 
+                             .5, .5, 
+                             .7, 0, .2, .1,
+                               .2, .2, .4, .2))
+
+plot(model_1)
+
+if(do_diagnosis){
+  
+  df_1 <- simulate_data(model_1, n = 20000, using = "parameters")
+  
+  posterior_1 <- CausalQueries(model_1, df_1, stan_model = fit)
+  
+  
+  
+  # In this model you are more likely to have an M=1 regardless if Y = 1 regardless 
+  # This produces a negative confound
+  model_2 <- make_model("X->M->Y") %>%
+              set_confound(confound = list(M = "(Y[M=1] ==1) & (Y[M=0]==1)")) %>%
+              set_parameters(c(.7, .1, .2, 0, 
+                               .5, .5, 
+                                0, .1, .2, .7,
+                               .2, .2, .4, .2))
+  df_2 <- simulate_data(model_2, n = 20000, using = "parameters")
+  
+  posterior_2 <- CausalQueries(model_2, df_2, stan_model = fit)
+  
+  out1 <- query_model(posterior_1, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
+  
+  out2 <- query_model(posterior_2, using="posteriors", queries = list(`X on M` = "M[X=1] - M[X=0]", `M on Y` = "Y[M=1] - Y[M=0]"))  
+  
+  write_rds(list(posterior_1, posterior_2, out1, out2), "saved/same_mechanism.rds")
+  
+  }
+
+same_mechanism <- read_rds("saved/same_mechanism.rds")
+
+kable(same_mechanism[[3]])
+kable(same_mechanism[[4]])
+
+# The marginal effect of X on M will be different in the two cases
+# The effect of M on Y is the same however, though it is confounded
+
+```
+
+Under the model there is possibly a difference in the effect of $X$ on $Y$ in the 
+
+
+### Observational and experimental
+
+Let us imagine a second case in which one wants to update based on 
+
+
+## Learning across populations
+
+Now consider strategies to learn about clues from observing patterns in different populations.
+
+We first consider a situation in which we believe the same model holds in multiple sites but in which learning about the model requires combining data about different parts of the model from multiple studies. 
+
+```{r modelch14, eval = FALSE}
+model <- make_model("X -> Y <- Z -> K")
+```
+
+```{r modelk, echo = FALSE}
+
+# Population determines the strength of causal effects.  K observed whenever X causes Y, but possibly also when Y=1 regardless
+
+model <- make_model("X -> Y <- Z -> K") %>%
+
+          set_parameters(
+            statement = list("(Y[X=1, Z = 1] > Y[X=0, Z = 1])",  
+                             "(K[Z = 1] > K[Z = 0])"),
+            node = c("Y","K"), 
+            parameters = c(.2, .6))
+```
+
+```{r frankenstein, echo = FALSE}
+plot(model)
+
+if(do_diagnosis){
+  
+if(!exists("fit")) fit <- fitted_model()
+
+N <- 300
+df <- simulate_data(model, n = N, using = "parameters") 
+A <- 1:(N/3)
+B <- (1+N/3):(2*N/3) 
+C <- (1+2*N/3):N
+
+df[A, "K"] <- NA           #  factorial
+df[B, c("X", "Y")] <- NA   #  mechanism study 
+df[C, "Z"] <- NA           #  no clue
+
+updated1 <- CausalQueries(model, df[A, ], stan_model = fit)
+updated2 <- CausalQueries(model, df[B, ], stan_model = fit)
+updated3 <- CausalQueries(model, df[C, ], stan_model = fit)
+updated_all <- CausalQueries(model, df, stan_model = fit)
+
+subs <- list(
+              "X == 1 & Y == 1 & K == 1",
+              "X == 1 & Y == 1 & K == 0")
+subs2 <- list(
+              "X == 1 & Y == 1 & K == 1",
+              "X == 1 & Y == 1 & K == 0",
+              "X == 1 & Y == 1 & K == 1 & Z == 1",
+              "X == 1 & Y == 1 & K == 0 & Z == 1",
+              "X == 1 & Y == 1 & K == 1 & Z == 0",
+              "X == 1 & Y == 1 & K == 0 & Z == 0")
+
+# If updating done using case data only
+result1 <- query_model(updated1, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result2 <- query_model(updated2, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result3 <- query_model(updated3, queries = "Y[X=0] == 0", subsets = subs, using = "posteriors")
+result4 <- query_model(updated_all, queries = "Y[X=0] == 0", subsets = subs2, using = "posteriors")
+
+write_rds(list(result1, result2, result3, result4), "saved/frankenstein.rds")
+}
+
+```
+
+We imagine we have access to three types of data;
+
+1. Study 1 is an experiment looking at the effects of $X$ on $Y$, ancillary data on $K$ is collected but $Z$ is not observed
+2. Study 2 is a factorial study examining the joint effects of $X$ and $Z$ on $Y$, $K$ is not observed
+3. Study 3 is an RCT looking at the relation between $Z$ and $K$. $X$ and $Y$ are not observed. 
+
+Tables \@ref(tab:frank1) -  \@ref(tab:frank3) show conditional inferences for the probability that $X$ caused $Y$ in $X=Y=1$ cases conditional on $K$ for each study, analyzed individually 
+
+```{r frank1, echo = FALSE}
+
+frank <- read_rds("saved/frankenstein.rds")
+
+kable(frank[[3]][,-c(1,3)], caption = "Clue is uninformative in Study 1")
+```
+
+```{r frank2, echo = FALSE}
+kable(frank[[1]][,-c(1,3)], caption = "Clue is also uninformative in Study 2 (factorial)")
+```
+
+```{r frank3, echo = FALSE}
+kable(frank[[2]][,-c(1,3)], caption = "Clue is also uninformative in Study 3 (experiment studying $K$)")
+```
+
+In no case is  $K$ informative. In study 1 data on $K$ is not available, in study 2 it is available but researchers do not know, quantitatively, how it relates to  $Z$. In the third study the $Z,K$ relationship is well understood but the joint relation between  $Z,X$, and $Y$ is not understood.
+
+Table \@ref(tab:frank4) shows the inferences when the data are combined with joint updating across all parameters.
+
+```{r frank4, echo = FALSE}
+kable(frank[[4]][,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$")
+```
+
+Here fuller understanding of the model lets researchers use information on $Z$ to update on values for $Z$ and in turn update on the likely effects of $X$ on $Y$. Rows 3-6 highlight that the updating works through inferences on $Z$ and there are no gains when $Z$ is known, as in Study 2. 
+
+In this example Studies 2 and 3 can be thought of as helper experiments for Study 1.  Study 2 might be thought of as a mechnism study whereas Study 3 is more like a measurement study. 
