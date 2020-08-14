@@ -220,3 +220,19 @@ perm_bb <- function(v) {
          length.out=prod(v))
   } ) - 1
 }
+
+
+## Find replace
+
+file_find_replace <- function(filepath, pattern, replacement) {
+  file_contents <- readLines(filepath)
+  updated_contents <- gsub(x = file_contents, pattern = pattern, replacement = replacement)
+  cat(updated_contents, file = filepath, sep = "\n")
+}
+my_rmd_scripts <- list.files(pattern = "(Rmd)$")
+
+# for (r_script in my_rmd_scripts ) {
+#   file_find_replace(r_script,
+#                     "plot_dag",
+#                     "plot")
+# }
