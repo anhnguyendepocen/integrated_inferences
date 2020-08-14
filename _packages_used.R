@@ -22,6 +22,8 @@ pacman::p_load(
 
 library(CQtools)
 
+options(knitr.kable.NA = '')
+
 do_diagnosis = FALSE
 
 options(mc.cores = parallel::detectCores())
