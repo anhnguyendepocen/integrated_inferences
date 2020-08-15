@@ -30,7 +30,11 @@ Put differently, and perhaps more positively, we see social scientists commonly 
 
 ## A jigsaw puzzle: Integrating across a model
 
-Consider a situation in which we believe the same model holds in multiple sites but in which learning about the model requires combining data about different parts of the model from multiple studies. The graph is not too interesting in this example, what is more interesting is the data structure
+Generating knowledge about a causal domain often involves cumulating learning across studies that each focus in on some specific part of the domain. For instance, scholars interested in the political economy and democratization might undertake studies focused on the relationship between inequality and mass protests; studies on the role of mass mobilization in generating regime change; pathways other than mass mobilization through which inequality might affect democratization; studies of the role of international sanctions on the likelihood that autocracies will democratize; and studies of the effects of democratization on other things, such as growth or the distribution of resources. 
+
+We can think of these studies as each analyzing data on a particular part of a broader, more encompassing causal model. In an informal way, *if* findings "hold together" in a reasonably intuitive way, we might be able to piece together an impression of the overall relations among variables in this domain.  Yet an informal approach becomes more difficult for complex models or data patterns and, more importantly, will leave opportunities for learning unexaploited.
+
+Consider this simple DAG, in which both $X$ and $Z$ are causes of $Y$, and $Z$ also causes $K$. Now imagine three studies, all conducted in contexts in which we believe this model to hold: 
 
 ```{r jigsaw, eval = TRUE, echo = FALSE}
 model <- make_model("X -> Y <- Z -> K") %>%
@@ -45,11 +49,14 @@ plot(model)
 
 ```
 
-We imagine we have access to three types of data;
 
-1. Study 1 is a factorial study examining the joint effects of $X$ and $Z$ on $Y$, $K$ is not observed
-2. Study 2 is an RCT looking at the relation between $Z$ and $K$. $X$ and $Y$ are not observed. 
-3. Study 3 is an RCT looking at the effects of $X$ on $Y$, ancillary data on context, $K$ is collected, but $Z$ is not observed
+1. Study 1 is a factorial experiment, in which $X$ and $Z$ are independently randomized, allowing an examination of the joint effects of $X$ and $Z$ on $Y$. $K$ is not observed.
+2. Study 2 is an experiment randomizing $Z$, with only $K$ observed as an outcome. $X$ is not observed.
+3. Study 3 is an RCT in which $X$ is randomized, with data collected on both $Y$ and $K$. $K$ is collected. $Z$ is not observed.
+
+Now, let's say that our primary interest is in the relationship between $X$ and $Y$. Obviously, Study 3 will, with a sufficiently large sample, perform just fine in estimaing the average treatment effect of $X$ on $Y$. However, what if we are interested in a case-oriented query, such as the probability of causation: the probability, say, $X=1$ caused $Y=1$ in a given $X=1, Y=1$ case? 
+
+We know that within-case, process-tracing clues can sometimes provide probative value on case-level estimands like the probability of causation, and we have observed $K$ in the Study 3 cases. So what if we combine the $X$, $Y$, and $K$ data? 
 
 ```{r, echo = FALSE}
 
@@ -95,8 +102,13 @@ write_rds(list(result1, result2, result3, result4), "saved/10a_frankenstein.rds"
 ```
 
 
+<!-- AJ: Suggest we flip the study ordering to the X-Y experiment is STudy 1. Makes a more natural progression with the prose. -->
 
-For each study we can ask: what is the probability that $X$ caused $Y$ in $X=Y=1$ cases conditional on $K$.  Table \@ref(tab:frank1) gives the answers. In each case the conclusion does not depend on $K$---though part of the causal model, and available in data in 2 cases, the individual studies don't have enough  information about the full model to be able to make use of $K$. In study 1 data on $K$ is not available, in study 2 it is available but researchers do not know, quantitatively, how it relates to  $Z$. In the third study the $Z,K$ relationship is well understood but the joint relation between  $Z,X$, and $Y$ is not understood.
+A simple analysis of the graph tells us that $K$ cannot help us learn about $Y$'s potential outcomes since $K$ and $Y$ are $d$-separated by $Z$, and we have not observed $Z$ in Study 3. We see this confirmed in Table \@ref(tab:frank1). In the third pair of rows, we  show the results of analyses in which we have simulated data from the whole model, then updated using the Study 3 observations. We give here the posterior mean on the probability of causation for an $X=Y=1$ case, conditional on each possible value that $K$ might take on. As we can see, our beliefs about the estimand remain unaffected by $K$'s value, meaning that it contains no information about $X$'s effect in the case.
+
+<!-- AJ: When we say data on K is not available in S1, do we mean we haven't used K to *update* the model? But we are then simulating what would we would infer if we *did* collect $K$ for a case in S1? This is my read of the code. Or have I misread? Are we imagining a situation in which we simply don't have K at all, so by definition can't learn from K? I've written the text below on the first assumption, so will need changing if that's wrong. -->
+
+We see that the same thing is true for each of the other studies. In study 1, we have not used $K$ to update the model, and so have not learned anything form the data about $K$'s relationship to the other variables. Thus, we have no foundation on which to ground probative value fo $K$. In study 2, we understand the $Z,K$ relationship well, but know nothing quantitatively about how $Z$ and $X$ relate to $Y$. Thus, we have learned nothing from Study 2 about what observing $K$ might tell us about the effect of $X$ on $Y$.
  
 
 ```{r frank1, echo = FALSE}
@@ -113,7 +125,9 @@ kable(
 ```
 
 
-Table \@ref(tab:frank4) shows the inferences when the data are combined with joint updating across all parameters. In this case fuller understanding of the model lets researchers use information on $K$ to update on values for $Z$ and in turn update on the likely effects of $X$ on $Y$. Rows 3-4 highlight that the updating works through inferences on $Z$ and there if $Z$ is known (whether it is equal to 0 or 1), as in Study 2, there are no additional gains from knowledge of $K$. 
+We can do much better, however, if we combine the data and update *jointly* across all model paramaters. The results are shown in Table \@ref(tab:frank4). Updating simultaneously across the studies allows us, in a sense, to bridge across inferences. In particular, inferences from Study 1 make $Z$ informative about $Y$'s potential outcomes under different values of $X$. Meanwhile, inferences from the data in Study 2 allow us to use information on $K$ to update on values for $Z$. As we now see in rows 1 and 2, having updated the model in an integrated fashion, $K$ now *is* informative about the probability of causation, with our posterior mean on this query changing substantially depending on the value of $K$ that we observe in a case.  
+
+Rows 3-4 highlight that the updating works through inferences on $Z$: we see that if $Z$ is alreadys known (we show this for $Z=1$, but it holds for $Z=0$ as well), then there are no additional gains from knowledge of $K$. 
 
 
 ```{r frank4, echo = FALSE}
@@ -121,9 +135,15 @@ kable(frank[[4]][1:4,-c(1,3)], caption = "Clue is informative after combining st
 ```
 
 
-Thus the collection of studies collectively allow for inferences that are not possible from any one study. 
+In sum, the collection of studies collectively allow for inferences that are not possible from any one study. 
 
-In Chapter 15 we will discuss justifications for model based inference, but we note already that in this example we have an instance in which a researcher (examining a case in study 3) might wish to draw inferences using $K$, but she does not have anything in study 1 that justifies using $K$ for inference. However with access to studies 2 and 3, and conditional on the overall model, she has a justification for process tracing strategy. The general principle is that weaker commitments to lower level theories ---here the causal structure---can justify more fully inferences from more fully specifie higher level theories.  
+<!-- AJ: Is something wrong with the study numberings in this next paragraph? -->
+
+<!-- I find the reference to justifying a model confusing here. It's not going to be self-evident to readers how that's what we've just done. It seems like we've *started* with a model and used it. But I'm not 100% clear on what you want to say here. Can you clarify? -->
+
+We devote Chapter 15 to a discussion of how we justify a model. However, we note already that in this example we have an instance in which a researcher (examining a case in study 3) might wish to draw inferences using $K$, but she does not have anything in study 1 that justifies using $K$ for inference. However with access to studies 2 and 3, and conditional on the overall model, she has a justification for process tracing strategy. The general principle is that weaker commitments to lower level theories ---here the causal structure---can justify more fully inferences from more fully specified higher-level theories.  
+
+<!-- AJ: Also finding the last sentence above confusing. -->
 
 
 ## Combining observational and experimental data
