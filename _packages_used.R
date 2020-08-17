@@ -4,6 +4,7 @@ library("pacman")
 # devtools::install_github("tidyverse/dplyr")
 
 pacman::p_load(
+  bookdown,
   tidyverse,
   bayesplot,
   rstanarm,

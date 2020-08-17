@@ -17,9 +17,11 @@ A fully specified causal model includes the information needed to assess the pro
 
 So far we have described a way to think about causal models, a way to specify causal estimands, and a Bayesian approach to inference, given models and estimands. Together with a strategy for data gathering these elements are enough to fully characterize a research design. If in addition we provide criteria for evaluating a design we have enough to be able to simulate the behavior of a research design and assess whether a design is up to the task fo answering the questions we want to answer. 
 
-Once we have a  method to assess the performance of a given design we can can start asking what kind of design is optimal, given some beliefs about the world (see @blair2016declaring for more on this general approach to design declaration and diagnosis). In the next chapters we use this approach to assess a set of design choices including choices regarding the clues about which data is sought, the types of cases for which data is sought, and the number of cases for which different types of data is sought.  
+Once we have a  method to assess the performance of a given design we can can start asking what kind of design is optimal, given some beliefs about the world (see @blair2016declaring for more on this approach to design declaration and diagnosis). 
 
-In the remainder of this chapter we discuss a simple evaluative criterion for a design and give examples for design declaration for a simple single case process tracing design and a mixed methods design.
+In the next chapters we use this approach to assess a set of design choices including choices regarding the clues about which data is sought, the types of cases for which data is sought, and the number of cases for which different types of data is sought.  
+
+In the remainder of this chapter we describe these elements of a design and a simple evaluative criterion. We then  give examples for design declaration for a simple single case process tracing design and a mixed methods design.
 
 
 
@@ -36,16 +38,18 @@ We use the MIDA approach (model, inquiry, data strategy, answer strategy) approa
 
 * **Answer strategy**. The answer strategy combines observed data with a causal model to generate an updated model from which inferences can be drawn. 
 
-Importantly, the model used in the answer strategy does not need to be the same model as assumed at the model step since we could imagine analysts coming to the data with quite different models in mind. Of course any model used in the answer strategy should generally involve the same variables as in the model itself.
+Importantly, the model used in the answer strategy does not need to be the same model as assumed at the model step since we could imagine analysts coming to the data with quite different models in mind. Of course any model used in the answer strategy should generally involve the same variables as in the model itself. 
 
 A design is a concatenation of these four components or "steps." 
 
 The concatenation of steps lets us examine instances of `runs` of a design. A single instance would involve: 
 
-1. a single draw of a true parameter vector from the distribution given in the model definition
+1. a single draw of a true parameter vector from the distribution given in the model definition *the "reference model")
 2. a calculation of the value of an estimand given this true parameter draw
-3. the generation of a dataset given the model implied by step 1 and the data strategy
-4. the generation of an answer to the inquiry generated from the realized data from 3. and the answer strategy
+3. the generation of a dataset given the reference model implied by step 1 and the data strategy
+4. the generation of an answer to the inquiry generated from the realized data from 3. and the "analysis model" 
+
+The analysis model and the reference model differ from each other in that the reference model stipulates the actual distribution from which estimands are drawn whereas teh analysis model is what is used by the researcher when generating an estimate. Ideally these will be the same, but in practice the analyst might have the wrong model and, of course, will have a distribution over parameters values and not have acess to the true parameter vector. 
 
 With the observation of multiple instances we get to assess the distribution of our answers --- and our uncertainty around these -- over repeated draws, and each time we get to see how well the answer we get maps onto the assumed truth in that draw.
 
@@ -208,16 +212,18 @@ Other loss functions could be used, including functions that take account of the
 
 ## Illustration of Design Decaration in code
 
-In the `gbiqq` package there is a single function that lets you declare a full design in one go by letting you supply arguments to declare a model, an inquiry, a data strategy, and an answer strategy
+In the `CQtools` package there is a single function that lets you declare a full design in one go by letting you supply arguments to declare a model, an inquiry, a data strategy, and an answer strategy
 
 ```{r packs, include = FALSE}
 library(DeclareDesign)
-library(gbiqq)
+library(CausalQueries)
+library(CQtools)
 ```
 
 ```{r ch10designer, message = FALSE, warning = FALSE}
 
 library(DeclareDesign)
+library(CQtools)
 
 n <- 10
 
@@ -227,7 +233,7 @@ reference_model <- analysis_model %>% set_priors(c(.5, .5, 1, 1,7, 1))
 
 my_design <-
   
-  gbiqq_designer(
+  causal_model_designer(
     reference_model = reference_model,
     analysis_model  = analysis_model,
     n               = n,
@@ -235,7 +241,7 @@ my_design <-
     given           = "X==1 & Y==1"
   )
 
-
+plot(my_design)
 ```
 
 

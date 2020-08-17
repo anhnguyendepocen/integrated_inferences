@@ -2,7 +2,7 @@
 
 ***
 
-We provide three examples of situations in which by combining models, researchers learn more than they could from any single model.
+We provide three examples of situations in which, by combining models, researchers learn more than they could from any single model.
 
 ***
 
@@ -13,7 +13,7 @@ do_diagnosis = FALSE
 library(DeclareDesign)
 ```
 
-In the previous two chapters, we have demonstrated one form of integration that structural causal models can enable: the systematic combination of (what we typically think of as) qualitative and quantitative evidence for the purposes of drawing population- and case-level causal inferences. One feature of the analyses we have been considering so far is that the integration is essentially "nested." We are, for instance, integrating quantitaitve evidence for a large set of cases with qualitative evidence for a *subset* of those cases. We are, moreover, drawing inferences from the set of cases we observe to a population *within which* that sample of cases is situated. 
+In the previous two chapters, we described one form of integration that structural causal models can enable: the systematic combination of (what we typically think of as) qualitative and quantitative evidence for the purposes of drawing population- and case-level causal inferences. One feature of the analyses we have been considering so far is that the integration is essentially "nested." We are, for instance, integrating quantitative evidence for a large set of cases with qualitative evidence for a *subset* of those cases. We are, moreover, drawing inferences from the set of cases we observe to a population *within which* that sample of cases is situated. 
 
 In this chapter, we examine how we can use structural causal models to integrate across studies or settings that are, in a sense, more disjointed from one another: across studies that examine different causal relationships altogether; study designs that require different assumptions about exogeneity; and contexts across which the causal quantities of interest may vary.
 
@@ -21,9 +21,9 @@ In this chapter, we examine how we can use structural causal models to integrate
 
 2. **Integrating between experimental and observational studies** One form of multi-method research that has become increasingly common is the use of both observational and experimental methods to study the same basic causal relationships. While an experiment can offer causal identification in a usually local or highly controlled setting, an observational analysis can often shed light on how the same relationships operate "in the wild," if with greater risk of confounding. Usually, observational and experimental results are presented in parallel, as separate sources of support for a causal claim. We show how, in a causal model setup, we can use experimental and observational data *jointly* to address questions that cannot be answered when the designs are considered separately.
 
-3. **Transporting knowledge across contexts** Researchers are often in a situation in which they have can identify causal quantities in a particular setting --- say, from a randomized controlled trial implemented in a specific local context --- but want to know how those inferences travel to other settings. Would the intervention work differently in other countries or regions? As we will explain, with an appropriately specified causal model and the right data from the original context, we can draw inferences about causal relationships in other contexts.
+3. **Transporting knowledge across contexts** Researchers are sometimes in a situation in which they can identify causal quantities in a particular setting --- say, from a randomized controlled trial implemented in a specific local context --- but want to know how those inferences travel to other settings. Would the intervention work differently in other countries or regions? As we will explain, with an appropriately specified causal model and the right data from the original context, we can draw inferences about causal relationships in other contexts.
 
-Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that the *same* causal model operates across the multiple settings that we are learning from and want to draw inferences about. We can, of course, specify the model in a way that takes heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences. 
+Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that setting-, or study-, specific  causal model can be nested within a lower level, "encompssing," model that operates across the multiple settings that we are learning from and want to draw inferences about. Encompassing models, of course, can specifically take heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences. 
 
 Put differently, and perhaps more positively, we see social scientists commonly seeking to transport knowledge or combine information informally across studies and settings. Often such efforts are motivated, sometimes implicitly, by an interest in or reliance on general theoretical propositions. The approaches that we describe below force the researcher to be *explicit* about the underlying causal beliefs that warrant that integration while also ensuring that the integration proceeds in a way that is logically consistent with stated beliefs.
 
@@ -50,11 +50,11 @@ plot(model)
 ```
 
 
-1. Study 1 is a factorial experiment, in which $X$ and $Z$ are independently randomized, allowing an examination of the joint effects of $X$ and $Z$ on $Y$. $K$ is not observed.
-2. Study 2 is an experiment randomizing $Z$, with only $K$ observed as an outcome. $X$ is not observed.
-3. Study 3 is an RCT in which $X$ is randomized, with data collected on both $Y$ and $K$. $K$ is collected. $Z$ is not observed.
+1. Study 1 is an RCT in which $X$ is randomized, with data collected on both $Y$ and $K$. $K$ is collected. $Z$ is not observed.
+1. Study 2 is a factorial experiment, in which $X$ and $Z$ are independently randomized, allowing an examination of the joint effects of $X$ and $Z$ on $Y$. $K$ is not observed.
+2. Study 3 is an experiment randomizing $Z$, with only $K$ observed as an outcome. $X$ and $Y$ are not observed.
 
-Now, let's say that our primary interest is in the relationship between $X$ and $Y$. Obviously, Study 3 will, with a sufficiently large sample, perform just fine in estimaing the average treatment effect of $X$ on $Y$. However, what if we are interested in a case-oriented query, such as the probability of causation: the probability, say, $X=1$ caused $Y=1$ in a given $X=1, Y=1$ case? 
+Now, let's say that our primary interest is in the relationship between $X$ and $Y$. Obviously, Study 1 will, with a sufficiently large sample, perform just fine in estimaing the average treatment effect of $X$ on $Y$. However, what if we are interested in a case-oriented query, such as the probability of causation: the probability, say, $X=1$ caused $Y=1$ in a given $X=1, Y=1$ case? 
 
 We know that within-case, process-tracing clues can sometimes provide probative value on case-level estimands like the probability of causation, and we have observed $K$ in the Study 3 cases. So what if we combine the $X$, $Y$, and $K$ data? 
 
@@ -63,10 +63,10 @@ We know that within-case, process-tracing clues can sometimes provide probative 
 df <- make_data(model, 300, using = "parameters") %>%
   
       mutate(study = rep(1:3, each = 100),
-             K = ifelse(study == 1, NA, K),
-             X = ifelse(study == 2, NA, X),
-             Y = ifelse(study == 2, NA, Y),
-             Z = ifelse(study == 3, NA, Z)
+             Z = ifelse(study == 1, NA, Z),
+             K = ifelse(study == 2, NA, K),
+             X = ifelse(study == 3, NA, X),
+             Y = ifelse(study == 3, NA, Y)
              )
 
 ```
@@ -104,11 +104,13 @@ write_rds(list(result1, result2, result3, result4), "saved/10a_frankenstein.rds"
 
 <!-- AJ: Suggest we flip the study ordering to the X-Y experiment is STudy 1. Makes a more natural progression with the prose. -->
 
-A simple analysis of the graph tells us that $K$ cannot help us learn about $Y$'s potential outcomes since $K$ and $Y$ are $d$-separated by $Z$, and we have not observed $Z$ in Study 3. We see this confirmed in Table \@ref(tab:frank1). In the third pair of rows, we  show the results of analyses in which we have simulated data from the whole model, then updated using the Study 3 observations. We give here the posterior mean on the probability of causation for an $X=Y=1$ case, conditional on each possible value that $K$ might take on. As we can see, our beliefs about the estimand remain unaffected by $K$'s value, meaning that it contains no information about $X$'s effect in the case.
+A simple analysis of the graph tells us that $K$ cannot help us learn about $Y$'s potential outcomes since $K$ and $Y$ are $d$-separated by $Z$, and we have not observed $Z$ in Study 3. We see this confirmed in Table \@ref(tab:frank1). 
+
+In the first pair of rows, we  show the results of analyses in which we have simulated data from the whole model, then updated using the Study 1 observations. We give here the posterior mean on the probability of causation for an $X=Y=1$ case, conditional on each possible value that $K$ might take on. As we can see, our beliefs about the estimand remain unaffected by $K$'s value, meaning that it contains no information about $X$'s effect in the case.
 
 <!-- AJ: When we say data on K is not available in S1, do we mean we haven't used K to *update* the model? But we are then simulating what would we would infer if we *did* collect $K$ for a case in S1? This is my read of the code. Or have I misread? Are we imagining a situation in which we simply don't have K at all, so by definition can't learn from K? I've written the text below on the first assumption, so will need changing if that's wrong. -->
 
-We see that the same thing is true for each of the other studies. In study 1, we have not used $K$ to update the model, and so have not learned anything form the data about $K$'s relationship to the other variables. Thus, we have no foundation on which to ground probative value fo $K$. In study 2, we understand the $Z,K$ relationship well, but know nothing quantitatively about how $Z$ and $X$ relate to $Y$. Thus, we have learned nothing from Study 2 about what observing $K$ might tell us about the effect of $X$ on $Y$.
+We see that the same thing is true for each of the other studies. In study 2, we have not used $K$ to update the model, and so have not learned anything form the data about $K$'s relationship to the other variables. Thus, we have no foundation on which to ground probative value fo $K$. In study 3, we understand the $Z,K$ relationship well, but know nothing quantitatively about how $Z$ and $X$ relate to $Y$. Thus, we have learned nothing from Study 3 about what observing $K$ might tell us about the effect of $X$ on $Y$.
  
 
 ```{r frank1, echo = FALSE}
@@ -125,9 +127,9 @@ kable(
 ```
 
 
-We can do much better, however, if we combine the data and update *jointly* across all model paramaters. The results are shown in Table \@ref(tab:frank4). Updating simultaneously across the studies allows us, in a sense, to bridge across inferences. In particular, inferences from Study 1 make $Z$ informative about $Y$'s potential outcomes under different values of $X$. Meanwhile, inferences from the data in Study 2 allow us to use information on $K$ to update on values for $Z$. As we now see in rows 1 and 2, having updated the model in an integrated fashion, $K$ now *is* informative about the probability of causation, with our posterior mean on this query changing substantially depending on the value of $K$ that we observe in a case.  
+We can do much better, however, if we combine the data and update *jointly* across all model paramaters. The results are shown in Table \@ref(tab:frank4). Updating simultaneously across the studies allows us, in a sense, to bridge across inferences. In particular, inferences from Study 2 make $Z$ informative about $Y$'s potential outcomes under different values of $X$. Meanwhile, inferences from the data in Study 3 allow us to use information on $K$ to update on values for $Z$. As we now see in rows 1 and 2, having updated the model in an integrated fashion, $K$ now *is* informative about the probability of causation, with our posterior mean on this query changing substantially depending on the value of $K$ that we observe in a case.  
 
-Rows 3-4 highlight that the updating works through inferences on $Z$: we see that if $Z$ is alreadys known (we show this for $Z=1$, but it holds for $Z=0$ as well), then there are no additional gains from knowledge of $K$. 
+Rows 3-4 highlight that the updating works through inferences on $Z$: we see that if $Z$ is already known (we show this for $Z=1$, but it holds for $Z=0$ as well), then there are no additional gains from knowledge of $K$. 
 
 
 ```{r frank4, echo = FALSE}
@@ -135,7 +137,7 @@ kable(frank[[4]][1:4,-c(1,3)], caption = "Clue is informative after combining st
 ```
 
 
-In sum, the collection of studies collectively allow for inferences that are not possible from any one study. 
+<!-- In sum, the collection of studies collectively provides a justification for learning from $K$ when assessing a case level effect of $X$ on $Z$ in study 1.  -->
 
 <!-- AJ: Is something wrong with the study numberings in this next paragraph? -->
 
@@ -145,6 +147,74 @@ We devote Chapter 15 to a discussion of how we justify a model. However, we note
 
 <!-- AJ: Also finding the last sentence above confusing. -->
 
+## Multilevel models, meta-analysis
+
+A key idea in Bayesian meta-analysis is that when you analyze multiple studies together you learn not only about common processes that give rise to the different results seen in different sites, but you also learn more about each study from seeing the other studies.
+
+A classic setup is provided in GELMAN, which we have access to estimates of effects and uncertainty in eight sites (schools), $(b_j, se_j)_{j \in \{1,2,\dots,8\}}$. We assume that each $b_j$ is a draw from distribution $N(\beta_j, se_j)$ and that each  $\beta_j$ is a draw from distribution $N(\beta, \sigma)$. In that setup we want to learn not just about the superpopulation parameters  $\beta, \sigma$, but also about the study level effects $(\beta_j)_{j \in \{1,2,\dots,8\}}$.
+
+In a similar way here we define a model in which "setting" is a node. We observe an experiment that takes pace in setting 0 and in setting 1. We then conside the different conclusions we draw for the effect of $X$ on 
+
+```{r, echo=FALSE}
+
+
+if(do_diagnosis){
+  
+  model_1 <- make_model("X -> Y") %>% 
+    set_parameters(node  = "Y", parameters = c(.1, .1, .7, .1))
+  model_2 <- make_model("X -> Y") %>% 
+    set_parameters(node  = "Y", parameters = c(.1, .2, .6, .1))
+  model_3 <- make_model("X -> Y <- Setting") 
+  model_4 <- model_3 %>% set_priors(2) %>% 
+    set_priors(statement = interacts("Setting", "X", "Y"), alphas  = .1)
+
+  df_1 <- simulate_data(model_1, 100) %>% mutate(Setting = 0)
+  df_2 <- simulate_data(model_2, 100) %>% mutate(Setting = 1)
+  
+  model_1 <- update_model(model_1, df_1)
+  model_2 <- update_model(model_2, df_2)
+  model_3 <- update_model(model_3, rbind(df_1, df_2), iter = 8000)
+  model_4 <- update_model(model_4, rbind(df_1, df_2), iter = 8000)
+  
+  q1 <- query_model(model_1, list(`Setting 0` = te("X","Y")), using = "posteriors")
+  q2 <- query_model(model_2, list(`Setting 1` = te("X","Y")), using = "posteriors")
+  
+  q3_1 <- query_model(model_3, list(`Integrated (flat priors)` = te("X","Y")), 
+                   given = c(TRUE, "Setting==0", "Setting==1"), 
+                   expand_grid = TRUE, using = "posteriors")
+
+  q3_2 <- query_model(model_3, interacts("Setting", "X", "Y"), 
+                   using = c("priors", "posteriors"),
+                   expand_grid = TRUE) 
+    
+  q4_1 <- query_model(model_4, list(`Integrated (weak heterogeneity)` = te("X","Y")), 
+                   given = c(TRUE, "Setting==0", "Setting==1"), 
+                   expand_grid = TRUE, using = "posteriors")
+
+  q4_2 <- query_model(model_4, interacts("Setting", "X", "Y"), 
+                   using = c("priors", "posteriors"),
+                   expand_grid = TRUE) 
+  
+  write_rds(list(q1, q2, q3_1, q3_2, q4_1, q4_2), "saved/10a_multilevel.rds")
+  
+}
+
+  multilevel <- read_rds("saved/10a_multilevel.rds")
+
+    rbind(
+    multilevel[[1]],  multilevel[[2]],
+  multilevel[[3]], 
+  multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2)
+```
+We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2. 
+
+We can also update on the amount of heterogeneity. Here the estimand is the share of units that would respond differently to treatment if they were in a different setting. We see a dropin expectations of heterogeneitz in the analysis with flat priors, but a rise relative if we start thinking heterogeneity is unlikley.
+
+```{r, echo = FALSE}
+    multilevel[[4]] %>% kable(caption = "Interaction | Flat priors")
+  multilevel[[6]] %>% kable(caption = "Interaction | Expected homogeneity")
+  
+```
 
 ## Combining observational and experimental data
 

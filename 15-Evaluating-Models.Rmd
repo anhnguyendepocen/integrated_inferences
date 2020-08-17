@@ -576,21 +576,22 @@ abline(a = 0, b = 1, col = "lightgrey")
 par(mfrow = c(1,2))
 plot_loo(loo_pimd, name = "restricted model")
 plot_loo(loo_pimdnegmed, name = "unrestricted model")
+plot_loo(loo_pimdnonmon, name = "fully unrestricted model")
 
 ```
 
 
 ### Sensitivity to priors
 
-In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this?  We answer the question by comparing our conclusion to what we woudl conclude withiout this assumption. Our answers depend on the quantity examined.
+In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this?  We answer the question by comparing our conclusion to what we would conclude withiout this assumption. Our answers depend on the quantity examined.
 
-We first show results for population inference from a mixed methods analysis. As seen in Table XX our inferences regarging the overall effect of $I$ on $D$ are not very sensitive to this assumption. Our conditional inferences are however. In particular, in cases with $I=0, D=1$ we are more likley to think that democratization was due to *low* inequality given the  unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. 
+We first show results for population inference from a mixed methods analysis. As seen in Table XX our inferences regarging the overall effect of $I$ on $D$ are not very sensitive to this assumption. Our conditional inferences are, however. In particular, in cases with $I=0, D=1$ we are more likely to think that democratization was due to *low* inequality given the  unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
 
-AJ: Check intuition here!
+<!-- FLAG: AJ: Check intuition here! -->
 
-In the non-monotonic model you entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produced by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is *not* due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel. 
+In the non-monotonic model we entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produced by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is *not* due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel. 
 
-
+In all, we judge the conditional inferences as very sensitive to the monotonicity assumptions we put in place.
 
 ```{r 15pimdgraphs, echo = FALSE, fig.cap = "ATE of I on D."}
 
@@ -600,13 +601,15 @@ if(do_diagnosis){
   ate_id2 <- query_distribution(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors")
  
 
-  q_ate_id  <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
+  q_ate_id1 <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
                            given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
   q_ate_id2 <- query_model(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors", 
                            given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
+  q_ate_id3 <- query_model(pimd_nonmon, "D[I=1] - D[I=0]", using = "posteriors", 
+                           given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
 
-  out <- cbind(q_ate_id, q_ate_id2[, c("mean", "sd")])
-  names(out) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)") 
+  out <- cbind(q_ate_id1, q_ate_id2[, c("mean", "sd")], q_ate_id3[, c("mean", "sd")])
+  names(out) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)", "Mean (M3)", "sd (M3)") 
   out <- out %>% select(-c(q, u))
 
  write_rds(out, "saved/ch15_ateID.rds")
