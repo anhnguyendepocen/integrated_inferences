@@ -218,9 +218,25 @@ We can also update on the amount of heterogeneity. Here the estimand is the shar
 
 ## Combining observational and experimental data
 
-Experimental studies are sometimes referred to as gold standard. But an interesting weakness of experimental studies is that, by dealing so effectively with self selection into treatment, they limit our ability to learn about self selection. Often however we want to know what causal effects would be specifically for people that would take up a treatment in non experimental settings. This kind of problem is studied for example by @knox2019design.
+Experimental studies are often understood as the "gold standard" for causal inference. This is, in particular, because of the ability of a randomized trial (given certain assumptions, such as "no spillovers") to eliminate sources of confounding. By design, an experiment removes from the situation processes that, in nature, would generate a correlation between selection into treatment and potential outcomes. An experiment thereby allows for an unbiased estimate of the average causal effect of the treatment on the outcome. 
 
-A causal model can encompass both experimental and observational data and let you answer this kind of question. To illustrate, imagine that node $R$ indicates whether a unit was assigned to be randomly assigned to treatment ($X=Z$ if $R=1$) or took on its observational value ($X=O$ if $R=0$). We assume the exclusion restriction that entering the experimental sample is not related to $Y$ other than through assignment of $X$. We plot the model in Figure \@ref(fig:appcombexpob).
+At the same time, an interesting weakness of experimental studies is that, by dealing so effectively with selection into treatment, they limit our ability to learn about selection and its implications in the real world. Often, however, we want to know what causal effects would be specifically for units that *would* in fact take up a treatment in a real-world, non-experimental settings. This kind of problem is studied for example by @knox2019design.
+
+Consider, for instance, a policy that would make schooling subsidies available to parents, with the aim of improving educational outcomes for children. How would we know if the policy was effective? A source of confounding in an observational setting might be that those parents who apply for and take up the subsidy might also be those who are investing more in their children's education in other ways as compared to those parents who do not apply for the subsidy. To eliminate this problem, we might design an experiment in which parents are randomly assigned to receive (or not receive) the subsidy and compare outcomes between children in the treatment and control groups. With a no-spillovers assumption, we can extract the $ATE$ of the receipt of subsidies. 
+
+What this experiment cannot tell us, however, is how much the policy will boost educational outcomes outside the experiment. That is because the causal quantity of interest, for answering that question, is *not* the $ATE$: it is the average treatment effect for the *treated* ($ATT$), given real-world selection effects. That is, the policymaker wants to know what the effect of the subsidy will be for the children of parents who *select into* treatment. One could imagine the real-world $ATT$ being higher than the $ATE$ if, for instance, those parents who are informed and interested enough to take up the subsidy also put the subsidy to more effective use. One could also imagine the $ATT$ being lower than the $ATE$ is, for instance, there are diminishing marginal returns to educational investments and the self-selecting parents are already investing quite a lot. 
+
+Even outside a policy context, we may be interested in the effect of a causal condition *where* that causal condition emerges. To return to our inequality and democracy example, we may want to know what would have happened to autocracies with low inequality *if* they had had high inequality -- the standard average-treatment effect question. But we might also be interested in knowing how much of a difference high inequality makes *in the kinds of cases* where high inequality tends to be occur -- where the effect could be very different. 
+
+With such questions, we are in a sort of bind. The experiment cannot tell us *who* would naturally select into treatment and what the effects would be for them. Yet an observational study faces the challenge of ruling out confounding. Ideally, we would like to be able to combine the best features of both: use an experiment to deal with confounding and use observational data to learn about those whom nature assigns to treatment.
+
+We can achieve this form of integration with a causal model. We do so by creating a model in which random assignment is nested within a broader set of assignment processes. We plot the model in Figure \@ref(fig:appcombexpob)
+
+At the substantive core of this model is the $X \rightarrow Y$ relationship. However, we give $X$ a parent that is fully exogenous, $Z$, to capture a random-assignment process. We give $X$ a second parent, $O$, that is confounded with $Y$: $O$ here represents the observational scenario. Finally, we include a "switch" variable, $R$, that determines whether $X$ is randomly assigned or not. So when $R=1$, $X$ is determined solely by $Z$, with $X=Z$. When $R=0$, we are in an observational setting, and $X$ is determined solely by the confounded $O$, with $X=O$.
+
+A few notes on the parameter space. Parameters allow for complete confounding between $O$ and $Y$, but $Z$ and $Y$ are unconfounded. $X$ has only one causal type since its job is to operate as a conveyor belt, simply inheriting the value of $Z$ or $O$, depending on $R$. 
+
+Note also that this model assumes the exclusion restriction that entering the experimental sample ($R$) is not related to $Y$ other than through assignment of $X$. 
 
 
 ```{r copobsetup, message = FALSE, warning = FALSE, echo = FALSE}
@@ -241,9 +257,9 @@ kable(P[,1:4])
 ```
 
 
-In this model, $X$ has only one causal type since its job is to operate as a kind of switch, inheriting the value of $Z$ or $O$ depending on $R$. Parameters allow for complete confounding between $O$ and $Y$ but $Z$ and $Y$ are unconfounded.
+Now, let us imagine true parameter values such that $X$ has a $0.2$ average effect on $Y$. However, the effect is different for those who are selected into treatment in an observational setting: it is positive ($0.6$) for cases in which $X=1$ under observational assignment, but negative ($-0.2$) for cases in which $X=0$ under observational assignment. (See appendix for complete specification.) 
 
-We imagine parameter values in which there is a true .2 effect of $X$ on $Y$. However the effect is positive (.6) for cases in which $X=1$ under observational assignment but negative (-.2) for cases in which $X=0$ under observational assignment. (See appendix for complete specification.)
+When we use the model to analyze the data, we will start with flat priors on the causal types. 
 
 ```{r, echo = FALSE}
 
@@ -253,7 +269,9 @@ model <- model %>%
 
 ```
 
-The implied estimands and priors are as in Table \@ref(tab:fusionestimands).
+The implied true values for the estimands of interest, and our priors on those estimands, are displayed in Table \@ref(tab:fusionestimands).
+
+<!-- AJ: I think the talk of parameters and priors is less intuitive than it could be in a table and passage like this, though I realize it maps onto CQ argument names. By "parameters" we mean *true* values in the simulation, right? Can we convert to "truth" in the "Using" column? Truth vs. priors seems nicely intuitive. -->
 
 ```{r fusionestimands, echo = FALSE}
 
@@ -277,7 +295,7 @@ data <- make_data(model, n = 800)
 ```
 
 
-The true effect is .2 but naive analysis on the observational data would yield a strongly upwardly biased estimate. Table \@ref(tab:fusiondim) shows differences-in-means estimates using data on observational units only drawn from this model.
+Now, we generate data from the model, using the posited "true" parameter values, and then update the model using these data. We begin by analyzing just the observational data (cases where $R=0$) and display the results in Table \@ref(tab:fusiondim). The true effect is $0.2$ but naive analysis on the observational data would yield a strongly upwardly biased estimate. Table \@ref(tab:fusiondim) shows differences-in-means estimates using data on observational units only drawn from this model.
 
 
 ```{r fusiondim, echo  = FALSE, warning = FALSE, message = FALSE}
