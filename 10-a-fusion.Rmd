@@ -206,6 +206,7 @@ if(do_diagnosis){
   multilevel[[3]], 
   multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2)
 ```
+
 We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2. 
 
 We can also update on the amount of heterogeneity. Here the estimand is the share of units that would respond differently to treatment if they were in a different setting. We see a dropin expectations of heterogeneitz in the analysis with flat priors, but a rise relative if we start thinking heterogeneity is unlikley.
@@ -214,6 +215,36 @@ We can also update on the amount of heterogeneity. Here the estimand is the shar
     multilevel[[4]] %>% kable(caption = "Interaction | Flat priors")
   multilevel[[6]] %>% kable(caption = "Interaction | Expected homogeneity")
   
+```
+
+```{r}
+# Approach 2
+
+model_5 <- make_model("X -> Y <- Setting -> W -> Y") %>% 
+  set_restrictions("Y[X=1, W=1] != Y[X=0, W=1]")
+length(model_5$nodal_types$Y)
+
+
+if(do_diagnosis){
+  
+  model_5 <- update_model(model_5, rbind(df_1, df_2), iter = 8000)
+  
+  q5_1 <- query_model(model_5, list(`Integrated (Latent W)` = te("X","Y")), 
+                   given = c(TRUE, "Setting==0", "Setting==1"), 
+                   expand_grid = TRUE, using = "posteriors")
+
+  q5_2 <- query_model(model_5, interacts("Setting", "X", "Y"), 
+                   using = c("priors", "posteriors"),
+                   expand_grid = TRUE) 
+  q5_3 <- query_model(model_5, "W==1", 
+                   using = c("priors", "posteriors"),
+                   expand_grid = TRUE) 
+  
+  write_rds(list(q5_1, q5_2, q5_3), "saved/10a_multilevel_latent.rds")
+  
+}
+
+
 ```
 
 ## Combining observational and experimental data
