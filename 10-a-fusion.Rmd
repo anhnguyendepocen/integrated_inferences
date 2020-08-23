@@ -295,15 +295,16 @@ data <- make_data(model, n = 800)
 ```
 
 
-Now, we generate data from the model, using the posited "true" parameter values, and then update the model using these data. We begin by analyzing just the observational data (cases where $R=0$) and display the results in Table \@ref(tab:fusiondim). The true effect is $0.2$ but naive analysis on the observational data would yield a strongly upwardly biased estimate. Table \@ref(tab:fusiondim) shows differences-in-means estimates using data on observational units only drawn from this model.
+Now, we generate data from the model, using the posited "true" parameter values, and then update the model using these data. 
 
+We begin by analyzing just the observational data (cases where $R=0$) and display the results in Table \@ref(tab:fusiondim). Recall that the true average effect of $X$ on $Y$ is $0.2$. Naive analysis of the observational data, taking a simple difference in means between the $X=0$ and $X=1$ cases, yields a strongly upwardly biased estimate of that effect, of 0.0806. 
 
 ```{r fusiondim, echo  = FALSE, warning = FALSE, message = FALSE}
 x <- estimatr::difference_in_means(Y~X, data = filter(data, R==0))
 kable(summary(x)[[1]], digits = 3, caption = "Inferences on the ATE from differences in means")
 ```
 
-The estimates from updating on the full model, shown in Table \@ref(tab:fusionCQ), are much better.
+In contrast, when we use CausalQueries to update on the full causal model and use both the experimental and observational data, we get the much more accurate results shown in Table \@ref(tab:fusionCQ). Moving down the rows, we show here the estimate of the unconditional $ATE$, the estimate for the observational context ($R=0$), and the estimate for the experimental context ($R=1$). Unsurprisingly, the estimates are identical across all three settings since, in the model, $R$ is $d$-separated from $Y$ by $X$, which is observed. And, as we see, the posterior means are very close to the right answer of $0.2$.
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
@@ -345,12 +346,14 @@ result <- query_model(
 kable(result)
 ```
 
-Since the model used both the experimental and the observational data, it is interesting to ask whether the observational data improved the estimates of the treatment effect or does inference draw only from  the experimental data? We answer the question in the appendix by  updating using experimental data only.
- We find there that we do indeed get a tightening of posterior variance and a more accurate result when we use the observational data but that the gains are relatively small: the experimental data alone is quite powerful. The gains would be smaller still if we had more data, in which case inferences from the experimental data would be more accurate still. 
+Since the model used both the experimental and the observational data, we might wonder from where the leverage derived: did the observational data improve our estimates of the average treatment effect, or do our inferences emerge strictly from the experimental data? In the appendix, we show results when we updating using experimental data only.
+ Comparing the two sets of results, we find there that we do indeed get a tightening of posterior variance and a more accurate result when we use both the observational and experimental data, but the experimental data alone are quite powerful, as we should expect for an estimate of the $ATE$. The observational data do not add a great deal to an $ATE$ estimate, and the gains from observational data would be smaller still (and the experimental results even more accurate) if the experimental sample were larger. 
 
-However we do learn something of particular interest from this model. A key feature here is that there is heterogeneity between those that are in treatment and those that are in control *in the observational* sample. We learn nothing about this heterogeneity from the experimental data alone but we learn a lot from the mixed model, picking up the strong self selection into treatment in the observational group: 
+<!-- FLAG: Need to create above table in appendix -->
 
-```{r, echo = FALSE}
+However, what we can learn about uniquely from this model and the combined observational and experimental data is *heterogeneity* in effects between those that are in treatment and those that are in control *in the observational* setting. In Table \@ref(combexpobsattatc), we display the results of $ATT$ and $ATC$ queries of the updated model. In the first two rows, we see that, in the experimental setting, the average effect of $X$ on $Y$ is the same on both the treated and control groups, exactly as we would expect under random assignment. In the third row, we see the estimate of $X$'s average effect for those assigned "by nature" to the control group in the observational setting, extracting a result close to the "true" value of $-0.2$. The final row shows our estimate of the treatment effect for those who are selected into treatment in the observational setting, again getting close to the answer implied by the underlying data-generating process ($0.6$). 
+
+```{r combexpobsattatc, echo = FALSE}
 result2 <- query_model(
     updated, 
     queries = list(ATE = "c(Y[X=1] - Y[X=0])"), 
@@ -360,8 +363,14 @@ result2 <- query_model(
 kable(result2, caption = "Effects of $X$ conditional on $X$ for units that were randomly assigned or not.  Effects of $X$ do not depend on $X$ in the experimental group, but they do in the observational group becuase of seld selection. ")
 ```
 
-In essence by mixing the experimental and observational data we can learn what the effects for those that self select into treatment *and* what they would be for those that self select into control. The results here relate to the  LATE theorem [@angrist1995identification] in the following way. If we imagine using data only on (a) the experimental group in control and (b) the observational group, some of whom are in treatment, we can conceptualize our design as one in which the observational group are "encouraged" to take up treatment and we figure out the effect for the compliers in this group (those that self select into treatment). At the same time if we imagine using data only on (a) the experimental group in treatment and (b) the observational group, some of whom are in control, we can conceptualize our design as one in which the observational group are "encouraged" to take teh control condition and we figure out the effect for the compliers in this group (those that self select into control). 
+We can learn nothing about the observational $ATT$ or $ATC$ from the experimental data alone, where there $ATT$ and $ATC$ are the same quantity. And in the observational data alone, we are hobbled by confounding of unknown direction and size. What the mixed model and data, in effect, are able to do is (a) learn about the $ATE$ experimental data, (b) use inferences on the $ATE$ to separate true effects from confounding in the observational data and thus learn about the direction and size of the confounding in those data, and (c) estimate the treatment effect for the $X=0$ group and for the $X=1$ group, respectively, in the observational data *using* knowledge about confounding in these data. By mixing the experimental and observational data, we can learn about how the treatment has affected those units that, in the "real" world of the observational setting, selected into treatment *and* about how the treatment *would* affect those that selected into control. 
 
+The numbers in our toy example, while purely notional, can help us see why the observational $ATT$ and $ATC$ might be of great interest to decision makers where strong causal heterogeneity is a possibility. Based on the experimental data alone, we might conclude that the policy that makes $X=1$ available is a good bet, given its positive $ATE$ (assuming, of course, that $Y=1$ is a valued outcome). And, of course, the observational data alone would not allow us to confidently conclude otherwise. What the integrated analysis reveals, however, is that $X$ in fact has a *negative* mean effect on those who would be most likely to take up the treatment. The strong positive effect for the control strongly shapes the experimental results but will go unrealized in the real world. 
+In a similar vein, these estimates can aid causal explanation. Seeing the positive $ATE$ might lead us to infer that most of the $X=1, Y=1$ cases we observe in the world are ones in which $X=1$ caused $Y=1$. The observational $ATT$ estimates point in a very different direction, however, indicating that these are cases in which $X$ is least likely to have a positive effect and, thus, where $Y=1$ was most likely generated by some other cause.
+
+We note that the results here relate to the LATE theorem [@angrist1995identification]. Imagine using data only on (a) the experimental group in control and (b) the observational group, some of whom are in treatment. We can conceptualize our design as one in which the observational group are "encouraged" to take up treatment, allowing us to estimate the effect for the "compliers" in the observational setting: those that self-select into treatment. Conversely, we could use data only on (a) the experimental group in treatment and (b) the observational group, some of whom are in control. This is a design in which the observational group are "encouraged" to take the control condition, allowing us to estimate the effect for the "compliers" in this group (those that self select into control). 
+
+<!-- AJ: Can't we instead frame the second estimate as the estimate for the never takers? -->
 
 ## Transportation of findings across contexts
 
