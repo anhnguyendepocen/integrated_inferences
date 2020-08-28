@@ -217,7 +217,7 @@ We can also update on the amount of heterogeneity. Here the estimand is the shar
   
 ```
 
-```{r}
+```{r, include = FALSE}
 # Approach 2
 
 model_5 <- make_model("X -> Y <- Setting -> W -> Y") %>% 
@@ -249,6 +249,181 @@ if(do_diagnosis){
 
 
 ```
+
+## Real multilevel
+
+In the situations we have considered so far, we are learning from and about the particular contexts that we are studying. We are combining experimental data from one setting, for instance, with observational data from another. Or we are using updating from one context to draw an inference about another setting. Our inferences in these setups are limited strictly to the settings at hand, however. 
+
+We can take a step further by building a hierarchical model. A hierarchical model allows us to think about the populations in our study sites as themselves drawn from a larger population ("superpopulation") of settings. And, crucially, it allows us in turn to use data in the study sites to learn about that broader superpopulation of settings.
+
+<!-- AJ: Is "superpopulation" right here and below? -->
+
+For instance, we might be studying the effect of an individual's relative location in the income scale on their preferences for democracy. We might collect data in a set of 10 countries and estimate the average causal effect of relative income in each of them. We can readily average inferences across these countries or study country-level moderators of the effect to explain differences in effects across the 10 countries. Yet these data from the 10 countries also contain information of a more general sort: they tell us something about the "superpopulation" of settings from which these 10 countries have been "drawn."
+
+Let's review how our analytic setup has worked so far. At each node in a causal model, we conceptualize a given case as have a particular nodal type. The case's nodal type is drawn from a distribution of nodal types in the population of cases from which this case has been drawn. When we do process tracing, we consider that population-level distribution to be a set of fixed shares of nodal types in the population: say, for node $Y$, we might believe that half the cases in the population are $\lambda^Y_{01}$, a quarter are $\lambda^Y_{00}$, and a quarter are $\lambda^Y_{11}$. We then use data from the case to update on the case's nodal types (or on the combination of nodal types that correspond to some case-level query), given the population-level shares. 
+
+When we engage in population-level inference, we begin with *uncertainty* about the population-level shares of types, and we express our prior beliefs about those shares as a Dirichlet *distribution*. So, for instance, our beliefs might be centered around a $\lambda^Y_{01}=0.5, \lambda^Y_{00}=0.25, \lambda^Y_{11}=0.25$ breakdown of shares in the population, but we also express some degree of uncertainty about what the breakdown is. Now, when we analyze data on some number of cases, we can update both on those cases' types *and* on our beliefs about the distribution of types in the population -- perhaps shifting toward a higher share of $\lambda^Y_{01}$'s (and with a change in the distribution's variance).
+
+When we build a hierarchical model, each case is understood as being embedded within a population: our cases might be citizens, say, each embedded within a country. However, we conceive of there being *multiple* populations -- say, multiple countries -- each drawn from a superpopulation. Thus, each population (country) has a set of Dirichlet parameters, describing that population's distribution of types, that are themselves drawn from a superpopulation *distribution* of Dirichlet parameters. Data on citizens within countries now allows us to update our beliefs about causal relationships for the particular citizens we observe, for the population of citizens within each country that we study, *and* for the superpopulation of countries, including those countries we do not directly observe. 
+
+<!-- AJ: Check that all of the above is right! -->
+
+<!-- AJ: Need something here about how the approach to hierarchical models in Gelman et al is different from or related to how we're operationalizing them. -->
+
+We illustrate with a simple $X,Y$ model. We imagine that we are studying the $X \rightarrow Y$ relationship in `n` countries. Each country has a parameter distribution drawn from  common Dirichelets. We start off with flat priors over the alpha arguments of the Dirichlet. 
+
+<!-- AJ: I am confused by the statement that "Each country has a parameter distribution drawn from  common Dirichelets." I am generally struggling a bit with this bit still, and so may have this point wrong above. I am thinking: we have a set of alphas (Dirichlet parameters) for each *country* -- so we have a prior distribution of shares for each country. And the country-level alphas have been drawn from a common distribution of *alphas* at the superpop level. Is that right? Or is all the randomness at the superpop level, and we're now thinking of each country as having a specific set of shares, and our prior and posterior distributions are ONLY Dirichlet distributions at the superpop level? -->
+
+
+<!-- MH: No we do not have alphas for each country; each country does and always did have a specific set of shares. This was true before but we represented our prior uncertainty over the specific shares using the Dirichlet. We *still* are uncertain over the shares but now we beliefe there *is* a a Dirichlet distribution from which these are drwan (before the Dirichlet just represented our uncertainty; now it represents the actual data generation process); we just don;t know what the Dirichlet is so we are are uncertain over it (before we did know what the Diriclet is since that just meant we knew what our priors are; now we don;t know what it is because it represents the true dgp). Easiest to think through this focussed only on the distribution of a binary variable X. (a) For each person X is either 0 or 1. (b) in a study the distribution of X is given by p (prob X = 1); in a single country study we want to figure out what p is and we have a prior distribution over possible values of p, using a Beta distribution with parameters a,b.  (c) in a multicountry study we think that there is a different p is every country and we now imagine these are drawn from a beta distribution with parameters a,b; but we don;t know what a and b are. So we put priors over a and b (inverse gamma priors). -->
+
+
+For the simulation, we assign a particular true set of superpopulation parameter values that is unknown and that we would like to recover. In this true world, the probability of assignment to $X=1$ is .4, and the average treatment effect is .1. Using these true parameter values, we simulate $X, Y$ data for $n=8$ countries.
+
+```{r, comment = "", include = FALSE}
+model   <- make_model("X->Y")
+alpha_X <- c(6, 4)*1
+alpha_Y <- c(.5, .4, .6, .5)*5
+
+n <- 8
+
+if(do_diagnosis){
+  
+  # Draw parameter values for each study
+  lambda_X = rdirichlet(n, alpha_X)
+  lambda_Y = rdirichlet(n, alpha_Y)
+  
+  # Draw data for each study
+  data_events <- 
+    lapply(1:n,
+           function(j)
+             make_data(model, n = 50,
+                       parameters = c(lambda_X[j,], lambda_Y[j,])) %>%
+             collapse_data(model))
+  
+  write_rds(list(lambda_X=lambda_X, lambda_Y=lambda_Y, data = data_events), "saved/10a_truth.rds")
+  
+  }
+
+# Load
+truth <- read_rds("saved/10a_truth.rds")
+data_events <- truth$data
+data_events
+
+```
+
+<!-- AJ: I think you'll need to do some elaboration for this step, Macartan. -->
+
+
+```{r, include = FALSE}
+
+# Updating
+
+#We prepare `stan` data and update:
+
+
+# Stan data is the same as for CausalQueries except we provide a data matrix instead of a vector
+data_multilevel   <- CausalQueries:::prep_stan_data(model = model, data = data_events[[1]])
+data_multilevel$Y <- sapply(data_events, function(j) j$count)
+data_multilevel$n_studies <- ncol(data_multilevel$Y)
+
+
+if(do_diagnosis)
+  rstan::stan(file = "multilevel_dirichlet.stan",  data = data_multilevel, iter = 12000) %>%
+  write_rds("saved/10a_meta_pooled.rds")
+
+if(do_diagnosis)
+  lapply(1:length(data_events), function(s)
+    update_model(model, data = data_events[[s]], 
+                 data_type = "compact", iter = 4000)$posterior_distribution) %>%
+  write_rds("saved/10a_meta_unpooled.rds")
+
+pooled   <-  read_rds("saved/10a_meta_pooled.rds")
+unpooled <-  read_rds("saved/10a_meta_unpooled.rds")
+```
+
+
+
+```{r plotalphas, echo = FALSE}
+
+# Results
+
+# We use a custom summary function to summarize some results from these models and provide results in a graph and table.
+
+alphas <- rstan::extract(pooled, pars = "alpha")$alpha
+
+par(mfrow = c(1,3))
+    plot(alphas[,1], alphas[,2] )
+    plot(alphas[,3], alphas[,6] )
+    plot(alphas[,4], alphas[,5] )
+
+```
+
+```{r, include = FALSE}
+my_summary <- function(pooled, unpooled, truth){
+  
+  meta    <-  rstan::extract(pooled, pars = "alpha")$alpha
+  studies <-  rstan::extract(pooled, pars = "lambdas")$lambdas
+  
+  out1 <- data.frame(
+    analysis = c("Pooled", "Pooled", "Pooled"),
+    study = c("Meta", "Meta", "Meta"),
+    estimand = c("ATE", "Concentration", "Prob(X=1)"),
+    mean = c(
+      mean((meta[,5] - meta[,4])/(meta[,3] + meta[,4] + meta[,5] + meta[,6])),
+      mean((meta[,3] + meta[,4] + meta[,5] + meta[,6])),
+      mean((meta[,2])/(meta[,1] + meta[,2]))),
+   sd = c(
+      sd((meta[,5] - meta[,4])/(meta[,3] + meta[,4] + meta[,5] + meta[,6])),
+      sd((meta[,3] + meta[,4] + meta[,5] + meta[,6])),
+      sd((meta[,2])/(meta[,1] + meta[,2]))))
+  
+  my_sum <- function(df, s=1, label = NA)  
+    data.frame(
+               analysis = c(label, label),
+               study = c(paste(s),paste(s)),
+               estimand = c("ATE", "Prob(X=1)"),
+               mean =     c(mean(df[,5] - df[,4]), mean(df[,2])),
+               sd =       c(sd(df[,5] - df[,4]), sd(df[,2])))
+  
+  out2 <- lapply(1:dim(studies)[3], function(s) my_sum(studies[,,s], s, label = "Pooled"))
+  
+  out3 <- lapply(1:length(data_events), function(s) unpooled[[s]] %>% my_sum(s, "Unpooled"))
+
+  out4 <- data.frame(
+    analysis = rep("truth", nrow(truth$lambda_X)),
+    study = as.character(rep(1:nrow(truth$lambda_X), 2)),
+    estimand = rep(c("ATE", "Prob(X=1)"), each = nrow(truth$lambda_X)),
+    mean = c(truth$lambda_Y[,3] - truth$lambda_Y[,2], truth$lambda_X[,2]),
+    sd = NA)
+  
+  
+  bind_rows(list(out3, out2, out1, out4)) %>%
+    arrange(estimand)
+  }
+```
+
+In Figure \@ref(fig:plotalphas), we graph our posterior beliefs about the superpopulation parameters. We do this by plotting two alpha parameters against each other at a time. In the first panel, we plot the alphas for $X=0$ and $X=1$. In the next panel, we plot the alpha's corresponding to $c$ types against those corresponding to $d$ types. And in the third panel we plot the alpha's corresponding to $a$ types against those corresponding to $b$ types.
+
+As we can see, each distribution falls roughly along a diagonal. Probability mass located further up the diagonal represents worlds in which the superpopulation Dirichlet distribution of type shares is relatively low in variance. Thus, the more that our posterior beliefs are concentrated toward a graph's northeast corner, the lower the heterogeneity we believe there is in the relevant type shares across countries.   Meanwhile, the dispersion of probability mass *away* from the diagonal represents our *uncertainty* about the level of heterogeneity across countries.
+
+We can think of a concentration parameter here that is operationalized as the sum of the $\alpha^j$ terms for a node, $j$, with a higher value representing lower overall heterogeneity. 
+
+<!-- This would be 4 for a flat distribution ($(1,1,1,1)$ and should be a lot higher with this example.  -->
+
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE, fig.cap = "Estimates from individual analyses and from meta analysis", include = FALSE}
+results <- my_summary(pooled, unpooled, truth)  
+```
+
+```{r metaplot, echo = FALSE}
+results %>% filter(estimand == "ATE") %>%
+ggplot(aes(mean, study, color = analysis)) + geom_point()
+
+```
+
+In the Figure \@ref(fig:metaplot) we show a comparison of three $ATE$ estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from *all* countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.
+
 
 ## Combining observational and experimental data
 
