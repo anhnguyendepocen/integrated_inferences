@@ -153,9 +153,29 @@ A key idea in Bayesian meta-analysis is that when you analyze multiple studies t
 
 A classic setup is provided in GELMAN, which we have access to estimates of effects and uncertainty in eight sites (schools), $(b_j, se_j)_{j \in \{1,2,\dots,8\}}$. We assume that each $b_j$ is a draw from distribution $N(\beta_j, se_j)$ and that each  $\beta_j$ is a draw from distribution $N(\beta, \sigma)$. In that setup we want to learn not just about the superpopulation parameters  $\beta, \sigma$, but also about the study level effects $(\beta_j)_{j \in \{1,2,\dots,8\}}$.
 
-In a similar way here we define a model in which "setting" is a node. We observe an experiment that takes pace in setting 0 and in setting 1. We then conside the different conclusions we draw for the effect of $X$ on 
+<!-- AJ: Not clear to me that Gelman here is the right way to set up the analysis in this subsection. Doesn't Gelman's setup work more like our setup in the next section, with settings treated as being drawn stochastically from a common distribution at the superpop level? -->
 
-```{r, echo=FALSE}
+We define a model in which $X$ points into $Y$, and in which $Setting$ is a third node that also points into $Y$. Thus $Setting$ can potentially moderate the effect of $X$ on $Y$. We observe an experiment that takes place in $Setting$ 0 and also in $Setting$ 1. Note that, in this setup, any differences in the distribution of effects of $X$ on $Y$ between the two settings can *only* arise because of $Setting$. That is, we are here assuming the same causal effects across settings conditional on $Setting$ itself.
+
+We then consider the different conclusions we draw for the effect of $X$ on $Y$ in each setting, depending on whether we pool data across settings and on our priors over how much $Setting$ matters for $X$'s effects.
+
+We design the simulation so that in $X$'s true causal effect is stronger in $Setting$ 0 than in $Setting$ 1. We then generate data from these true parameters for each setting, 100 cases for each, and run the analysis in different ways, with results displayed in Table \@ref(settingmatters). In the first two rows, we show $ATE$ posteriors from separate analyses of the data for each setting. We see that we recover an $ATE$ that is higher in $Setting 0$ than in $Setting 1$, as expected.
+
+In the third row (Integrated flat priors), we use data from both settings to estimate an overall $ATE$. Moreover, we put equal weight on all possible $Y$ types, i.e., on all possible joint effects of $X$ and $Setting$, meaning that we provide substantial scope for $Setting$ to moderate $X$'s effects. As expected, the $ATE$ looking across both settings lies between the $ATE$ for each in the unpooled analyses. 
+
+<!-- AJ: Why is the ATE in "Integrated, flat priors" not more centered between the ATE in the first two rows? It's much lower than I'd have expected. Does allowing interactions pull the ATE down in some way? -->
+
+In rows 4 and 5, we then estimate the $ATE$ in each setting separately, again using flat priors that allow for substantial interactions with setting. Differently from the first two rows, however, we are using data from both settings in estimating effects for each setting. Consider what happens we estimate the $ATE$ for $Setting$ 0: we are using our posterior over $Y$'s nodal type shares to answer this query. Of course, data from $Setting$ 0 itself provides what we might think of as the most context-*specific* information about the causal effect in that particular setitng. But data from $Setting$ 1, where we also observe $X$ and $Y$ values, *also* provides information about those shares, and this additional information drawn from $Setting$ 1 is reflected in the integrated estimate for $Setting$ 0 -- and vice versa for the integrated $Setting$ 1 estimate. With the pooling of data, we see that the $ATE$ for each setting.... Also note that the standard deviation of the posterior has shrunk, reflecting the fact that we have brought more data to bear on the question.
+
+<!-- AJ: I don't know how to finish the above sentence because I don't get the lack of convergence -- the lower ATE for Setting 1. Especially since we *do* get the expected convergence with weak interactions priors. -->
+
+Finally, in the last three rows, we set priors such that the moderating effect of $Setting$ is believed to be weak. Here we see that the $ATE$'s for the two settings converge more strongly, reflecting the influence of our low-heterogeneity priors. Moreover, our uncertainty shrinks further here, reflecting the fact that -- if we believe that heterogeneity across settings is low -- then we also believe that data from one setting is *more* informative about the other setting: i.e., we get a bigger boost in statistical power from the pooling under these priors. 
+
+<!-- AJ: Why is the overall $ATE$ higher here than with flat priors? Must be that the interactions themselves depress the ATE. Less interaction then means higher ATE?? -->
+
+
+
+```{r settingmatters, echo=FALSE}
 
 
 if(do_diagnosis){
@@ -187,7 +207,7 @@ if(do_diagnosis){
                    using = c("priors", "posteriors"),
                    expand_grid = TRUE) 
     
-  q4_1 <- query_model(model_4, list(`Integrated (weak heterogeneity)` = te("X","Y")), 
+  q4_1 <- query_model(model_4, list(`Integrated (low heterogeneity)` = te("X","Y")), 
                    given = c(TRUE, "Setting==0", "Setting==1"), 
                    expand_grid = TRUE, using = "posteriors")
 
@@ -207,9 +227,9 @@ if(do_diagnosis){
   multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2)
 ```
 
-We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2. 
+<!-- We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2.  -->
 
-We can also update on the amount of heterogeneity. Here the estimand is the share of units that would respond differently to treatment if they were in a different setting. We see a dropin expectations of heterogeneitz in the analysis with flat priors, but a rise relative if we start thinking heterogeneity is unlikley.
+Further, we can use these same updated models to update specifically on the amount of heterogeneity across settings. We operationalize heterogeneity here as the share of units that *would* respond differently to $X$ if they were in a different setting. In Table XXXX, we compare our prior on this quantity to our posterior. Where we started out with flat priors --- allowing for a great deal of heterogeneity --- we see that the data bring these beliefs downward. This makes sense given that, under the true data-generating process, the effects in the two settings are only moderately different. Conversely, where we start with a very low prior on heterogeneity, the data lead us to believe there is *more* heterogeneity than we had initially believed (though, given the strength of the prior that we have used in this example, we can still see its formidable efect on the posterior).
 
 ```{r, echo = FALSE}
     multilevel[[4]] %>% kable(caption = "Interaction | Flat priors")
@@ -262,23 +282,28 @@ For instance, we might be studying the effect of an individual's relative locati
 
 Let's review how our analytic setup has worked so far. At each node in a causal model, we conceptualize a given case as have a particular nodal type. The case's nodal type is drawn from a distribution of nodal types in the population of cases from which this case has been drawn. When we do process tracing, we consider that population-level distribution to be a set of fixed shares of nodal types in the population: say, for node $Y$, we might believe that half the cases in the population are $\lambda^Y_{01}$, a quarter are $\lambda^Y_{00}$, and a quarter are $\lambda^Y_{11}$. We then use data from the case to update on the case's nodal types (or on the combination of nodal types that correspond to some case-level query), given the population-level shares. 
 
-When we engage in population-level inference, we begin with *uncertainty* about the population-level shares of types, and we express our prior beliefs about those shares as a Dirichlet *distribution*. So, for instance, our beliefs might be centered around a $\lambda^Y_{01}=0.5, \lambda^Y_{00}=0.25, \lambda^Y_{11}=0.25$ breakdown of shares in the population, but we also express some degree of uncertainty about what the breakdown is. Now, when we analyze data on some number of cases, we can update both on those cases' types *and* on our beliefs about the distribution of types in the population -- perhaps shifting toward a higher share of $\lambda^Y_{01}$'s (and with a change in the distribution's variance).
+When we engage in population-level inference, we begin with *uncertainty* about the population-level shares of types, and we express our prior beliefs about those shares as a Dirichlet *distribution*. So, for instance, our beliefs might be centered around a $\lambda^Y_{01}=0.5, \lambda^Y_{00}=0.25, \lambda^Y_{11}=0.25$ breakdown of shares in the population; and we also express some degree of uncertainty about what the breakdown is. Now, when we analyze data on some number of cases, we can update both on those cases' types and on our beliefs about the distribution of types in the population -- perhaps shifting toward a higher share of $\lambda^Y_{01}$'s (and with a change in the distribution's variance).
 
-When we build a hierarchical model, each case is understood as being embedded within a population: our cases might be citizens, say, each embedded within a country. However, we conceive of there being *multiple* populations -- say, multiple countries -- each drawn from a superpopulation. Thus, each population (country) has a set of Dirichlet parameters, describing that population's distribution of types, that are themselves drawn from a superpopulation *distribution* of Dirichlet parameters. Data on citizens within countries now allows us to update our beliefs about causal relationships for the particular citizens we observe, for the population of citizens within each country that we study, *and* for the superpopulation of countries, including those countries we do not directly observe. 
+When we build a hierarchical model, each case is understood as being embedded within a population: our cases might be citizens, say, each embedded within a country. However, we conceive of there being *multiple* populations -- say, multiple countries -- each drawn from a population of populations, or superpopulation. Now, we think of each population (country) as having its own set of type shares for each node. And we think of each country's type shares as being drawn from a Dirichlet distribution of type shares (for each node) that lives at the superpopulation level. Moreover, we are *uncertain* about what that distribution at the superpopulation level *is*. We uncertain around what type proportions the superpopulation-level distribution is centered, and we are uncertain about how dispersed this distribution is. While the distribution's central tendency will be related to the mean type shares for countries, its variance will determine the degree of *heterogeneity* across countries in their type shares. 
+
+To summarize, in population-level inference, we express uncertainty about the population's type shares with a Dirichlet prior, at the population level, on which we update. In the hierarchical setting, we are uncertain both about the population-level type shares and the superpopulation Dirichlet from which each node's type shares are drawn. We express our uncertainty about each superpopulation Dirichlet by positing a prior distribution over the Dirichlet's alpha parameters.
+
+Now, when we observe data on citizens within countries, we can update our beliefs about types fora the particular citizens we observe, about type shares in the population of citizens within each country that we study, *and* on the parameters of the Dirichlet distribution from which population shares have been drawn. In updating on the last of these, we are learning not just about the countries we observe but also about those we do not directly observe. 
 
 <!-- AJ: Check that all of the above is right! -->
 
 <!-- AJ: Need something here about how the approach to hierarchical models in Gelman et al is different from or related to how we're operationalizing them. -->
 
-We illustrate with a simple $X,Y$ model. We imagine that we are studying the $X \rightarrow Y$ relationship in `n` countries. Each country has a parameter distribution drawn from  common Dirichelets. We start off with flat priors over the alpha arguments of the Dirichlet. 
+We illustrate with a simulation using a simple $X,Y$ model. We imagine that we are studying the $X \rightarrow Y$ relationship in `n` countries. Each country has a parameter distribution drawn from  common Dirichelets. We start off with flat priors over the alpha arguments of the superpopulation Dirichlets. 
 
 <!-- AJ: I am confused by the statement that "Each country has a parameter distribution drawn from  common Dirichelets." I am generally struggling a bit with this bit still, and so may have this point wrong above. I am thinking: we have a set of alphas (Dirichlet parameters) for each *country* -- so we have a prior distribution of shares for each country. And the country-level alphas have been drawn from a common distribution of *alphas* at the superpop level. Is that right? Or is all the randomness at the superpop level, and we're now thinking of each country as having a specific set of shares, and our prior and posterior distributions are ONLY Dirichlet distributions at the superpop level? -->
 
 
 <!-- MH: No we do not have alphas for each country; each country does and always did have a specific set of shares. This was true before but we represented our prior uncertainty over the specific shares using the Dirichlet. We *still* are uncertain over the shares but now we beliefe there *is* a a Dirichlet distribution from which these are drwan (before the Dirichlet just represented our uncertainty; now it represents the actual data generation process); we just don;t know what the Dirichlet is so we are are uncertain over it (before we did know what the Diriclet is since that just meant we knew what our priors are; now we don;t know what it is because it represents the true dgp). Easiest to think through this focussed only on the distribution of a binary variable X. (a) For each person X is either 0 or 1. (b) in a study the distribution of X is given by p (prob X = 1); in a single country study we want to figure out what p is and we have a prior distribution over possible values of p, using a Beta distribution with parameters a,b.  (c) in a multicountry study we think that there is a different p is every country and we now imagine these are drawn from a beta distribution with parameters a,b; but we don;t know what a and b are. So we put priors over a and b (inverse gamma priors). -->
 
+<!-- AJ: OK, revised text accordingly. -->
 
-For the simulation, we assign a particular true set of superpopulation parameter values that is unknown and that we would like to recover. In this true world, the probability of assignment to $X=1$ is .4, and the average treatment effect is .1. Using these true parameter values, we simulate $X, Y$ data for $n=8$ countries.
+We assign a particular true set of superpopulation parameter values that, for the analytic exercise, is treated as unknown and that we would like to recover. In this true world, the probability of assignment to $X=1$ is .4, and the average treatment effect is .1. Using these true parameter values, we simulate $X, Y$ data for $n=8$ countries.
 
 ```{r, comment = "", include = FALSE}
 model   <- make_model("X->Y")
@@ -405,7 +430,7 @@ my_summary <- function(pooled, unpooled, truth){
 
 In Figure \@ref(fig:plotalphas), we graph our posterior beliefs about the superpopulation parameters. We do this by plotting two alpha parameters against each other at a time. In the first panel, we plot the alphas for $X=0$ and $X=1$. In the next panel, we plot the alpha's corresponding to $c$ types against those corresponding to $d$ types. And in the third panel we plot the alpha's corresponding to $a$ types against those corresponding to $b$ types.
 
-As we can see, each distribution falls roughly along a diagonal. Probability mass located further up the diagonal represents worlds in which the superpopulation Dirichlet distribution of type shares is relatively low in variance. Thus, the more that our posterior beliefs are concentrated toward a graph's northeast corner, the lower the heterogeneity we believe there is in the relevant type shares across countries.   Meanwhile, the dispersion of probability mass *away* from the diagonal represents our *uncertainty* about the level of heterogeneity across countries.
+As we can see, each distribution falls roughly along a diagonal. Probability mass located further up the diagonal represents worlds in which the superpopulation Dirichlet distribution of type shares is relatively low in variance. Thus, the more that our posterior beliefs are concentrated toward a graph's northeast corner, the lower the heterogeneity we have inferred there to be in the relevant type shares across countries. Meanwhile, the dispersion of probability mass *away* from the diagonal represents greater posterior *uncertainty* about the heterogeneity across countries, arising from greater variance about the posterior distribution of the alphas.
 
 We can think of a concentration parameter here that is operationalized as the sum of the $\alpha^j$ terms for a node, $j$, with a higher value representing lower overall heterogeneity. 
 
@@ -422,7 +447,7 @@ ggplot(aes(mean, study, color = analysis)) + geom_point()
 
 ```
 
-In the Figure \@ref(fig:metaplot) we show a comparison of three $ATE$ estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from *all* countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.
+In the Figure \@ref(fig:metaplot) we turn to the causal query of interest and show a comparison of three $ATE$ estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from *all* countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.
 
 
 ## Combining observational and experimental data
