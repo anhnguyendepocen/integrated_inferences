@@ -247,7 +247,7 @@ models <- list(
 gen_observed <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
   data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
     tidyr::uncount(ns) %>%
-    collapse_data(models$base_model, remove_family = TRUE)}
+    collapse_data(models$base_model, drop_family = TRUE)}
 
 # Givens
 observed <- list(
@@ -680,7 +680,7 @@ We now examine inferences given different data strategies:
 obs_fold <- function(n_fold) 
   data.frame(X = c(0,0,0,1,1,1), Y = c(0,0,1,0,1,1), K = NA) %>%
         slice(rep(row_number(), n_fold)) %>%
-        collapse_data(model, remove_family = TRUE)
+        collapse_data(model, drop_family = TRUE)
 
 
 wd <- function(n_fold=2, sims = 600)  {

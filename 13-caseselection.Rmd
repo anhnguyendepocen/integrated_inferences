@@ -145,7 +145,7 @@ model <- make_model("X->M->Y")  %>%
 
 # We imagine some preexisting data we have observed
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
-observed <-  collapse_data(data, model, remove_family = TRUE)
+observed <-  collapse_data(data, model, drop_family = TRUE)
 
 # We can then imagine what data we might observe if we examine M inside some subset of cases
 A_on_regression_line <- 
@@ -266,7 +266,7 @@ model <- make_model("X -> M -> Y")
 gen_observed_data <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
   data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
     tidyr::uncount(ns) %>%
-    collapse_data(model, remove_family = TRUE)}
+    collapse_data(model, drop_family = TRUE)}
 
 
 # Data strategies
@@ -520,7 +520,7 @@ models <- list(
 gen_observed_data <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
   data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
     tidyr::uncount(ns) %>%
-    collapse_data(models$base_model, remove_family = TRUE)}
+    collapse_data(models$base_model, drop_family = TRUE)}
 
 # observed_data
 observed_data <- list(
