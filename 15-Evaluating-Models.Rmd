@@ -166,7 +166,7 @@ Second, we may be lucky and run into computation issues. In this example there i
 <!-- AJ: Looked a little more - still nothing! Whence did you get a sense there might be something to this? -->
 
 
-### Bayesian $p$ value: Are the data unusual given your model?
+### Bayesian $p$ value: Are the data unexpected given your model?
 
 A third approach asks whether features of the data you observe are in some sense unusual given your model, or more unusual given your model than another model. For instance, if one model assumed no adverse effects of $X$ on $Y$ and no confounding, then a strong negative correlation between $X$ and $Y$ would be unusual, even for the model updated with this data; and this negative correlation would *more* unusual for this model than for a model that allowed for adverse effects.
 
@@ -262,9 +262,9 @@ hist(replicates_unrestricted$C, main = "X, Y covariance | weaker", xlim = xlimC,
 <!-- Check look package for rstan -->
 
 
-### Leave-one-out cross-validation
+### Leave-one-out (LOO) cross-validation
 
-A further class of model-validation methods involves cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict new data that have not yet been seen. One way to do this is to split the available data, using one subsample to update and then assessing predictions using the other subsample. We focus here, however, on approaches that uses the *all* of the available data to estimate out-of-sample predictive performance.
+A further class of model-validation methods involves cross-validation. Rather than asking how well the updated model predicts the data used to update it, cross-validation uses the data at hand to estimate how well the model is likely to predict new data that have not yet been seen. One way to do this is to split the available data, using one subsample to update and then assessing predictions using the other subsample. We focus here, however, on approaches that use *all* of the available data to estimate out-of-sample predictive performance.
 
 One such approach is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one and then ask how well the model performs in predicting the left-out observation. We repeat this for every data point in the dataset to assess how well we can predict the entire dataset. 
 
@@ -474,9 +474,11 @@ pimd_nonmon <-   read_rds("saved/ch15_pimd_nonmon_model.rds")
 
 ### Check assumptions of conditional independence
 
-Our model presupposes that $P$ and $I$ are independent and that $P$ and $M$ are independent. Note that the model is consistent with the possibility that, conditional on $D$, there is a correlation betwen $M$ and $P$ or between $I$ and $P$, as in these cases $D$ acts as a collider. 
+Our model presupposes that $P$ and $I$ are independent and that $P$ and $M$ are independent. Note that the model is consistent with the possibility that, conditional on $D$, there is a correlation betwen $M$ and $P$ or between $I$ and $P$, as $D$ acts as a collider for these pairs of nodes. 
 
-The relations in the first two rows of Table \@ref(tab:ch15cipimd) are  consistent with this assumption. 
+We check these assumptions through a set of simple regression models, displayed in \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in these two rows that the data pattern is consistent with our assumptions of unconditional independence for these two pairs of variables.
+
+In
 
 <!-- MH: Realize we actually have a big iussue here: we only have M,P data in cases with D = 1 so we are in fact condtiioining on D and so we do *not* expect independence  -->
 
@@ -504,11 +506,20 @@ rbind(
 
 ```
 
-We can dig a little deeper however. The model *also* implies that $P$ should be independent of $I$ given $M$, and of $M$ given $I$ since in each case $D$ blocks all paths between $P$ and $I$ or $M$. Here the evidence is more worrying. We see for example a relative strong relation between $P$ and $I$ when $M=1$ and between $P$ and $M$ when $I=0$. Substantively, at least in states with less inequality, mobilization is common in cases in which there is no international pressure ($P=0$), arising in 0 of 13 cases, but rare in cases in which there is pressure arising in just 1 of 5 cases. This puts pressure on our assumption that mobilization is not directly affected by (the absence of) international pressure.
+<!-- Should add columns saying for which two nodes the correlation is being assessed. -->
 
+We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$, and of $M$ given $I$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in the next 4 rows. In rows 3 and 4 of the table, we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is more troubling for our model, as we see a relative strong relation between $P$ and $I$ when $M=1$. Substantively, this implies that in cases where there is mobilization, pressure is more common where inequality is high than where inequality is low. While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization a collider for inequality and pressure. 
+
+Looking at rows 5 and 6, we see that there is a correlation between $P$ and $M$ when inequality is low. Substantively, in states with low inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization.
+
+<!-- Unclear what the case numbers above are referring to. For instance, I see 13 cases with I=0, P=0. But what's the 0?-->
+
+<!-- I am thinking we should now bring in models that relax the assumptions that appear not to hold in the CI analysis. For instance, introduce an arrow from $P$ to $M$. -->
 
 
 ### Bayesian $p$-value
+
+We turn next to 
 
 ```{r ch15pvalue_pimd, echo = FALSE}
 if(do_diagnosis){
@@ -540,8 +551,12 @@ hist(replicates_pimd$C, main = "I, M covariance | pimd", xlim = xlimC, xlab = "p
 ```
 
 <!-- AJ: Should we also calculate a p-value? -->
+AJ: And what about comparing multiple models?
 
-Turning to leave one out model assessment we now consider comparing the base model to a model in in which we drop the assumption of monotonicity of $M$ in $I$. This model has more parameters but is also more.
+
+### LOO validation
+
+Turning to "leave one out" model assessment, we now consider comparing the base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$ and instead put a low prior probability on negative $I \rightarrow M$ effects. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
 ```{r, echo = FALSE}
 # Leave one out
@@ -623,7 +638,7 @@ kable(ateid, caption = "Posteriors on the effect of I on D depending on whether 
 
 ```
 
-We now  consider case level analysis. For this we we  consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$ in comparison to the 0, 1/3,1/3,1/3 distribution. We show the results for the inferences given different findings in Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant). 
+We now consider case-level analysis. For this setup, we consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$ in comparison to the 0, 1/3,1/3,1/3 distribution. We show the results for the inferences given different findings in Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant). 
 
 
 
