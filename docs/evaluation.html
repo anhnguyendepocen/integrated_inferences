@@ -325,7 +325,7 @@
 <p>Imagine a situation in which researchers believe that the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> runs entirely through <span class="math inline">\(M\)</span>, positing a model of the form <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. Imagine, however, that the true causal process is one in which <span class="math inline">\(X\)</span> affects <span class="math inline">\(Y\)</span> <em>directly</em>; <span class="math inline">\(X\)</span> has no effect on <span class="math inline">\(M\)</span>, so that there is no indirect effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>; and <span class="math inline">\(M\)</span> never has a negative effect on <span class="math inline">\(Y\)</span>.</p>
 <p>The problem with the posited model, then, is that it represents overly strong beliefs about independence relations: it does not allow for a direct effect that is in fact operating.</p>
 <!-- AJ: "Restrictedness" seems a bit off here insofar as the "unrestricted" model is also restricted in essentially assuming no operative $X -> M$ arrow, as well as no negative direct effects.  -->
-<p>We are perfectly able to update using this too-strong <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model and the data — but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a “true” model with direct effects only and an average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of <span class="math inline">\(1/3\)</span>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> In the left panel of Figure <a href="#modelsch15"><strong>??</strong></a>, we show the estimated average treatment effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> when using these data to update the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model.</p>
+<p>We are perfectly able to update using this too-strong <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model and the data — but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a “true” model with direct effects only and an average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of <span class="math inline">\(1/3\)</span>.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> In the left panel of Figure <a href="#fig:modelsch15"><strong>??</strong></a>, we show the estimated average treatment effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> when using these data to update the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model.</p>
 <p>In the righthand panel of the figure, we show the inferences using the same data but a model that makes weaker assumptions by allowing for direct effects: a <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span> model. With both models, we start with flat priors over nodal types.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <p>We represent the true average effect with the vertical line in each graph.</p>
 <p>As we can see, the weaker (i.e., more permissive) model performs OK: the true effect falls well within the posterior predictive distribution on the ATE. However, the stronger model, which excludes direct effects, generates a posterior predictive distribution that essentially excludes the right answer. So, if we go into the analysis with the stronger model, we have a problem.</p>
@@ -399,7 +399,7 @@ Figure 16.1: A restricted model yields a credibility interval that does not cont
 <p>In fact, this approach is quite classical: we are looking to see whether we should “reject” our model in light of inconistent data.</p>
 <!-- AJ: But it can also be done in a comparative sense as we do below, right? Which is then not about "rejection", right? I've actually adjusted the text two paragraphs up to make the idea of comparison more prominent. This works?-->
 <p>An approach for doing this using simulated data from the posterior predictive distribution is described in <span class="citation">Gabry et al. (<a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>)</span>.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
-<p>We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution in the data compares to the predicted distribution from the updated model. Second, we look at the actual correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and see how this compares to the predicted distribution.</p>
+<p>We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution in the data compares to the predicted distribution from the updated model. Second, we look at the actual correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and see how this compares to the predicted distribution. In both cases we calculate a two sided <span class="math inline">\(p\)</span> value by assessing and doubling the mass on the more extreme side of the observed data. Thus indeed the observed data was at the mean of the distribution we would have a <span class="math inline">\(p\)</span> of 1. If it were at the 95th percentile we would have a <span class="math inline">\(p\)</span> of 0.10. (We note that in this straightforward calculation we assess the probability of the data given the same model that generated the data; approaches could also be used that seek out of sample estimates of teh probability of observing teh observed data).</p>
 <p>For the first test, we see that the predicted distribution of the outcome <span class="math inline">\(Y\)</span> is similar for both updated models; and the actual mean outcome is within the distribution of predicted mean outcomes. The two models are thus equally good at “learning” from the data about the observed distribution of the outcome.</p>
 <p>When it comes to the correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, however, the two models perform very differently. The posterior predictive distribution from the stronger model is centered around a <span class="math inline">\(0\)</span> correlation. Thus, from the perspective of the stronger model the strong <span class="math inline">\(X,Y\)</span> correlation in the data is unexpected. The updated weaker model, in contrast, predicts a strong correlation, and the observed correlation is comfortably within the posterior predictive distribution. A frequentist looking at the observed correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> should feel comfortable rejecting the stronger model.</p>
 <p>At first blush, the abysmal performance of the stronger model may seem paradoxical. Even after this model has <em>seen</em> the <span class="math inline">\(X,Y\)</span> correlations in the data, the model still finds those correlations highly surprising. What keeps the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model from learning, however, is the strength of the assumptions it contains. The problem is that <span class="math inline">\(M\)</span> is uncorrelated with <span class="math inline">\(X\)</span> in the true data-generating process, so the stronger model learns that there is no indirect effect. But, at the same time, this model does not <em>allow</em> for a direct effect. Despite what would seem to be overwhelming evidence of a systematic <span class="math inline">\(X,Y\)</span> correlation, a causal relationship connecting <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span> remains extremely unlikely given the <span class="math inline">\(X,M\)</span> data pattern and the impossibility of direct effects. The stronger model just can’t handle the truth. The weaker model, on the other hand, readily learns about the direct <span class="math inline">\(X \rightarrow Y\)</span> effect.</p>
@@ -535,6 +535,7 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <caption><span id="tab:ch15cipimd">Table 16.3: </span>Regression coefficients to assess conditional independence</caption>
 <thead>
 <tr class="header">
+<th align="left">Correlation</th>
 <th align="left">Given</th>
 <th align="right">estimate</th>
 <th align="right">std.error</th>
@@ -543,36 +544,42 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">P,I</td>
 <td align="left">-</td>
 <td align="right">0.151</td>
 <td align="right">0.155</td>
 <td align="right">0.337</td>
 </tr>
 <tr class="even">
+<td align="left">P,M</td>
 <td align="left">-</td>
 <td align="right">-0.175</td>
 <td align="right">0.164</td>
 <td align="right">0.292</td>
 </tr>
 <tr class="odd">
+<td align="left">P,I</td>
 <td align="left">M = 0</td>
 <td align="right">-0.071</td>
 <td align="right">0.277</td>
 <td align="right">0.800</td>
 </tr>
 <tr class="even">
+<td align="left">P,I</td>
 <td align="left">M = 1</td>
 <td align="right">0.329</td>
 <td align="right">0.170</td>
 <td align="right">0.066</td>
 </tr>
 <tr class="odd">
+<td align="left">P,M</td>
 <td align="left">I = 0</td>
 <td align="right">-0.400</td>
 <td align="right">0.214</td>
 <td align="right">0.080</td>
 </tr>
 <tr class="even">
+<td align="left">P,M</td>
 <td align="left">I = 1</td>
 <td align="right">0.000</td>
 <td align="right">0.244</td>
@@ -599,7 +606,7 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <p><img src="ii_files/figure-html/loo_pimdplots-1.png" width="672" /><img src="ii_files/figure-html/loo_pimdplots-2.png" width="672" /><img src="ii_files/figure-html/loo_pimdplots-3.png" width="672" />
 <!-- AJ: Getting error for LOO plots -- can't find plot_loo function. --></p>
 <p>In Figures @ref(loo_pimdplots), we show the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes (<span class="math inline">\(I, P, M\)</span> and <span class="math inline">\(D\)</span>). In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.</p>
-<p>More formally, we calculate the LOO likelihood for each model as <code>formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)</code> for the model with monontonicity assumptions throughout, <code>formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)</code> for the model that relaxes the montonocity assumption for <span class="math inline">\(I \rightarrow M\)</span>, and <code>formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)</code> for the model with no monontonicity assumptions at all. In other words, we see that the most restrictive model performs best, by about an order of magnitude, followed by the least restrictive model, and then the moderately restrictive one.</p>
+<p>More formally, we calculate the LOO likelihood for each model as 1.02e-73 for the model with monotonicity assumptions throughout, 1.98e-74 for the model that relaxes the monotonicity assumption for <span class="math inline">\(I \rightarrow M\)</span>, and 7.06e-74 for the model with no monotonicity assumptions at all. In other words, we see that the most restrictive model performs best, by about an order of magnitude, followed by the least restrictive model, and then the moderately restrictive one.</p>
 </div>
 <div id="sensitivity-to-priors" class="section level3">
 <h3><span class="header-section-number">16.2.4</span> Sensitivity to priors</h3>
