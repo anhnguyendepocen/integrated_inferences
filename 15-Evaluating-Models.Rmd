@@ -206,14 +206,19 @@ if(do_diagnosis){
   
   }
 
-replicates_restricted <-   read_rds("saved/ch15_replicates_restricted.rds") 
+replicates_restricted   <-   read_rds("saved/ch15_replicates_restricted.rds") 
 replicates_unrestricted <-   read_rds("saved/ch15_replicates_unrestricted.rds") 
 
 par(mfrow = c(2,2))
 xlimY <- range(c(replicates_restricted$Y, replicates_unrestricted$Y))
 xlimC <- range(c(replicates_restricted$C, replicates_unrestricted$C))
 
-hist(replicates_restricted$Y, main = "Y mean | stronger", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+## FLAG: ADD p values to others graphs
+
+hist(replicates_restricted$Y, 
+     main = paste("Y mean | stronger: p = ", round(mean(replicates_restricted$Y > mean(data$Y)),2)),
+                  xlim = xlimY, xlab = "predictions") 
+     abline(v = mean(data$Y), col = "red")
 hist(replicates_restricted$C, main = "X, Y covariance | stronger", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
 hist(replicates_unrestricted$Y, main = "Y mean | weaker", xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
 hist(replicates_unrestricted$C, main = "X, Y covariance | weaker", xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
