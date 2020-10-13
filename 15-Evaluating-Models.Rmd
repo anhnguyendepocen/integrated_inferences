@@ -584,10 +584,16 @@ p_temp <- p_two_sided(replicates_pimd$D, mean(data$D))
 hist(replicates_pimd$D, main = paste("D mean | pimd: p= ", p_temp)
      , xlim = xlimD, xlab = "predictions"); abline(v = mean(data$D), col = "red")
 
-p_temp <- p_two_sided(replicates_pimd$C, cor(data$M, data$I))
-hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp) 
+p_two_sided <- function(Y, y, digits = 2){
+  if(y <  mean(Y)) return(round(2* mean(y > Y), digits))
+  if(y >= mean(Y)) return(round(2* mean(y <= Y), digits))
+}
+
+p_temp2 <- p_two_sided(replicates_pimd$C, cor(data$M, data$I))
+hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$M, data$I, use = "complete.obs"), col = "blue")
 
+#Some problem with p_temp2 line above. cor(data$M, data$I) returns NA.  Because of missing values??
 
 # FLAG: WOULD LIKE THIS DONE WITH GGPLOT
 ```
