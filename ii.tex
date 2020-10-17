@@ -628,7 +628,7 @@ The chapters to come operate in a non-parametric vein, with \(U\) terms as recep
 \item
   \textbf{Binary nodes with 2 binary parents}: \(\theta^M\) will take on a possible 16 values of the form \(\theta^M_{hijk}\) (\(\theta^M_{0000}\), \(\theta^M_{0001}\), etc.).
 \item
-  \textbf{Binary nodes with \(n\) binary parents} have \(2^\left(2^n\right)\) subscripts.
+  \textbf{Binary nodes with \(n\) binary parents} have \(2^{\left(2^n\right)}\) subscripts.
 \end{itemize}
 
 For analytic applications later in the book, we will want to be able to think both about the causal type operation at a particular \emph{node} and about \emph{collections} of causal types across a model. We thus refer to \(\theta^J\) as a unit's \emph{nodal} causal type, or simply nodal type, for \(J\).\footnote{The types here map directly into the four types, \(a\), \(b\), \(c\), \(d\), used in \citet{humphreys2015mixing} and into principal strata employed by Rubin and others. The literature on probabilistic models also refers to such strata as ``canonical partitions'' or ``equivalence classes.'' Note that this model is not completely general as the multinomial distribution assumes that errors are iid.} We refer to the collection of nodal types across all nodes for a given unit (i.e., a case) as the case's \emph{unit causal type}, or simply \emph{causal type}, denoted by \(\theta\). Since the nodal types of exogenous include values of exogenous nodes, then the unit's causal type fully specifies all node values as well as all \emph{counterfactual} node values for a unit.
@@ -5867,7 +5867,7 @@ FLAG: Relax qualitative restrictions
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-We provide three examples of situations in which, by combining models, researchers learn more than they could from any single model.
+We provide four examples of situations in which, by combining models, researchers learn more than they could from any single model.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -5883,9 +5883,11 @@ In this chapter, we examine how we can use structural causal models to integrate
   \textbf{Integrating between experimental and observational studies} One form of multi-method research that has become increasingly common is the use of both observational and experimental methods to study the same basic causal relationships. While an experiment can offer causal identification in a usually local or highly controlled setting, an observational analysis can often shed light on how the same relationships operate ``in the wild,'' if with greater risk of confounding. Usually, observational and experimental results are presented in parallel, as separate sources of support for a causal claim. We show how, in a causal model setup, we can use experimental and observational data \emph{jointly} to address questions that cannot be answered when the designs are considered separately.
 \item
   \textbf{Transporting knowledge across contexts} Researchers are sometimes in a situation in which they can identify causal quantities in a particular setting --- say, from a randomized controlled trial implemented in a specific local context --- but want to know how those inferences travel to other settings. Would the intervention work differently in other countries or regions? As we will explain, with an appropriately specified causal model and the right data from the original context, we can draw inferences about causal relationships in other contexts.
+\item
+  \textbf{Models in hierarchies.} Sometimes researchers learn about the same types of processes in different settings. By thinking of the processes in each setting as deriving from a family of processes, researchers can learn from observations in one setting about causal processes in another and also learn about the nature of heterogeneity between settings.
 \end{enumerate}
 
-Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that setting-, or study-, specific causal model can be nested within a lower level, ``encompssing,'' model that operates across the multiple settings that we are learning from and want to draw inferences about. Encompassing models, of course, can specifically take heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences.
+Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that setting-, or study-, specific causal model can be nested within a lower level, ``encompassing,'' model that operates across the multiple settings that we are learning from and want to draw inferences about. Encompassing models, of course, can specifically take heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences.
 
 Put differently, and perhaps more positively, we see social scientists commonly seeking to transport knowledge or combine information informally across studies and settings. Often such efforts are motivated, sometimes implicitly, by an interest in or reliance on general theoretical propositions. The approaches that we describe below force the researcher to be \emph{explicit} about the underlying causal beliefs that warrant that integration while also ensuring that the integration proceeds in a way that is logically consistent with stated beliefs.
 
@@ -6039,7 +6041,7 @@ We begin by analyzing just the observational data (cases where \(R=0\)) and disp
 \hline
   & Estimate & Std. Error & t value & Pr(>|t|) & CI Lower & CI Upper & DF\\
 \hline
-X & 0.845 & 0.024 & 35.04 & 0 & 0.798 & 0.893 & 225\\
+X & 0.814 & 0.028 & 28.59 & 0 & 0.758 & 0.87 & 187\\
 \hline
 \end{tabular}
 \end{table}
@@ -6227,89 +6229,14 @@ CATE & Case==1 & parameters & 0.812 & \\
 
 A key idea in Bayesian meta-analysis is that when you analyze multiple studies together you learn not only about common processes that give rise to the different results seen in different sites, but you also learn more about each study from seeing the other studies.
 
-A classic setup is provided in GELMAN, which we have access to estimates of effects and uncertainty in eight sites (schools), \((b_j, se_j)_{j \in \{1,2,\dots,8\}}\). We assume that each \(b_j\) is a draw from distribution \(N(\beta_j, se_j)\) and that each \(\beta_j\) is a draw from distribution \(N(\beta, \sigma)\). In that setup we want to learn not just about the superpopulation parameters \(\beta, \sigma\), but also about the study level effects \((\beta_j)_{j \in \{1,2,\dots,8\}}\).
+A classic setup is provided in \citet{gelman2013bayesian}, in which we have access to estimates of effects and uncertainty in eight sites (schools), \((b_j, se_j)_{j \in \{1,2,\dots,8\}}\). To integrate learning across these studies we employ a ``hierarchical model''
+that treats each \(b_j\) as a draw from distribution \(N(\beta_j, se_j)\) (and, in turn treats each \(\beta_j\) is a draw from distribution \(N(\beta, \sigma)\)). In that setup we want to learn about the superpopulation parameters \(\beta, \sigma\), but we also get to learn more about the study level effects \((\beta_j)_{j \in \{1,2,\dots,8\}}\) by studying them jointly.
 
-We define a model in which \(X\) points into \(Y\), and in which \(Setting\) is a third node that also points into \(Y\). Thus \(Setting\) can potentially moderate the effect of \(X\) on \(Y\). We observe an experiment that takes place in \(Setting\) 0 and also in \(Setting\) 1. Note that, in this setup, any differences in the distribution of effects of \(X\) on \(Y\) between the two settings can \emph{only} arise because of \(Setting\). That is, we are here assuming the same causal effects across settings conditional on \(Setting\) itself.
+A hierarchical model like this allows us to think about the populations in our study sites as themselves drawn from a larger population (``superpopulation'') of settings. And, crucially, it allows us in turn to use data in the study sites to learn about that broader superpopulation of settings.
 
-We then consider the different conclusions we draw for the effect of \(X\) on \(Y\) in each setting, depending on whether we pool data across settings and on our priors over how much \(Setting\) matters for \(X\)'s effects.
+Although often used in the context of linear models with parameters for average causal effects, this logic works just as well with the kinds of causal models we have been using in this book.
 
-We design the simulation so that in \(X\)'s true causal effect is stronger in \(Setting\) 0 than in \(Setting\) 1. We then generate data from these true parameters for each setting, 100 cases for each, and run the analysis in different ways, with results displayed in Table \ref{settingmatters}. In the first two rows, we show \(ATE\) posteriors from separate analyses of the data for each setting. We see that we recover an \(ATE\) that is higher in \(Setting 0\) than in \(Setting 1\), as expected.
-
-In the third row (Integrated flat priors), we use data from both settings to estimate an overall \(ATE\). Moreover, we put equal weight on all possible \(Y\) types, i.e., on all possible joint effects of \(X\) and \(Setting\), meaning that we provide substantial scope for \(Setting\) to moderate \(X\)'s effects. As expected, the \(ATE\) looking across both settings lies between the \(ATE\) for each in the unpooled analyses.
-
-In rows 4 and 5, we then estimate the \(ATE\) in each setting separately, again using flat priors that allow for substantial interactions with setting. Differently from the first two rows, however, we are using data from both settings in estimating effects for each setting. Consider what happens we estimate the \(ATE\) for \(Setting\) 0: we are using our posterior over \(Y\)'s nodal type shares to answer this query. Of course, data from \(Setting\) 0 itself provides what we might think of as the most context-\emph{specific} information about the causal effect in that particular setitng. But data from \(Setting\) 1, where we also observe \(X\) and \(Y\) values, \emph{also} provides information about those shares, and this additional information drawn from \(Setting\) 1 is reflected in the integrated estimate for \(Setting\) 0 -- and vice versa for the integrated \(Setting\) 1 estimate. With the pooling of data, we see that the \(ATE\) for each setting\ldots. Also note that the standard deviation of the posterior has shrunk, reflecting the fact that we have brought more data to bear on the question.
-
-Finally, in the last three rows, we set priors such that the moderating effect of \(Setting\) is believed to be weak. Here we see that the \(ATE\)'s for the two settings converge more strongly, reflecting the influence of our low-heterogeneity priors. Moreover, our uncertainty shrinks further here, reflecting the fact that -- if we believe that heterogeneity across settings is low -- then we also believe that data from one setting is \emph{more} informative about the other setting: i.e., we get a bigger boost in statistical power from the pooling under these priors.
-
-\begin{table}
-
-\caption{\label{tab:settingmatters}Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies}
-\centering
-\begin{tabular}[t]{l|l|l|r|r}
-\hline
-Query & Given & Using & mean & sd\\
-\hline
-Setting 0 & - & posteriors & 0.43 & 0.09\\
-\hline
-Setting 1 & - & posteriors & 0.20 & 0.10\\
-\hline
-Integrated (flat priors) & - & posteriors & 0.26 & 0.06\\
-\hline
-Integrated (flat priors) & Setting==0 & posteriors & 0.36 & 0.08\\
-\hline
-Integrated (flat priors) & Setting==1 & posteriors & 0.17 & 0.09\\
-\hline
-Integrated (weak heterogeneity) & - & posteriors & 0.29 & 0.06\\
-\hline
-Integrated (weak heterogeneity) & Setting==0 & posteriors & 0.32 & 0.07\\
-\hline
-Integrated (weak heterogeneity) & Setting==1 & posteriors & 0.26 & 0.08\\
-\hline
-\end{tabular}
-\end{table}
-
-Further, we can use these same updated models to update specifically on the amount of heterogeneity across settings. We operationalize heterogeneity here as the share of units that \emph{would} respond differently to \(X\) if they were in a different setting. In Table XXXX, we compare our prior on this quantity to our posterior. Where we started out with flat priors --- allowing for a great deal of heterogeneity --- we see that the data bring these beliefs downward. This makes sense given that, under the true data-generating process, the effects in the two settings are only moderately different. Conversely, where we start with a very low prior on heterogeneity, the data lead us to believe there is \emph{more} heterogeneity than we had initially believed (though, given the strength of the prior that we have used in this example, we can still see its formidable efect on the posterior).
-
-\begin{table}
-
-\caption{\label{tab:unnamed-chunk-11}Interaction | Flat priors}
-\centering
-\begin{tabular}[t]{l|l|l|r|r}
-\hline
-Query & Given & Using & mean & sd\\
-\hline
-Q 1 & - & priors & 0.628 & 0.119\\
-\hline
-Q 1 & - & posteriors & 0.588 & 0.122\\
-\hline
-\end{tabular}
-\end{table}
-
-\begin{table}
-
-\caption{\label{tab:unnamed-chunk-11}Interaction | Expected homogeneity}
-\centering
-\begin{tabular}[t]{l|l|l|r|r}
-\hline
-Query & Given & Using & mean & sd\\
-\hline
-Q 1 & - & priors & 0.077 & 0.072\\
-\hline
-Q 1 & - & posteriors & 0.087 & 0.074\\
-\hline
-\end{tabular}
-\end{table}
-
-\hypertarget{real-multilevel}{%
-\section{Real multilevel}\label{real-multilevel}}
-
-In the situations we have considered so far, we are learning from and about the particular contexts that we are studying. We are combining experimental data from one setting, for instance, with observational data from another. Or we are using updating from one context to draw an inference about another setting. Our inferences in these setups are limited strictly to the settings at hand, however.
-
-We can take a step further by building a hierarchical model. A hierarchical model allows us to think about the populations in our study sites as themselves drawn from a larger population (``superpopulation'') of settings. And, crucially, it allows us in turn to use data in the study sites to learn about that broader superpopulation of settings.
-
-For instance, we might be studying the effect of an individual's relative location in the income scale on their preferences for democracy. We might collect data in a set of 10 countries and estimate the average causal effect of relative income in each of them. We can readily average inferences across these countries or study country-level moderators of the effect to explain differences in effects across the 10 countries. Yet these data from the 10 countries also contain information of a more general sort: they tell us something about the ``superpopulation'' of settings from which these 10 countries have been ``drawn.''
-
-Let's review how our analytic setup has worked so far. At each node in a causal model, we conceptualize a given case as have a particular nodal type. The case's nodal type is drawn from a distribution of nodal types in the population of cases from which this case has been drawn. When we do process tracing, we consider that population-level distribution to be a set of fixed shares of nodal types in the population: say, for node \(Y\), we might believe that half the cases in the population are \(\lambda^Y_{01}\), a quarter are \(\lambda^Y_{00}\), and a quarter are \(\lambda^Y_{11}\). We then use data from the case to update on the case's nodal types (or on the combination of nodal types that correspond to some case-level query), given the population-level shares.
+Let's review how our analytic setup has worked so far. At each node in a causal model, we conceptualize a given case as having a particular nodal type. The case's nodal type is drawn from a distribution of nodal types in the population of cases from which this case has been drawn. When we do process tracing, we consider that population-level distribution to be a set of fixed shares of nodal types in the population: say, for node \(Y\), we might believe that half the cases in the population are \(\lambda^Y_{01}\), a quarter are \(\lambda^Y_{00}\), and a quarter are \(\lambda^Y_{11}\). We then use data from the case to update on the case's nodal types (or on the combination of nodal types that correspond to some case-level query), given the population-level shares.
 
 When we engage in population-level inference, we begin with \emph{uncertainty} about the population-level shares of types, and we express our prior beliefs about those shares as a Dirichlet \emph{distribution}. So, for instance, our beliefs might be centered around a \(\lambda^Y_{01}=0.5, \lambda^Y_{00}=0.25, \lambda^Y_{11}=0.25\) breakdown of shares in the population; and we also express some degree of uncertainty about what the breakdown is. Now, when we analyze data on some number of cases, we can update both on those cases' types and on our beliefs about the distribution of types in the population -- perhaps shifting toward a higher share of \(\lambda^Y_{01}\)'s (and with a change in the distribution's variance).
 
@@ -6325,7 +6252,11 @@ We illustrate with a simulation using a simple \(X,Y\) model. We imagine that we
 
 We assign a particular true set of superpopulation parameter values that, for the analytic exercise, is treated as unknown and that we would like to recover. In this true world, the probability of assignment to \(X=1\) is .4, and the average treatment effect is .1. Using these true parameter values, we simulate \(X, Y\) data for \(n=8\) countries.
 
+\begin{figure}
+\centering
 \includegraphics{ii_files/figure-latex/plotalphas-1.pdf}
+\caption{\label{fig:plotalphas}Joint distributions over alpha parameters.}
+\end{figure}
 
 In Figure \ref{fig:plotalphas}, we graph our posterior beliefs about the superpopulation parameters. We do this by plotting two alpha parameters against each other at a time. In the first panel, we plot the alphas for \(X=0\) and \(X=1\). In the next panel, we plot the alpha's corresponding to \(c\) types against those corresponding to \(d\) types. And in the third panel we plot the alpha's corresponding to \(a\) types against those corresponding to \(b\) types.
 
@@ -6333,9 +6264,13 @@ As we can see, each distribution falls roughly along a diagonal. Probability mas
 
 We can think of a concentration parameter here that is operationalized as the sum of the \(\alpha^j\) terms for a node, \(j\), with a higher value representing lower overall heterogeneity.
 
+\begin{figure}
+\centering
 \includegraphics{ii_files/figure-latex/metaplot-1.pdf}
+\caption{\label{fig:metaplot}Updating on study level parameters from integrated analyses.}
+\end{figure}
 
-In the Figure \ref{fig:metaplot} we turn to the causal query of interest and show a comparison of three \(ATE\) estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from \emph{all} countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.
+In Figure \ref{fig:metaplot} we turn to the causal query of interest and show a comparison of three \(ATE\) estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from \emph{all} countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.
 
 \hypertarget{part-design-choices}{%
 \part{Design Choices}\label{part-design-choices}}
@@ -6568,9 +6503,9 @@ event & strategy & count\\
 \hline
 X0Y0 & XY & 9\\
 \hline
-X1Y0 & XY & 1\\
+X1Y0 & XY & 0\\
 \hline
-X0Y1 & XY & 0\\
+X0Y1 & XY & 1\\
 \hline
 X1Y1 & XY & 0\\
 \hline
@@ -6587,7 +6522,7 @@ We can look at sample estimands using \texttt{draw\_estimands}:
 \hline
 estimand\_label & estimand\\
 \hline
-PC & 0.657\\
+PC & 0.697\\
 \hline
 \end{tabular}
 \end{table}
@@ -6602,7 +6537,7 @@ We can look at sample estimates using \texttt{draw\_estimates}:
 \hline
 estimand\_label & Given & Using & estimate & sd & estimator\_label\\
 \hline
-PC & - & posteriors & 0.671 & 0.195 & est\_PC\\
+PC & - & posteriors & 0.336 & 0.246 & est\_PC\\
 \hline
 \end{tabular}
 \end{table}
@@ -7687,11 +7622,11 @@ We see that prior beliefs are for a 0 average effect which rises to approximatel
 \hline
 Query & Given & Using & mean & sd\\
 \hline
-ATE & - & priors & 0.004 & 0.339\\
+ATE & - & priors & 0.000 & 0.340\\
 \hline
-ATE & K==1 & priors & 0.497 & 0.223\\
+ATE & K==1 & priors & 0.494 & 0.223\\
 \hline
-ATE & K==0 & priors & -0.496 & 0.222\\
+ATE & K==0 & priors & -0.502 & 0.223\\
 \hline
 \end{tabular}
 
@@ -7701,11 +7636,11 @@ We see little difference in the prior on estimands. Despite this an important di
 \hline
 Query & Given & Using & mean & sd\\
 \hline
-ATE & - & priors & -0.001 & 0.345\\
+ATE & - & priors & 0.006 & 0.344\\
 \hline
-ATE & K==1 & priors & 0.499 & 0.222\\
+ATE & K==1 & priors & 0.501 & 0.223\\
 \hline
-ATE & K==0 & priors & -0.502 & 0.225\\
+ATE & K==0 & priors & -0.501 & 0.223\\
 \hline
 \end{tabular}
 
@@ -8364,7 +8299,7 @@ Results:
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-21}Doubly decisive test}
+\caption{\label{tab:unnamed-chunk-19}Doubly decisive test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8381,7 +8316,7 @@ Q 1 & K==1 & posteriors & 0.976 & 0.008\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-21}Hoop test}
+\caption{\label{tab:unnamed-chunk-19}Hoop test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8398,7 +8333,7 @@ Q 1 & K==1 & posteriors & 0.494 & 0.023\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-21}Smoking gun test}
+\caption{\label{tab:unnamed-chunk-19}Smoking gun test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8415,7 +8350,7 @@ Q 1 & K==1 & posteriors & 0.900 & 0.037\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-21}Straw in the wind test}
+\caption{\label{tab:unnamed-chunk-19}Straw in the wind test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8470,7 +8405,7 @@ We now share a more negative result. Say you had access to large amounts of obse
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-22}Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$}
+\caption{\label{tab:unnamed-chunk-20}Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8770,7 +8705,7 @@ Throughout this book we have maintained the conceit that you believe your model.
 \hypertarget{five-strategies}{%
 \section{Five Strategies}\label{five-strategies}}
 
-Sometimes a model is just a poor representation of the underlying causal processes.
+Sometimes a model is just a poor representation of underlying causal processes. Fortunately it can sometimes be possible to figure out your model is sending you in the wrong direction. We describe five strategies.
 
 Imagine a situation in which researchers believe that the effect of \(X\) on \(Y\) runs entirely through \(M\), positing a model of the form \(X \rightarrow M \rightarrow Y\). Imagine, however, that the true causal process is one in which \(X\) affects \(Y\) \emph{directly}; \(X\) has no effect on \(M\), so that there is no indirect effect of \(X\) on \(Y\); and \(M\) never has a negative effect on \(Y\).
 
@@ -8807,7 +8742,7 @@ Note that this form of diagnostic test is a classical one in the frequentist sen
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-23}Regression coefficient on $X$ given $M=0$ and $M=1$}
+\caption{\label{tab:unnamed-chunk-21}Regression coefficient on $X$ given $M=0$ and $M=1$}
 \centering
 \begin{tabular}[t]{r|r|r|r}
 \hline
@@ -8861,7 +8796,7 @@ One such approach is the ``leave-one-out'' (LOO) algorithm. In a LOO approach, w
 
 Often, the LOO approach is used to predict a particular outcome variable. In a \CausalQuery~framework, however, we are interested in predictions over the joint realization of all nodes, not just a single ``outcome.'' Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations.
 
-\includegraphics{ii_files/figure-latex/unnamed-chunk-24-1.pdf} \includegraphics{ii_files/figure-latex/unnamed-chunk-24-2.pdf}
+\includegraphics{ii_files/figure-latex/unnamed-chunk-22-1.pdf} \includegraphics{ii_files/figure-latex/unnamed-chunk-22-2.pdf}
 
 The LOO estimate of out-of-sample predictive fit, for a dataset with \(n\) observations, is then:
 
@@ -8879,7 +8814,7 @@ In Figure XXXX, we then see how the likelihoods of each data type line up with t
 
 We can also turn the tables and imagine that the \emph{stronger} model represents the true data-generating process. We implement LOO cross-validation of the two models using 200 data points generated from the stronger model. In Figure XXXX, we see a comparison of the likelihoods of the data types under the two updated models and note that they are extremely similar. This represents an important asymmetry: the model that makes weaker assumptions performs far better in handling data generated by a ``stronger'' true model than does the stronger model in learning about a process that violates one of its assumptions. Since the weaker model allows for both direct and indirect effects, the weaker \emph{can} learn about the parameters of the true process in the first situation; but the strong model cannot do so in the second situation because it has by assumption ruled out a key feature of that process (the direct effect).
 
-\includegraphics{ii_files/figure-latex/unnamed-chunk-25-1.pdf}
+\includegraphics{ii_files/figure-latex/unnamed-chunk-23-1.pdf}
 
 BETTER: PLOT CASES ON BOTTOM AND TWO LIKELIHOODS AS POINTS; HAVE TYPES AS LABELS X AI IF POSSIBLE
 
@@ -8907,7 +8842,7 @@ Our inferences when \(M=0\), on the other hand, do depend on \(\lambda^Y_{10}\):
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-26}Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\lambda^Y_{10}$}
+\caption{\label{tab:unnamed-chunk-24}Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\lambda^Y_{10}$}
 \centering
 \begin{tabular}[t]{r|r|r|r}
 \hline
