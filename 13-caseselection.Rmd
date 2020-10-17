@@ -145,12 +145,16 @@ model <- make_model("X->M->Y")  %>%
 
 # We imagine some preexisting data we have observed
 data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
-observed <-  collapse_data(data, model, remove_family = TRUE)
+observed <-  collapse_data(data, model, drop_family = TRUE)
 
 # We can then imagine what data we might observe if we examine M inside some subset of cases
 A_on_regression_line <- 
-  make_possible_data(model, observed = observed, vars = "M", N = c(1,1), 
-                     condition = c("X==1 & Y==1", "X==0 & Y==0"), prefix = "A")
+  make_possible_data(
+    model, 
+    observed = observed, vars = "M", 
+    N = c(1,1), 
+    condition = c("X==1 & Y==1", "X==0 & Y==0"), 
+    prefix = "A")
 names(A_on_regression_line)[-c(1:2)] <- c("A1", "A2", "A3", "A4")
 
 B_off_regression_line <- 
@@ -196,7 +200,7 @@ For each of these possible strategies we can assess the posterior that we would 
 
 if(do_diagnosis){
   
- if(!exists("fit")) fit  <- fitted_model()
+ if(!exists("fit")) fit  <- update_model(make_model("X->Y"), keep_fit = TRUE)
  
  strategies <- 
    list(A_on_regression_line, B_off_regression_line, C_X1Y1_only)
@@ -266,7 +270,7 @@ model <- make_model("X -> M -> Y")
 gen_observed_data <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
   data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
     tidyr::uncount(ns) %>%
-    collapse_data(model, remove_family = TRUE)}
+    collapse_data(model, drop_family = TRUE)}
 
 
 # Data strategies
@@ -287,7 +291,7 @@ data_strats <- function(N = 4) {
 
 # Queries
 
-if(!exists("fit")) fit <- fitted_model()
+# if(!exists("fit")) fit <- fitted_model()
 
 # Diagnosis function 
 
@@ -520,7 +524,7 @@ models <- list(
 gen_observed_data <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
   data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
     tidyr::uncount(ns) %>%
-    collapse_data(models$base_model, remove_family = TRUE)}
+    collapse_data(models$base_model, drop_family = TRUE)}
 
 # observed_data
 observed_data <- list(
@@ -575,7 +579,7 @@ subsets <- list(TRUE, "X==1 & Y==1", "X==1 & Y==1")
 
 # Diagnosis function 
 
-fit <- fitted_model()
+# fit <- fitted_model()
 
 case_selection_diagnose <- function(model, given,  N, sims = 4000, fit, ...)
   

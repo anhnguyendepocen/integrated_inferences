@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 16 Evaluating models | Integrated Inferences</title>
   <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
-  <meta name="generator" content="bookdown 0.19 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 16 Evaluating models | Integrated Inferences" />
   <meta property="og:type" content="book" />
@@ -53,7 +53,7 @@
 
 
 
-<link rel="stylesheet" href="headers\style.css" type="text/css" />
+<link rel="stylesheet" href="headers/style.css" type="text/css" />
 </head>
 
 <body>
@@ -291,7 +291,7 @@
 <li class="chapter" data-level="17.4" data-path="final-words.html"><a href="final-words.html#a-world-of-models-practical-steps-forward-for-collective-cumulation"><i class="fa fa-check"></i><b>17.4</b> A world of models: Practical steps forward for collective cumulation</a></li>
 </ul></li>
 <li class="part"><span><b>V Appendices</b></span></li>
-<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>gbiqq</code></a></li>
+<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/macartan/gbiqq/" target="blank">Uses gbiqq</a></li>
@@ -399,9 +399,11 @@ Figure 16.1: A restricted model yields a credibility interval that does not cont
 <p>In fact, this approach is quite classical: we are looking to see whether we should “reject” our model in light of inconistent data.</p>
 <!-- AJ: But it can also be done in a comparative sense as we do below, right? Which is then not about "rejection", right? I've actually adjusted the text two paragraphs up to make the idea of comparison more prominent. This works?-->
 <p>An approach for doing this using simulated data from the posterior predictive distribution is described in <span class="citation">Gabry et al. (<a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>)</span>.<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
-<p>We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution in the data compares to the predicted distribution from the updated model. Second, we look at the actual correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and see how this compares to the predicted distribution. In both cases we calculate a two sided <span class="math inline">\(p\)</span> value by assessing and doubling the mass on the more extreme side of the observed data. Thus indeed the observed data was at the mean of the distribution we would have a <span class="math inline">\(p\)</span> of 1. If it were at the 95th percentile we would have a <span class="math inline">\(p\)</span> of 0.10. (We note that in this straightforward calculation we assess the probability of the data given the same model that generated the data; approaches could also be used that seek out of sample estimates of teh probability of observing teh observed data).</p>
-<p>For the first test, we see that the predicted distribution of the outcome <span class="math inline">\(Y\)</span> is similar for both updated models; and the actual mean outcome is within the distribution of predicted mean outcomes. The two models are thus equally good at “learning” from the data about the observed distribution of the outcome.</p>
-<p>When it comes to the correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, however, the two models perform very differently. The posterior predictive distribution from the stronger model is centered around a <span class="math inline">\(0\)</span> correlation. Thus, from the perspective of the stronger model the strong <span class="math inline">\(X,Y\)</span> correlation in the data is unexpected. The updated weaker model, in contrast, predicts a strong correlation, and the observed correlation is comfortably within the posterior predictive distribution. A frequentist looking at the observed correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> should feel comfortable rejecting the stronger model.</p>
+<p>We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution in the data compares to the predicteddistribution from the updated model. Second, we look at the actual correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and see how this compares to the predicted distribution. In both cases we calculate a two sided <span class="math inline">\(p\)</span>-value by assessing and doubling the share of the mass of the predictive posterior distribution that lies on the more extreme side of the observed data. If the observed data were at the mean of the predicive distribution, then we would have a <span class="math inline">\(p\)</span>-value of 1. If it were at the 95th percentile we would have a <span class="math inline">\(p\)</span>-value of 0.10. (We note that in this straightforward calculation we assess the probability of the data given the same model that generated the data; approaches could also be used that seek out of sample estimates of teh probability of observing the observed data.)</p>
+<!-- AJ: Last sentence confuses me. Aren't we using data only from unrestricted_model? -->
+<p>For the first test, we see that the predicted distribution of the outcome <span class="math inline">\(Y\)</span> is similar for both updated models; and the actual mean outcome is within the distribution of predicted mean outcomes. The <span class="math inline">\(p\)</span>-values for the stronger (0.11) and weaker models (0.14) suggest that the observed mean <span class="math inline">\(Y\)</span> values are about equally likely for both models.</p>
+<p>When it comes to the correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, however, the two models perform very differently. The posterior predictive distribution from the stronger model is centered around a <span class="math inline">\(0\)</span> correlation and does not even extend out as far as the observed correlation. The resulting <span class="math inline">\(p\)</span>-value is 0, meaning that from the perspective of the stronger model the <span class="math inline">\(X,Y\)</span> correlation in the data is entirely unexpected. A frequentist looking at the observed correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> should feel comfortable rejecting the stronger model. The updated weaker model, in contrast, predicts a strong correlation, and the observed correlation is comfortably within the posterior predictive distribution, with a <span class="math inline">\(p\)</span>-value of 0.08.</p>
+<!-- AJ: Need to code in the p-values -->
 <p>At first blush, the abysmal performance of the stronger model may seem paradoxical. Even after this model has <em>seen</em> the <span class="math inline">\(X,Y\)</span> correlations in the data, the model still finds those correlations highly surprising. What keeps the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model from learning, however, is the strength of the assumptions it contains. The problem is that <span class="math inline">\(M\)</span> is uncorrelated with <span class="math inline">\(X\)</span> in the true data-generating process, so the stronger model learns that there is no indirect effect. But, at the same time, this model does not <em>allow</em> for a direct effect. Despite what would seem to be overwhelming evidence of a systematic <span class="math inline">\(X,Y\)</span> correlation, a causal relationship connecting <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span> remains extremely unlikely given the <span class="math inline">\(X,M\)</span> data pattern and the impossibility of direct effects. The stronger model just can’t handle the truth. The weaker model, on the other hand, readily learns about the direct <span class="math inline">\(X \rightarrow Y\)</span> effect.</p>
 <p><img src="ii_files/figure-html/ch15simulations-1.png" width="672" /></p>
 <!-- ## Model likelihoods -->
@@ -597,8 +599,29 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <h3><span class="header-section-number">16.2.2</span> Bayesian <span class="math inline">\(p\)</span>-value</h3>
 <p>We turn next to</p>
 <p><img src="ii_files/figure-html/ch15pvalue_pimd-1.png" width="672" /></p>
-<!-- AJ: Should we also calculate a p-value? -->
-<p>AJ: And what about comparing multiple models?</p>
+<!-- p_two_sided <- function(Y, y, digits = 2){ -->
+<!--   if(y <  mean(Y)) return(round(2* mean(y > Y), digits)) -->
+<!--   if(y >= mean(Y)) return(round(2* mean(y <= Y), digits)) -->
+<!-- } -->
+<!-- hist(replicates_restricted$Y,  -->
+<!--      main = paste("Y mean | stronger: p = ", p_temp), -->
+<!--                   xlim = xlimY, xlab = "predictions")  -->
+<!--      abline(v = mean(data$Y), col = "red") -->
+<!-- p_temp <- p_two_sided(replicates_restricted$C, cor(data$Y, data$X)) -->
+<!-- hist(replicates_restricted$C,  -->
+<!--      main = paste("X, Y covariance | stronger: p =", p_temp),  -->
+<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
+<!-- p_temp <- p_two_sided(replicates_unrestricted$Y, mean(data$Y)) -->
+<!-- hist(replicates_unrestricted$Y,  -->
+<!--      main = paste("Y mean | weaker: p = ", p_temp), -->
+<!--      xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red") -->
+<!-- p_temp <- p_two_sided(replicates_unrestricted$C, cor(data$Y, data$X)) -->
+<!-- hist(replicates_unrestricted$C,  -->
+<!--      main = paste("X, Y covariance | weaker: p = ", p_temp),  -->
+<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
+<!-- <!-- AJ: Should we also calculate a p-value? -->
+<p>–&gt;
+<!-- AJ: And what about comparing multiple models? --></p>
 </div>
 <div id="loo-validation" class="section level3">
 <h3><span class="header-section-number">16.2.3</span> LOO validation</h3>
