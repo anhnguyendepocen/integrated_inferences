@@ -307,12 +307,17 @@ We also see that the mediator is much more informative when the causal effect we
 
 ```{r explearning, echo = FALSE, message = FALSE, warning = FALSE}
 
+if(do_diagnosis){
 ELpimd1 <-
   rbind(
 expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+write_rds(ELpimd1, "saved/11_ELpimd1.rds")
+}
+
+ELpimd1 <- read_rds("saved/11_ELpimd1.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 
@@ -335,12 +340,16 @@ kable(inferences2_pimd, caption = "\\label{possible_outcomespimd_i0} Table shows
 
 ```{r pimdlearn, echo = FALSE, message = FALSE, warning = FALSE}
 
+if(do_diagnosis){
 ELpimd2 <-
   rbind(
 expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
 expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
 expected_learning(pimd, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
 expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
+write_rds(ELpimd2, "saved/11_ELpimd2.rds")
+}
+ELpimd2 <- read_rds("saved/11_ELpimd2.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 

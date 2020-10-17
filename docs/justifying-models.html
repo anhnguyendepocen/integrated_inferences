@@ -32,14 +32,14 @@
   
 <link rel="prev" href="caseselection.html"/>
 <link rel="next" href="evaluation.html"/>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -49,7 +49,7 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<script src="libs/accessible-code-block/empty-anchor.js"></script>
 
 
 <style type="text/css">
@@ -384,7 +384,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr />
 <p>The approach we have described to inference always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters. In many applications the problem of stating priors can be more fundamental than for many Bayesian applications for two reasons. First the beliefs are beliefs over the distribution of individual level effects and not just the beliefs over average effects. This puts us up against the fundamental problem of causal inference (Holland cite, Dawid cite FLAG). Second, the beliefs can do a lot of work—especially in small <span class="math inline">\(n\)</span> applications. Indeed for the the process tracing described chapters 6 and 7 [FLAG ADD REFS] the inferences are little more than conditional applications of a model.</p>
 <p>We see two broad responses to this problem.</p>
-<p>One is <em>emphasize the contingent nature of claims</em>. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world—for example one might, be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then the simple <span class="math inline">\(X \rightarrow Y\)</span> DAG in chapter 4 (FIGURE REF) is more of a representation of beliefs about the world than it is a model of the world, in the sense of a simplified representation.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is unquetionanly a model and hard to think of as a faithful summary of beliefs.</p>
+<p>One is <em>emphasize the contingent nature of claims</em>. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world—for example one might, be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then the simple <span class="math inline">\(X \rightarrow Y\)</span> DAG in chapter 4 (FIGURE REF) is more of a representation of beliefs about the world than it is a model of the world, in the sense of a simplified representation.<a href="#fn81" class="footnote-ref" id="fnref81"><sup>81</sup></a> But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used is unquetionanly a model and hard to think of as a faithful summary of beliefs.</p>
 <p>Recognizing in this way that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose <span class="citation">(Clarke and Primo <a href="#ref-clarke2012model" role="doc-biblioref">2012</a>)</span>. That is the subject of Chapter 15.</p>
 <p>Here we focus on more positive steps that might be taken to underpin a model. We show how <em>the type of approach used in Chapters 8 and 9 can be used to justify a process tracing model on the basis of a mixed methods model</em>. These applications presuppose knowledge of a DAG however. In a sense, they simply push the question down a level. There are two further responses to this concern. One is to try to generate the DAG itself from data or a combination of data and theory. We discuss this approach here. Another is to assess the importance of DAG assumptions – which we address in Chapter 15.</p>
 <div id="justifying-the-classic-process-tracing-tests" class="section level2">
@@ -477,36 +477,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>**More practiaclly….*</p>
 <p>In the table above some entries were given as ranges. This reflects that fact that unless we are at edge cases the estimand here is not identified even with infinite experimental data. In practice we expect never to be at these edges. Even still, the procedures given in Chapters XX above let us form posteriors over inferences with finite data.</p>
 <p>For the illustration we first make use of a function that generates data from a model with a constrained set of types for <span class="math inline">\(Y\)</span> and a given prior distribution over clue <span class="math inline">\(K\)</span>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="justifying-models.html#cb1-1"></a>van_evera_data &lt;-<span class="st"> </span><span class="cf">function</span>(y_types, k_types)</span>
-<span id="cb1-2"><a href="justifying-models.html#cb1-2"></a>  </span>
-<span id="cb1-3"><a href="justifying-models.html#cb1-3"></a>  <span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb1-4"><a href="justifying-models.html#cb1-4"></a><span class="st">  </span></span>
-<span id="cb1-5"><a href="justifying-models.html#cb1-5"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="dt">labels =</span> <span class="kw">list</span>(<span class="dt">Y =</span> y_types), <span class="dt">keep =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
-<span id="cb1-6"><a href="justifying-models.html#cb1-6"></a><span class="st">  </span></span>
-<span id="cb1-7"><a href="justifying-models.html#cb1-7"></a><span class="st">  </span><span class="kw">set_parameters</span>(<span class="dt">param_type =</span> <span class="st">&quot;define&quot;</span>, <span class="dt">node =</span> <span class="st">&quot;K&quot;</span>, <span class="dt">parameters =</span> <span class="kw">c</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>k_types, k_types)) <span class="op">%&gt;%</span></span>
-<span id="cb1-8"><a href="justifying-models.html#cb1-8"></a><span class="st">  </span></span>
-<span id="cb1-9"><a href="justifying-models.html#cb1-9"></a><span class="st">  </span><span class="kw">make_data</span>(<span class="dt">n =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="justifying-models.html#cb28-1"></a>van_evera_data &lt;-<span class="st"> </span><span class="cf">function</span>(y_types, k_types)</span>
+<span id="cb28-2"><a href="justifying-models.html#cb28-2"></a>  </span>
+<span id="cb28-3"><a href="justifying-models.html#cb28-3"></a>  <span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb28-4"><a href="justifying-models.html#cb28-4"></a><span class="st">  </span></span>
+<span id="cb28-5"><a href="justifying-models.html#cb28-5"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="dt">labels =</span> <span class="kw">list</span>(<span class="dt">Y =</span> y_types), <span class="dt">keep =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span></span>
+<span id="cb28-6"><a href="justifying-models.html#cb28-6"></a><span class="st">  </span></span>
+<span id="cb28-7"><a href="justifying-models.html#cb28-7"></a><span class="st">  </span><span class="kw">set_parameters</span>(<span class="dt">param_type =</span> <span class="st">&quot;define&quot;</span>, <span class="dt">node =</span> <span class="st">&quot;K&quot;</span>, <span class="dt">parameters =</span> <span class="kw">c</span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>k_types, k_types)) <span class="op">%&gt;%</span></span>
+<span id="cb28-8"><a href="justifying-models.html#cb28-8"></a><span class="st">  </span></span>
+<span id="cb28-9"><a href="justifying-models.html#cb28-9"></a><span class="st">  </span><span class="kw">make_data</span>(<span class="dt">n =</span> <span class="dv">1000</span>)</span></code></pre></div>
 <p>We then use a function that draws inferences, given different values of a clue <span class="math inline">\(K\)</span>, from a model that has been updated using available data. Note that the model that is updated has no constraints on <span class="math inline">\(Y\)</span>, has flat beliefs over the distribution of <span class="math inline">\(K\)</span>, and imposes no assumption that <span class="math inline">\(K\)</span> is informative for how <span class="math inline">\(Y\)</span> reacts to <span class="math inline">\(X\)</span>.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="justifying-models.html#cb2-1"></a>van_evera_inference &lt;-<span class="st"> </span><span class="cf">function</span>(data)</span>
-<span id="cb2-2"><a href="justifying-models.html#cb2-2"></a>  </span>
-<span id="cb2-3"><a href="justifying-models.html#cb2-3"></a>  <span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb2-4"><a href="justifying-models.html#cb2-4"></a><span class="st">  </span></span>
-<span id="cb2-5"><a href="justifying-models.html#cb2-5"></a><span class="st">  </span><span class="kw">update_model</span>(<span class="dt">data =</span> data) <span class="op">%&gt;%</span><span class="st">  </span></span>
-<span id="cb2-6"><a href="justifying-models.html#cb2-6"></a><span class="st">  </span></span>
-<span id="cb2-7"><a href="justifying-models.html#cb2-7"></a><span class="st">  </span><span class="kw">query_model</span>(<span class="dt">query =</span> <span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
-<span id="cb2-8"><a href="justifying-models.html#cb2-8"></a>              <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;K==0&quot;</span>, <span class="st">&quot;K==1&quot;</span>),</span>
-<span id="cb2-9"><a href="justifying-models.html#cb2-9"></a>              <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="justifying-models.html#cb29-1"></a>van_evera_inference &lt;-<span class="st"> </span><span class="cf">function</span>(data)</span>
+<span id="cb29-2"><a href="justifying-models.html#cb29-2"></a>  </span>
+<span id="cb29-3"><a href="justifying-models.html#cb29-3"></a>  <span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb29-4"><a href="justifying-models.html#cb29-4"></a><span class="st">  </span></span>
+<span id="cb29-5"><a href="justifying-models.html#cb29-5"></a><span class="st">  </span><span class="kw">update_model</span>(<span class="dt">data =</span> data) <span class="op">%&gt;%</span><span class="st">  </span></span>
+<span id="cb29-6"><a href="justifying-models.html#cb29-6"></a><span class="st">  </span></span>
+<span id="cb29-7"><a href="justifying-models.html#cb29-7"></a><span class="st">  </span><span class="kw">query_model</span>(<span class="dt">query =</span> <span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
+<span id="cb29-8"><a href="justifying-models.html#cb29-8"></a>              <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;K==0&quot;</span>, <span class="st">&quot;K==1&quot;</span>),</span>
+<span id="cb29-9"><a href="justifying-models.html#cb29-9"></a>              <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span></code></pre></div>
 <p>We can now generate posterior beliefs, given <span class="math inline">\(K\)</span>, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model.</p>
 <p>Results:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="justifying-models.html#cb3-1"></a>doubly_decisive &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="st">&quot;0001&quot;</span>, <span class="fl">.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span>
-<span id="cb3-2"><a href="justifying-models.html#cb3-2"></a></span>
-<span id="cb3-3"><a href="justifying-models.html#cb3-3"></a>hoop            &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="kw">c</span>(<span class="st">&quot;0001&quot;</span>, <span class="st">&quot;0101&quot;</span>), <span class="fl">.9</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span>
-<span id="cb3-4"><a href="justifying-models.html#cb3-4"></a></span>
-<span id="cb3-5"><a href="justifying-models.html#cb3-5"></a>smoking_gun     &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="kw">c</span>(<span class="st">&quot;0001&quot;</span>, <span class="st">&quot;0011&quot;</span>), <span class="fl">.1</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span>
-<span id="cb3-6"><a href="justifying-models.html#cb3-6"></a></span>
-<span id="cb3-7"><a href="justifying-models.html#cb3-7"></a>straw_in_wind   &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="kw">c</span>(<span class="st">&quot;0001&quot;</span>, <span class="st">&quot;0101&quot;</span>, <span class="st">&quot;0011&quot;</span>), <span class="fl">.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="justifying-models.html#cb30-1"></a>doubly_decisive &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="st">&quot;0001&quot;</span>, <span class="fl">.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span>
+<span id="cb30-2"><a href="justifying-models.html#cb30-2"></a></span>
+<span id="cb30-3"><a href="justifying-models.html#cb30-3"></a>hoop            &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="kw">c</span>(<span class="st">&quot;0001&quot;</span>, <span class="st">&quot;0101&quot;</span>), <span class="fl">.9</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span>
+<span id="cb30-4"><a href="justifying-models.html#cb30-4"></a></span>
+<span id="cb30-5"><a href="justifying-models.html#cb30-5"></a>smoking_gun     &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="kw">c</span>(<span class="st">&quot;0001&quot;</span>, <span class="st">&quot;0011&quot;</span>), <span class="fl">.1</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span>
+<span id="cb30-6"><a href="justifying-models.html#cb30-6"></a></span>
+<span id="cb30-7"><a href="justifying-models.html#cb30-7"></a>straw_in_wind   &lt;-<span class="st"> </span><span class="kw">van_evera_data</span>(<span class="kw">c</span>(<span class="st">&quot;0001&quot;</span>, <span class="st">&quot;0101&quot;</span>, <span class="st">&quot;0011&quot;</span>), <span class="fl">.5</span>) <span class="op">%&gt;%</span><span class="st"> </span>van_evera_inference</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-4">Table 15.1: </span>Doubly decisive test</caption>
+<caption><span id="tab:unnamed-chunk-22">Table 15.1: </span>Doubly decisive test</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -541,7 +541,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-4">Table 15.1: </span>Hoop test</caption>
+<caption><span id="tab:unnamed-chunk-22">Table 15.1: </span>Hoop test</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -576,7 +576,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-4">Table 15.1: </span>Smoking gun test</caption>
+<caption><span id="tab:unnamed-chunk-22">Table 15.1: </span>Smoking gun test</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -611,7 +611,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 <table>
-<caption><span id="tab:unnamed-chunk-4">Table 15.1: </span>Straw in the wind test</caption>
+<caption><span id="tab:unnamed-chunk-22">Table 15.1: </span>Straw in the wind test</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -650,34 +650,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="nothing-from-nothing" class="section level2">
 <h2><span class="header-section-number">15.2</span> Nothing from nothing</h2>
 <p>We now share a more negative result. Say you had access to large amounts of observational data on <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span> and <span class="math inline">\(M\)</span>, but beyond knowing the temporal order of <span class="math inline">\(X, Y, M\)</span>, you do now know the graph. Can you figure out whether <span class="math inline">\(M\)</span> is informative for <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> from this data?</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="justifying-models.html#cb4-1"></a>agnostic_data &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X-&gt;M-&gt;Y&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb4-2"><a href="justifying-models.html#cb4-2"></a><span class="st">  </span><span class="kw">set_parameters</span>(<span class="dt">node =</span> <span class="kw">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;Y&quot;</span>), <span class="dt">parameters =</span> <span class="kw">list</span>(<span class="kw">c</span>(.<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">.8</span>, <span class="fl">.1</span>),</span>
-<span id="cb4-3"><a href="justifying-models.html#cb4-3"></a>                                                       <span class="kw">c</span>(.<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">.8</span>, <span class="fl">.1</span>))) <span class="op">%&gt;%</span></span>
-<span id="cb4-4"><a href="justifying-models.html#cb4-4"></a><span class="st">  </span><span class="kw">simulate_data</span>(<span class="dt">n =</span> <span class="dv">1000</span>)</span>
-<span id="cb4-5"><a href="justifying-models.html#cb4-5"></a></span>
-<span id="cb4-6"><a href="justifying-models.html#cb4-6"></a><span class="cf">if</span>(do_diagnosis){</span>
-<span id="cb4-7"><a href="justifying-models.html#cb4-7"></a>  </span>
-<span id="cb4-8"><a href="justifying-models.html#cb4-8"></a>agnostic_XMY &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X-&gt;M-&gt;Y&lt;-X; X&lt;-&gt;M; X&lt;-&gt;Y; M &lt;-&gt;Y&quot;</span>)<span class="op">%&gt;%</span></span>
-<span id="cb4-9"><a href="justifying-models.html#cb4-9"></a><span class="st">  </span><span class="kw">update_model</span>(agnostic_data)</span>
-<span id="cb4-10"><a href="justifying-models.html#cb4-10"></a></span>
-<span id="cb4-11"><a href="justifying-models.html#cb4-11"></a><span class="kw">write_rds</span>(agnostic_XMY, <span class="st">&quot;ch14_agnostic.rds&quot;</span>)</span>
-<span id="cb4-12"><a href="justifying-models.html#cb4-12"></a></span>
-<span id="cb4-13"><a href="justifying-models.html#cb4-13"></a></span>
-<span id="cb4-14"><a href="justifying-models.html#cb4-14"></a>agnostic_query &lt;-<span class="st">  </span><span class="kw">query_model</span>(agnostic_XMY,</span>
-<span id="cb4-15"><a href="justifying-models.html#cb4-15"></a>              <span class="dt">query =</span> <span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
-<span id="cb4-16"><a href="justifying-models.html#cb4-16"></a>              <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;M==0&quot;</span>, <span class="st">&quot;M==1&quot;</span>),</span>
-<span id="cb4-17"><a href="justifying-models.html#cb4-17"></a>              <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
-<span id="cb4-18"><a href="justifying-models.html#cb4-18"></a></span>
-<span id="cb4-19"><a href="justifying-models.html#cb4-19"></a><span class="kw">write_rds</span>(agnostic_query, <span class="st">&quot;ch14_agnostic_query.rds&quot;</span>)</span>
-<span id="cb4-20"><a href="justifying-models.html#cb4-20"></a></span>
-<span id="cb4-21"><a href="justifying-models.html#cb4-21"></a></span>
-<span id="cb4-22"><a href="justifying-models.html#cb4-22"></a>}</span>
-<span id="cb4-23"><a href="justifying-models.html#cb4-23"></a></span>
-<span id="cb4-24"><a href="justifying-models.html#cb4-24"></a>agnostic_query &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;ch14_agnostic_query.rds&quot;</span>)</span>
-<span id="cb4-25"><a href="justifying-models.html#cb4-25"></a></span>
-<span id="cb4-26"><a href="justifying-models.html#cb4-26"></a>agnostic_query <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable</span>(<span class="dt">caption =</span> <span class="st">&quot;Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="justifying-models.html#cb31-1"></a>agnostic_data &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X-&gt;M-&gt;Y&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb31-2"><a href="justifying-models.html#cb31-2"></a><span class="st">  </span><span class="kw">set_parameters</span>(<span class="dt">node =</span> <span class="kw">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;Y&quot;</span>), <span class="dt">parameters =</span> <span class="kw">list</span>(<span class="kw">c</span>(.<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">.8</span>, <span class="fl">.1</span>),</span>
+<span id="cb31-3"><a href="justifying-models.html#cb31-3"></a>                                                       <span class="kw">c</span>(.<span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">.8</span>, <span class="fl">.1</span>))) <span class="op">%&gt;%</span></span>
+<span id="cb31-4"><a href="justifying-models.html#cb31-4"></a><span class="st">  </span><span class="kw">simulate_data</span>(<span class="dt">n =</span> <span class="dv">1000</span>)</span>
+<span id="cb31-5"><a href="justifying-models.html#cb31-5"></a></span>
+<span id="cb31-6"><a href="justifying-models.html#cb31-6"></a><span class="cf">if</span>(do_diagnosis){</span>
+<span id="cb31-7"><a href="justifying-models.html#cb31-7"></a>  </span>
+<span id="cb31-8"><a href="justifying-models.html#cb31-8"></a>agnostic_XMY &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X-&gt;M-&gt;Y&lt;-X; X&lt;-&gt;M; X&lt;-&gt;Y; M &lt;-&gt;Y&quot;</span>)<span class="op">%&gt;%</span></span>
+<span id="cb31-9"><a href="justifying-models.html#cb31-9"></a><span class="st">  </span><span class="kw">update_model</span>(agnostic_data)</span>
+<span id="cb31-10"><a href="justifying-models.html#cb31-10"></a></span>
+<span id="cb31-11"><a href="justifying-models.html#cb31-11"></a><span class="kw">write_rds</span>(agnostic_XMY, <span class="st">&quot;ch14_agnostic.rds&quot;</span>)</span>
+<span id="cb31-12"><a href="justifying-models.html#cb31-12"></a></span>
+<span id="cb31-13"><a href="justifying-models.html#cb31-13"></a></span>
+<span id="cb31-14"><a href="justifying-models.html#cb31-14"></a>agnostic_query &lt;-<span class="st">  </span><span class="kw">query_model</span>(agnostic_XMY,</span>
+<span id="cb31-15"><a href="justifying-models.html#cb31-15"></a>              <span class="dt">query =</span> <span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
+<span id="cb31-16"><a href="justifying-models.html#cb31-16"></a>              <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;M==0&quot;</span>, <span class="st">&quot;M==1&quot;</span>),</span>
+<span id="cb31-17"><a href="justifying-models.html#cb31-17"></a>              <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
+<span id="cb31-18"><a href="justifying-models.html#cb31-18"></a></span>
+<span id="cb31-19"><a href="justifying-models.html#cb31-19"></a><span class="kw">write_rds</span>(agnostic_query, <span class="st">&quot;ch14_agnostic_query.rds&quot;</span>)</span>
+<span id="cb31-20"><a href="justifying-models.html#cb31-20"></a></span>
+<span id="cb31-21"><a href="justifying-models.html#cb31-21"></a></span>
+<span id="cb31-22"><a href="justifying-models.html#cb31-22"></a>}</span>
+<span id="cb31-23"><a href="justifying-models.html#cb31-23"></a></span>
+<span id="cb31-24"><a href="justifying-models.html#cb31-24"></a>agnostic_query &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;ch14_agnostic_query.rds&quot;</span>)</span>
+<span id="cb31-25"><a href="justifying-models.html#cb31-25"></a></span>
+<span id="cb31-26"><a href="justifying-models.html#cb31-26"></a>agnostic_query <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">kable</span>(<span class="dt">caption =</span> <span class="st">&quot;Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$&quot;</span>)</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-5">Table 15.2: </span>Conditional inferences from an update agnostic model given a true model in which <span class="math inline">\(X\)</span> causes <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span> causes <span class="math inline">\(Y\)</span></caption>
+<caption><span id="tab:unnamed-chunk-23">Table 15.2: </span>Conditional inferences from an update agnostic model given a true model in which <span class="math inline">\(X\)</span> causes <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span> causes <span class="math inline">\(Y\)</span></caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -916,21 +916,21 @@ In this case we can now identify PC, even before observing <span class="math inl
 <h3><span class="header-section-number">15.4.1</span> A model of models</h3>
 <p>In the following mode there is an unknown, <span class="math inline">\(Q\)</span>, which determines the relevant causal model.
 If <span class="math inline">\(Q=1\)</span> then we have <span class="math inline">\(A \rightarrow B \rightarrow C2\)</span>; if <span class="math inline">\(Q=0\)</span> then <span class="math inline">\(A \rightarrow B \leftarrow C1\)</span>. In this case the temporal order of <span class="math inline">\(C1\)</span> and <span class="math inline">\(C2\)</span> is observable, so there is not confusion there; what is not clear however is which is the important node to include in the model.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="justifying-models.html#cb5-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;A -&gt; B -&gt; C2 &lt;- C1 -&gt; B &lt;- Q -&gt; C2&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb5-2"><a href="justifying-models.html#cb5-2"></a><span class="st">  </span><span class="co"># These restrictions capture the role of Q in turning parentage on or off </span></span>
-<span id="cb5-3"><a href="justifying-models.html#cb5-3"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>(</span>
-<span id="cb5-4"><a href="justifying-models.html#cb5-4"></a>    <span class="st">&quot;(B[C1=1, Q=1] != B[C1=0, Q=1])&quot;</span>,</span>
-<span id="cb5-5"><a href="justifying-models.html#cb5-5"></a>    <span class="st">&quot;(C2[B=1, Q=0] != C2[B=0, Q=0])&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb5-6"><a href="justifying-models.html#cb5-6"></a><span class="st">  </span></span>
-<span id="cb5-7"><a href="justifying-models.html#cb5-7"></a><span class="st">  </span><span class="co"># These restrictions are for simplification: monotonicity and complementarity </span></span>
-<span id="cb5-8"><a href="justifying-models.html#cb5-8"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>(</span>
-<span id="cb5-9"><a href="justifying-models.html#cb5-9"></a>    <span class="st">&quot;(C2[B=1] &lt; C2[B=0])&quot;</span>,</span>
-<span id="cb5-10"><a href="justifying-models.html#cb5-10"></a>    <span class="st">&quot;(C2[C1=1] &lt; C2[C1=0])&quot;</span>,</span>
-<span id="cb5-11"><a href="justifying-models.html#cb5-11"></a>    <span class="st">&quot;(B[A=1]  &lt; B[A=0])&quot;</span>,</span>
-<span id="cb5-12"><a href="justifying-models.html#cb5-12"></a>    <span class="st">&quot;(B[C1=1] &lt; B[C1=0])&quot;</span>,</span>
-<span id="cb5-13"><a href="justifying-models.html#cb5-13"></a>    <span class="st">&quot;((B[A=1, C1=1] - B[A=0, C1=1]) &lt; (B[A=1, C1=0] - B[A=0, C1=0]))&quot;</span>))</span>
-<span id="cb5-14"><a href="justifying-models.html#cb5-14"></a>                   </span>
-<span id="cb5-15"><a href="justifying-models.html#cb5-15"></a>model</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="justifying-models.html#cb32-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;A -&gt; B -&gt; C2 &lt;- C1 -&gt; B &lt;- Q -&gt; C2&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb32-2"><a href="justifying-models.html#cb32-2"></a><span class="st">  </span><span class="co"># These restrictions capture the role of Q in turning parentage on or off </span></span>
+<span id="cb32-3"><a href="justifying-models.html#cb32-3"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>(</span>
+<span id="cb32-4"><a href="justifying-models.html#cb32-4"></a>    <span class="st">&quot;(B[C1=1, Q=1] != B[C1=0, Q=1])&quot;</span>,</span>
+<span id="cb32-5"><a href="justifying-models.html#cb32-5"></a>    <span class="st">&quot;(C2[B=1, Q=0] != C2[B=0, Q=0])&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb32-6"><a href="justifying-models.html#cb32-6"></a><span class="st">  </span></span>
+<span id="cb32-7"><a href="justifying-models.html#cb32-7"></a><span class="st">  </span><span class="co"># These restrictions are for simplification: monotonicity and complementarity </span></span>
+<span id="cb32-8"><a href="justifying-models.html#cb32-8"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>(</span>
+<span id="cb32-9"><a href="justifying-models.html#cb32-9"></a>    <span class="st">&quot;(C2[B=1] &lt; C2[B=0])&quot;</span>,</span>
+<span id="cb32-10"><a href="justifying-models.html#cb32-10"></a>    <span class="st">&quot;(C2[C1=1] &lt; C2[C1=0])&quot;</span>,</span>
+<span id="cb32-11"><a href="justifying-models.html#cb32-11"></a>    <span class="st">&quot;(B[A=1]  &lt; B[A=0])&quot;</span>,</span>
+<span id="cb32-12"><a href="justifying-models.html#cb32-12"></a>    <span class="st">&quot;(B[C1=1] &lt; B[C1=0])&quot;</span>,</span>
+<span id="cb32-13"><a href="justifying-models.html#cb32-13"></a>    <span class="st">&quot;((B[A=1, C1=1] - B[A=0, C1=1]) &lt; (B[A=1, C1=0] - B[A=0, C1=0]))&quot;</span>))</span>
+<span id="cb32-14"><a href="justifying-models.html#cb32-14"></a>                   </span>
+<span id="cb32-15"><a href="justifying-models.html#cb32-15"></a>model</span></code></pre></div>
 <pre><code>## 
 ## Statement: 
 ## [1] &quot;A -&gt; B -&gt; C2 &lt;- C1 -&gt; B &lt;- Q -&gt; C2&quot;
@@ -984,15 +984,24 @@ If <span class="math inline">\(Q=1\)</span> then we have <span class="math inlin
 ## $C2
 ## 00000000  10000000  01000000  11000000  00100000  10100000  01100000  11100000  00010000  10010000  01010000  11010000  00110000  10110000  01110000  11110000240 nodal types omitted
 ## 
-##   node position      display              interpretation
-## 1   C2        1 C2[*]******* C2 | C1 = 0 &amp; Q = 0 &amp; B = 0
-## 2   C2        2 C2*[*]****** C2 | C1 = 1 &amp; Q = 0 &amp; B = 0
-## 3   C2        3 C2**[*]***** C2 | C1 = 0 &amp; Q = 1 &amp; B = 0
-## 4   C2        4 C2***[*]**** C2 | C1 = 1 &amp; Q = 1 &amp; B = 0
-## 5   C2        5 C2****[*]*** C2 | C1 = 0 &amp; Q = 0 &amp; B = 1
-## 6   C2        6 C2*****[*]** C2 | C1 = 1 &amp; Q = 0 &amp; B = 1
-## 7   C2        7 C2******[*]* C2 | C1 = 0 &amp; Q = 1 &amp; B = 1
-## 8   C2        8 C2*******[*] C2 | C1 = 1 &amp; Q = 1 &amp; B = 1
+##   node position      display
+## 1   C2        1 C2[*]*******
+## 2   C2        2 C2*[*]******
+## 3   C2        3 C2**[*]*****
+## 4   C2        4 C2***[*]****
+## 5   C2        5 C2****[*]***
+## 6   C2        6 C2*****[*]**
+## 7   C2        7 C2******[*]*
+## 8   C2        8 C2*******[*]
+##                interpretation
+## 1 C2 | C1 = 0 &amp; Q = 0 &amp; B = 0
+## 2 C2 | C1 = 1 &amp; Q = 0 &amp; B = 0
+## 3 C2 | C1 = 0 &amp; Q = 1 &amp; B = 0
+## 4 C2 | C1 = 1 &amp; Q = 1 &amp; B = 0
+## 5 C2 | C1 = 0 &amp; Q = 0 &amp; B = 1
+## 6 C2 | C1 = 1 &amp; Q = 0 &amp; B = 1
+## 7 C2 | C1 = 0 &amp; Q = 1 &amp; B = 1
+## 8 C2 | C1 = 1 &amp; Q = 1 &amp; B = 1
 ## 
 ## 
 ## Number of types by node
@@ -1009,27 +1018,27 @@ If <span class="math inline">\(Q=1\)</span> then we have <span class="math inlin
 ## Q: 0 restricted types 
 ## B: 0 restricted types 
 ## C2: 0 restricted types</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="justifying-models.html#cb7-1"></a><span class="kw">plot</span>(model)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="justifying-models.html#cb34-1"></a><span class="kw">plot</span>(model)</span></code></pre></div>
 <p><img src="ii_files/figure-html/ch14Qornot-1.png" width="672" /></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="justifying-models.html#cb8-1"></a><span class="cf">if</span>(do_diagnosis){</span>
-<span id="cb8-2"><a href="justifying-models.html#cb8-2"></a>  model_Q0 &lt;-<span class="st"> </span><span class="kw">set_parameters</span>(model, <span class="dt">node =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">alphas =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">0</span>))</span>
-<span id="cb8-3"><a href="justifying-models.html#cb8-3"></a>  model_Q1 &lt;-<span class="st"> </span><span class="kw">set_parameters</span>(model, <span class="dt">node =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">alphas =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb8-4"><a href="justifying-models.html#cb8-4"></a>  </span>
-<span id="cb8-5"><a href="justifying-models.html#cb8-5"></a>  data_<span class="dv">0</span> &lt;-<span class="st"> </span><span class="kw">make_data</span>(model_Q0, <span class="dv">100</span>, <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>))</span>
-<span id="cb8-6"><a href="justifying-models.html#cb8-6"></a>  data_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">make_data</span>(model_Q1, <span class="dv">100</span>, <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>))</span>
-<span id="cb8-7"><a href="justifying-models.html#cb8-7"></a>  </span>
-<span id="cb8-8"><a href="justifying-models.html#cb8-8"></a>  model_Q0 &lt;-<span class="st"> </span><span class="kw">update_model</span>(model, data_<span class="dv">0</span>)</span>
-<span id="cb8-9"><a href="justifying-models.html#cb8-9"></a>  model_Q1 &lt;-<span class="st"> </span><span class="kw">update_model</span>(model, data_<span class="dv">1</span>)</span>
-<span id="cb8-10"><a href="justifying-models.html#cb8-10"></a></span>
-<span id="cb8-11"><a href="justifying-models.html#cb8-11"></a>Qu0 &lt;-<span class="st"> </span><span class="kw">query_model</span>(model_Q0, <span class="st">&quot;Q==1&quot;</span>, <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
-<span id="cb8-12"><a href="justifying-models.html#cb8-12"></a>Qu1 &lt;-<span class="st"> </span><span class="kw">query_model</span>(model_Q1, <span class="st">&quot;Q==1&quot;</span>, <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
-<span id="cb8-13"><a href="justifying-models.html#cb8-13"></a></span>
-<span id="cb8-14"><a href="justifying-models.html#cb8-14"></a>  <span class="kw">write_rds</span>(<span class="kw">list</span>(model_Q0, model_Q1, Qu0, Qu1), <span class="st">&quot;saved/ch14_Qornot.rds&quot;</span>)</span>
-<span id="cb8-15"><a href="justifying-models.html#cb8-15"></a>}</span>
-<span id="cb8-16"><a href="justifying-models.html#cb8-16"></a></span>
-<span id="cb8-17"><a href="justifying-models.html#cb8-17"></a>Qornot &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch14_Qornot.rds&quot;</span>)</span>
-<span id="cb8-18"><a href="justifying-models.html#cb8-18"></a></span>
-<span id="cb8-19"><a href="justifying-models.html#cb8-19"></a><span class="kw">kable</span>(Qornot[[<span class="dv">3</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="justifying-models.html#cb35-1"></a><span class="cf">if</span>(do_diagnosis){</span>
+<span id="cb35-2"><a href="justifying-models.html#cb35-2"></a>  model_Q0 &lt;-<span class="st"> </span><span class="kw">set_parameters</span>(model, <span class="dt">node =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">alphas =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb35-3"><a href="justifying-models.html#cb35-3"></a>  model_Q1 &lt;-<span class="st"> </span><span class="kw">set_parameters</span>(model, <span class="dt">node =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">alphas =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb35-4"><a href="justifying-models.html#cb35-4"></a>  </span>
+<span id="cb35-5"><a href="justifying-models.html#cb35-5"></a>  data_<span class="dv">0</span> &lt;-<span class="st"> </span><span class="kw">make_data</span>(model_Q0, <span class="dv">100</span>, <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>))</span>
+<span id="cb35-6"><a href="justifying-models.html#cb35-6"></a>  data_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">make_data</span>(model_Q1, <span class="dv">100</span>, <span class="dt">vars =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>))</span>
+<span id="cb35-7"><a href="justifying-models.html#cb35-7"></a>  </span>
+<span id="cb35-8"><a href="justifying-models.html#cb35-8"></a>  model_Q0 &lt;-<span class="st"> </span><span class="kw">update_model</span>(model, data_<span class="dv">0</span>)</span>
+<span id="cb35-9"><a href="justifying-models.html#cb35-9"></a>  model_Q1 &lt;-<span class="st"> </span><span class="kw">update_model</span>(model, data_<span class="dv">1</span>)</span>
+<span id="cb35-10"><a href="justifying-models.html#cb35-10"></a></span>
+<span id="cb35-11"><a href="justifying-models.html#cb35-11"></a>Qu0 &lt;-<span class="st"> </span><span class="kw">query_model</span>(model_Q0, <span class="st">&quot;Q==1&quot;</span>, <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
+<span id="cb35-12"><a href="justifying-models.html#cb35-12"></a>Qu1 &lt;-<span class="st"> </span><span class="kw">query_model</span>(model_Q1, <span class="st">&quot;Q==1&quot;</span>, <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
+<span id="cb35-13"><a href="justifying-models.html#cb35-13"></a></span>
+<span id="cb35-14"><a href="justifying-models.html#cb35-14"></a>  <span class="kw">write_rds</span>(<span class="kw">list</span>(model_Q0, model_Q1, Qu0, Qu1), <span class="st">&quot;saved/ch14_Qornot.rds&quot;</span>)</span>
+<span id="cb35-15"><a href="justifying-models.html#cb35-15"></a>}</span>
+<span id="cb35-16"><a href="justifying-models.html#cb35-16"></a></span>
+<span id="cb35-17"><a href="justifying-models.html#cb35-17"></a>Qornot &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/ch14_Qornot.rds&quot;</span>)</span>
+<span id="cb35-18"><a href="justifying-models.html#cb35-18"></a></span>
+<span id="cb35-19"><a href="justifying-models.html#cb35-19"></a><span class="kw">kable</span>(Qornot[[<span class="dv">3</span>]])</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1050,7 +1059,7 @@ If <span class="math inline">\(Q=1\)</span> then we have <span class="math inlin
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="justifying-models.html#cb9-1"></a><span class="kw">kable</span>(Qornot[[<span class="dv">4</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="justifying-models.html#cb36-1"></a><span class="kw">kable</span>(Qornot[[<span class="dv">4</span>]])</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1096,8 +1105,8 @@ If <span class="math inline">\(Q=1\)</span> then we have <span class="math inlin
 </div>
 <div class="footnotes">
 <hr />
-<ol start="1">
-<li id="fn1"><p>Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable invovlves a form of modelling.<a href="justifying-models.html#fnref1" class="footnote-back">↩︎</a></p></li>
+<ol start="81">
+<li id="fn81"><p>Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable invovlves a form of modelling.<a href="justifying-models.html#fnref81" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
@@ -1109,15 +1118,15 @@ If <span class="math inline">\(Q=1\)</span> then we have <span class="math inlin
 <a href="evaluation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({

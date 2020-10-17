@@ -16,13 +16,14 @@ pacman::p_load(
   rstanarm,
   knitr,
   expm,
+  plotrix,
   reshape2,
   dagitty,
   stargazer,
   partitions)
 
 library(CQtools)
-
+options(mc.cores = parallel::detectCores())
 options(knitr.kable.NA = '')
 
 do_diagnosis = FALSE
