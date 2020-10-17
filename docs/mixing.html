@@ -393,47 +393,47 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Note that we have described the problem at the unit level. We can redescribe it at the population level however as a situation in which a treatment vector <span class="math inline">\(X\)</span> can take on one of four values, <span class="math inline">\((0,0), (0,1), (1,0), (1,1)\)</span> with equal probability (or more strictly: as determined by <span class="math inline">\(\theta\)</span>). <span class="math inline">\(\theta\)</span> is also a vector with two elements that can take on one of 16 values <span class="math inline">\((a,a), (a,b),\dots (d,d)\)</span> as determined by <span class="math inline">\(U_\theta\)</span>. In this case we will assume that the 16 possibilities are not equally likely, which captures the failure of independence in the unit level assignments. <span class="math inline">\(Y\)</span> is a vector that reflects the elements of <span class="math inline">\(\theta\)</span> and <span class="math inline">\(X\)</span> in the obvious way (e.g <span class="math inline">\(X=(0,0), \theta=(a,b)\)</span> generates outcomes <span class="math inline">\(Y=(1,0)\)</span>; though it is immediately obvious that representing nodes in vector forms allows for more general vector-level mappings to allow for SUTVA violations. <span class="math inline">\(K\)</span> has the same domain as <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, and element <span class="math inline">\(K[j]=1\)</span> if <span class="math inline">\(\theta[j]=b\)</span>.</p>
 <p>Note that to describe the estimand, the Sample Average Treatment Effect, we also need to consider operations and queries defined at the vector level. In practice we consider three operations, one in which both units have <span class="math inline">\(X\)</span> forced to 0 and two in which one unit has <span class="math inline">\(X\)</span> set to 0 and the other has <span class="math inline">\(X\)</span> set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary—of the form: is it a <span class="math inline">\(b\)</span> type?–and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, etc…)</p>
 <p>Represented in this way we can use the tools of Chapters 6 and 7 to fully examine this seemingly multi-case study. In the below we examine a situation in which we consider the value of observing <span class="math inline">\(K\)</span> on one case — in this set up this is equivalent to observing part of the vector <span class="math inline">\(K\)</span> and making inferences on the full vector <span class="math inline">\(\theta\)</span>.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="mixing.html#cb7-1"></a><span class="kw">library</span>(gbiqq)</span>
-<span id="cb7-2"><a href="mixing.html#cb7-2"></a></span>
-<span id="cb7-3"><a href="mixing.html#cb7-3"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X-&gt;Y&quot;</span>)</span>
-<span id="cb7-4"><a href="mixing.html#cb7-4"></a></span>
-<span id="cb7-5"><a href="mixing.html#cb7-5"></a>fit &lt;-<span class="st"> </span><span class="kw">fitted_model</span>()</span>
-<span id="cb7-6"><a href="mixing.html#cb7-6"></a></span>
-<span id="cb7-7"><a href="mixing.html#cb7-7"></a>updated_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">X=</span><span class="dv">1</span>, <span class="dt">Y=</span><span class="dv">1</span>), </span>
-<span id="cb7-8"><a href="mixing.html#cb7-8"></a>                                     <span class="dt">chains =</span> <span class="dv">10</span>, <span class="dt">iter =</span> <span class="dv">12000</span>, <span class="dt">fit =</span> fit)</span>
-<span id="cb7-9"><a href="mixing.html#cb7-9"></a></span>
-<span id="cb7-10"><a href="mixing.html#cb7-10"></a>updated_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">X=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">Y=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>)), </span>
-<span id="cb7-11"><a href="mixing.html#cb7-11"></a>                                     <span class="dt">chains =</span> <span class="dv">10</span>, <span class="dt">iter =</span> <span class="dv">12000</span>, <span class="dt">fit =</span> fit)</span>
-<span id="cb7-12"><a href="mixing.html#cb7-12"></a></span>
-<span id="cb7-13"><a href="mixing.html#cb7-13"></a>updated_<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">X=</span><span class="dv">1</span>, <span class="dt">Y=</span><span class="ot">NA</span>), </span>
-<span id="cb7-14"><a href="mixing.html#cb7-14"></a>                                     <span class="dt">chains =</span> <span class="dv">10</span>, <span class="dt">iter =</span> <span class="dv">12000</span>, <span class="dt">fit =</span> fit)</span>
-<span id="cb7-15"><a href="mixing.html#cb7-15"></a></span>
-<span id="cb7-16"><a href="mixing.html#cb7-16"></a><span class="co"># query_model(query = &quot;Y[X=1] - Y[X=0]&quot;, )</span></span>
-<span id="cb7-17"><a href="mixing.html#cb7-17"></a></span>
-<span id="cb7-18"><a href="mixing.html#cb7-18"></a><span class="kw">query_model</span>(updated_<span class="dv">1</span>, </span>
-<span id="cb7-19"><a href="mixing.html#cb7-19"></a>                        <span class="dt">query =</span> <span class="kw">te</span>(<span class="st">&quot;X&quot;</span>,<span class="st">&quot;Y&quot;</span>), </span>
-<span id="cb7-20"><a href="mixing.html#cb7-20"></a>                        <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;X==1 &amp; Y==1&quot;</span>), </span>
-<span id="cb7-21"><a href="mixing.html#cb7-21"></a>                        <span class="dt">using =</span> <span class="kw">c</span>(<span class="st">&quot;parameters&quot;</span>, <span class="st">&quot;posteriors&quot;</span>), </span>
-<span id="cb7-22"><a href="mixing.html#cb7-22"></a>                        <span class="dt">expand_grid =</span> <span class="ot">TRUE</span> )</span>
-<span id="cb7-23"><a href="mixing.html#cb7-23"></a></span>
-<span id="cb7-24"><a href="mixing.html#cb7-24"></a><span class="kw">query_model</span>(updated_<span class="dv">2</span>, </span>
-<span id="cb7-25"><a href="mixing.html#cb7-25"></a>                        <span class="dt">query =</span> <span class="kw">te</span>(<span class="st">&quot;X&quot;</span>,<span class="st">&quot;Y&quot;</span>), </span>
-<span id="cb7-26"><a href="mixing.html#cb7-26"></a>                        <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;X==1 &amp; Y==1&quot;</span>), </span>
-<span id="cb7-27"><a href="mixing.html#cb7-27"></a>                        <span class="dt">using =</span> <span class="kw">c</span>(<span class="st">&quot;parameters&quot;</span>, <span class="st">&quot;posteriors&quot;</span>), </span>
-<span id="cb7-28"><a href="mixing.html#cb7-28"></a>                        <span class="dt">expand_grid =</span> <span class="ot">TRUE</span> )</span>
-<span id="cb7-29"><a href="mixing.html#cb7-29"></a></span>
-<span id="cb7-30"><a href="mixing.html#cb7-30"></a><span class="kw">query_model</span>(updated_<span class="dv">3</span>, </span>
-<span id="cb7-31"><a href="mixing.html#cb7-31"></a>                        <span class="dt">query =</span> <span class="kw">te</span>(<span class="st">&quot;X&quot;</span>,<span class="st">&quot;Y&quot;</span>), </span>
-<span id="cb7-32"><a href="mixing.html#cb7-32"></a>                        <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;X==1 &amp; Y==1&quot;</span>), </span>
-<span id="cb7-33"><a href="mixing.html#cb7-33"></a>                        <span class="dt">using =</span> <span class="kw">c</span>(<span class="st">&quot;parameters&quot;</span>, <span class="st">&quot;posteriors&quot;</span>), </span>
-<span id="cb7-34"><a href="mixing.html#cb7-34"></a>                        <span class="dt">expand_grid =</span> <span class="ot">TRUE</span> )</span>
-<span id="cb7-35"><a href="mixing.html#cb7-35"></a></span>
-<span id="cb7-36"><a href="mixing.html#cb7-36"></a></span>
-<span id="cb7-37"><a href="mixing.html#cb7-37"></a><span class="co"># IMPORTANT TO DISTINGUISH BETWEEN:</span></span>
-<span id="cb7-38"><a href="mixing.html#cb7-38"></a></span>
-<span id="cb7-39"><a href="mixing.html#cb7-39"></a><span class="co"># what is the chance that X caused Y given X=1, Y=1 and</span></span>
-<span id="cb7-40"><a href="mixing.html#cb7-40"></a><span class="co"># what is the chance that X causes Y given you have seen a case in which X=1, Y=1 and</span></span>
-<span id="cb7-41"><a href="mixing.html#cb7-41"></a><span class="co"># Only data that your query has not conditioned on is informative (is dta conditionnally independent of teh query)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="mixing.html#cb6-1"></a><span class="kw">library</span>(gbiqq)</span>
+<span id="cb6-2"><a href="mixing.html#cb6-2"></a></span>
+<span id="cb6-3"><a href="mixing.html#cb6-3"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X-&gt;Y&quot;</span>)</span>
+<span id="cb6-4"><a href="mixing.html#cb6-4"></a></span>
+<span id="cb6-5"><a href="mixing.html#cb6-5"></a>fit &lt;-<span class="st"> </span><span class="kw">fitted_model</span>()</span>
+<span id="cb6-6"><a href="mixing.html#cb6-6"></a></span>
+<span id="cb6-7"><a href="mixing.html#cb6-7"></a>updated_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">X=</span><span class="dv">1</span>, <span class="dt">Y=</span><span class="dv">1</span>), </span>
+<span id="cb6-8"><a href="mixing.html#cb6-8"></a>                                     <span class="dt">chains =</span> <span class="dv">10</span>, <span class="dt">iter =</span> <span class="dv">12000</span>, <span class="dt">fit =</span> fit)</span>
+<span id="cb6-9"><a href="mixing.html#cb6-9"></a></span>
+<span id="cb6-10"><a href="mixing.html#cb6-10"></a>updated_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">X=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">Y=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>)), </span>
+<span id="cb6-11"><a href="mixing.html#cb6-11"></a>                                     <span class="dt">chains =</span> <span class="dv">10</span>, <span class="dt">iter =</span> <span class="dv">12000</span>, <span class="dt">fit =</span> fit)</span>
+<span id="cb6-12"><a href="mixing.html#cb6-12"></a></span>
+<span id="cb6-13"><a href="mixing.html#cb6-13"></a>updated_<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> <span class="kw">data.frame</span>(<span class="dt">X=</span><span class="dv">1</span>, <span class="dt">Y=</span><span class="ot">NA</span>), </span>
+<span id="cb6-14"><a href="mixing.html#cb6-14"></a>                                     <span class="dt">chains =</span> <span class="dv">10</span>, <span class="dt">iter =</span> <span class="dv">12000</span>, <span class="dt">fit =</span> fit)</span>
+<span id="cb6-15"><a href="mixing.html#cb6-15"></a></span>
+<span id="cb6-16"><a href="mixing.html#cb6-16"></a><span class="co"># query_model(query = &quot;Y[X=1] - Y[X=0]&quot;, )</span></span>
+<span id="cb6-17"><a href="mixing.html#cb6-17"></a></span>
+<span id="cb6-18"><a href="mixing.html#cb6-18"></a><span class="kw">query_model</span>(updated_<span class="dv">1</span>, </span>
+<span id="cb6-19"><a href="mixing.html#cb6-19"></a>                        <span class="dt">query =</span> <span class="kw">te</span>(<span class="st">&quot;X&quot;</span>,<span class="st">&quot;Y&quot;</span>), </span>
+<span id="cb6-20"><a href="mixing.html#cb6-20"></a>                        <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;X==1 &amp; Y==1&quot;</span>), </span>
+<span id="cb6-21"><a href="mixing.html#cb6-21"></a>                        <span class="dt">using =</span> <span class="kw">c</span>(<span class="st">&quot;parameters&quot;</span>, <span class="st">&quot;posteriors&quot;</span>), </span>
+<span id="cb6-22"><a href="mixing.html#cb6-22"></a>                        <span class="dt">expand_grid =</span> <span class="ot">TRUE</span> )</span>
+<span id="cb6-23"><a href="mixing.html#cb6-23"></a></span>
+<span id="cb6-24"><a href="mixing.html#cb6-24"></a><span class="kw">query_model</span>(updated_<span class="dv">2</span>, </span>
+<span id="cb6-25"><a href="mixing.html#cb6-25"></a>                        <span class="dt">query =</span> <span class="kw">te</span>(<span class="st">&quot;X&quot;</span>,<span class="st">&quot;Y&quot;</span>), </span>
+<span id="cb6-26"><a href="mixing.html#cb6-26"></a>                        <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;X==1 &amp; Y==1&quot;</span>), </span>
+<span id="cb6-27"><a href="mixing.html#cb6-27"></a>                        <span class="dt">using =</span> <span class="kw">c</span>(<span class="st">&quot;parameters&quot;</span>, <span class="st">&quot;posteriors&quot;</span>), </span>
+<span id="cb6-28"><a href="mixing.html#cb6-28"></a>                        <span class="dt">expand_grid =</span> <span class="ot">TRUE</span> )</span>
+<span id="cb6-29"><a href="mixing.html#cb6-29"></a></span>
+<span id="cb6-30"><a href="mixing.html#cb6-30"></a><span class="kw">query_model</span>(updated_<span class="dv">3</span>, </span>
+<span id="cb6-31"><a href="mixing.html#cb6-31"></a>                        <span class="dt">query =</span> <span class="kw">te</span>(<span class="st">&quot;X&quot;</span>,<span class="st">&quot;Y&quot;</span>), </span>
+<span id="cb6-32"><a href="mixing.html#cb6-32"></a>                        <span class="dt">given =</span> <span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;X==1 &amp; Y==1&quot;</span>), </span>
+<span id="cb6-33"><a href="mixing.html#cb6-33"></a>                        <span class="dt">using =</span> <span class="kw">c</span>(<span class="st">&quot;parameters&quot;</span>, <span class="st">&quot;posteriors&quot;</span>), </span>
+<span id="cb6-34"><a href="mixing.html#cb6-34"></a>                        <span class="dt">expand_grid =</span> <span class="ot">TRUE</span> )</span>
+<span id="cb6-35"><a href="mixing.html#cb6-35"></a></span>
+<span id="cb6-36"><a href="mixing.html#cb6-36"></a></span>
+<span id="cb6-37"><a href="mixing.html#cb6-37"></a><span class="co"># IMPORTANT TO DISTINGUISH BETWEEN:</span></span>
+<span id="cb6-38"><a href="mixing.html#cb6-38"></a></span>
+<span id="cb6-39"><a href="mixing.html#cb6-39"></a><span class="co"># what is the chance that X caused Y given X=1, Y=1 and</span></span>
+<span id="cb6-40"><a href="mixing.html#cb6-40"></a><span class="co"># what is the chance that X causes Y given you have seen a case in which X=1, Y=1 and</span></span>
+<span id="cb6-41"><a href="mixing.html#cb6-41"></a><span class="co"># Only data that your query has not conditioned on is informative (is dta conditionnally independent of teh query)</span></span></code></pre></div>
 </div>
 <div id="general-procedure" class="section level2">
 <h2><span class="header-section-number">8.2</span> General procedure</h2>
@@ -1041,9 +1041,9 @@ In other words, the likelihood of observing a particular data pattern given <spa
 <h2><span class="header-section-number">8.5</span> Considerations</h2>
 <div id="the-identification-problem" class="section level3">
 <h3><span class="header-section-number">8.5.1</span> The identification problem</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="mixing.html#cb8-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X1 -&gt; M1 -&gt; Y &lt;- M2 &lt;- X2&quot;</span>)</span>
-<span id="cb8-2"><a href="mixing.html#cb8-2"></a></span>
-<span id="cb8-3"><a href="mixing.html#cb8-3"></a><span class="co"># restrict such that *only* M1 OR M2 could cause Y -- can we create a DD test? / achieve identification</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="mixing.html#cb7-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X1 -&gt; M1 -&gt; Y &lt;- M2 &lt;- X2&quot;</span>)</span>
+<span id="cb7-2"><a href="mixing.html#cb7-2"></a></span>
+<span id="cb7-3"><a href="mixing.html#cb7-3"></a><span class="co"># restrict such that *only* M1 OR M2 could cause Y -- can we create a DD test? / achieve identification</span></span></code></pre></div>
 </div>
 <div id="continuous-data" class="section level3">
 <h3><span class="header-section-number">8.5.2</span> Continuous data</h3>

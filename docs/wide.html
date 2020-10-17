@@ -517,9 +517,9 @@ Thus, when we observe <span class="math inline">\(M=0\)</span> in an <span class
 <p>Graph full set</p>
 <p>How does this approach guide researchers in making choices about research designs?</p>
 <p>We address this question with a focus on characterizing the kind of learning that emerges from gathering different sorts of data—such , <em>under different research conditions</em>. We report the results here of simulation-based experiments designed to tell us under what research conditions different mixes of methods can be expected to yield more accurate inferences. We also discuss, at a high level, the implications of the framework for strategies of qualitative case-selection.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="wide.html#cb23-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb23-2"><a href="wide.html#cb23-2"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="st">&quot;(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb23-3"><a href="wide.html#cb23-3"></a><span class="st">  </span><span class="kw">set_parameters</span>(<span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">.99</span>, <span class="fl">.5</span>, <span class="fl">.5</span>, <span class="fl">.25</span>, <span class="fl">.25</span>, <span class="fl">.25</span>, <span class="fl">.25</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="wide.html#cb22-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- K&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb22-2"><a href="wide.html#cb22-2"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="st">&quot;(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb22-3"><a href="wide.html#cb22-3"></a><span class="st">  </span><span class="kw">set_parameters</span>(<span class="kw">c</span>(<span class="fl">0.01</span>, <span class="fl">.99</span>, <span class="fl">.5</span>, <span class="fl">.5</span>, <span class="fl">.25</span>, <span class="fl">.25</span>, <span class="fl">.25</span>, <span class="fl">.25</span>))</span></code></pre></div>
 <p>We see that prior beliefs are for a 0 average effect which rises to approximately .5 for cases in which <span class="math inline">\(K=1\)</span> is observed and falls to -.5 for cases in which <span class="math inline">\(K=0\)</span> is observed.</p>
 <table>
 <thead>
@@ -536,21 +536,21 @@ Thus, when we observe <span class="math inline">\(M=0\)</span> in an <span class
 <td align="left">ATE</td>
 <td align="left">-</td>
 <td align="left">priors</td>
-<td align="right">-0.006</td>
-<td align="right">0.345</td>
+<td align="right">0.002</td>
+<td align="right">0.339</td>
 </tr>
 <tr class="even">
 <td align="left">ATE</td>
 <td align="left">K==1</td>
 <td align="left">priors</td>
-<td align="right">0.497</td>
-<td align="right">0.221</td>
+<td align="right">0.498</td>
+<td align="right">0.224</td>
 </tr>
 <tr class="odd">
 <td align="left">ATE</td>
 <td align="left">K==0</td>
 <td align="left">priors</td>
-<td align="right">-0.502</td>
+<td align="right">-0.491</td>
 <td align="right">0.223</td>
 </tr>
 </tbody>
@@ -571,72 +571,72 @@ Thus, when we observe <span class="math inline">\(M=0\)</span> in an <span class
 <td align="left">ATE</td>
 <td align="left">-</td>
 <td align="left">priors</td>
-<td align="right">0.006</td>
-<td align="right">0.345</td>
+<td align="right">-0.004</td>
+<td align="right">0.341</td>
 </tr>
 <tr class="even">
 <td align="left">ATE</td>
 <td align="left">K==1</td>
 <td align="left">priors</td>
-<td align="right">0.500</td>
-<td align="right">0.227</td>
+<td align="right">0.499</td>
+<td align="right">0.224</td>
 </tr>
 <tr class="odd">
 <td align="left">ATE</td>
 <td align="left">K==0</td>
 <td align="left">priors</td>
-<td align="right">-0.504</td>
-<td align="right">0.223</td>
+<td align="right">-0.496</td>
+<td align="right">0.225</td>
 </tr>
 </tbody>
 </table>
 <p>We now examine inferences given different data strategies:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="wide.html#cb24-1"></a><span class="cf">if</span>(do_diagnosis){</span>
-<span id="cb24-2"><a href="wide.html#cb24-2"></a>  wd_<span class="dv">1</span>_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">wide_or_deep</span>(model, <span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb24-3"><a href="wide.html#cb24-3"></a>  <span class="kw">write_rds</span>( wd_<span class="dv">1</span>_<span class="dv">2</span>, <span class="st">&quot;saved/wd_1_2.rds&quot;</span>)</span>
-<span id="cb24-4"><a href="wide.html#cb24-4"></a>}</span>
-<span id="cb24-5"><a href="wide.html#cb24-5"></a></span>
-<span id="cb24-6"><a href="wide.html#cb24-6"></a>wd_<span class="dv">1</span>_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/wd_1_2.rds&quot;</span>)</span>
-<span id="cb24-7"><a href="wide.html#cb24-7"></a></span>
-<span id="cb24-8"><a href="wide.html#cb24-8"></a></span>
-<span id="cb24-9"><a href="wide.html#cb24-9"></a>wd_sim &lt;-<span class="st"> </span><span class="cf">function</span>(model, n_K, n_fold) {</span>
-<span id="cb24-10"><a href="wide.html#cb24-10"></a>  </span>
-<span id="cb24-11"><a href="wide.html#cb24-11"></a>    df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">X =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">K =</span> <span class="ot">NA</span>) <span class="op">%&gt;%</span></span>
-<span id="cb24-12"><a href="wide.html#cb24-12"></a><span class="st">      </span><span class="kw">slice</span>(<span class="kw">rep</span>(<span class="kw">row_number</span>(), n_fold))</span>
-<span id="cb24-13"><a href="wide.html#cb24-13"></a>    df &lt;-<span class="st"> </span><span class="kw">mutate</span>(df, <span class="dt">K =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>, n_K), <span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">n</span>()<span class="op">-</span>n_K)))</span>
-<span id="cb24-14"><a href="wide.html#cb24-14"></a>    </span>
-<span id="cb24-15"><a href="wide.html#cb24-15"></a>    given &lt;-<span class="st">  </span><span class="kw">collapse_data</span>(df, model)</span>
-<span id="cb24-16"><a href="wide.html#cb24-16"></a></span>
-<span id="cb24-17"><a href="wide.html#cb24-17"></a>    updated &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> df, <span class="dt">stan_model =</span> fit)</span>
-<span id="cb24-18"><a href="wide.html#cb24-18"></a>    <span class="kw">query_model</span>(updated, </span>
-<span id="cb24-19"><a href="wide.html#cb24-19"></a>                  <span class="dt">queries =</span> <span class="kw">list</span>(<span class="dt">ATE =</span> <span class="st">&quot;Y[X=1] - Y[X=0]&quot;</span>), </span>
-<span id="cb24-20"><a href="wide.html#cb24-20"></a>                  <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
-<span id="cb24-21"><a href="wide.html#cb24-21"></a>  </span>
-<span id="cb24-22"><a href="wide.html#cb24-22"></a>}</span>
-<span id="cb24-23"><a href="wide.html#cb24-23"></a></span>
-<span id="cb24-24"><a href="wide.html#cb24-24"></a><span class="cf">if</span>(do_diagnosis){</span>
-<span id="cb24-25"><a href="wide.html#cb24-25"></a>  <span class="cf">if</span>(<span class="op">!</span><span class="kw">exists</span>(<span class="st">&quot;fit&quot;</span>)) fit &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">fitted_model</span>()</span>
-<span id="cb24-26"><a href="wide.html#cb24-26"></a>  out &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>), <span class="cf">function</span>(n_K) {<span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">10</span>, <span class="dv">20</span>), <span class="cf">function</span>(k) <span class="kw">wd_sim</span>(model, n_K, k))})</span>
-<span id="cb24-27"><a href="wide.html#cb24-27"></a>  <span class="kw">write_rds</span>(out, <span class="st">&quot;saved/wide_or_deep_XMY.rds&quot;</span>)</span>
-<span id="cb24-28"><a href="wide.html#cb24-28"></a>  }</span>
-<span id="cb24-29"><a href="wide.html#cb24-29"></a></span>
-<span id="cb24-30"><a href="wide.html#cb24-30"></a>wd &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/wide_or_deep_XMY.rds&quot;</span>)</span>
-<span id="cb24-31"><a href="wide.html#cb24-31"></a>wd &lt;-<span class="st"> </span><span class="kw">t</span>(wd[<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">9</span>,<span class="dv">14</span>), ])</span>
-<span id="cb24-32"><a href="wide.html#cb24-32"></a><span class="kw">rownames</span>(wd) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Clues on 4 cases&quot;</span>, <span class="st">&quot;Clues on 8 cases&quot;</span>)</span>
-<span id="cb24-33"><a href="wide.html#cb24-33"></a><span class="kw">colnames</span>(wd) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;N=8&quot;</span>, <span class="st">&quot;N=40&quot;</span>, <span class="st">&quot;N=80&quot;</span>)</span>
-<span id="cb24-34"><a href="wide.html#cb24-34"></a><span class="kw">kable</span>((wd))</span>
-<span id="cb24-35"><a href="wide.html#cb24-35"></a></span>
-<span id="cb24-36"><a href="wide.html#cb24-36"></a><span class="cf">if</span>(do_diagnosis){</span>
-<span id="cb24-37"><a href="wide.html#cb24-37"></a>  <span class="cf">if</span>(<span class="op">!</span><span class="kw">exists</span>(<span class="st">&quot;fit&quot;</span>)) fit &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">fitted_model</span>()</span>
-<span id="cb24-38"><a href="wide.html#cb24-38"></a>  out &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>), <span class="cf">function</span>(n_K) {<span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">10</span>, <span class="dv">20</span>), <span class="cf">function</span>(k) <span class="kw">wd_sim</span>(model_confound, n_K, k))})</span>
-<span id="cb24-39"><a href="wide.html#cb24-39"></a>  <span class="kw">write_rds</span>(out, <span class="st">&quot;saved/wide_or_deep_XMY2.rds&quot;</span>)</span>
-<span id="cb24-40"><a href="wide.html#cb24-40"></a>  }</span>
-<span id="cb24-41"><a href="wide.html#cb24-41"></a></span>
-<span id="cb24-42"><a href="wide.html#cb24-42"></a>wd2 &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/wide_or_deep_XMY2.rds&quot;</span>)</span>
-<span id="cb24-43"><a href="wide.html#cb24-43"></a>wd2 &lt;-<span class="st"> </span><span class="kw">t</span>(wd2[<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">9</span>,<span class="dv">14</span>), ])</span>
-<span id="cb24-44"><a href="wide.html#cb24-44"></a><span class="kw">rownames</span>(wd2) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Clues on 4 cases&quot;</span>, <span class="st">&quot;Clues on 8 cases&quot;</span>)</span>
-<span id="cb24-45"><a href="wide.html#cb24-45"></a><span class="kw">colnames</span>(wd2) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;N=8&quot;</span>, <span class="st">&quot;N=40&quot;</span>, <span class="st">&quot;N=80&quot;</span>)</span>
-<span id="cb24-46"><a href="wide.html#cb24-46"></a><span class="kw">kable</span>((wd2))</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="wide.html#cb23-1"></a><span class="cf">if</span>(do_diagnosis){</span>
+<span id="cb23-2"><a href="wide.html#cb23-2"></a>  wd_<span class="dv">1</span>_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">wide_or_deep</span>(model, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb23-3"><a href="wide.html#cb23-3"></a>  <span class="kw">write_rds</span>( wd_<span class="dv">1</span>_<span class="dv">2</span>, <span class="st">&quot;saved/wd_1_2.rds&quot;</span>)</span>
+<span id="cb23-4"><a href="wide.html#cb23-4"></a>}</span>
+<span id="cb23-5"><a href="wide.html#cb23-5"></a></span>
+<span id="cb23-6"><a href="wide.html#cb23-6"></a>wd_<span class="dv">1</span>_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/wd_1_2.rds&quot;</span>)</span>
+<span id="cb23-7"><a href="wide.html#cb23-7"></a></span>
+<span id="cb23-8"><a href="wide.html#cb23-8"></a></span>
+<span id="cb23-9"><a href="wide.html#cb23-9"></a>wd_sim &lt;-<span class="st"> </span><span class="cf">function</span>(model, n_K, n_fold) {</span>
+<span id="cb23-10"><a href="wide.html#cb23-10"></a>  </span>
+<span id="cb23-11"><a href="wide.html#cb23-11"></a>    df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">X =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">K =</span> <span class="ot">NA</span>) <span class="op">%&gt;%</span></span>
+<span id="cb23-12"><a href="wide.html#cb23-12"></a><span class="st">      </span><span class="kw">slice</span>(<span class="kw">rep</span>(<span class="kw">row_number</span>(), n_fold))</span>
+<span id="cb23-13"><a href="wide.html#cb23-13"></a>    df &lt;-<span class="st"> </span><span class="kw">mutate</span>(df, <span class="dt">K =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>, n_K), <span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">n</span>()<span class="op">-</span>n_K)))</span>
+<span id="cb23-14"><a href="wide.html#cb23-14"></a>    </span>
+<span id="cb23-15"><a href="wide.html#cb23-15"></a>    given &lt;-<span class="st">  </span><span class="kw">collapse_data</span>(df, model)</span>
+<span id="cb23-16"><a href="wide.html#cb23-16"></a></span>
+<span id="cb23-17"><a href="wide.html#cb23-17"></a>    updated &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">gbiqq</span>(model, <span class="dt">data =</span> df, <span class="dt">stan_model =</span> fit)</span>
+<span id="cb23-18"><a href="wide.html#cb23-18"></a>    <span class="kw">query_model</span>(updated, </span>
+<span id="cb23-19"><a href="wide.html#cb23-19"></a>                  <span class="dt">queries =</span> <span class="kw">list</span>(<span class="dt">ATE =</span> <span class="st">&quot;Y[X=1] - Y[X=0]&quot;</span>), </span>
+<span id="cb23-20"><a href="wide.html#cb23-20"></a>                  <span class="dt">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span>
+<span id="cb23-21"><a href="wide.html#cb23-21"></a>  </span>
+<span id="cb23-22"><a href="wide.html#cb23-22"></a>}</span>
+<span id="cb23-23"><a href="wide.html#cb23-23"></a></span>
+<span id="cb23-24"><a href="wide.html#cb23-24"></a><span class="cf">if</span>(do_diagnosis){</span>
+<span id="cb23-25"><a href="wide.html#cb23-25"></a>  <span class="cf">if</span>(<span class="op">!</span><span class="kw">exists</span>(<span class="st">&quot;fit&quot;</span>)) fit &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">fitted_model</span>()</span>
+<span id="cb23-26"><a href="wide.html#cb23-26"></a>  out &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>), <span class="cf">function</span>(n_K) {<span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">10</span>, <span class="dv">20</span>), <span class="cf">function</span>(k) <span class="kw">wd_sim</span>(model, n_K, k))})</span>
+<span id="cb23-27"><a href="wide.html#cb23-27"></a>  <span class="kw">write_rds</span>(out, <span class="st">&quot;saved/wide_or_deep_XMY.rds&quot;</span>)</span>
+<span id="cb23-28"><a href="wide.html#cb23-28"></a>  }</span>
+<span id="cb23-29"><a href="wide.html#cb23-29"></a></span>
+<span id="cb23-30"><a href="wide.html#cb23-30"></a>wd &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/wide_or_deep_XMY.rds&quot;</span>)</span>
+<span id="cb23-31"><a href="wide.html#cb23-31"></a>wd &lt;-<span class="st"> </span><span class="kw">t</span>(wd[<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">9</span>,<span class="dv">14</span>), ])</span>
+<span id="cb23-32"><a href="wide.html#cb23-32"></a><span class="kw">rownames</span>(wd) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Clues on 4 cases&quot;</span>, <span class="st">&quot;Clues on 8 cases&quot;</span>)</span>
+<span id="cb23-33"><a href="wide.html#cb23-33"></a><span class="kw">colnames</span>(wd) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;N=8&quot;</span>, <span class="st">&quot;N=40&quot;</span>, <span class="st">&quot;N=80&quot;</span>)</span>
+<span id="cb23-34"><a href="wide.html#cb23-34"></a><span class="kw">kable</span>((wd))</span>
+<span id="cb23-35"><a href="wide.html#cb23-35"></a></span>
+<span id="cb23-36"><a href="wide.html#cb23-36"></a><span class="cf">if</span>(do_diagnosis){</span>
+<span id="cb23-37"><a href="wide.html#cb23-37"></a>  <span class="cf">if</span>(<span class="op">!</span><span class="kw">exists</span>(<span class="st">&quot;fit&quot;</span>)) fit &lt;-<span class="st"> </span>gbiqq<span class="op">::</span><span class="kw">fitted_model</span>()</span>
+<span id="cb23-38"><a href="wide.html#cb23-38"></a>  out &lt;-<span class="st"> </span><span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">8</span>), <span class="cf">function</span>(n_K) {<span class="kw">sapply</span>(<span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">10</span>, <span class="dv">20</span>), <span class="cf">function</span>(k) <span class="kw">wd_sim</span>(model_confound, n_K, k))})</span>
+<span id="cb23-39"><a href="wide.html#cb23-39"></a>  <span class="kw">write_rds</span>(out, <span class="st">&quot;saved/wide_or_deep_XMY2.rds&quot;</span>)</span>
+<span id="cb23-40"><a href="wide.html#cb23-40"></a>  }</span>
+<span id="cb23-41"><a href="wide.html#cb23-41"></a></span>
+<span id="cb23-42"><a href="wide.html#cb23-42"></a>wd2 &lt;-<span class="st"> </span><span class="kw">read_rds</span>(<span class="st">&quot;saved/wide_or_deep_XMY2.rds&quot;</span>)</span>
+<span id="cb23-43"><a href="wide.html#cb23-43"></a>wd2 &lt;-<span class="st"> </span><span class="kw">t</span>(wd2[<span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">9</span>,<span class="dv">14</span>), ])</span>
+<span id="cb23-44"><a href="wide.html#cb23-44"></a><span class="kw">rownames</span>(wd2) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Clues on 4 cases&quot;</span>, <span class="st">&quot;Clues on 8 cases&quot;</span>)</span>
+<span id="cb23-45"><a href="wide.html#cb23-45"></a><span class="kw">colnames</span>(wd2) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;N=8&quot;</span>, <span class="st">&quot;N=40&quot;</span>, <span class="st">&quot;N=80&quot;</span>)</span>
+<span id="cb23-46"><a href="wide.html#cb23-46"></a><span class="kw">kable</span>((wd2))</span></code></pre></div>
 </div>
 </div>
 <div id="evaluating-strategies" class="section level2">

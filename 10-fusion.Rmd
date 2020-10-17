@@ -2,7 +2,7 @@
 
 ***
 
-We provide three examples of situations in which, by combining models, researchers learn more than they could from any single model.
+We provide four examples of situations in which, by combining models, researchers learn more than they could from any single model.
 
 ***
 
@@ -23,7 +23,10 @@ In this chapter, we examine how we can use structural causal models to integrate
 
 3. **Transporting knowledge across contexts** Researchers are sometimes in a situation in which they can identify causal quantities in a particular setting --- say, from a randomized controlled trial implemented in a specific local context --- but want to know how those inferences travel to other settings. Would the intervention work differently in other countries or regions? As we will explain, with an appropriately specified causal model and the right data from the original context, we can draw inferences about causal relationships in other contexts.
 
-Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that setting-, or study-, specific  causal model can be nested within a lower level, "encompssing," model that operates across the multiple settings that we are learning from and want to draw inferences about. Encompassing models, of course, can specifically take heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences. 
+4. **Models in hierarchies.** Sometimes researchers learn about the same types of processes in different settings. By thinking of the processes in each setting as deriving from a family of processes, researchers can learn from observations in one setting about causal processes in another and also learn about the nature of heterogeneity between settings. 
+
+
+Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that setting-, or study-, specific  causal model can be nested within a lower level, "encompassing," model that operates across the multiple settings that we are learning from and want to draw inferences about. Encompassing models, of course, can specifically take heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences. 
 
 Put differently, and perhaps more positively, we see social scientists commonly seeking to transport knowledge or combine information informally across studies and settings. Often such efforts are motivated, sometimes implicitly, by an interest in or reliance on general theoretical propositions. The approaches that we describe below force the researcher to be *explicit* about the underlying causal beliefs that warrant that integration while also ensuring that the integration proceeds in a way that is logically consistent with stated beliefs.
 
@@ -433,138 +436,141 @@ kable(q2, caption = "Extrapolation when two contexts differ on $W$ and $W$ is no
 
 A key idea in Bayesian meta-analysis is that when you analyze multiple studies together you learn not only about common processes that give rise to the different results seen in different sites, but you also learn more about each study from seeing the other studies.
 
-A classic setup is provided in GELMAN, which we have access to estimates of effects and uncertainty in eight sites (schools), $(b_j, se_j)_{j \in \{1,2,\dots,8\}}$. We assume that each $b_j$ is a draw from distribution $N(\beta_j, se_j)$ and that each  $\beta_j$ is a draw from distribution $N(\beta, \sigma)$. In that setup we want to learn not just about the superpopulation parameters  $\beta, \sigma$, but also about the study level effects $(\beta_j)_{j \in \{1,2,\dots,8\}}$.
+A classic setup is provided in @gelman2013bayesian, in which we have access to estimates of effects and uncertainty in eight sites (schools), $(b_j, se_j)_{j \in \{1,2,\dots,8\}}$. To integrate learning across these studies we employ a  "hierarchical model"
+that treats each $b_j$ as a draw from distribution $N(\beta_j, se_j)$ (and, in turn treats each  $\beta_j$ is a draw from distribution $N(\beta, \sigma)$). In that setup we want to learn about the superpopulation parameters  $\beta, \sigma$, but we also get to learn more about the study level effects $(\beta_j)_{j \in \{1,2,\dots,8\}}$ by studying them jointly.
 
 <!-- AJ: Not clear to me that Gelman here is the right way to set up the analysis in this subsection. Doesn't Gelman's setup work more like our setup in the next section, with settings treated as being drawn stochastically from a common distribution at the superpop level? -->
 
-We define a model in which $X$ points into $Y$, and in which $Setting$ is a third node that also points into $Y$. Thus $Setting$ can potentially moderate the effect of $X$ on $Y$. We observe an experiment that takes place in $Setting$ 0 and also in $Setting$ 1. Note that, in this setup, any differences in the distribution of effects of $X$ on $Y$ between the two settings can *only* arise because of $Setting$. That is, we are here assuming the same causal effects across settings conditional on $Setting$ itself.
+<!-- We define a model in which $X$ points into $Y$, and in which $Setting$ is a third node that also points into $Y$. Thus $Setting$ can potentially moderate the effect of $X$ on $Y$. We observe an experiment that takes place in $Setting$ 0 and also in $Setting$ 1. Note that, in this setup, any differences in the distribution of effects of $X$ on $Y$ between the two settings can *only* arise because of $Setting$. That is, we are here assuming the same causal effects across settings conditional on $Setting$ itself. -->
 
-We then consider the different conclusions we draw for the effect of $X$ on $Y$ in each setting, depending on whether we pool data across settings and on our priors over how much $Setting$ matters for $X$'s effects.
+<!-- We then consider the different conclusions we draw for the effect of $X$ on $Y$ in each setting, depending on whether we pool data across settings and on our priors over how much $Setting$ matters for $X$'s effects. -->
 
-We design the simulation so that in $X$'s true causal effect is stronger in $Setting$ 0 than in $Setting$ 1. We then generate data from these true parameters for each setting, 100 cases for each, and run the analysis in different ways, with results displayed in Table \@ref(settingmatters). In the first two rows, we show $ATE$ posteriors from separate analyses of the data for each setting. We see that we recover an $ATE$ that is higher in $Setting 0$ than in $Setting 1$, as expected.
+<!-- We design the simulation so that in $X$'s true causal effect is stronger in $Setting$ 0 than in $Setting$ 1. We then generate data from these true parameters for each setting, 100 cases for each, and run the analysis in different ways, with results displayed in Table \@ref(settingmatters). In the first two rows, we show $ATE$ posteriors from separate analyses of the data for each setting. We see that we recover an $ATE$ that is higher in $Setting 0$ than in $Setting 1$, as expected. -->
 
-In the third row (Integrated flat priors), we use data from both settings to estimate an overall $ATE$. Moreover, we put equal weight on all possible $Y$ types, i.e., on all possible joint effects of $X$ and $Setting$, meaning that we provide substantial scope for $Setting$ to moderate $X$'s effects. As expected, the $ATE$ looking across both settings lies between the $ATE$ for each in the unpooled analyses. 
+<!-- In the third row (Integrated flat priors), we use data from both settings to estimate an overall $ATE$. Moreover, we put equal weight on all possible $Y$ types, i.e., on all possible joint effects of $X$ and $Setting$, meaning that we provide substantial scope for $Setting$ to moderate $X$'s effects. As expected, the $ATE$ looking across both settings lies between the $ATE$ for each in the unpooled analyses.  -->
 
-<!-- AJ: Why is the ATE in "Integrated, flat priors" not more centered between the ATE in the first two rows? It's much lower than I'd have expected. Does allowing interactions pull the ATE down in some way? -->
+<!-- <!-- AJ: Why is the ATE in "Integrated, flat priors" not more centered between the ATE in the first two rows? It's much lower than I'd have expected. Does allowing interactions pull the ATE down in some way? --> 
 
-In rows 4 and 5, we then estimate the $ATE$ in each setting separately, again using flat priors that allow for substantial interactions with setting. Differently from the first two rows, however, we are using data from both settings in estimating effects for each setting. Consider what happens we estimate the $ATE$ for $Setting$ 0: we are using our posterior over $Y$'s nodal type shares to answer this query. Of course, data from $Setting$ 0 itself provides what we might think of as the most context-*specific* information about the causal effect in that particular setitng. But data from $Setting$ 1, where we also observe $X$ and $Y$ values, *also* provides information about those shares, and this additional information drawn from $Setting$ 1 is reflected in the integrated estimate for $Setting$ 0 -- and vice versa for the integrated $Setting$ 1 estimate. With the pooling of data, we see that the $ATE$ for each setting.... Also note that the standard deviation of the posterior has shrunk, reflecting the fact that we have brought more data to bear on the question.
+<!-- In rows 4 and 5, we then estimate the $ATE$ in each setting separately, again using flat priors that allow for substantial interactions with setting. Differently from the first two rows, however, we are using data from both settings in estimating effects for each setting. Consider what happens we estimate the $ATE$ for $Setting$ 0: we are using our posterior over $Y$'s nodal type shares to answer this query. Of course, data from $Setting$ 0 itself provides what we might think of as the most context-*specific* information about the causal effect in that particular setitng. But data from $Setting$ 1, where we also observe $X$ and $Y$ values, *also* provides information about those shares, and this additional information drawn from $Setting$ 1 is reflected in the integrated estimate for $Setting$ 0 -- and vice versa for the integrated $Setting$ 1 estimate. With the pooling of data, we see that the $ATE$ for each setting.... Also note that the standard deviation of the posterior has shrunk, reflecting the fact that we have brought more data to bear on the question. -->
 
-<!-- AJ: I don't know how to finish the above sentence because I don't get the lack of convergence -- the lower ATE for Setting 1. Especially since we *do* get the expected convergence with weak interactions priors. -->
+<!-- <!-- AJ: I don't know how to finish the above sentence because I don't get the lack of convergence -- the lower ATE for Setting 1. Especially since we *do* get the expected convergence with weak interactions priors. --> 
 
-Finally, in the last three rows, we set priors such that the moderating effect of $Setting$ is believed to be weak. Here we see that the $ATE$'s for the two settings converge more strongly, reflecting the influence of our low-heterogeneity priors. Moreover, our uncertainty shrinks further here, reflecting the fact that -- if we believe that heterogeneity across settings is low -- then we also believe that data from one setting is *more* informative about the other setting: i.e., we get a bigger boost in statistical power from the pooling under these priors. 
+<!-- Finally, in the last three rows, we set priors such that the moderating effect of $Setting$ is believed to be weak. Here we see that the $ATE$'s for the two settings converge more strongly, reflecting the influence of our low-heterogeneity priors. Moreover, our uncertainty shrinks further here, reflecting the fact that -- if we believe that heterogeneity across settings is low -- then we also believe that data from one setting is *more* informative about the other setting: i.e., we get a bigger boost in statistical power from the pooling under these priors.  -->
 
-<!-- AJ: Why is the overall $ATE$ higher here than with flat priors? Must be that the interactions themselves depress the ATE. Less interaction then means higher ATE?? -->
-
-
-
-```{r settingmatters, echo=FALSE}
+<!-- <!-- AJ: Why is the overall $ATE$ higher here than with flat priors? Must be that the interactions themselves depress the ATE. Less interaction then means higher ATE?? --> 
 
 
-if(do_diagnosis){
-  
-  model_1 <- make_model("X -> Y") %>% 
-    set_parameters(node  = "Y", parameters = c(.1, .1, .7, .1))
-  model_2 <- make_model("X -> Y") %>% 
-    set_parameters(node  = "Y", parameters = c(.1, .2, .6, .1))
-  model_3 <- make_model("X -> Y <- Setting") 
-  model_4 <- model_3 %>% set_priors(2) %>% 
-    set_priors(statement = interacts("Setting", "X", "Y"), alphas  = .1)
 
-  df_1 <- simulate_data(model_1, 100) %>% mutate(Setting = 0)
-  df_2 <- simulate_data(model_2, 100) %>% mutate(Setting = 1)
-  
-  model_1 <- update_model(model_1, df_1)
-  model_2 <- update_model(model_2, df_2)
-  model_3 <- update_model(model_3, rbind(df_1, df_2), iter = 8000)
-  model_4 <- update_model(model_4, rbind(df_1, df_2), iter = 8000)
-  
-  q1 <- query_model(model_1, list(`Setting 0` = te("X","Y")), using = "posteriors")
-  q2 <- query_model(model_2, list(`Setting 1` = te("X","Y")), using = "posteriors")
-  
-  q3_1 <- query_model(model_3, list(`Integrated (flat priors)` = te("X","Y")), 
-                   given = c(TRUE, "Setting==0", "Setting==1"), 
-                   expand_grid = TRUE, using = "posteriors")
-
-  q3_2 <- query_model(model_3, interacts("Setting", "X", "Y"), 
-                   using = c("priors", "posteriors"),
-                   expand_grid = TRUE) 
-    
-  q4_1 <- query_model(model_4, list(`Integrated (low heterogeneity)` = te("X","Y")), 
-                   given = c(TRUE, "Setting==0", "Setting==1"), 
-                   expand_grid = TRUE, using = "posteriors")
-
-  q4_2 <- query_model(model_4, interacts("Setting", "X", "Y"), 
-                   using = c("priors", "posteriors"),
-                   expand_grid = TRUE) 
-  
-  write_rds(list(q1, q2, q3_1, q3_2, q4_1, q4_2), "saved/10a_multilevel.rds")
-  
-}
-
-  multilevel <- read_rds("saved/10a_multilevel.rds")
-
-    rbind(
-    multilevel[[1]],  multilevel[[2]],
-  multilevel[[3]], 
-  multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2)
-```
-
-<!-- We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2.  -->
-
-Further, we can use these same updated models to update specifically on the amount of heterogeneity across settings. We operationalize heterogeneity here as the share of units that *would* respond differently to $X$ if they were in a different setting. In Table XXXX, we compare our prior on this quantity to our posterior. Where we started out with flat priors --- allowing for a great deal of heterogeneity --- we see that the data bring these beliefs downward. This makes sense given that, under the true data-generating process, the effects in the two settings are only moderately different. Conversely, where we start with a very low prior on heterogeneity, the data lead us to believe there is *more* heterogeneity than we had initially believed (though, given the strength of the prior that we have used in this example, we can still see its formidable efect on the posterior).
-
-```{r, echo = FALSE}
-    multilevel[[4]] %>% kable(caption = "Interaction | Flat priors")
-  multilevel[[6]] %>% kable(caption = "Interaction | Expected homogeneity")
-  
-```
-
-```{r, include = FALSE}
-# Approach 2
-
-model_5 <- make_model("X -> Y <- Setting -> W -> Y") %>% 
-  set_restrictions("Y[X=1, W=1] != Y[X=0, W=1]")
-length(model_5$nodal_types$Y)
+<!-- ```{r settingmatters, echo=FALSE} -->
 
 
-if(do_diagnosis){
-  
-  model_5 <- update_model(model_5, rbind(df_1, df_2), iter = 8000)
-  
-  q5_1 <- query_model(model_5, list(`Integrated (Latent W)` = te("X","Y")), 
-                   given = c(TRUE, "Setting==0", "Setting==1"), 
-                   expand_grid = TRUE, using = "posteriors")
+<!-- if(do_diagnosis){ -->
 
-  q5_2 <- query_model(model_5, interacts("Setting", "X", "Y"), 
-                   using = c("priors", "posteriors"),
-                   expand_grid = TRUE) 
-  q5_3 <- query_model(model_5, "W==1", 
-                   using = c("priors", "posteriors"),
-                   expand_grid = TRUE) 
-  q5_4 <- query_model(model_5, c("W[Setting=1]-W[Setting=0]"), 
-                   using = c("priors", "posteriors"),
-                   expand_grid = TRUE) 
-  
-  write_rds(list(q5_1, q5_2, q5_3, q5_4), "saved/10a_multilevel_latent.rds")
-  
-}
+<!--   model_1 <- make_model("X -> Y") %>%  -->
+<!--     set_parameters(node  = "Y", parameters = c(.1, .1, .7, .1)) -->
+<!--   model_2 <- make_model("X -> Y") %>%  -->
+<!--     set_parameters(node  = "Y", parameters = c(.1, .2, .6, .1)) -->
+<!--   model_3 <- make_model("X -> Y <- Setting")  -->
+<!--   model_4 <- model_3 %>% set_priors(2) %>%  -->
+<!--     set_priors(statement = interacts("Setting", "X", "Y"), alphas  = .1) -->
+
+<!--   df_1 <- simulate_data(model_1, 100) %>% mutate(Setting = 0) -->
+<!--   df_2 <- simulate_data(model_2, 100) %>% mutate(Setting = 1) -->
+
+<!--   model_1 <- update_model(model_1, df_1) -->
+<!--   model_2 <- update_model(model_2, df_2) -->
+<!--   model_3 <- update_model(model_3, rbind(df_1, df_2), iter = 8000) -->
+<!--   model_4 <- update_model(model_4, rbind(df_1, df_2), iter = 8000) -->
+
+<!--   q1 <- query_model(model_1, list(`Setting 0` = te("X","Y")), using = "posteriors") -->
+<!--   q2 <- query_model(model_2, list(`Setting 1` = te("X","Y")), using = "posteriors") -->
+
+<!--   q3_1 <- query_model(model_3, list(`Integrated (flat priors)` = te("X","Y")),  -->
+<!--                    given = c(TRUE, "Setting==0", "Setting==1"),  -->
+<!--                    expand_grid = TRUE, using = "posteriors") -->
+
+<!--   q3_2 <- query_model(model_3, interacts("Setting", "X", "Y"),  -->
+<!--                    using = c("priors", "posteriors"), -->
+<!--                    expand_grid = TRUE)  -->
+
+<!--   q4_1 <- query_model(model_4, list(`Integrated (low heterogeneity)` = te("X","Y")),  -->
+<!--                    given = c(TRUE, "Setting==0", "Setting==1"),  -->
+<!--                    expand_grid = TRUE, using = "posteriors") -->
+
+<!--   q4_2 <- query_model(model_4, interacts("Setting", "X", "Y"),  -->
+<!--                    using = c("priors", "posteriors"), -->
+<!--                    expand_grid = TRUE)  -->
+
+<!--   write_rds(list(q1, q2, q3_1, q3_2, q4_1, q4_2), "saved/10a_multilevel.rds") -->
+
+<!-- } -->
+
+<!--   multilevel <- read_rds("saved/10a_multilevel.rds") -->
+
+<!--     rbind( -->
+<!--     multilevel[[1]],  multilevel[[2]], -->
+<!--   multilevel[[3]],  -->
+<!--   multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2) -->
+<!-- ``` -->
+
+<!-- <!-- We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2.  -->
+
+<!-- Further, we can use these same updated models to update specifically on the amount of heterogeneity across settings. We operationalize heterogeneity here as the share of units that *would* respond differently to $X$ if they were in a different setting. In Table XXXX, we compare our prior on this quantity to our posterior. Where we started out with flat priors --- allowing for a great deal of heterogeneity --- we see that the data bring these beliefs downward. This makes sense given that, under the true data-generating process, the effects in the two settings are only moderately different. Conversely, where we start with a very low prior on heterogeneity, the data lead us to believe there is *more* heterogeneity than we had initially believed (though, given the strength of the prior that we have used in this example, we can still see its formidable efect on the posterior). -->
+
+<!-- ```{r, echo = FALSE} -->
+<!--     multilevel[[4]] %>% kable(caption = "Interaction | Flat priors") -->
+<!--   multilevel[[6]] %>% kable(caption = "Interaction | Expected homogeneity") -->
+
+<!-- ``` -->
+
+<!-- ```{r, include = FALSE} -->
+<!-- # Approach 2 -->
+
+<!-- model_5 <- make_model("X -> Y <- Setting -> W -> Y") %>%  -->
+<!--   set_restrictions("Y[X=1, W=1] != Y[X=0, W=1]") -->
+<!-- length(model_5$nodal_types$Y) -->
 
 
-```
+<!-- if(do_diagnosis){ -->
 
-## Real multilevel
+<!--   model_5 <- update_model(model_5, rbind(df_1, df_2), iter = 8000) -->
+
+<!--   q5_1 <- query_model(model_5, list(`Integrated (Latent W)` = te("X","Y")),  -->
+<!--                    given = c(TRUE, "Setting==0", "Setting==1"),  -->
+<!--                    expand_grid = TRUE, using = "posteriors") -->
+
+<!--   q5_2 <- query_model(model_5, interacts("Setting", "X", "Y"),  -->
+<!--                    using = c("priors", "posteriors"), -->
+<!--                    expand_grid = TRUE)  -->
+<!--   q5_3 <- query_model(model_5, "W==1",  -->
+<!--                    using = c("priors", "posteriors"), -->
+<!--                    expand_grid = TRUE)  -->
+<!--   q5_4 <- query_model(model_5, c("W[Setting=1]-W[Setting=0]"),  -->
+<!--                    using = c("priors", "posteriors"), -->
+<!--                    expand_grid = TRUE)  -->
+
+<!--   write_rds(list(q5_1, q5_2, q5_3, q5_4), "saved/10a_multilevel_latent.rds") -->
+
+<!-- } -->
+
+
+<!-- ``` -->
+
+<!-- ## Real multilevel -->
 
 <!-- AJ: Need a better section heading -->
 
-In the situations we have considered so far, we are learning from and about the particular contexts that we are studying. We are combining experimental data from one setting, for instance, with observational data from another. Or we are using updating from one context to draw an inference about another setting. Our inferences in these setups are limited strictly to the settings at hand, however. 
+<!-- In the situations we have considered so far, we are learning from and about the particular contexts that we are studying. We are combining experimental data from one setting, for instance, with observational data from another. Or we are using updating from one context to draw an inference about another setting. Our inferences in these setups are limited strictly to the settings at hand, however.  -->
 
-We can take a step further by building a hierarchical model. A hierarchical model allows us to think about the populations in our study sites as themselves drawn from a larger population ("superpopulation") of settings. And, crucially, it allows us in turn to use data in the study sites to learn about that broader superpopulation of settings.
+A hierarchical model like this allows us to think about the populations in our study sites as themselves drawn from a larger population ("superpopulation") of settings. And, crucially, it allows us in turn to use data in the study sites to learn about that broader superpopulation of settings.
 
 <!-- AJ: Is "superpopulation" right here and below? -->
 
-For instance, we might be studying the effect of an individual's relative location in the income scale on their preferences for democracy. We might collect data in a set of 10 countries and estimate the average causal effect of relative income in each of them. We can readily average inferences across these countries or study country-level moderators of the effect to explain differences in effects across the 10 countries. Yet these data from the 10 countries also contain information of a more general sort: they tell us something about the "superpopulation" of settings from which these 10 countries have been "drawn."
+<!-- For instance, we might be studying the effect of an individual's relative location in the income scale on their preferences for democracy. We might collect data in a set of 10 countries and estimate the average causal effect of relative income in each of them. We can readily average inferences across these countries or study country-level moderators of the effect to explain differences in effects across the 10 countries. Yet these data from the 10 countries also contain information of a more general sort: they tell us something about the "superpopulation" of settings from which these 10 countries have been "drawn." -->
 
-Let's review how our analytic setup has worked so far. At each node in a causal model, we conceptualize a given case as have a particular nodal type. The case's nodal type is drawn from a distribution of nodal types in the population of cases from which this case has been drawn. When we do process tracing, we consider that population-level distribution to be a set of fixed shares of nodal types in the population: say, for node $Y$, we might believe that half the cases in the population are $\lambda^Y_{01}$, a quarter are $\lambda^Y_{00}$, and a quarter are $\lambda^Y_{11}$. We then use data from the case to update on the case's nodal types (or on the combination of nodal types that correspond to some case-level query), given the population-level shares. 
+Although often used in the context of linear models with parameters for average causal effects, this logic works just as well with the kinds of causal models we have been using in this book. 
+
+Let's review how our analytic setup has worked so far. At each node in a causal model, we conceptualize a given case as having a particular nodal type. The case's nodal type is drawn from a distribution of nodal types in the population of cases from which this case has been drawn. When we do process tracing, we consider that population-level distribution to be a set of fixed shares of nodal types in the population: say, for node $Y$, we might believe that half the cases in the population are $\lambda^Y_{01}$, a quarter are $\lambda^Y_{00}$, and a quarter are $\lambda^Y_{11}$. We then use data from the case to update on the case's nodal types (or on the combination of nodal types that correspond to some case-level query), given the population-level shares. 
 
 When we engage in population-level inference, we begin with *uncertainty* about the population-level shares of types, and we express our prior beliefs about those shares as a Dirichlet *distribution*. So, for instance, our beliefs might be centered around a $\lambda^Y_{01}=0.5, \lambda^Y_{00}=0.25, \lambda^Y_{11}=0.25$ breakdown of shares in the population; and we also express some degree of uncertainty about what the breakdown is. Now, when we analyze data on some number of cases, we can update both on those cases' types and on our beliefs about the distribution of types in the population -- perhaps shifting toward a higher share of $\lambda^Y_{01}$'s (and with a change in the distribution's variance).
 
@@ -655,7 +661,7 @@ unpooled <-  read_rds("saved/10a_meta_unpooled.rds")
 
 
 
-```{r plotalphas, echo = FALSE}
+```{r plotalphas, echo = FALSE, fig.cap="Joint distributions over alpha parameters."}
 
 # Results
 
@@ -727,10 +733,10 @@ We can think of a concentration parameter here that is operationalized as the su
 results <- my_summary(pooled, unpooled, truth)  
 ```
 
-```{r metaplot, echo = FALSE}
+```{r metaplot, echo = FALSE, fig.cap="Updating on study level parameters from integrated analyses. "}
 results %>% filter(estimand == "ATE") %>%
 ggplot(aes(mean, study, color = analysis)) + geom_point()
 
 ```
 
-In the Figure \@ref(fig:metaplot) we turn to the causal query of interest and show a comparison of three $ATE$ estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from *all* countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.
+In Figure \@ref(fig:metaplot) we turn to the causal query of interest and show a comparison of three $ATE$ estimates for each country: in blue, we show the unpooled estimate, or the estimate we get for each country using only data from that country; in red, we see the pooled estimates, or the estimate we get for each country using data from *all* countries to inform that country's parameter estimates; and in black, we plot the truth as posited for this simulation. As we can see, the pooled estimates are all closer to the center than the unpooled estimates: this is because we are effectively using data from all countries to discount extreme features of the data observed in a given country. Put differently, the pooled data serve the function of a prior when it comes to drawing inferences about a single country: our inference is a compromise between the data from that country and the beliefs we have formed from the pooled data. We can also see that, for most countries, the pooling helps: the regularization provided by the pooling gives us an estimate closer to the truth for most of the settings.

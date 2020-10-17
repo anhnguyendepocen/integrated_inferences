@@ -114,7 +114,6 @@
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{amsmath}
-\usepackage{mathspec}
 \usepackage{color}
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -145,23 +144,14 @@ This book has four main parts:
 \item
   Part I introduces causal models and a Bayesian approach to learning about them and drawing inferences from them.
 \item
-  Part II applies these tools to strategies of learning from process tracing and mixed methods research, with applications.
+  Part II applies these tools to strategies that use process tracing, mixed methods, and ``model aggregation.''
 \item
-  Part III turn to design decisions, exploring strategies for assessing what kind of data is most useful for addressing different kinds of research questions given knowledge to date about a population or a case.
+  Part III turns to design decisions, exploring strategies for assessing what kind of data is most useful for addressing different kinds of research questions given knowledge to date about a population or a case.
 \item
   Everything up to Part IV assumes that we have access to models we are happy with. In Part IV we turn to the difficult question of model justification and outline a range of strategies on can use to justify causal models.
 \end{itemize}
 
-There is also an accompanying \texttt{R} package currently hosted on github. This can be downloaded and installed as follows:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{install.packages}\NormalTok{(}\StringTok{"remotes"}\NormalTok{)}
-\NormalTok{remotes}\OperatorTok{::}\KeywordTok{install_github}\NormalTok{(}\StringTok{"macartan/gbiqq"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-An \protect\hyperlink{examplesappendix}{appendix} shows how to use the package for defining and learning from a set of canonical causal models.
+We have developed an \texttt{R} package \texttt{CausalQueries} that accompanies this book, hosted on \href{https://cran.r-project.org/web/packages/CausalQueries/index.html}{Cran}. In addition, a supplementary \href{https://macartan.github.io/causalmodels/}{Guide to Causal Models} serves as a guide to the package and provides the code behind many of the mode models used in this book.
 
 \hypertarget{intro}{%
 \chapter{Introduction}\label{intro}}
@@ -1123,7 +1113,7 @@ Analyzing a causal graph for relations of independence represents one payoff to 
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-We given an introduction to the idea of thinking of (applied) theoretical claims as claims within hierarchies of causal models. Lower level models serve as a theory for a higher level model if the higher level model can be deduced from the lower level model. The empirical content of a lower level model is the possible reduction in variance of the higher level model that it can provide.
+We give an introduction to the idea of thinking of (applied) theoretical claims as claims within hierarchies of causal models. Lower level models serve as a theory for a higher level model if the higher level model can be deduced from the lower level model. The empirical content of a lower level model is the possible reduction in variance of the higher level model that it can provide.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1435,28 +1425,28 @@ To illustrate, consider two ``lower level'' theories of democratization:
 \begin{itemize}
 \tightlist
 \item
-  (\(L_1\)): \(Inequality \rightarrow Democratization \leftarrow Mobilization\)\\
+  (\(L_1\)): Inequality \(\rightarrow\) Democratization \(\leftarrow\) Mobilization\\
 \item
-  (\(L_2\)): \(Inequality \rightarrow Mobilization \rightarrow Democratization\)
+  (\(L_2\)): Inequality \(\rightarrow\) Mobilization \(\rightarrow\) Democratization
 \end{itemize}
 
-Note how these theories are incompatible with one another. While \(Inequality\) and \(Democratization\) are independent in \(L_1\), they are causally related in \(L_2\). Moreover, in \(L_2\), \(Inequality\) and \(Democratization\) are related only through \(Mobilization\), while in \(L_1\), \(Democratization\) is directly affected by \(Inequality\).\footnote{Put differently, these two theories record different relations of conditional independence: in \(L_1\), \(Inequality\) and \(Mobilization\) are unconditionally independent, but they are not unconditionally independent in \(L_2\). Also, in \(L_2\), \(Inequality\) is independent of \(Democratization\) conditional on \(Mobilization\); but this is not the case in \(L_1\).}
+Note how these theories are incompatible with one another. While \emph{Inequality} and \emph{Democratization} are independent in \(L_1\), they are causally related in \(L_2\). Moreover, in \(L_2\), \emph{Inequality} and \emph{Democratization} are related only through \emph{Mobilization}, while in \(L_1\), \emph{Democratization} is directly affected by \emph{Inequality}.\footnote{Put differently, these two theories record different relations of conditional independence: in \(L_1\), \(Inequality\) and \emph{Mobilization} are unconditionally independent, but they are not unconditionally independent in \(L_2\). Also, in \(L_2\), \(Inequality\) is independent of \emph{Democratization} conditional on \emph{Mobilization}; but this is not the case in \(L_1\).}
 
 Now, consider the following three higher-level claims:
 
 \begin{itemize}
 \tightlist
 \item
-  (\(H_1\)): \(Inequality \rightarrow Democratization\)
+  (\(H_1\)): Inequality \(\rightarrow\) Democratization
 \item
-  (\(H_2\)): \(Mobilization \rightarrow Democratization\)
+  (\(H_2\)): Mobilization \(\rightarrow\) Democratization
 \item
-  (\(H_3\)): \(Inequality \rightarrow Mobilization\)
+  (\(H_3\)): Inequality \(\rightarrow\) Mobilization
 \end{itemize}
 
-\(H_1\) could be derived from (explained by) either theory, \(L_1\) or \(L_2\). Although the two theories are incompatible with one another, in both theories \(Inequality\) affects \(Democratization\). Both theories likewise imply \(H_2\), in which \(Mobilization\) affects \(Democratization\).
+\(H_1\) could be derived from (explained by) either theory, \(L_1\) or \(L_2\). Although the two theories are incompatible with one another, in both theories \(Inequality\) affects \emph{Democratization}. Both theories likewise imply \(H_2\), in which \emph{Mobilization} affects \emph{Democratization}.
 
-\(H_3\), however, can be supported only by one of these theories: only in \(L_2\), and not in \(L_1\), does \(Inequality\) cause \(Mobilization\).\footnote{In addition, the \emph{conditional} higher-level model \(((Inequality \rightarrow Democratization)|Mobilization=1)\) can be supported by model \(L_1\) but not by model \(L_2\), where holding \(Mobilization\) constant would sever the dependence of \(Democratization\) on \(Inequality\).}
+\(H_3\), however, can be supported only by one of these theories: only in \(L_2\), and not in \(L_1\), does \(Inequality\) cause \emph{Mobilization}.\footnote{In addition, the \emph{conditional} higher-level model \(((Inequality \rightarrow Democratization)|Mobilization=1)\) can be supported by model \(L_1\) but not by model \(L_2\), where holding \emph{Mobilization} constant would sever the dependence of \emph{Democratization} on \(Inequality\).}
 
 Thus multiple (possibly \emph{incompatible}) theories can usually be proposed to explain any given causal effect. When seeking an explanation for, say, \(H_1\), the choice between \(L_1\) and \(L_2\) is not dictated by logic; it must be drawn from a substantive belief about which set of causal dependencies operates in the world. On the other hand, \(L_2\) \emph{is} logically ruled out as an explanation of \(H_3\). Further, any given theory logically implies multiple (necessarily \emph{compatible}) higher-level claims about causal relations.
 
@@ -2038,22 +2028,12 @@ In sum, we can define a query about causal paths as a query about the value of \
 
 It is worth noting how different this formulation of the task of identifying causal pathways is from widespread understandings of process tracing. Scholars commonly characterize process tracing as a method in which we determine whether a mechanism was operating by establishing whether the events lying along that path occurred. As a causal-model framework makes clear, finding out that \(M=1\) (or \(M=0\), for that matter) does not establish what was going on causally. Observing this intervening step does not by itself tell us what value \(M\) \emph{would} have taken on if \(X\) had taken on a different value, or whether this would have changed \(Y\)'s value. We need instead to conceive of the problem of identifying pathways as one of figuring out the \emph{counterfactual} response patterns of the variables along the causal chain. As we will demonstrate later in the book, explicitly characterizing those response patterns as nodes in a causal model helps us think systematically about empirical strategies for drawing the relevant inferences.
 
---\textgreater{}
-
---\textgreater{}
-
---\textgreater{}
-
---\textgreater{}
-
---\textgreater{}
-
 \hypertarget{bayeschapter}{%
 \chapter{Bayesian Answers}\label{bayeschapter}}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-We run through the logic of Bayesian updating and show how it is used for answering queries of interest. We illustrate with applications to correlational and process tracing inferences.
+We run through the logic of Bayesian updating and show how it is used for answering causal queries. We illustrate with applications to correlational and process tracing inferences.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -6059,7 +6039,7 @@ We begin by analyzing just the observational data (cases where \(R=0\)) and disp
 \hline
   & Estimate & Std. Error & t value & Pr(>|t|) & CI Lower & CI Upper & DF\\
 \hline
-X & 0.765 & 0.03 & 25.22 & 0 & 0.705 & 0.825 & 195\\
+X & 0.845 & 0.024 & 35.04 & 0 & 0.798 & 0.893 & 225\\
 \hline
 \end{tabular}
 \end{table}
@@ -6292,7 +6272,7 @@ Further, we can use these same updated models to update specifically on the amou
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-12}Interaction | Flat priors}
+\caption{\label{tab:unnamed-chunk-11}Interaction | Flat priors}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -6307,7 +6287,7 @@ Q 1 & - & posteriors & 0.588 & 0.122\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-12}Interaction | Expected homogeneity}
+\caption{\label{tab:unnamed-chunk-11}Interaction | Expected homogeneity}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -6586,13 +6566,13 @@ Sample data can be generated with the \texttt{DeclareDesign} function \texttt{dr
 \hline
 event & strategy & count\\
 \hline
-X0Y0 & XY & 5\\
+X0Y0 & XY & 9\\
 \hline
-X1Y0 & XY & 3\\
+X1Y0 & XY & 1\\
 \hline
-X0Y1 & XY & 1\\
+X0Y1 & XY & 0\\
 \hline
-X1Y1 & XY & 1\\
+X1Y1 & XY & 0\\
 \hline
 \end{tabular}
 \end{table}
@@ -6607,7 +6587,7 @@ We can look at sample estimands using \texttt{draw\_estimands}:
 \hline
 estimand\_label & estimand\\
 \hline
-PC & 0.768\\
+PC & 0.657\\
 \hline
 \end{tabular}
 \end{table}
@@ -6622,7 +6602,7 @@ We can look at sample estimates using \texttt{draw\_estimates}:
 \hline
 estimand\_label & Given & Using & estimate & sd & estimator\_label\\
 \hline
-PC & - & posteriors & 0.282 & 0.225 & est\_PC\\
+PC & - & posteriors & 0.671 & 0.195 & est\_PC\\
 \hline
 \end{tabular}
 \end{table}
@@ -7707,11 +7687,11 @@ We see that prior beliefs are for a 0 average effect which rises to approximatel
 \hline
 Query & Given & Using & mean & sd\\
 \hline
-ATE & - & priors & 0.003 & 0.343\\
+ATE & - & priors & 0.004 & 0.339\\
 \hline
-ATE & K==1 & priors & 0.499 & 0.228\\
+ATE & K==1 & priors & 0.497 & 0.223\\
 \hline
-ATE & K==0 & priors & -0.498 & 0.223\\
+ATE & K==0 & priors & -0.496 & 0.222\\
 \hline
 \end{tabular}
 
@@ -7721,11 +7701,11 @@ We see little difference in the prior on estimands. Despite this an important di
 \hline
 Query & Given & Using & mean & sd\\
 \hline
-ATE & - & priors & -0.006 & 0.342\\
+ATE & - & priors & -0.001 & 0.345\\
 \hline
-ATE & K==1 & priors & 0.499 & 0.224\\
+ATE & K==1 & priors & 0.499 & 0.222\\
 \hline
-ATE & K==0 & priors & -0.506 & 0.224\\
+ATE & K==0 & priors & -0.502 & 0.225\\
 \hline
 \end{tabular}
 
@@ -8384,7 +8364,7 @@ Results:
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-22}Doubly decisive test}
+\caption{\label{tab:unnamed-chunk-21}Doubly decisive test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8401,7 +8381,7 @@ Q 1 & K==1 & posteriors & 0.976 & 0.008\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-22}Hoop test}
+\caption{\label{tab:unnamed-chunk-21}Hoop test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8418,7 +8398,7 @@ Q 1 & K==1 & posteriors & 0.494 & 0.023\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-22}Smoking gun test}
+\caption{\label{tab:unnamed-chunk-21}Smoking gun test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8435,7 +8415,7 @@ Q 1 & K==1 & posteriors & 0.900 & 0.037\\
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-22}Straw in the wind test}
+\caption{\label{tab:unnamed-chunk-21}Straw in the wind test}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8490,7 +8470,7 @@ We now share a more negative result. Say you had access to large amounts of obse
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-23}Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$}
+\caption{\label{tab:unnamed-chunk-22}Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$}
 \centering
 \begin{tabular}[t]{l|l|l|r|r}
 \hline
@@ -8827,7 +8807,7 @@ Note that this form of diagnostic test is a classical one in the frequentist sen
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-24}Regression coefficient on $X$ given $M=0$ and $M=1$}
+\caption{\label{tab:unnamed-chunk-23}Regression coefficient on $X$ given $M=0$ and $M=1$}
 \centering
 \begin{tabular}[t]{r|r|r|r}
 \hline
@@ -8881,7 +8861,7 @@ One such approach is the ``leave-one-out'' (LOO) algorithm. In a LOO approach, w
 
 Often, the LOO approach is used to predict a particular outcome variable. In a \CausalQuery~framework, however, we are interested in predictions over the joint realization of all nodes, not just a single ``outcome.'' Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations.
 
-\includegraphics{ii_files/figure-latex/unnamed-chunk-25-1.pdf} \includegraphics{ii_files/figure-latex/unnamed-chunk-25-2.pdf}
+\includegraphics{ii_files/figure-latex/unnamed-chunk-24-1.pdf} \includegraphics{ii_files/figure-latex/unnamed-chunk-24-2.pdf}
 
 The LOO estimate of out-of-sample predictive fit, for a dataset with \(n\) observations, is then:
 
@@ -8899,7 +8879,7 @@ In Figure XXXX, we then see how the likelihoods of each data type line up with t
 
 We can also turn the tables and imagine that the \emph{stronger} model represents the true data-generating process. We implement LOO cross-validation of the two models using 200 data points generated from the stronger model. In Figure XXXX, we see a comparison of the likelihoods of the data types under the two updated models and note that they are extremely similar. This represents an important asymmetry: the model that makes weaker assumptions performs far better in handling data generated by a ``stronger'' true model than does the stronger model in learning about a process that violates one of its assumptions. Since the weaker model allows for both direct and indirect effects, the weaker \emph{can} learn about the parameters of the true process in the first situation; but the strong model cannot do so in the second situation because it has by assumption ruled out a key feature of that process (the direct effect).
 
-\includegraphics{ii_files/figure-latex/unnamed-chunk-26-1.pdf}
+\includegraphics{ii_files/figure-latex/unnamed-chunk-25-1.pdf}
 
 BETTER: PLOT CASES ON BOTTOM AND TWO LIKELIHOODS AS POINTS; HAVE TYPES AS LABELS X AI IF POSSIBLE
 
@@ -8927,7 +8907,7 @@ Our inferences when \(M=0\), on the other hand, do depend on \(\lambda^Y_{10}\):
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-27}Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\lambda^Y_{10}$}
+\caption{\label{tab:unnamed-chunk-26}Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\lambda^Y_{10}$}
 \centering
 \begin{tabular}[t]{r|r|r|r}
 \hline

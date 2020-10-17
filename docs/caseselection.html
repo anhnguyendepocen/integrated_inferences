@@ -791,23 +791,23 @@ data patterns do not discriminate between X having a positive effect on Y an d X
 <p><strong>Posterior variance on estimate given the data</strong>. For each data possibility, we can then use <code>gibiqq</code> to ask what inference we would get from each data possibility, given whatever query we seek to answer. What we are in fact interested in for the purposes of case selection is the <em>variance</em> of the posterior. We indicate in the fourth column of Table <a href="#tab:caseselect1"><strong>??</strong></a> the posterior variance for each possible data realization.</p>
 <p><strong>Expected posterior variance under each strategy</strong>. The quantity of ultimate interest is the posterior variance that we expect to end up with under each <em>strategy</em>. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. The final column provides the expected posterior variances, one for each strategy.</p>
 <p>Complicated as the procedure might seem, it can all be done in code using a single command from the <code>gbiqqtools</code> package.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="caseselection.html#cb25-1"></a><span class="kw">diagnose_strategies</span>(</span>
-<span id="cb25-2"><a href="caseselection.html#cb25-2"></a>    </span>
-<span id="cb25-3"><a href="caseselection.html#cb25-3"></a>   <span class="dt">analysis_model =</span> model,</span>
-<span id="cb25-4"><a href="caseselection.html#cb25-4"></a>   </span>
-<span id="cb25-5"><a href="caseselection.html#cb25-5"></a>   <span class="dt">observed =</span> observed,</span>
-<span id="cb25-6"><a href="caseselection.html#cb25-6"></a>   </span>
-<span id="cb25-7"><a href="caseselection.html#cb25-7"></a>   <span class="dt">data_strategies =</span> <span class="kw">list</span>(</span>
-<span id="cb25-8"><a href="caseselection.html#cb25-8"></a>     <span class="dt">A_online  =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, </span>
-<span id="cb25-9"><a href="caseselection.html#cb25-9"></a>                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==1&quot;</span>, <span class="st">&quot;X==0 &amp; Y==0&quot;</span>)),</span>
-<span id="cb25-10"><a href="caseselection.html#cb25-10"></a>     <span class="dt">B_offline =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, </span>
-<span id="cb25-11"><a href="caseselection.html#cb25-11"></a>                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==0&quot;</span>, <span class="st">&quot;X==0 &amp; Y==1&quot;</span>)),</span>
-<span id="cb25-12"><a href="caseselection.html#cb25-12"></a>     <span class="dt">C_X1Y1    =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="dv">2</span>, <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, </span>
-<span id="cb25-13"><a href="caseselection.html#cb25-13"></a>                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==1&quot;</span>))),</span>
-<span id="cb25-14"><a href="caseselection.html#cb25-14"></a>   </span>
-<span id="cb25-15"><a href="caseselection.html#cb25-15"></a>   <span class="dt">queries =</span> <span class="st">&quot;Y[X=1] - Y[X=0]&quot;</span></span>
-<span id="cb25-16"><a href="caseselection.html#cb25-16"></a>   </span>
-<span id="cb25-17"><a href="caseselection.html#cb25-17"></a>   )</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="caseselection.html#cb24-1"></a><span class="kw">diagnose_strategies</span>(</span>
+<span id="cb24-2"><a href="caseselection.html#cb24-2"></a>    </span>
+<span id="cb24-3"><a href="caseselection.html#cb24-3"></a>   <span class="dt">analysis_model =</span> model,</span>
+<span id="cb24-4"><a href="caseselection.html#cb24-4"></a>   </span>
+<span id="cb24-5"><a href="caseselection.html#cb24-5"></a>   <span class="dt">observed =</span> observed,</span>
+<span id="cb24-6"><a href="caseselection.html#cb24-6"></a>   </span>
+<span id="cb24-7"><a href="caseselection.html#cb24-7"></a>   <span class="dt">data_strategies =</span> <span class="kw">list</span>(</span>
+<span id="cb24-8"><a href="caseselection.html#cb24-8"></a>     <span class="dt">A_online  =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, </span>
+<span id="cb24-9"><a href="caseselection.html#cb24-9"></a>                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==1&quot;</span>, <span class="st">&quot;X==0 &amp; Y==0&quot;</span>)),</span>
+<span id="cb24-10"><a href="caseselection.html#cb24-10"></a>     <span class="dt">B_offline =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, </span>
+<span id="cb24-11"><a href="caseselection.html#cb24-11"></a>                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==0&quot;</span>, <span class="st">&quot;X==0 &amp; Y==1&quot;</span>)),</span>
+<span id="cb24-12"><a href="caseselection.html#cb24-12"></a>     <span class="dt">C_X1Y1    =</span> <span class="kw">list</span>(<span class="dt">N=</span><span class="dv">2</span>, <span class="dt">within =</span> <span class="ot">TRUE</span>, <span class="dt">vars =</span> <span class="st">&quot;M&quot;</span>, </span>
+<span id="cb24-13"><a href="caseselection.html#cb24-13"></a>                       <span class="dt">conditions =</span> <span class="kw">c</span>(<span class="st">&quot;X==1 &amp; Y==1&quot;</span>))),</span>
+<span id="cb24-14"><a href="caseselection.html#cb24-14"></a>   </span>
+<span id="cb24-15"><a href="caseselection.html#cb24-15"></a>   <span class="dt">queries =</span> <span class="st">&quot;Y[X=1] - Y[X=0]&quot;</span></span>
+<span id="cb24-16"><a href="caseselection.html#cb24-16"></a>   </span>
+<span id="cb24-17"><a href="caseselection.html#cb24-17"></a>   )</span></code></pre></div>
 <table>
 <caption><span id="tab:ch13diagnosis387">Table 14.2: </span>The estimand and the expected estimate are the same under each data strategy.</caption>
 <thead>
