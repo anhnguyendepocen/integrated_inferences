@@ -4,6 +4,7 @@ library("pacman")
 # devtools::install_github("tidyverse/dplyr")
 
 pacman::p_load(
+  DT,
   bookdown,
   tidyverse,
   bayesplot,
@@ -46,7 +47,7 @@ format_with_col = function(x, color = "blue"){
 
 #' Game Tree
 #'
-#' Thus function is in development. It draws game trees and identifies subgame perfect equilibria when this is unique
+#' This function is in development. It draws game trees and identifies subgame perfect equilibria when this is unique
 #' Backwards induction is implemented under the assumption that utilities are "generic" and so a unique solution exits.
 #'
 #' In this version the graphing is not good when there are multiple solutions or indifference at given nodes.
