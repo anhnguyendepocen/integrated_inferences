@@ -28,6 +28,8 @@ options(knitr.kable.NA = '')
 
 do_diagnosis = FALSE
 
+colorize <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
+
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 
