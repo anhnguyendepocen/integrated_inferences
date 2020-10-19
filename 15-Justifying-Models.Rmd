@@ -1,0 +1,738 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+# (PART) Models in Question  {-}
+
+
+# Justifying models
+
+```{r, include = FALSE}
+drop_sd <- function(tab, name = "Doubly decisive") {
+
+  a <- tab[, 1:4]
+  b <- tab[, c(1:3, 5)] 
+  names(a) <- names(b) <- c("Query",	"Given",	"Using", name)
+  x <- rbind(a,b)[c(1,4,2,5,3,6),]
+  x[c(2,4,6), 1:3] <- ""
+  x
+}
+```
+
+***
+
+We outline strategies to reduce reliance on unfounded beliefs about the probative value of clues.
+
+***
+
+
+```{r packagesused14, include = FALSE}
+source("_packages_used.R")
+do_diagnosis = FALSE
+```
+
+
+
+The approach we have described to inference always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters. 
+
+The problem of stating priors for process tracing inferences can be more fundamental than for many Bayesian applications for two reasons. First the  beliefs are beliefs over the distribution of individual level effects and not just the beliefs over average effects. This puts us up against the fundamental problem of causal inference [@holland1986statistics]. Second, the beliefs can do a lot of work---especially in small $n$ applications. Indeed for case level queries, inferences might be little more than conditional applications of a model.      
+
+We see two broad responses to this problem.
+
+One is *emphasize the contingent nature of claims*. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example one might,  be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then simple models such as that represented by an $X \rightarrow Y$ DAG is a representation of coarse beliefs about the world and not a model of the world, in the sense of a  representation of a simplified  world.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable involves a form of modeling.] But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used really is a model and hard to think of as a faithful summary of beliefs. 
+
+Recognizing that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. That is the subject of Chapter 15.
+
+A second approach is to justify a process tracing model by claiming exchangeability with units for which we have a lower level  model. In a sense, this approach  pushes the question down a level, since the lower level model itself needs to be justified. There are two further responses to this concern. One is to justify the lower level model with  data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of DAG assumptions -- which we address in Chapter 16.
+
+
+## Nothing from nothing
+
+
+```{r, echo = FALSE, include = FALSE}
+
+agnostic_data <- make_model("X->M->Y") %>% 
+  set_parameters(node = c("M", "Y"), parameters = list(c(.1, 0, .8, .1),
+                                                       c(.1, 0, .8, .1))) %>%
+  simulate_data(n = 1000)
+
+if(do_diagnosis){
+  
+agnostic_XMY <- make_model("X->M->Y<-X; X<->M; X<->Y; M <->Y")%>%
+  update_model(agnostic_data)
+
+write_rds(agnostic_XMY, "ch14_agnostic.rds")
+
+
+agnostic_query <-  query_model(agnostic_XMY,
+              query = "Y[X=1] > Y[X=0]", 
+              given = c(TRUE, "M==0", "M==1"),
+              using = "posteriors")
+
+write_rds(agnostic_query, "ch14_agnostic_query.rds")
+
+
+}
+
+agnostic_query <- read_rds("ch14_agnostic_query.rds")
+
+agnostic_query %>% kable(caption = "Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$")
+```
+
+
+We start with a fairly negative result. Many of the models we have looked at---especially for process tracing---have a lot of structure, viz:  
+
+* conditional independence assumptions
+* no confounding assumptions, and 
+* monotonicity assumptions, or other restrictions 
+
+What happens if you have none of these? Can access to observational data render clues meaningful for inferences on causal effects?
+
+
+We show the scope for learning from a mediator for a "good case"---a world in which in fact (though unknown *ex ante* to the researcher): 
+
+* You have access to large amounts of observational data on $X$, $Y$ and $M$.
+* In fact $X$ causes $Y$ through $M$
+* $X$ is a necessary condition for $M$ and $M$ is a sufficient condition for $Y$ -- and so $Y$ is monotonic in $X$ and 
+* There is, in fact, no confounding
+
+
+```{r appnana, include = FALSE}
+
+data <- make_model("X -> M -> Y") %>% 
+  
+        make_data(n = 2000, 
+                  parameters = c(.5, .5, .2, 0, .8, 0, 0, 0, .8, .2))
+
+
+kable(cor(data), digits = 2, caption = "Data contains strong correlations.")
+
+```
+
+
+We imagine inferences are made starting from two types of model. In both we allow all possible links and we impose no restrictions on nodal types. Even though there are only three nodes, this model has 128 causal types ($2\times 4 \times 16$). In addition: 
+
+* In `model_1` we allow confounding between all pairs of nodes. This results in 127 free parameters. 
+
+* In `model_2` we assume that $X$ is known to be randomized. There are now only 64 free parameters.
+
+
+```{r appnana3, include = FALSE}
+model_1 <- 
+  make_model("X -> M -> Y <- X; X <-> M; M <->Y; X <-> Y") 
+
+model_2 <- 
+  make_model("X -> M -> Y <- X; M <->Y") 
+
+```
+
+```{r, echo = FALSE, fig.cap= "Two models. The model on the right might be justified if $X$ is known to be randomized."}
+par(mfrow = 1:2)
+plot(model_1)
+# title(main = list("X not known to be randomized", cex = .5))
+plot(model_2)
+# title("X  known to be randomized")
+# text(0, -1.3, "X  known to be randomized")
+```
+
+
+After updating we query the models to see how inferences depend on $M$ like this:
+
+
+
+```{r, echo = FALSE}
+
+if(do_diagnosis){
+
+model_1 <- update_model(model_1, data, iter = 6000)
+
+model_2 <- update_model(model_2, data, iter = 6000)
+
+q1 <- query_model(model_1, 
+            queries = "Y[X=1] > Y[X=0]",
+            given = c("X==1 & Y==1", "X==1 & M==1 & Y==1", "X==1 & M==0 & Y==1"),
+            using = c("priors", "posteriors"), 
+            expand_grid = TRUE)
+
+q2 <- query_model(model_2, 
+            queries = "Y[X=1] > Y[X=0]",
+            given = c("X==1 & Y==1", "X==1 & M==1 & Y==1", "X==1 & M==0 & Y==1"),
+            using = c("priors", "posteriors"), 
+            expand_grid = TRUE)
+
+write_rds(model_1, "saved/App_somethingnothing_model_1.rds")
+write_rds(model_2, "saved/App_somethingnothing_model_2.rds")
+write_rds(q1, "saved/App_somethingnothing1.rds")
+write_rds(q2, "saved/App_somethingnothing2.rds")
+}
+
+q1 <- read_rds("saved/App_somethingnothing1.rds")
+q2 <- read_rds("saved/App_somethingnothing2.rds")
+
+# q1 %>% arrange(Using) %>% kable( 
+#       caption = "Can observation of large N data render mediator $M$ informative for case level inference? Observational data.")
+# 
+# kable(q2 %>% arrange(Using), 
+#       caption = "Can observation of large N data render mediator $M$ informative for case level inference? X randomized.")
+
+tab <- data.frame(drop_sd(q1[c(2,4,6),], name = "M1") ,  drop_sd(q2[c(2,4,6),], name = "M1")[,4]) 
+for(j in 4:5){
+tab[c(2, 4, 6), j] <- paste0("(", tab[c(2, 4, 6), j], ")")}
+
+tab %>% kable(caption = "Can observation of large N data render mediator $M$ informative for case level inference? Case 1: No knowledge of structure; Case 2: X known to be randomized. Posterior sd in parentheses.", col.names = c("Query",	"Given",	"Using", "Case 1", "Case 2"), row.names = FALSE)
+
+```
+
+We find that even with an auspicious monotonic data generating process in which $M$ is a total mediator, $M$ gives no traction on causal inference in Case 1. In contrast it gives considerable leverage in Case 2: $M$ is informative, especially if $M=0$ (in which case we downgrade confidence that $X$ caused $Y$), when $X$ is known to be randomized.
+
+```{r appnana6, eval = FALSE, echo = FALSE}
+model1 <- read_rds("saved/App_somethingnothing_model_1.rds")
+
+kable(cbind(prior = get_parameters(model1, param_type = "flat"),
+            posterior = get_parameters(model1, param_type = "posterior_mean")), digits = 2)
+```
+
+
+This example illustrates the Cartwight idea we pointed to in Chapter 2: no causes in, no causes out  [@cartwright1994nature]. It poses, we think, a challenge to process tracing approaches: observational data alone is not sufficient to generate a justification for process tracing inferences for 3 node problems *even when in reality* causal structures are simple.
+
+## Justifying the classic process tracing tests
+
+Now,  more positively, we who the  possibility of justification of each of the four classical "qualitative tests" described by @collier2011understanding and drawing on @Van-Evera:1997, at least when treatment assignment is randomized. 
+
+Recall the four tests are "smoking gun" tests, "hoop" tests, "doubly decisive" tests, and "straw-in-the-wind" tests. A hoop test is one which, if failed, bodes especially badly for a claim; a smoking gun test is one that bodes well for a hypothesis if passed; a doubly decisive test is strongly conclusive no matter what is found, and a straw-in-the-wind test is suggestive, though not conclusive, either way.
+
+In some treatments (such as @humphreys2015mixing), formalization involves specifying a prior that a hypothesis is true and an independent set of beliefs about the probability of seeing some data if the hypothesis is true and if it is false. Then updating proceeds using Bayes' rule. 
+
+This simple approach suffers from two related weaknesses however: first, there is no good reason to expect these probabilities to be independent; second, there is nothing in the set-up to indicate how beliefs around the probative value of clues can be established or justified. 
+
+Both of these problems are resolvable if the problem is articulated using fully specified causal models.
+
+We illustrate first by using an idealized example to show that a case level "doubly decisive" test can be justified by population data from factorial designs.
+
+Say we have from observing just $X$ and $Y$ that $\Pr(Y=1|X=1) = \Pr(Y=1|X=0) = .5$. Here we have an average treatment effect of 0. We are interested in a particular case with $X=1, Y=1$ and specifically whether  $X=1$ caused $Y=1$ in that case. The marginal information so far is consistent with a world in which $X$ never affects $Y$ and one in which $X$ always affects $Y$ (sometimes negatively, sometimes positively). 
+
+Say now that we had data on $K$ and found (a) that $K=1$ arises with 50% probabilities, and (b) that the marginal distributions of $Y$ given $X$ and $K$ are as follows:
+
+* $\Pr(Y=1|X=0, K = 0) = 1$
+* $\Pr(Y=1|X=1, K = 0) = .5$
+* $\Pr(Y=1|X=0, K = 1) = 0$
+* $\Pr(Y=1|X=1, K = 1) = .5$
+
+In that case we see that in cases in which $K=1$, $X=0$ is a necessary condition for $Y=1$. So if $K=1$ then certainly $X=1$ caused $Y=1$ (since, in that case, were $X$ zero then certainly $Y$ would be 0.) On the other hand were $K=0$ then $X=0$ would be a sufficient condition for $Y=1$, which means that in this case $X=1$ most certainly did *not* cause $Y=1$.  We have then that if $K=1$ then  certainly $X=1$ caused $Y=1$ whereas if  $K=0$ then  certainly $X=1$ did not cause $Y=1$
+ 
+This argument demonstrates that it is possible to justify a doubly decisive test on the basis of experimental data---provided your case can be considered exchangeable with cases in the experimental data.  
+
+Table \@ref(tab:tests15) shows how this logic generalizes to different types of tests.
+
+
+```{r tests15, echo = FALSE}
+data.frame(Value = c(
+"$\\Pr(K = 1)$", 
+"$\\Pr(Y=1 \\vert X=0, K = 0)$", 
+"$\\Pr(Y=1 \\vert X=1, K = 0)$",
+"$\\Pr(Y=1 \\vert X=0, K = 1)$", 
+"$\\Pr(Y=1 \\vert X=1, K = 1)$", 
+"$\\Pr(X \\text{  causes }Y \\vert K=1)$",
+"$\\Pr(X \\text{  causes }Y \\vert K=0)$"),
+
+DD =      c(.5, 1,     .5,   0,    .5,  1, 0),
+Hoop =    c(.9, 1,     .5, .44, "4/9", "", 0),
+Smoking = c( 1, "4/9", .5,   0, .5,     1, ""), 
+Straw =   c(.5,    .6, .5,  .4, .5,    "", "") 
+)  %>% kable(col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw in the wind"),
+             caption = "Known probabilities from a model with  $X \\rightarrow Y \\leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.", align=c("l", rep('c', 4)))
+
+
+```
+
+`r flag()` Put bounds in empty cells.
+
+Note hat some entries in Table \@ref(tab:tests15)  were given as ranges. This reflects that fact that unless we are at edge cases the estimand here is not identified even with infinite  experimental data. In practice we expect never to be at these edges. Even still, the procedures given in Chapters XX above let us form posteriors over inferences with finite data. 
+
+For the illustration we first make use of a function that generates data from a model with a constrained set of types for $Y$ and a given prior distribution over clue $K$.
+
+We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data. Note that the model that is updated has no constraints on $Y$, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ reacts to $X$. 
+
+
+```{r, echo = FALSE}
+van_evera_data <- function(y_types, k_types)
+  
+  make_model("X -> Y <- K") %>%
+  
+  set_restrictions(labels = list(Y = y_types), keep = TRUE) %>%
+  
+  set_parameters(param_type = "define", node = "K", parameters = c(1 - k_types, k_types)) %>%
+  
+  make_data(n = 1000)
+
+van_evera_inference <- function(data)
+  
+  make_model("X -> Y <- K") %>%
+  
+  update_model(data = data) %>%  
+  
+  query_model(query = "Y[X=1] > Y[X=0]", 
+              given = c(TRUE, "K==0", "K==1"),
+              using = "posteriors")
+```
+
+We can now generate posterior beliefs, given $K$, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model.
+  
+Results:
+
+
+```{r, echo = FALSE}
+if(do_diagnosis){
+doubly_decisive <- van_evera_data("0001", .5) %>% van_evera_inference
+
+hoop            <- van_evera_data(c("0001", "0101"), .9) %>% van_evera_inference
+
+smoking_gun     <- van_evera_data(c("0001", "0011"), .1) %>% van_evera_inference
+
+straw_in_wind   <- van_evera_data(c("0001", "0101", "0011"), .5) %>% van_evera_inference
+
+write_rds(list(doubly_decisive, hoop, smoking_gun, straw_in_wind), "saved/ch14_vanevera.rds")
+}
+
+tests <- read_rds("saved/ch14_vanevera.rds")
+
+
+teststable <- 
+  cbind(drop_sd(tests[[1]]),  
+      Hoop = drop_sd(tests[[2]])[,4],
+      `Smoking gun` = drop_sd(tests[[3]])[,4],
+      `Straw in the Wind` = drop_sd(tests[[4]])[,4]
+      
+      )
+for(j in 4:7){
+teststable[c(2, 4, 6), j] <- paste0("(", teststable[c(2, 4, 6), j], ")")}
+
+  teststable %>% 
+  kable(caption= "Classic tests with probative value inferred from (simulated) data", row.names = FALSE)
+```
+
+
+We see that these tests all behave as expected. Importantly, however, the approach to thinking about the tests is quite different to that described in @collier2011understanding or @humphreys2015mixing. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that relates a clue to possible causal effects. Critically, with this approach,  the inferences made from observing clues can be justified by reference to a more fundamental,  agnostic model, that has been updated in light of data. The updated model yields both a prior over the proposition, belief about probative values, and guidance for what conclusions to draw given knowledge of $K$. 
+
+
+<!-- ## Bounds on probative value -->
+
+<!-- Classic treatments of process tracing make use of Causal Process Observations --- observations that are taken to be indicative of a particular causal process in operation. We introduced in Chapter 5 (as well as in FLAG CITE humphreysjacobs)  quantities such as $\phi_{b}$---the probability that $K=1$ given $X$ caused $Y$ and $X=Y=1$, or $\phi_{d}$-----the probability that $K=1$ given $X$ did not cause $Y$ and $X=Y=1$.  -->
+
+<!-- These accounts do not guide much guidance however regarding where these quantities come from --- given that causal types are unobservable how can one justify a belief about the probability of some observation *given* a causal type. Is it even possible to justify such beliefs? -->
+
+<!-- The grounded approach we described provides an answer to this puzzle. In short, knowledge of the structure of a causal model, together with data on exchangeable units, can be enough to place bounds on possible values of $\phi_{b}, \phi_{d}$.  -->
+
+<!-- We illustrate the basic idea and then review some results in this area. -->
+
+<!-- Imagine a fortunate situation in which (a) it is known that the true causal model has the form $X \rightarrow M \rightarrow Y$ and (b) we have a lot of experimental data on the conditional distribution of $M$ given $X$ and of $Y$ given $M$ for exchangeable units (meaning that we can treat our unit of interest as if it were a draw from this set).  -->
+
+<!-- Let us define: -->
+
+<!-- * $\tau_1 = \Pr(M=1 | X=1) - \Pr(M=1 | X=0)$ -->
+<!-- * $\rho_1 = \Pr(M=1 | X=1) - \Pr(M=0 | X=0)$ -->
+<!-- * $\tau_2 = \Pr(Y=1 | M=1) - \Pr(Y=1 | M=0)$ -->
+<!-- * $\rho_2 = \Pr(Y=1 | M=1) - \Pr(Y=0 | M=0)$ -->
+
+<!-- These are all quantities that can be calculated from the data. The $\tau$s are average treatment effects and the $\rho$s are indicators for how common the $Y=1$ outcome is. -->
+
+<!-- We are interested in the probability of observing $M=1$ given $X=Y=1$: -->
+
+<!-- $$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + \lambda_{a}^K\lambda_{a}^Y}$$ -->
+
+
+<!-- Noting that $\tau_j = \lambda_{b_j} - \lambda_{a_j}$: -->
+
+<!-- $$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + (\lambda_{b}^K-\tau_1)(\lambda_{b}^Y - \tau_2)}$$ -->
+<!-- which we can see is decreasing in $\lambda_{b}^j$ (this may seem counterintuitive, but the reason is that with $\tau^j$ fixed, lower $\lambda_{b}^j$ also means lower $\lambda_{a}^j$ which means less ambiguity about *how* $X$ affects $Y$ (i.e. through positive or negative effects on $K$). -->
+
+<!--  <!-- $$\phi_{1} = \frac{\lambda_{b}^Y}{2\lambda_{b}^Y -\tau_2 - \tau_1(\lambda_{b}^Y - \tau_2)/\lambda_{b}}^K$$ -->
+
+<!-- The lowest permissible value of  $\lambda_{b_j}$  is $\tau_j$, yielding $\phi_{b1} = 1$.  -->
+
+<!-- The highest value obtainable by $\lambda_{b_j}$ is when $\lambda_{a_j} = \frac{1-\tau_j+\rho_j}2$ and so $\lambda_{b_j} = \frac{1+\tau_j+\rho_j}2$.  -->
+
+<!-- In this case: -->
+<!-- $$\phi_{b1} = \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2) + (1-\tau_1+\rho_1)(1-\tau_2+\rho_2)}= \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau}$$ -->
+
+<!-- And so: -->
+
+<!-- $$\frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau_2} \leq \phi_{b1} \leq 1$$ -->
+
+<!-- These are the bounds on $\phi_{b1}$. We can calculate bounds on $\phi_{d1}$ in a similar way (though of course the bounds on  $\phi_{b1}$ and $\phi_{d1}$ are not independent).  -->
+
+
+<!-- $$\phi_{d1} = \frac{\lambda_{b}^K\lambda_{d}^Y}{(\lambda_{a}^K + \lambda_{b}^K + \lambda_{c}^K)\lambda_{d}^Y+ \lambda_{c}^K\lambda_{a}^Y}$$ -->
+
+<!-- Figure \@ref(fig:probval1) illustrates how "smoking gun" and "hoop" tests might each be justified with knowledge of $\tau_j, \rho_j$.  -->
+
+<!-- ```{r phis85, echo = FALSE, include = FALSE} -->
+
+<!-- make_phis <- function(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5, .3, 0, .6, .1, .1, 0, .6, .3), -->
+<!--                         n = 60000){ -->
+
+<!--   data <- simulate_data(model,  -->
+<!--                         n = n, -->
+<!--                         parameters = par,  -->
+<!--                         using = "parameters")  -->
+
+<!--   m1 <- with(data, c(mean(M[X==0]), mean(M[X==1]))) -->
+<!--   m1[2] - m1[1]; m1[2] - 1 + m1[1] -->
+<!--   m2<- with(data, c(mean(Y[M==0]), mean(Y[M==1]))) -->
+<!--   m2[2] - m2[1]; m2[2] - 1 + m2[1] -->
+
+<!--   if(!exists("fit")) fit <- fitted_model() -->
+
+<!--   updated <- CausalQueries(model, data, stan_model = fit) -->
+
+<!--   # check <- rstan::extract(updated$posterior, pars= "lambdas")$lambdas -->
+
+<!--   phi_b_num <- query_distribution(updated, query = "(M==1) & (Y[X=0]==0)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_b_denom <- query_distribution(updated, query = "(Y[X=0]==0)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_b <- phi_b_num/phi_b_denom -->
+
+<!--   phi_d_num <- query_distribution(updated, query = "(M==1) & (Y[X=0]==1)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_d_denom <- query_distribution(updated, query = "(Y[X=0]==1)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_d <- phi_d_num/phi_d_denom -->
+
+<!--   out <- data.frame(phi_b, phi_d) -->
+
+<!--   out -->
+<!--   } -->
+
+<!-- plot_phi <- function(out, main = "bounds"){ -->
+<!--     plot(out$phi_d, out$phi_b, xlim = c(0,1), ylim = c(0,1), cex = .5, main = main,  -->
+<!--        xlab = expression(phi[d]), ylab = expression(phi[b])) -->
+<!--   abline(0,1) -->
+<!-- } -->
+<!-- ``` -->
+
+<!-- ```{r writephis, include = FALSE} -->
+<!-- if(do_diagnosis){ -->
+<!--   phis1  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5, .3, 0, .6, .1, .1, 0, .6, .3), -->
+<!--                         n = 80000) -->
+<!--   write_rds(phis1, "saved/phis_1.rds") -->
+
+<!--   phis2  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5,  -->
+<!--                                 .95, 0, 0, .05,  -->
+<!--                                 .95, 0, 0, .05), -->
+<!--                         n = 80000) -->
+<!--   write_rds(phis2, "saved/phis_2.rds") -->
+
+<!-- } -->
+<!-- ``` -->
+
+<!-- ```{r plotphis, echo = FALSE} -->
+<!-- phis1 <- read_rds("saved/phis_1.rds") -->
+<!-- phis2 <- read_rds("saved/phis_2.rds") -->
+
+<!-- par(mfrow = c(1,2)) -->
+
+<!-- plot_phi(phis1, -->
+<!--          main = expression(paste("Hoop: ", tau[1], "= .6, ", -->
+<!--                                            rho[1], "= -.2, ", -->
+<!--                                            tau[2], "= .6, ", -->
+<!--                                            rho[2], "= .2")) -->
+<!--          ) -->
+
+<!-- plot_phi(phis2, -->
+<!--           main = expression(paste("Smoking gun: ",  -->
+<!--                                   tau[1], "= 0, ", -->
+<!--                                   rho[1], "= -.9, ", -->
+<!--                                   tau[2], "= 0, ", -->
+<!--                                   rho[2], "= -.9")) -->
+<!--          ) -->
+
+<!-- ``` -->
+
+
+<!-- <!-- plot_bounds(.6, -.2, .6, .2, 20, main = expression(paste("Hoop: ", tau[1], "= .6, ", -->
+<!-- <!--                                                             rho[1], "= -.2, ", -->
+<!-- <!--                                                             tau[2], "= .6, ", -->
+<!-- <!--                                                             rho[2], "= .2"))) -->
+
+<!-- <!-- plot_bounds(0.0, -.9, .0, -.9, 100, main = expression(paste("Smoking gun: ", tau[1], "= 0, ", -->
+<!-- <!--                                                             rho[1], "= -.9, ", -->
+<!-- <!--                                                             tau[2], "= 0, ", -->
+<!-- <!--                                                             rho[2], "= -.9, "))) -->
+
+<!-- <!-- ``` -->
+
+
+<!-- <!-- ```{r, eval = FALSE, echo = FALSE} -->
+<!-- <!-- # An odd one! -->
+<!-- <!-- plot_bounds(.02, -.5, -.10, -.5,600) -->
+<!-- <!-- ``` -->
+
+<!-- For the smoking gun,  $\phi_{b1}$ is .5 because $\lambda_a^j = \lambda_b^j$ so half of the upper level $b$ types work through a positive effect on $M$ and half through a negative effect on $M$. $\phi_{d1}$, on the other hand, is low here $d$ types mostly arise because of $c$ types in the first step and $a$ types in the second, and hence most commonly with $M=1$.  -->
+
+<!-- Whether the bounds map into useful probative value depends in part on whether causal effects are better identified in the first or the second stage. We can see this in Figure \@ref(fig:probval2). -->
+
+<!-- The key difference between the panels is that $\phi_d$ is constrained to be low in the first panel but not in the second.  -->
+
+<!-- For intuition note that a higher level $d$ type will exhibit $M=1$ if it is formed via $db$, $bd$,or $dd$ and it will exhibit $M=0$ if it is formed via $ca$, $cd$, $ad$. The weak second stage makes it possible that there are no second stage d types, only a and b types. The stronger first stage makes it possible that there are no first stage $c$ types. In that case the higher level d types are formed uniquely of $db$ types -- which always exhibit $M=1$ if $X=1$. -->
+
+<!-- This is not possible however for the data assume in the first panel. In the first panel the the higher value on $\rho_2$ means that there must be at least .25 d types. And the weak first stage means that there must at least .5 a and c types combined. Thus there *must* be a set of cases in which $M$ is not observed even though we have an upper level d type. -->
+
+<!-- ```{r probval2, echo = FALSE, fig.width = 10, fig.cap = "Probative value with different first and second stage relations"} -->
+
+<!-- # par(mfrow = c(1,2)) -->
+<!-- #  -->
+<!-- # plot_bounds(0, 0, .25, .25, 20, main = expression(paste("Weak first stage: ", tau[1], "= 0, ", -->
+<!-- #                                                             rho[1], "= 0, ", -->
+<!-- #                                                             tau[2], "= .25 ", -->
+<!-- #                                                             rho[2], "= .25"))) -->
+<!-- #  -->
+<!-- # plot_bounds(.25, .25, 0, 0, 20, main = expression(paste("Weak second stage: ", tau[1], "= .25, ", -->
+<!-- #                                                             rho[1], "= .25, ", -->
+<!-- #                                                             tau[2], "= 0, ", -->
+<!-- #                                                            rho[2], "= 0"))) -->
+
+<!-- if(do_diagnosis){ -->
+<!--   phis3  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5,  -->
+<!--                                 .25, .25, .25, .25,  -->
+<!--                                 .25, 0, .25, .5), -->
+<!--                         n = 50000) -->
+<!--   write_rds(phis3, "saved/phis_3.rds") -->
+
+<!--   phis4  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5,  -->
+<!--                                 .25, 0, .25, .5, -->
+<!--                                 .25, .25, .25, .25), -->
+<!--                         n = 50000) -->
+<!--   write_rds(phis4, "saved/phis_4.rds") -->
+
+<!-- } -->
+
+<!-- phis3 <- read_rds("saved/phis_3.rds") -->
+<!-- phis4 <- read_rds("saved/phis_4.rds") -->
+
+<!-- par(mfrow = c(1,2)) -->
+
+<!-- plot_phi(phis3, -->
+<!--          main = expression(paste("Hoop: ", tau[1], "= 0, ", -->
+<!--                                                             rho[1], "= 0, ", -->
+<!--                                                             tau[2], "= .25, ", -->
+<!--                                                             rho[2], "= .25"))) -->
+
+<!-- plot_phi(phis4, -->
+<!--           main = expression(paste("Smoking gun: ",  -->
+<!--                                   tau[1], "= .25, ", -->
+<!--                                   rho[1], "= .25, ", -->
+<!--                                   tau[2], "= 0, ", -->
+<!--                                   rho[2], "= 0, "))) -->
+
+<!-- ``` -->
+
+
+<!-- In short we emphasize that difficult as it might seem at first it is possible to put relatively tight bounds on probative value for causal types with access to experimental data on exchangeable units.  -->
+
+## Justification from experimental designs
+
+idea: show inferences given for example parallel designs for mediation
+
+### Mediator
+
+Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$. 
+
+Say the transition matrices from $X$ to $K$ and $K$ to $Y$ are:
+
+$$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$ 
+Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$. 
+
+To see this, note that we can calculate:
+
+* $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$
+* $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$
+
+and so:
+
+* $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$
+* $\lambda_d^u = \lambda_d^Y$ 
+* $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$.
+
+whence:
+
+* $\phi_{b1} = 1$
+* $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$
+
+More generally we can calculate the lower bound on the probability that $X$ caused $Y$ as the product of the lower bounds that $X$ caused $M$ and that $M$ caused $Y$, and similarly for the upper bound, using the same formula as before. Signing things so that $\tau^j\geq 0$, $j \in {1,2}$:
+
+$$\frac{2\tau_1}{1+\tau_1+\rho_1}\frac{2\tau_2}{1+\tau_2+\rho_2}  \leq PC \leq \frac{1+\tau_1-|\rho_1|}{1+\tau_1+\rho_1}\frac{1+\tau_2-|\rho_2|}{1+\tau_2+\rho_2} $$
+
+
+We have undertaken essentially the same operations as above except that now we are placing bounds on a substantive estimand of interest rather than first placing bounds on probative value of a clue and then turning to Bayes rule to place bounds on the estimand.
+
+
+### Moderator
+Consider now  a situation  in which our case is drawn from a set of cases for which $X$ and $K$ were each randomly assigned. Say then that the transition matrices, conditional on $K$ look as follows:
+
+$$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$
+In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$ --- before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$. 
+
+How about $\phi_{b1}$ and $\phi_{d1}$?
+
+Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue.
+
+
+
+
+## Causal discovery
+
+The last sections---as well as the core content in chapters 10 and 11 `r flag()` showed how higher level models can be justified by reference to lower level models plus data. Even these lower level presupposed beliefs about the basic causal structure. But where does this knowledge come from?
+
+The discovery of causal structure is itself a very large field of inquiry and we cannot do it justice here. For a review see for instance @glymour2019review.
+
+Here we illustrate simply the possibility of  casual discovery. We illustrate with three cases in which there is a true---but unknown model---relating $X,M,$ and $Y$ to each other. Critically we assume that there are no unobserved confounding relations (this is a requirement for the "PC" algorithm but not for the "Fast Causal Inference" algorithm). In each case we show the true relationship and the "skeleton" of the model as discovered by a prominent technique that uses a "constraint-based algorithm"--- examining whether observed data correlations are consistent with one or other set of conditional independence relations.   
+
+
+```{r skeleton, include = FALSE, eval = TRUE, message = FALSE}
+
+install_discovery_packages <- FALSE
+
+if(install_discovery_packages){
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("RBGL")
+
+ install.packages("BiocManager")
+ BiocManager::install("Rgraphviz")
+ BiocManager::install(c("graph", "RBGL"))
+ install.packages(pcalg)
+}
+
+library(Rgraphviz)
+library(pcalg)
+
+recover_model <- function(model) {
+    
+  df <- make_data(model, n = 20000)
+  V  <- colnames(df)
+  
+  suffStat <- list(dm = df, nlev = c(2,2,2), adaptDF = FALSE)
+  skel.fit <- fci(suffStat,
+                       indepTest = disCItest, 
+                       alpha = 0.01, labels = V, 
+                       verbose = TRUE)
+  plot(skel.fit)
+  }
+```
+
+In the  first model  $X$ affects $Y$ directly and indirectly through $M$. We simulate data from this model -- assuming monotonicity but otherwise a flat distribution on types.
+
+
+```{r model1ch14, include = FALSE}
+model1 <- make_model("X -> M -> Y <- X") %>% 
+  set_restrictions(c("(M[X=1]<M[X=0])", 
+                     "(Y[M=1, X=.]<Y[M=0, X=.]) | (Y[X=1, M=.]<Y[X=0, M=.])"))
+```
+
+
+
+Next we consider the model in which $Y$ has two causes that do not influence each other. 
+
+Finally  we consider the model in which $X$ causes $Y$ through $M$ but not directly. Again we impose monotonicity, draw data.
+
+
+```{r model3ch14, include = FALSE}
+model2 <- make_model("X1 -> Y <- X2") %>% 
+  set_restrictions("(Y[X1=1]<Y[X1=0]) | (Y[X2=1]<Y[X2=0])")
+```
+
+
+```{r model2ch14, include = FALSE}
+model3 <- make_model("X -> M -> Y") %>% 
+  set_restrictions(c("(M[X=1]<M[X=0])", "(Y[M=1]<Y[M=0])"))
+```
+
+
+
+```{r model4ch14, include = FALSE}
+model4 <- make_model("X -> Y <-> Z -> W") %>% 
+  set_restrictions(c("(Y[X=1]<Y[X=0])", "(W[Z=1]<W[Z=0])")) %>%
+  set_parameters(param_set = "Y_1", nodal_type = "11", parameters = .1) %>%
+  set_parameters(param_set = "Y_0", nodal_type = "00", parameters = .1) 
+```
+
+
+```{r plots, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "(Partially) DAGs from Data: True DAGs in upper row with partially directed graphs in lower row. Circles indicate uncertainty whether a aroow starts or ends at a given point.", fig.width = 8, fig.height = 8,results='hide',fig.keep='all', eval = TRUE, fig.align = "center"}
+par(mfrow = c(2,3))
+#par(mar = rep(3, 4))
+plot(model1); title("I", line = -2)
+plot(model2); title("II", line = -2)
+plot(model3); title("III", line = -2)
+recover_model(model1)
+recover_model(model2)
+recover_model(model3)
+```
+
+In all cases we correctly recover the skeleton. Note that the "o" in the skeleton graphs indicate that we may have an arrow head or an arrow tail. In the first case the skeleton is unrestricted, in the second and third cases the correct restricted skeleton is found. In all cases if we have access to all relevant variables the true graph can  be recovered with knowledge of the temporal ordering of variables. 
+
+Perhaps the most impressive of these discoveries is the last: here $X$, $M$ and $Y$ are all correlated with each other, but the correct graph is discovered because $X$ and $M$ are not correlated with each other *conditional* on $M$.
+
+The second graph is also impressive as here we observe arrow heads in the estimated graphs. Thus even without knowledge of the timing of the variables the algorithm indicate that  $X_1$ and $X_2$ are not children of $Y$ --- it sees, in essence, data patterns that are distinctive of colliders---$X_1$, $X_2$ correlated conditional on $Y$ but not otherwise. With that said, if confounding is possible we do not know for sure whether  $Y$ is a child of $X_1$ or whether $Y$ and $X_1$ are confounded. 
+
+These examples provide  grounds for hope that causal models can be discovered and not simply assumed. In cases in which unobserved confounding is possible the results do not identify a unique causal structure. If all nodes are known and measured however---a tall order for sure---causal structures can be identified from data.  
+
+
+<!-- ### A model of models -->
+
+<!-- In the following mode there is an unknown, $Q$, which determines the relevant causal model.  -->
+<!-- If $Q=1$ then we have $A \rightarrow B \rightarrow C2$; if $Q=0$ then $A \rightarrow B \leftarrow C1$. In this case the temporal order of $C1$ and $C2$ is observable, so there is not confusion there; what is not clear however is which is the important node to include in the model.  -->
+
+<!-- ```{r ch14Qornot} -->
+
+<!-- model <- make_model("A -> B -> C2 <- C1 -> B <- Q -> C2") %>% -->
+<!--   # These restrictions capture the role of Q in turning parentage on or off  -->
+<!--   set_restrictions(c( -->
+<!--     "(B[C1=1, Q=1] != B[C1=0, Q=1])", -->
+<!--     "(C2[B=1, Q=0] != C2[B=0, Q=0])")) %>% -->
+
+<!--   # These restrictions are for simplification: monotonicity and complementarity  -->
+<!--   set_restrictions(c( -->
+<!--     "(C2[B=1] < C2[B=0])", -->
+<!--     "(C2[C1=1] < C2[C1=0])", -->
+<!--     "(B[A=1]  < B[A=0])", -->
+<!--     "(B[C1=1] < B[C1=0])", -->
+<!--     "((B[A=1, C1=1] - B[A=0, C1=1]) < (B[A=1, C1=0] - B[A=0, C1=0]))")) -->
+
+<!-- model -->
+
+<!-- plot(model) -->
+
+<!-- if(do_diagnosis){ -->
+<!--   model_Q0 <- set_parameters(model, node = "Q", alphas = c(1,0)) -->
+<!--   model_Q1 <- set_parameters(model, node = "Q", alphas = c(0,1)) -->
+
+<!--   data_0 <- make_data(model_Q0, 100, vars = c("A", "B", "C1", "C2")) -->
+<!--   data_1 <- make_data(model_Q1, 100, vars = c("A", "B", "C1", "C2")) -->
+
+<!--   model_Q0 <- update_model(model, data_0) -->
+<!--   model_Q1 <- update_model(model, data_1) -->
+
+<!-- Qu0 <- query_model(model_Q0, "Q==1", using = "posteriors") -->
+<!-- Qu1 <- query_model(model_Q1, "Q==1", using = "posteriors") -->
+
+<!--   write_rds(list(model_Q0, model_Q1, Qu0, Qu1), "saved/ch14_Qornot.rds") -->
+<!-- } -->
+
+<!-- Qornot <- read_rds("saved/ch14_Qornot.rds") -->
+
+<!-- kable(Qornot[[3]]) -->
+<!-- kable(Qornot[[4]]) -->
+
+
+
+
+<!-- ``` -->
+
+<!-- [Ideally here however $\lambda^Q$ is either 0 or 1 --- we want to know which world we are in] -->
+
+
+## Exercise
+
+Imagine a model in which in fact $X \rightarrow Y \leftarrow K$ but in which the researcher knows only the temporal ordering of variables. Say in fact that on average $X$ and $K$ both have strong positive effects on $Y$ with positive interactions. Can access to observational data provide a justification for using $K$ as a clue for the effect of $X$ on $Y$ in an $X=Y=1$ case?  

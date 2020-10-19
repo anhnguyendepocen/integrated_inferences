@@ -1,0 +1,831 @@
+# Clue Selection as a Decision Problem {#clue}
+
+
+
+```{r packagesused11, include = FALSE}
+source("_packages_used.R")
+do_diagnosis = FALSE
+```
+
+***
+
+We draw out the implications of the causal model approach for clue selection strategies. We introduce a tool for generating an optimal decision tree for clue selection given.
+
+***
+
+Consider now the problem of determining what qualitative data to gather on a case. Evidently it makes sense to gather information on clues that have large probative value, but whether or not clues have probative value can depend on what clues have already been collected: Finding out that the butler had no motive may be informative for the claim that he is innocent, but it may not be useful if you already know he had no opportunity. 
+
+## Core logic
+
+To motivate our thinking about clue-selection, consider again our running example with the free press and government removal. We can use this toy example to see, intuitively, how researchers may have a choice among observations that could be informative, and how the informativeness of an observation can depend on what is already known. In Figure \@ref(fig:running), we showed  how one can use the structural equations to provide a set of conditional causal graphs that let one see easily what caused what at different values of the exogenous nodes $S$ and $X$. Each of these plots graphs a particular context. We can thus readily see what the answer to a particular query is in a particular context. Turning things around, we can also see, *given a query*, which nodes are informative about the probability that the query is true.^[With larger graphs, continuous variables, and more stochastic components, it may not be feasible to graph every possible context; but the strategy for inference remains the same.]  
+
+<!-- FLAG: I'm having trouble getting the logical progression here. Seems somewhat broken in the sense that it's incomplete. Conceptually, we might think of informativeness situations as taking four possible forms of interest: a clue is always informative; never informative; informative only conditional on something else (obviously, what the something else is can vary); conditional only in the absence of something else. We seem to be covering always informative and conditionally uninformative. Seems odd not to also show always uninformative and informative only conditional on something else. But not sure if we can do this with this example. -->
+
+For example, suppose that one can see that $Y=0$ but does not know the causal effect of $X$ on $Y$.  This is equivalent to saying that we know that we are in panel $A$, $B$, or $C$ but do not know which of these we are in. Would it be helpful to collect the clue $S$ if one has no other information? Defining the query in terms of root nodes, the question becomes  $S \stackrel{?}{=} 1$, or $\Pr(S=1|X=0,Y=0)$; the difference between the contexts in the two panels is that $S=0$ when, and only when, $X=0$ causes $Y=0$. Given the structural equation for $S$, $\Pr(S|X=0,Y=0) = \Pr(S|X=0)$, and given independence of $X$ and $S$, $\Pr(S=1|X=0)= \lambda^S_1$ (the simple assignment propensity).  Figuring out $S$ *fully* answers the query.^[Graphically what is important is that $S$ is informative not because it is $d-$connected with $Y$, but because it is $d-$connected to the query variable---here, simply, to itself.]
+
+We can also see instances in this example of  how existing data can make clues *uninformative*. Say one wanted to know if $X$ causes $C$ in a case. As we can see from inspection of the panels, this query is equivalent to asking whether $S=1$ (as $X$ causes $C$ only in those two panels ($B$ and $D$) where $S=1$). Data on $R$ is unconditionally informative about this query as $R$ is not $d-$separated from $S$. For example, $R=1$ implies $S=0$. However, if $C$ and $X$ are already known, then $R$ is no longer informative because $C$ and $X$ together *d*-separate $R$ from $S$.^[We can come to the same conclusion by reasoning with the graphs: if $X=0$ and $C=1$, we know we are in subfigure $A$ or $B$, and $X$ causes $C$ only in panel $B$. However, $R$ is of no help to us in distinguishing between the two contexts as it takes the same value in both graphs.]
+
+The running example also lets us demonstrate how informative clues can be found in many different places in a graph. 
+
+1. **Informative spouses** Spouses---parents of the same child---can inform on one another. As we have seen in other examples, when an outcome has multiple causes, knowing the value of one of those causes helps assess the effect(s) of the other(s). For example, here, $S$ and $X$ are both parents of $C$; $S$ is thus informative for assessing whether $X$ causes $C$. Indeed this query, written in terms of roots, is simply $P(S)$:  $X$ causes $C$ if and only if $S=1$. Likewise, $S$ causes $C$ (negatively) if and only if $X=1$. 
+
+2. **Pre-treatment clues.** Did the absence of media reports on corruption ($R=0$) cause government survival ($Y=0$)? Look to the pre-treatment clue, $X$: $X=0$ is a smoking gun establishing that the absence of a report produced government survival. Or, substantively, if there were a free press, then a missing report would never be a cause of survival since it would occur only in the absence of corruption, which would itself be sufficient for survival. More broadly, this example illustrates how knowledge of selection into treatment can be informative about treatment effects. 
+
+3. **Post-outcome clues.** Suppose we observe the presence of a free press ($X=1$) and want to know if it caused a lack of corruption ($C=0$), but cannot observe the level of corruption directly. Observing $Y$---which occurs after the outcome---is informative here: if $X=1$, then $X$ causes $C$ (negatively) if and only if $Y=0$. When an outcome is not observed, a consequence of that outcome can be informative about its value and, thus, about the effect of an observed suspected cause. 
+
+4. **Mediators as clues**: We see a politically sensitive government ($S=1$) and its survival ($S=0$). Did the government survive because of its sensitivity to public opinion? Here, the mediation clue $C$ is helpful: a lack of corruption, $C=0$, is evidence of $S$'s negative effect on $Y$. 
+
+And, of course, different clues can be  informative in different ways for different types of estimand.
+
+Needed then is a systematic way for identifying what clues to look for for answering a given type of causal quesiton, given what we already know---and perhaps, in what order to look for them.
+
+## A strategic approach
+
+The representation of inference problems as one of querying a Bayesian model points to a relatively simple method for answering this question, at least for small problems. Consider, first, a situation in which one has access to data $W$ and wants to know the expected probative value of all possible collections of data one could gather. 
+
+This can be done as follows:
+
+1. Define the model. 
+2. Define a query on the model.
+3. Define a data strategy: a set of clues for which one might search (e.g., observe the value of $C$).
+4. Given prior data, figure out the probability of different realizations of the new data, and for each possible realization calculate the posterior variance. Then calculate the *expected* posterior variance for the data strategy by taking an average of these variances, with weights given by the probability of observing the clue realization in question.
+5. Repeat steps 3-4 for different data strategies. 
+
+This procedure returns the expected posterior variances associated with different data strategies. 
+
+A still more sophisticated strategy would, for multiple clues, take sequence into account: it would tell us which clues to search for later in the process given the realization of clues sought earlier. The path-dependence of clue selection arises from the possibility that the informativeness of a clue may depend on the value of other nodes in the model. A given clue $K_2$, for instance, may be informative if another clue $K_1$ has the value of 1 but not if it has the value 0. 
+
+We provide tools for both of these approaches and illustrate them below for both the running example and the democracy application.
+
+### Clue selection with a simple example
+
+Let's return to the running example and assess the informativeness of different clue strategies for different estimands. Whereas we have in previous chapters specified fully deterministic functional equations for this model, we amend the model here by allowing for uncertainty over the nodal types for $C$ and $R$. At $C$, we allow for the possibilities that corruption is always present and that corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$). Thus, we permit both $\theta^C_{1111}$ and $\theta^C_{1110}$. At $R$, we allow for both $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption.
+
+To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether corruption is ever-present or not, but if it is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it is only because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press --- the only mechanism that can generate reporting on corruption --- is present. In turn, the presence of a free press can only matter for government survival if governments are *not* sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.
+
+This model is formally defined in `gbiqq` as follows:
+
+```{r ch11definerunningmodel1, warning = FALSE}
+model <- 
+  
+  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+  
+  set_restrictions(labels = list(C = c("1110", "1111"), 
+                                 R = c("0001", "0000"), 
+                                 Y = c("0001")), 
+                   keep = TRUE) 
+
+```
+
+```{r plot, echo = FALSE, include = FALSE}
+plot(model)
+```
+
+Suppose that our query is whether $X$ has a positive effect on $Y$. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that $Y=0$. 
+
+```{r cinfers, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+possible_inferences <-  
+  
+  conditional_inferences(model, 
+                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                         given = "Y==0")
+
+```
+
+Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $NA$ under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first row, we are collecting no clues beyond our prior data on $X$ and $Y$. In the second row, we have additionally sought clue $S$ and observed a value of $0$, while in the third row we have chosen the same strategy but observed $S=1$. 
+
+In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$, given that $Y=0$. The final column indicates the probability of each data-realization, given the chosen strategy (*not* conditioning on the prior observation, $Y-0$). 
+
+FLAG: Let's add posterior variance to Table \@ref(tab:showstrats5xx)
+
+
+```{r showstrats5xx, echo = FALSE, warning = FALSE}
+# colnames(possible_inferences)[1:2] <- c("Prior var", "Var given W")
+
+kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns. ", row.names = FALSE)
+```
+
+Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Given the probability of each data-realization, conditional on the clue strategy, it is easy to assess the *expected* reduction in variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of $Y$, in Table \@ref(tab:scxrylearning). 
+
+
+```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
+
+strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
+
+learning <- sapply(strats,  function(strategy) {
+
+  expected_learning(model, 
+                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                    strategy = strategy, 
+                    given = "Y==0", 
+                    parameters = NULL)
+  })
+```
+
+
+```{r scxrylearning, echo = FALSE}
+kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
+```
+  
+
+We operationalize higher levels of expected learning from a strategy as a greater expected reduction in variance upon observing the data. We can see a couple of patterns here. 
+
+* By far the biggest gains in learning come from observing $X$. We can see this most readily by comparing the 1-clue strategies to one another. But in general, any strategy that includes observing $X$ always does substantially better than the comparable strategy that excludes $X$. The intuition here is fairly straightforward: if we want to know whether $Y=0$ was caused by $X=0$, and start out very uncertain about $X$'s value, we should expect to learn a good deal from figuring out whether $X$ is in fact equal to $0$.
+
+* There are also considerable gains from observing $S$ or $C$ by themselves. Consider, first, why observing $S$ is informative. $S$ is potentially informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. Remember that a government is removed only if there is both corruption ($C=1$) and reporting on corruption ($R=1$). Moreover, there is only reporting on corruption (if ever) if $C=1. Thus, for both of these reasons, $X$ can only have a positive effect on government removal (by causing reporting on corruption) if $C=1$: i.e., if there is corruption. And $S$ tells us something about what $C$'s value is likely to be if $X$ were set to 1. 
+
+ Specifically, if we observe $S=0$, then we know for sure that $C=1$, regardless of $X$, since $C$ is always 1 when $S=0$ under both permitted nodal types for $C$. If $S=1$, on the other hand, there's a lower chance that $C$ would be equal to 1 if $X$ were set to 1: in one of $C$'s permitted nodal types, there is always corruption; but in the other type, sensitive governments avoid corruption when there is a free press, so $X$ moving to 1 would give us $C=0$. We have put equal prior probabilities on these two nodal types. Thus, if we observe $S=1$, we conclude that there is a lower probability that $C$ will take on the value necessary for $X$ to exert a positive effect on $Y$ than if we observe $S=0$.
+
+ Why, then, is $C$ informative? If we observe $C=0$, then we know that $X$ must be equal to 1 since, under permitted nodal types for $C$, there is an absence of corruption *only* in the presence of a free press and sensitive governments. And if $X=1$ with $Y=0$, a positive effect is ruled out with certainty. If we observe $C=1$, then there remains some possibility that $X=0$ as well as some possibility $C$ would remain at 1 if $X$ were set to 1 (depending on $C$'s unknown nodal type), allowing $X$ to yield a positive effect on $Y$ through $R$.
+ 
+* There are no gains from observing $R$ if $Y=0$. We can see why by looking at our table of data possibilities consistent with $Y=0$ (Table \@ref(showstrats5xx)). As we can see, there is no possibility of observing anything other than $R=0$ if we have already seen $Y=0$. We can see why by thinking, jointly, about how $Y$ is determined and how $R$ is determined. $Y$ can be 0 either because $C=0$ or $R=0$. So if $R$ were equal to $1$, this must mean that $C$ was $0$. However, a necessary condition for $R$ to be 1, under $R$'s permitted nodal types, is $C=1$ and $X=1$. In other words, the condition under which $R$ could be 1 is a condition under which $Y$ would not be 0. Thus, if we already know $Y=0$, we know $R=0$, and there is no gain from actually looking for $R$. 
+
+* Once we decide to observe $X$, then the next-most informative clue to add to our research design is $S$: $X, S$ has the lowest expected posterior variance of any of the 2-clue strategies. And, in fact, there are no gains to adding $C$ to $X$, relative to observing $X$ by itself. 
+
+ Let us develop the intuition underlying this result. 
+
+ Imagine that we have already observed $X$'s value. If $X=1$, then (given $Y=0$), a positive effect is immediately ruled out with certainty, rendering any further observations of no value. If we observe $X=0$, however, then (under this causal model) we know for certain that $C=1$, simply because $C=1$ for both of $C$'s permitted nodal types when $X=0$ (there is always corruption when there is no free press). Thus, there is nothing to be gained by observing $C$. (We have already seen why there is nothing to be gained from observing $R$.)
+
+ Why, we might still ask, are there possible gains to observing $S$ even if we're going to observe $X$? $S$ is informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. The potential gains from observing $S$ with $X$ arise from the possibility that we may see $X=0$ (since $X=1$ woudl decide the matter by itself). If $X=0$, then we still need to know whether $Y$ *would* be 1 if we changed $X$ to 1. As discussed above, *that* depends on whether $C$ would be $1$ if $X$ were set to 1, and (as, again, explained above) $S$ is informative on that matter.
+ 
+* We see, further, in the table --- and it follows from the above logic --- that we cannot improve on an $X, S$ strategy by gathering more data. Thus, if the search for information is costly, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
+
+* Clues can be more informative jointly than separately, and the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing $C$ by itself is slightly *more* informative than observing $S$ by itself. However, if we are planning to observe $X$, then the gains flip, and it is only $S$ that offers additional useful information. As we have discussed, observing $X$ makes observing $C$ uninformative while $S$ remains informative as a moderator of $X$'s effect.
+
+We would add that the pattern here forms part of a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from *moderators*, like $S$ in this model, than from mediators, like $C$ and $R$. We return to this point below. 
+
+
+### Dependence on prior beliefs
+
+As the foregoing discussion already suggests, optimal clue strategies can depend on our prior beliefs about causal relationships among the variables in the model.  We illustrate this point here, examining how evaluation of clue strategies shift as we relax restrictions on nodal types and set informative priors over nodal types.
+
+**Relaxing restrictions.** In the analysis above, we allowed for just two (of 16 possible) nodal types at both $C$ and $R$, effectively expressing strong beliefs about how $C$'s and $R$'s values are determined. But what if we are less certain than this? 
+
+Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
+
+```{r model, warning = FALSE}
+model <- 
+  
+  make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+  
+  set_restrictions(labels = list(C = c("1110", "1111", "1010"), 
+                                 R = c("0001", "0000"), 
+                                 Y = c("0001")), 
+                   keep = TRUE) 
+ 
+```
+
+
+```{r cinfer2, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+possible_inferences <-  
+  
+  conditional_inferences(model, 
+                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                         given = "Y==0")
+
+```
+
+
+```{r ch11ExpectedLearning2, warning = FALSE, include = FALSE}
+
+strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
+
+learning <- sapply(strats,  function(strategy) {
+
+  expected_learning(model, 
+                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                    strategy = strategy, 
+                    given = "Y==0", 
+                    parameters = NULL)
+  })
+```
+
+
+```{r scxrylearning2, echo = FALSE}
+kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
+```
+
+The diagnosis of strategies under this adjusted set of beliefs, for the same query (whether $X$ has a positive effect on $Y$) and prior data ($Y=0$) as before, are displayed in Table \@ref(scxrylearning2).
+
+We see that, among 1-clue strategies, observing $X$ is still the best choice. Among 2-clue strategies, however, things begin to look different. The best 2-clue strategy is also still $X, S$. Where things change most significantly, however, is among 3-clue strategies: now, we can do even better by additionally observing $C$. The reason is that, with greater uncertainty about its nodal types, $C$'s value is no longer known when $X=0$: it is now possible that $C=0$ when $X=0$ since we think it possible that $C$'s nodal type is $\theta^C_{1010}$. Since $C$'s value bears on whether $X$ can have an effect via $R$, we can thus in this situation potentially learn something by observing $C$.
+
+We can also see $C$'s enhanced informational value throughout the table. Among 1-clue strategies, observing $C$ alone generates greater learning here than it does under the original setup. More strikingly, among 2-clue strategies we see that observing $C$ can now generate learning even if we have *already* observed $X$ (whereas there was no gain from strategy $X, C$ relative to $X$ under the original model). While $X, S$ is still a better strategy than $X, C$, the change in diagnosis could matter if, for instance, we cannot observe $S$ for some reason or if observing $S$ is much more costly than observing $C$.
+
+Moreover, the expected variance reduction from observing $S$ is also greater under the new model, for 1- and 2-clue strategies. To see the informal intuition here, note that $S$ is potentially informative about $C$'s value as a parent of $C$. And we now believe (with the added nodal type for $C$) that there may be an additional way in which $S$ could matter for $C$, and thus provide information about its value. Moreover, since the added nodal type has $S$ exerting a negative effect on $C$ regardless of $X$'s value, $S$ can now be informative even if we have already observed $X=0$. 
+
+Finally, we can see that nothing has changed in regard to $R$, about whose nodal types we have retained the same beliefs. It is still uniformly unprofitable to observe $R$ because we still know $R$'s value whenever $X=0$.
+
+This exercise also suggests a further interesting principle of clue-selection: that potential informativeness rests on uncertainty about what we will find.
+
+
+**Changing priors.** We can also see what happens when, rather than permitting new nodal types, we have informative beliefs about the prevalence of permitted types. We can provide a simple demonstration by expressing stronger prior beliefs about $S$'s nodal type. Suppose we believe most governments to be sensitive to public opinion. This would imply that we should put greater prior weight on $\theta^S_1$ than on $\theta^S_0$. We can do this by setting a higher $\alpha$ value corresponding to $S=1$, and telling `gbiqq` to set all paramater values (the $\lambda$'s for each nodal type) to the means of the prior distributions:
+
+```{r ch11strategies_chunk_slowxx, warning = FALSE}
+
+#Set priors for S with more weight on S=1. Should make S less informative -- the more informative value for S is expected to be less likely??
+
+model_priors <-  model %>%
+  
+  set_priors(node = "S",
+             statement = "S[]==1",
+             alphas = 10) %>%
+  
+  set_parameters(type = "prior_mean")
+
+```
+
+These priors put roughly a 0.91 probability on $S=1$. 
+
+```{r cinfer3, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
+possible_inferences <-  
+  
+  conditional_inferences(model_priors, 
+                         query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                         given = "Y==0")
+
+```
+
+
+```{r ch11ExpectedLearning3, warning = FALSE, include = FALSE}
+
+strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
+
+learning <- sapply(strats,  function(strategy) {
+
+  expected_learning(model_priors, 
+                    query = list(COE = "(Y[X=1] > Y[X=0])"), 
+                    strategy = strategy, 
+                    given = "Y==0", 
+                    parameters = NULL)
+  })
+```
+
+
+```{r scxrylearning3, echo = FALSE}
+kable(t(learning), col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"))
+```
+
+We see the results of this new set of diagnoses, with informative priors on $S$'s nodal types, in Table \@ref(scxrylearning3). Comparing with Table \@ref(scxrylearning), a number of features stand out. First is the much lower *prior* variance under the new model: having a strong prior belief about $S$'s value gives us stronger prior beliefs about whether $X$ could have caused $Y$ since such an effect *depends* on $S$'s value. A second striking difference is that searching for $S$ is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for $S$. We *could* be surprised, but we should not *expect* to be. In the original model, in contrast, we were maximally uncertain about $S$'s value --- believing it had a 0.5 chance of being 1 --- and so there was much more to be gained by looking. 
+
+While not shown here, we get essentially the same result if we flip our priors and put much greater weight on $S=0$, rather than on $S=1$. 
+
+
+### Clue selection for the democratization model 
+
+We now apply this approach to the model of democratization that we worked with in Chapters \ref(ptapp) and \ref(mixingapp).
+
+We start by specifying the democratization model, with negative effects ruled for $I \rightarrow M$, $M \rightarrow D$, and $P \rightarrow D$ and a positive direct effect ruled out for $I \rightarrow D$.
+
+```{r model2, echo = FALSE, message = FALSE}
+
+pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))   #Exclude a set of negative-effect and positive-effect nodal types.
+
+```
+
+Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables --- mobilization or international pressure --- we should collect data on: we could observe nothing further; observe $P$ only; observe $M$ only; or observe both $P$ and $M$. In Table \@ref(possible_outcomespimd_i1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditionining on $I=D=1$.)
+
+```{r cinfer4, echo = FALSE}
+
+inferences_pimd <-
+  conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
+
+kable(inferences_pimd, caption = "\\label{possible_outcomespimd_i1} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3)
+
+```
+
+We show in Table \@ref(pimdlearn_i1d1) how we expect uncertainty to be reduced by different research designs. In this table, we show these reductions for the two kinds of cases in which democratization does occur. The first row displays the variance on our posterior belief about the effect of $I$ on $D$ before we observe anything at all. The next three rows show our expectations for looking for $P$ only; looking for $M$ only; and looking for both. The clearest message here is that, if we had to choose between clues, we should observe $P$: given our model (including our priors on the types), we reduce our uncertainty more by learning about an alternative cause than by learning about a mediator. 
+
+We also see that the mediator is much more informative when the causal effect we are looking for is one that *could* have operated via the mediator, as compared to when the mediator is informative only as a moderator of the cause's direct effects.
+
+
+
+
+
+```{r explearning, echo = FALSE, message = FALSE, warning = FALSE}
+
+if(do_diagnosis){
+ELpimd1 <-
+  rbind(
+expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
+expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+write_rds(ELpimd1, "saved/11_ELpimd1.rds")
+}
+
+ELpimd1 <- read_rds("saved/11_ELpimd1.rds")
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = "\\label{pimdlearn_i1d1} Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
+
+```
+
+We turn next to considering those cases with low inequality that democratized, asking whether democratization occurred because of a *negative* effect of inequality. The possible data realizations, resulting inferences, and data probabilities are shown in Table \@ref(possible_outcomespimd_i0), while the expected learning estimates for each clue strategy are given in Table \@ref(pimdlearn_i0d1). The pattern here is similar, though somewhat starker: substantially greater gains to observing the moderator, $P$, than the mediator $M$. The gains to observing $M$ here are very small indeed. We can already see from comparing the relevant rows in the data-possibilities table how little our posterior beliefs shift depending on $M$'s realized value. $M$ is far less informative for assessing $I$'s causal effect for an $I=0, D=1$ case than for a $I=1, D=1$ case. The reason is that, in the former situation, we are looking for a positive effect while in the latter situation, we are looking for a negative effects; but only positive effects can operate through the mobilization pathway under the model restrictions. Thus, $M$ is uninformative as a mediator of $I$'s effect in an $I=0, D=1$ (though it is informative as a moderator for such a case, but less so).
+
+```{r cinfer5, echo = FALSE}
+
+inferences2_pimd <-
+  conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
+
+kable(inferences2_pimd, caption = "\\label{possible_outcomespimd_i0} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3)
+
+```
+
+
+
+```{r pimdlearn, echo = FALSE, message = FALSE, warning = FALSE}
+
+if(do_diagnosis){
+ELpimd2 <-
+  rbind(
+expected_learning(pimd, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"),
+expected_learning(pimd, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1"))
+write_rds(ELpimd2, "saved/11_ELpimd2.rds")
+}
+ELpimd2 <- read_rds("saved/11_ELpimd2.rds")
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "\\label{pimdlearn_i0d1}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3)
+
+```
+
+
+
+<!-- ```{r, echo = FALSE, message = FALSE} -->
+
+<!-- pimd_confound <- make_model("I -> M -> D <- P; I -> D", add_priors = FALSE) %>% #Specify the DAG -->
+
+<!--          set_restrictions(c(  -->
+<!--            "(M[I=1] < M[I=0])",  -->
+<!--            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. -->
+
+<!--             set_confound(list(I = "(M[I=1] == 1) & (M[I=0] == 0)"))  #Allow I to have a distinct conditional distribution when M's nodal type is \theta^M_{01}.  -->
+
+<!-- new_parameters <-pimd_confound$parameters  -->
+
+<!-- new_parameters[1:2] <- c(.7, .3)  -->
+
+<!-- pimd_confound <- set_parameters(pimd_confound, new_parameters)  -->
+
+<!--     ``` -->
+
+<!-- In Table \@ref(possible_outcomespimd_i1con), we can see the inferences we would derive (about $I$'s positive effect on $D$) from the possible data realizations for $I=1, D=1$ cases. Comparing with the parallel set of inferences for the model without confounding (Table \@ref(possible_outcomespimd_i1)), the key difference is that all non-zero priors and posteriors on the query are lower in the presence of confounding. The reason is straightforward. The confounding built into this model makes $I$'s value additionally informative about the causal effect of $I$ on $M$ since we have expressed a belief that $I$ is more likely to be $0$ where $I$ has a positive effect on $M$. Moreover, $I$ must have a positive effect on $M$ in order for $I$ to have a positive effect on $D$. Thus, in the model with confounding, $I=1$ is already a clue that speaks against a positive $I \rightarrow D$ effect, whereas $I=1$ is not informative in this same way in the model without confounding.   -->
+
+
+<!-- ```{r, echo = FALSE} -->
+
+<!-- inferences_pimdcon <- -->
+<!--   conditional_inferences(pimd_confound, query = "D[I=1] > D[I=0]", given = "I==1 & D==1") -->
+
+<!-- kable(inferences_pimdcon, caption = "\\label{possible_outcomespimd_i1con} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterioron the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3) -->
+
+<!-- ``` -->
+<!-- In Table \@ref(pimdlearn_i1d1con), we see the expected learning results for the $I=1, D=1$ cases, given a model with confounding, which we can compare to the comparable results in Table \@ref(pimdlearn_i1d1), for the model without confounding. Differences are modest. We are in general somewhat less uncertain in the model with confounding, regardless of strategy, which likely is an artifact of the fact that our posterior means are closer to $0$. Likewise, the scope for uncertainty-reduction is lower in the new model. In addition, however, it looks like the difference in expected learning between observing $P$ and observing $M$ is slightly smaller in the model with confounding. -->
+
+
+<!-- ```{r, echo = FALSE, message = FALSE, warning = FALSE} -->
+
+<!-- ELpimdconfound1 <- -->
+<!--   rbind( -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1")) -->
+
+<!-- x_strategy <- c("None", "P", "M", "P and M") -->
+
+<!-- kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3) -->
+
+<!-- ``` -->
+
+
+<!-- ```{r, echo = FALSE} -->
+
+<!-- inferences2_pimdcon <- -->
+<!--   conditional_inferences(pimd_confound, query = "D[I=1] < D[I=0]", given = "I==0 & D==1") -->
+
+<!-- kable(inferences2_pimdcon, caption = "\\label{possible_outcomespimd_i0con} Table shows possible data patterns for P and M given I = 0 and D = 1, assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3) -->
+
+<!-- ``` -->
+
+
+
+<!-- ```{r, echo = FALSE, message = FALSE, warning = FALSE} -->
+
+<!-- ELpimdconfound2 <- -->
+<!--   rbind( -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = NULL,       given = "I==0 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "P",        given = "I==0 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = "M",        given = "I==0 & D==1"), -->
+<!-- expected_learning(pimd_confound, query = "D[I=1] == 0", strategy = c("P","M"), given = "I==0 & D==1")) -->
+
+<!-- x_strategy <- c("None", "P", "M", "P and M") -->
+
+<!-- kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3) -->
+
+<!-- ``` -->
+
+Now, let us see what happens as we revise the model, making it less restrictive. We do this, first, by allowing for confounding between two nodes in the model, international pressure and democratization. In particular, we allow for the possibility that, in order to generate a perception of foreign-policy influence and success, other states may target democratization pressure on autocratic regimes that are likely to democratize in the presence of pressure. This includes regimes that will democratize *only* if pressured as well as those that will democratize in the presence of pressure but where pressure itself was not a cause. We use the `set_confound` function to define distinct parameters for $P$'s nodal type when this is the case. The confound condition here is extremely easy to define: it is simply all unit types in which $D=1$ when $P=1$ ((D[P=1] == 1)). This includes all unit types (combinations of nodal types) that generate democratization in the presence of international pressure. 
+
+Having set the confound condition, we can then express beliefs (parameter values) that $P=1$ is more common relative to $P=0$ when the condition is met than otherwise.^[It will be recalled that, in single-case inference we must express beliefs about population-level shares of nodal types. This includes expressing beliefs about the parameters defining the confounding.] We keep all other parameter values flat across the nodal types that are not excluded.
+
+```{r pimdconfound, echo = FALSE, message = FALSE}
+
+pimd_confound2 <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+  
+  set_restrictions(c( 
+    "(M[I=1] < M[I=0])", 
+    "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+  
+set_confound(list(P = "(D[P=1] == 1)")) %>%
+
+set_priors(alphas = c(90), statement = "P[]==1", confound = list(P = "(D[P=1] == 1)")) %>%
+
+set_parameters(type = "prior_mean")  
+
+
+#new_parameters <-pimd_confound2$parameters 
+
+#new_parameters[1:2] <- c(.05, .95) 
+
+#pimd_confound2 <- set_parameters(pimd_confound2, new_parameters)  
+
+```
+
+
+
+```{r possoutpimdconf, echo = FALSE}
+
+inferences_pimdconf <-
+  conditional_inferences(pimd_confound2, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
+
+kable(inferences_pimdconf, caption = "\\label{possible_outcomespimd_conf} Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization, with confounding involving $P$.", digits = 4)
+
+```
+
+```{r pimdlearni1d1con, echo = FALSE, message = FALSE, warning = FALSE}
+ELpimdconfound4 <-
+  rbind(
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = NULL,       given = "I==1 & D==1"),
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
+    expected_learning(pimd_confound2, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimdconfound4[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 4)
+```
+
+We display the inferences we *would* draw from different clue strategies and data realizations in Table \@ref(possible_outcomespimd_conf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed $I=1$ and $D=1$, in Table \ref@(pimdlearn_i1d1con). As we can see from the latter table, the presence of a confound involving $P$ reduces this clue's relative expected contribution to learning, making it now *less* informative in expectation than $M$. 
+
+Working backwards, we can readily identify the reason for this in Table \@ref(possible_outcomespimd_conf). We see here that observing $P=1$ moves our beliefs very little off of our prior of $0.091$ because, given the confounding, we already strongly expect to see $P=1$ in a case that democratized; actually observing $P=1$ contains only a small amount of new information. Our beliefs over the query change a great deal if we observe $P=0$---since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, $P$'s value is far more consequential than $M$'s. However, we can also see from the last column of the table that the most impactful realization of $P$'s value is also extremely unlikely under the model (given $I=D=1$). Thus, $P$ *can* be highly informative under this model, but it is very unlikely to be.
+
+
+We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the *pathway* through which an effect occurs. We need to adjust the model to allow allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of $I$ on $M$ and instead use `set_priors` to state a belief that such a negative effect is less likely than $M$'s other nodal types. 
+
+
+```{r model3, echo = FALSE, message = FALSE}
+
+pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+  
+         set_restrictions(c(
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
+
+#         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5)))  #Set less weight on negative effect of I on M
+
+           set_parameters(node = "M", statement = "(M[I=0] > M[I=1])", parameters = 0.125)  #Set less weight on negative effect of I on M
+
+
+
+```
+
+To isolate how the query matters from how the restrictions matter, we first diagnose clue strategies for a causal-effect query under this new model: given $I=0, D=1$, did $I$ have a negative effect on $D$? Inferences conditional on data-realizations and clue strategies are displayed in Table \@ref(possible_outcomespimd_priors_effect) and expected posterior variances in Table \@ref(tab:pimdlearn_priors_effect). 
+
+Starting with Table \@(possible_outcomespimd_priors_effect), a comparison with the parallel results for the model that excludes negative $I \rightarrow M$ effects -- Table \@ref(possible_outcomespimd_i0) -- is informative. Similar to what we saw in Chapter \@ref(pt_app), the inferences we draw from observing $M$'s values *flip* in direction when we allow for negative effects of $I$ on $M$. When such effects were excluded, $M$ was informative only as a moderator of $I$'s direct negative effect on $D$. An observation of $M=1$ counted as evidence against $I=0$ being the cause of $D=1$ since $M=1$ could be the cause (given that $M$ could have a positive effect on $D$); $M=0$ counted, by a similar logic, as evidence in favor of $I$'s negative effect. Once we relax the restriction and allow negative effects of $I$ on $M$, $M$ is additionally informative as a *mediator* along a second pathway through which $I$ can have a negative effect on $M$. Now, observing $M=0$ cuts in two directions: on the one hand, it rules out a negative effect of $I$ running through $M$ (informativeness as mediator); on the other hand, it makes it more likely that $I=0$ caused $D=1$ indirectly (informativeness as moderator). We can see that, in this situation, the information we get from $M$ as a mediator overwhelms that which we get from $M$ as a moderator since our posterior on $I$'s causal effect now moves *downwards* if we observe $M=0$. $M=1$, of course, cuts both ways as well by a parallel logic, but with the net effect being an upward shift in our posterior on the causal effect. 
+
+So how informative overall is $M$ as compared to $P$? In the model allowing negative $I \rightarrow M$ effects, we are now learning in two ways from $M$ rather than one; so our intuition might be that $M$ has become more informative than it was in our original model. In Table \@ref(tab:pimdlearn_priors_effect), we see that this is not at all the case! Much as in Table \@ref(pimdlearn_i0d1), for the same query and given data but under our original model, we still see very little---indeed, slightly less---reduction in expected posterior variance from the search for $M$. $M$ may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect *undoes* some of the learning from the moderation by pushing our inferences in the opposing directions.
+
+
+```{r tableinferencespriors_effect, echo = FALSE}
+
+inferences_priors_effect <-
+  conditional_inferences(pimd_priors, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
+
+kable(inferences_priors_effect, caption = "\\label{possible_outcomespimd_priors_effect} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?", digits = 3)
+
+```
+
+```{r pimdlearnpriorseffect, echo = FALSE, message = FALSE, warning = FALSE}
+ELpimd_priors_effect <-
+  rbind(
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = NULL,       given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "P",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "M",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = c("P","M"), given = "I==0 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
+```
+
+Now, let's see how things look when we are interested not in $I$'s causal effect on $D$ but in whether it had an effect via particular pathway. Specifically, given $I=0$ and $D=1$, did $I$ have a negative effect on $D$ that was mediated by $M$? Following our discussion of mediation in Chapter \@ref(questions), we define the query as asking whether the following are true:
+
+1 Does $I$ have a negative effect on $M$? (in code, $M[I=1] < M[I=0]$)
+2 Does the change in $M$ resulting from a change from $I=1$ to $I=0$ cause a change in $D$ from $0$ to $1$? ($(D[M=M[I=0]] > D[M=M[I=1]])$)
+3 Does $I$'s effect on $D$ *depend* on $I$'s effect on $M$? In other words, would we still get the $I \rightarrow D$ effect if $M$ were fixed at the value that it takes on when $I=1$? ($(D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])$)
+
+Inferences conditional on data strategies and realizations are displayed in Table \@ref(possible_outcomespimd_path). We saw in Table \@ref(possible_outcomespimd_priors_effect) that seeing $M=0$ slightly reduces our confidence that there was a negative effect of $I$ on $D$. However, we see now that observing $M=0$ entirely *eliminates* the possibility that this effect was mediated by $M$. We also see that the data realization under which we update most strongly in favor of a negative causal effect--$P=0, M=1$--is also the realization most suportive of a belief in a mediated negative effect. 
+
+Turning to expected learning from alternative strategies, shown in Table \@ref(pimdlearn_path), we can see clearly -- by comparison to Table \ref@(tab:pimdlearn_priors_effect) -- how optimal clue strategies depend on the query of interest. Whereas $M$ is only slight informative about $I$'s causal effect--with $P$ the more informative clue--we expect to learn much more from $M$ about the pathway-specific query, and $M$ is far more informative than $P$.
+
+
+```{r possibleoutcomespimdpath, echo = FALSE}
+
+inferences_pimdpath <-
+  conditional_inferences(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", given = "I==0 & D==1")
+
+kable(inferences_pimdpath, caption = "\\label{possible_outcomespimd_path} Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?", digits = 3)
+
+```
+
+```{r pimdlearnpath, echo = FALSE, message = FALSE, warning = FALSE}
+ELpimd_path <-
+  rbind(
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = NULL,       given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = "P",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = "M",        given = "I==0 & D==1"),
+    expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
+                     (D[M=M[I=0]] > D[M=M[I=1]]) & 
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = c("P","M"), given = "I==0 & D==1"))
+
+x_strategy <- c("None", "P", "M", "P and M")
+
+kable(cbind(strategy = x_strategy, ELpimd_path[,-1]), caption = "\\label{pimdlearn_path}Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
+```
+
+Now, what if we already know that $I$ has a negative effect on $D$ and we want to know via which pathway that effect operates---the direct or the indirect? 
+
+FLAG
+
+```{r model6, echo = FALSE, message = FALSE, eval = FALSE}
+
+pimd_priors <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+  
+         set_restrictions(c(
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types. Here do NOT exclude negative effects of I on M
+  
+         set_priors(alphas = list(M = c(`(M[I=0] > M[I=1])` = 0.5))) %>% #Set less weight on negative effect of I on M
+
+```
+
+
+
+FLAG: actual cause and notable cause ??
+
+## Dynamic Strategies
+
+The clue-collection strategies described above assume that researchers identify the full set of clues to be gathered in advance and do not alter their strategies as they go along. However, the expected informativeness of a clue may depend on the values of other clues that we see first, implying that an optimal strategy will be dynamic, taking into account earlier observations in selecting later ones. 
+
+Given $n$ nodes, a dynamic data collection strategy will be of the form:
+$$\sigma = \{K_1, (K_2|K_1 = 1), (K_2|K_1 = 0), (K_3|K_1=1, K_2 =0)\dots\}$$
+
+where each $K_j$ is en element of the nodes on the graph, or is the empty set. Thus, we start with observing $K_1$; then, whether we choose to observe $K_2$ depends on the value of $K_1$; whether we choose to observe $K_3$ depends on the value of $K_1$ and (if we observed it) $K_2$; and so on. A strategy *vector* specifies a series of conditional clue-search actions: it identifies the first clue sought and then which clues are sought conditional on the realization of all prior clues sought.  
+
+Each possible strategy has an associated expected reduction in variance. We can also build in an expected cost associated with each clue, allowing us to treat clue-selection as an optimization problem. 
+
+To illustrate with the running example, we imagine a situation in which it is known that $Y=1$, and we are interested in whether $Y=0$ because of $S$ (though we don't know at the outset what the value of $S$ is). We consider strategies in which we first seek information on one node and then, conditional on what we find, look or do not look for data on one other node. With five nodes, one already known, there are $4 \times 4^2$ strategies of this form.
+
+Suppose that we observe that $Y=0$: the government was not replaced. We then want to know whether this is because the government was sophisticated ($S=1$). If we learn that the government was not sophisticated, then this answers the question in the negative. If we learn that the government was sophisticated then we can infer that this was the cause if we learn that there was a free press (or if we learn that there was no corruption).
+
+
+```{r ch11definerunningmodel3, warning = FALSE}
+
+# Make model
+model <-
+    make_model("S -> C -> Y <- R <- X; X -> C -> R") %>%
+       set_restrictions(
+       labels = list(C = c("1110", "1111"),
+                     R = c("0001", "0000"),
+                     Y = c("0001")),
+       keep = TRUE)
+
+```
+
+
+```{r runexam, echo = FALSE}
+# Implement for running examples
+
+
+# Calculate expected n and variance
+if(do_diagnosis){
+
+
+# Generate strategies list
+strategies <- two_step_strategies(model)
+
+# Evaluate list of strategies
+results <-
+  strategy_evaluation(
+    model,
+    strategies  = strategies,
+    query = "(Y[S=1] != Y[S=0])",
+    given = "Y==0",
+    prices = c(1, 1.4, 2.5, .5, .7))
+
+    write_rds(results, "saved/ch11_tradeoffs.rds")
+  }
+
+results <- read_rds("saved/ch11_tradeoffs.rds")
+
+
+# Plot results
+# Which labels to print?
+extremes_for_var <- function(D)
+sapply(1:nrow(D), function(i) {
+j <- D[i, ]
+S <- filter(D, (expected_variance - j["expected_variance"][[1]])^2 < .000001) %>%
+mutate(dominated = expected_costs < j["expected_costs"][[1]],
+ undominated = expected_costs > j["expected_costs"][[1]])
+(!any(S$dominated)) 
+# | (!any(S$undominated)) 
+})    
+
+show <- extremes_for_var(results)
+
+with(results, {
+  plot(expected_variance, expected_costs, type = "n", xlab = "Expected Variance", ylab = "Expected Costs", xlim = c(.035, .075), main = "Variance / cost tradeoffs", ylim = c(-.3, 4))
+  points(expected_variance, expected_costs)
+  text(expected_variance[show], expected_costs[show] - .3, labs[show], cex = .8)
+
+})
+```
+
+
+For each strategy we can then assess the expected variance reduction; in addition, if collecting different clues comes at different costs---but collection depends on past findings---then we can also calculate the expected costs of each strategy.
+
+
+| Strategy | Step 1 | Step 2 if 0 | Step 2 if 1 | Expected variance | Expected Cost |
+|----------|--------|-------------|-------------|-------------------|---------------|
+| 1        | S      | None        | None        |       0.167       | 1             |
+| 2        | S      | X           | X           |       0           | 2.5           |
+| 3        | S      | None        | X           |       0           | 2             |
+|          |        |             |             |                   |               |
+
+Table: Illustration of three (of many) possible two step strategies.
+
+Figure \@ref(fig:tradeoffs) plots a collection of strategies based on two criteria---the variance reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest variance strategy that minimizes costs involves gathering $Y$ only.
+
+
+Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.
+
+
+```{r model7, echo = FALSE, message = FALSE}
+
+pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+  
+         set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))   #Exclude a set of negative-effect and positive-effect nodal types.
+
+```
+
+
+```{r strategies, echo = FALSE}
+
+strategies <- two_step_strategies(pimd) %>% 
+  filter((one %in% c("P", "M"))) %>% 
+  filter(is.na(two_0) | (two_0 %in% c("P", "M")))%>% 
+  filter(is.na(two_1) | (two_1 %in% c("P", "M")))
+
+# Calculate expected n and variance
+if(do_diagnosis){
+
+
+# Evaluate list of strategies
+results_pimd_tradeoff <-
+  strategy_evaluation(
+    pimd,
+    strategies  = strategies,
+    given = "D==1 & I==1", 
+    query = "(D[I=1] != D[I=0])", 
+    prices = c(1, 1.5, 1, 1))
+
+    write_rds(results_pimd_tradeoff, "saved/ch11_tradeoffs_pimd.rds")
+  }
+
+results_pimd_tradeoff <- read_rds("saved/ch11_tradeoffs_pimd.rds")
+
+
+results_pimd_tradeoff <- 
+  results_pimd_tradeoff %>% 
+  mutate(labs = ifelse(expected_n ==2, "All", as.character(labs)))
+
+with(results_pimd_tradeoff, {
+  plot(expected_variance, expected_costs, type = "n", xlab = "Expected Variance", ylab = "Expected Costs", 
+       ylim = c(-.0, 2.8), 
+       main = "Variance / cost tradeoffs" , 
+       xlim = c(.1035, .1125)
+       )
+#  points(expected_variance, expected_costs)
+  text(expected_variance, expected_costs, labs, cex = .8)
+
+})
+
+```
+
+
+We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:
+
+1 Observe $M$ first, then stop. This strategy has relatively high expected uncertainty but minimizes costs relative to any other strategy: we observe just one clue, and it's the cheaper one.
+2 Observe $P$ first, then stop. We'll learn more from this strategy than from Strategy 1, though at higher cost. Still there is no other strategy that allows us to reduce costs without increasing variqnce.
+3 Observe $P$ first; if $P=0$, observe $M$, otherwise stop. We, again, get uncertainty reduction here, relative to Strategy 2, but again at higher cost.
+4 Observe $M$ first; if $M=0$, stop; if $M=1$, observe $P$. This strategy gets us the lowest expected posterior variance of any strategy. Moreover, it is not the highest-cost strategy, which would be to observe both clues no matter what. Once we've observed $M=0$, we get nothing from the additional investment in $P$ since $M=0$ already tells us that $I$ could not have had a positive effect on $D$.
+
+Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don't expect to learn the most by starting with the most probative clue. If we start with the more informative clue, $P$, observing $M$ only if $P=0$, we expect to end up with *more* uncertainty than if we start with the less informative clue, $M$, and observe $P$ only if $M=1$. 
+
+
+```{r tradeoffspimdconfound, echo = FALSE, message = FALSE, eval = FALSE}
+
+confound = list(P = "(D[P=1] == 1)")
+
+pimd_confound2 <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+  
+  #Exclude a set of negative-effect and positive-effect nodal types.
+  set_restrictions(c(decreasing("I", "M"), increasing("I", "D"), 
+                     decreasing("M", "D"), decreasing("P", "D"))) %>% 
+  
+  set_confound(confound) %>%
+  
+  set_parameters(confound = confound, alphas = c(.05, .95), node = "P")
+
+strategies <- two_step_strategies(pimd_confound2) %>% 
+  filter((one %in% c("P", "M"))) %>% 
+  filter(is.na(two_0) | (two_0 %in% c("P", "M")))%>% 
+  filter(is.na(two_1) | (two_1 %in% c("P", "M")))
+
+# Calculate expected n and variance
+if(do_diagnosis){
+
+# Evaluate list of strategies
+results_pimd_tradeoff_confound <-
+  strategy_evaluation(
+    pimd_confound2,
+    strategies  = strategies,
+    given = "D==1 & I==1", 
+    query = "(D[I=1] != D[I=0])", 
+    prices = c(1, 1.5, 1, 1))
+
+    write_rds(results_pimd_tradeoff_confound, "saved/ch11_tradeoffs_pimd_confound.rds")
+  }
+
+results_pimd_tradeoff_confound <- read_rds("saved/ch11_tradeoffs_pimd_confound.rds")
+
+
+results_pimd_tradeoff_confound <- 
+  results_pimd_tradeoff_confound %>% 
+  mutate(labs = ifelse(expected_n ==2, "All", as.character(labs)))
+
+with(results_pimd_tradeoff_confound, {
+  plot(expected_variance, expected_costs, type = "n", xlab = "Expected Variance", ylab = "Expected Costs", 
+       ylim = c(-.0, 2.6), 
+       main = "Variance / cost tradeoffs" , 
+       xlim = c(.080, .083)
+       )
+#  points(expected_variance, expected_costs)
+  text(expected_variance, expected_costs, labs, cex = .8)
+
+})
+
+```
+
+  
+<!-- ## More complex problems -->
+
+<!-- Illustration of clue inference for a continuous problem. -->
+
+
+
+## Conclusion
+
+Explicit statement of a causal model---including prior beliefs over roots---allows one to assess what will be inferred from all possible observations. This opens the way for simple strategies for assessing what data is most valuable, and in what order it should be gathered. 
+
+We are conscious that here we are pushing the basic logic to the limits. In practice researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts; the claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data is most useful to gather. 
+
+
+

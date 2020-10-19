@@ -4,6 +4,7 @@ library("pacman")
 # devtools::install_github("tidyverse/dplyr")
 
 pacman::p_load(
+  DT,
   bookdown,
   tidyverse,
   bayesplot,
@@ -16,16 +17,19 @@ pacman::p_load(
   rstanarm,
   knitr,
   expm,
+  plotrix,
   reshape2,
   dagitty,
   stargazer,
   partitions)
 
 library(CQtools)
-
+options(mc.cores = parallel::detectCores())
 options(knitr.kable.NA = '')
 
 do_diagnosis = FALSE
+
+flag <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
 
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
@@ -43,7 +47,7 @@ format_with_col = function(x, color = "blue"){
 
 #' Game Tree
 #'
-#' Thus function is in development. It draws game trees and identifies subgame perfect equilibria when this is unique
+#' This function is in development. It draws game trees and identifies subgame perfect equilibria when this is unique
 #' Backwards induction is implemented under the assumption that utilities are "generic" and so a unique solution exits.
 #'
 #' In this version the graphing is not good when there are multiple solutions or indifference at given nodes.
