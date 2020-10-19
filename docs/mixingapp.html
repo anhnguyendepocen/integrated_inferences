@@ -376,12 +376,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="mixingapp" class="section level1">
 <h1><span class="header-section-number">Chapter 9</span> Mixed-Method Application: Inequality and Democracy Revisited</h1>
-<hr />
+<div class="headerbox">
+<div class="center">
+
+</div>
 <p>In Chapter 7 we drew inferences from a ‘theory based’ democracy and inequality model on data. Here we train the model on data before making case level inferences, allowing for the possibility of confounding in the assignment of inequality. In this case we update our beliefs over the population parameters and not just over the case level parameters. Thus we simultaneously learn about our theory and use our theory to learn about cases. The data informed inferences are, on the whole, weaker than the theory based inferences of Chapter 7.</p>
-<hr />
-<pre class="infobox caution" data-latex="caution"><code>
-Include the actual content here.
-</code></pre>
+</div>
+<p><br></p>
 <!-- FLAG: Change causal types to unit types everywhere. -->
 <div id="a-trained-model" class="section level2">
 <h2><span class="header-section-number">9.1</span> A trained model</h2>
@@ -398,15 +399,15 @@ Include the actual content here.
 <p>Finally, we allow for confounding. The theoretical intuition we want to instantiate in the model is that the level of inequality could be endogenous to inequality’s effect on mobilization. In particular, in places where mobilization would pose a mobilizational threat, governments may work harder to reduce inequality. To allow for this possibility, we need to create distinct elements of <span class="math inline">\(\lambda\)</span> representing the conditional distribution of <span class="math inline">\(I\)</span>’s nodal types given <span class="math inline">\(M\)</span>’s: one parameter for <span class="math inline">\(\theta^I\)</span>’s distribution when <span class="math inline">\(M\)</span>’s nodal type is <span class="math inline">\(\theta^M_{01}\)</span>, and another parameter for <span class="math inline">\(\theta^I\)</span>’s distribution when <span class="math inline">\(M\)</span>’s nodal type is something else.</p>
 <p>We can use <code>CausalQueries</code> to define the model, with these restrictions and this confounding possibility, as follows.</p>
 <!-- I have changed the confound to create a distinct conditional distribution when I will have a positive effect on M (was for 11 types)_. Seems like we'd expect governments to work harder to reduce inequality in places where it would pose a mobilizational threat than in other places. -->
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="mixingapp.html#cb2-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;I -&gt; M -&gt; D &lt;- P; I -&gt; D&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#Specify the DAG</span></span>
-<span id="cb2-2"><a href="mixingapp.html#cb2-2"></a></span>
-<span id="cb2-3"><a href="mixingapp.html#cb2-3"></a><span class="st">         </span><span class="co"># Monotonicity restrictions</span></span>
-<span id="cb2-4"><a href="mixingapp.html#cb2-4"></a><span class="st">         </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>( </span>
-<span id="cb2-5"><a href="mixingapp.html#cb2-5"></a>           <span class="st">&quot;(M[I=1] &lt; M[I=0])&quot;</span>, </span>
-<span id="cb2-6"><a href="mixingapp.html#cb2-6"></a>           <span class="st">&quot;(D[I=1] &gt; D[I=0]) | (D[M=1] &lt; D[M=0]) | (D[P=1] &lt; D[P=0])&quot;</span>))  <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb2-7"><a href="mixingapp.html#cb2-7"></a><span class="st">  </span></span>
-<span id="cb2-8"><a href="mixingapp.html#cb2-8"></a><span class="st">          </span><span class="co"># Allow I to have a distinct conditional distribution when I causes M</span></span>
-<span id="cb2-9"><a href="mixingapp.html#cb2-9"></a><span class="st">          </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">I =</span> <span class="st">&quot;(M[I=1]  &gt; M[I=0])&quot;</span>))   </span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="mixingapp.html#cb1-1"></a>model &lt;-<span class="st"> </span><span class="kw">make_model</span>(<span class="st">&quot;I -&gt; M -&gt; D &lt;- P; I -&gt; D&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co">#Specify the DAG</span></span>
+<span id="cb1-2"><a href="mixingapp.html#cb1-2"></a></span>
+<span id="cb1-3"><a href="mixingapp.html#cb1-3"></a><span class="st">         </span><span class="co"># Monotonicity restrictions</span></span>
+<span id="cb1-4"><a href="mixingapp.html#cb1-4"></a><span class="st">         </span><span class="kw">set_restrictions</span>(<span class="kw">c</span>( </span>
+<span id="cb1-5"><a href="mixingapp.html#cb1-5"></a>           <span class="st">&quot;(M[I=1] &lt; M[I=0])&quot;</span>, </span>
+<span id="cb1-6"><a href="mixingapp.html#cb1-6"></a>           <span class="st">&quot;(D[I=1] &gt; D[I=0]) | (D[M=1] &lt; D[M=0]) | (D[P=1] &lt; D[P=0])&quot;</span>))  <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-7"><a href="mixingapp.html#cb1-7"></a><span class="st">  </span></span>
+<span id="cb1-8"><a href="mixingapp.html#cb1-8"></a><span class="st">          </span><span class="co"># Allow I to have a distinct conditional distribution when I causes M</span></span>
+<span id="cb1-9"><a href="mixingapp.html#cb1-9"></a><span class="st">          </span><span class="kw">set_confound</span>(<span class="kw">list</span>(<span class="dt">I =</span> <span class="st">&quot;(M[I=1]  &gt; M[I=0])&quot;</span>))   </span></code></pre></div>
 <hr />
 <p>This model, with confounding, is represented graphically as in Figure <a href="mixingapp.html#fig:pimdgraph">9.1</a>. The possibility of confounding is represented with the bidirected edge, connecting <span class="math inline">\(I\)</span> and <span class="math inline">\(M\)</span>.</p>
 <div class="figure"><span id="fig:pimdgraph"></span>
