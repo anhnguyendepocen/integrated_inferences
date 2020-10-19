@@ -11,69 +11,79 @@ We describe the book's general approach, and explain how it differs from current
 source("_packages_used.R")
 ```
 
+Here is the key idea of this book. Quantitative social scientists spend a lot of time trying to understand causal relations between variables by looking across cases to see how outcomes differ when causes differ. They rely on variation between cases and the quality of their inferences depend in large part on what gives rise to that variation.  Qualitative social scientists, like historians, spend a lot of time looking at few cases and learn about causal relations by looking for evidence of causal processes in operation within individual cases. They rely on theories for how things work, theories that specify what should be observable within a case if indeed an outcome was due to a particular cause.  These approaches seem to differ in what they seek to explain---individual level or population level outcomes; what evidence they need---cross case variation or within case detail; and what they need to assume---knowledge of assignment processes or knowledge of causal processes. The key idea of this book is that this distinction, though culturally real, is neither deep nor helpful. Social scientists can form causal models that simultaneously exploit cross-case variation and within-case detail, that address both case level and population level questions, and that both depend on, and contribute to developing,  theories of how things work.
+
+The goal of this book is to motivate this approach, give an introduction to the theory of structural causal models, provide practical guidance for setting up, updating, and querying causal models, and extract principles for research design.
+
+<!-- The approach we describe is centered on the deployment of causal models to ground inferences. It draws heavily on work pioneered by scholars in computer science, statistics, and philosophy---that has had modest traction to date in quantitative political science. The expression of background knowledge and structuring of inference via causal models can directly address the kinds of design decisions and inferential challenges with which qualitative scholars routinely grapple.  -->
+
+
 <!-- CHANGE FROM PHILOSOPHER TO SOMETHING ELSE; SKEPTIC? -->
 
-The engineer pressed the button, but the light didn't turn on. 
+<!-- The engineer pressed the button, but the light didn't turn on.  -->
 
-"Maybe the bulb is blown," she thought. 
+<!-- "Maybe the bulb is blown," she thought.  -->
 
-She replaced the bulb, pressed the button and, sure enough, the light turned on.
+<!-- She replaced the bulb, pressed the button and, sure enough, the light turned on. -->
 
-"What just happened?" asked her philosopher friend.
+<!-- "What just happened?" asked her philosopher friend. -->
 
-"The light wouldn't turn on because the bulb was busted, but I replaced the bulb and fixed the problem." 
+<!-- "The light wouldn't turn on because the bulb was busted, but I replaced the bulb and fixed the problem."  -->
 
-"Such hubris!" remarked her friend.  "If I understand you, you are saying that pressing the button *would have* caused a change in the light *if the bulb had not been busted*."
+<!-- "Such hubris!" remarked her friend.  "If I understand you, you are saying that pressing the button *would have* caused a change in the light *if the bulb had not been busted*." -->
 
-"That's right."
+<!-- "That's right." -->
 
-"But hold on a second. That's a causal claim about counterfactual events in counterfactual conditions that you couldn't have observed. I don't know where to begin. For one thing, you seem to be inferring from the fact that the light did not go on when you pressed the button the first time that pressing the button the first time had no effect at all. What a remarkable conclusion. Did it never occur to you that the light might have about to turn on anyway---and that your pressing that button at just that moment is what *stopped* the light going on?"
+<!-- "But hold on a second. That's a causal claim about counterfactual events in counterfactual conditions that you couldn't have observed. I don't know where to begin. For one thing, you seem to be inferring from the fact that the light did not go on when you pressed the button the first time that pressing the button the first time had no effect at all. What a remarkable conclusion. Did it never occur to you that the light might have about to turn on anyway---and that your pressing that button at just that moment is what *stopped* the light going on?" -->
 
-"What's more," the philosopher went on, "you seem also to be saying that pressing the button the second time *did* have an effect because you saw the light go on that second time. That's rather incredible. That light could be controlled by a different circuit that was timed to turn it on at just the moment that you pressed the button the second time. Did you think about that possibility?"
-   
-"On top of those two unsubstantiated causal claims," the philosopher continued, "you are *also* saying, I think, that the difference between what you *believe* to be a non-cause on the first pressing and a cause on the second pressing is itself due to the bulb. But, of course, countless other things could have changed! Maybe there was a power outage for a few minutes." 
+<!-- "What's more," the philosopher went on, "you seem also to be saying that pressing the button the second time *did* have an effect because you saw the light go on that second time. That's rather incredible. That light could be controlled by a different circuit that was timed to turn it on at just the moment that you pressed the button the second time. Did you think about that possibility?" -->
 
-"That hardly ever happens."
+<!-- "On top of those two unsubstantiated causal claims," the philosopher continued, "you are *also* saying, I think, that the difference between what you *believe* to be a non-cause on the first pressing and a cause on the second pressing is itself due to the bulb. But, of course, countless other things could have changed! Maybe there was a power outage for a few minutes."  -->
 
-"Well, maybe the light only comes on the second time the button is pressed." 
+<!-- "That hardly ever happens." -->
 
-"It's not that kind of button."
+<!-- "Well, maybe the light only comes on the second time the button is pressed."  -->
 
-"So you say. But even if that's true, there are still so many other possible factors that could have mattered here---including things that neither of us can even imagine!"
+<!-- "It's not that kind of button." -->
 
-The philosopher paused to ponder her friend's chutzpah.
+<!-- "So you say. But even if that's true, there are still so many other possible factors that could have mattered here---including things that neither of us can even imagine!" -->
 
-"Come to think of it," the philosopher went on, "how do you even know the bulb was busted?"
+<!-- The philosopher paused to ponder her friend's chutzpah. -->
 
-"Because the light worked when I replaced the bulb."
+<!-- "Come to think of it," the philosopher went on, "how do you even know the bulb was busted?" -->
 
-"But that means," the philosopher responded, "that your measurement of the state of the bulb depends on your causal inference about the effects of the button. And we know where that leads. Really, my friend, you are lost."
+<!-- "Because the light worked when I replaced the bulb." -->
 
-"So do you want me to put the old bulb back in?"
+<!-- "But that means," the philosopher responded, "that your measurement of the state of the bulb depends on your causal inference about the effects of the button. And we know where that leads. Really, my friend, you are lost." -->
+
+<!-- "So do you want me to put the old bulb back in?" -->
 
 
 ## The Case for Causal Models
 
-In the conversation between the philosopher and the engineer, the philosopher disputes what seems a simple inference. Some of her arguments suggest a skepticism bordering on paranoia and seem easily dismissed. Others seem closer to hitting a mark: perhaps there was nothing wrong with the bulb and the button was just the kind that has to be pressed twice. 
+<!-- In the conversation between the philosopher and the engineer, the philosopher disputes what seems a simple inference. Some of her arguments suggest a skepticism bordering on paranoia and seem easily dismissed. Others seem closer to hitting a mark: perhaps there was nothing wrong with the bulb and the button was just the kind that has to be pressed twice.  -->
 
-While the philosopher's skepticism guards against false inferences, it is also potentially paralyzing. 
+<!-- While the philosopher's skepticism guards against false inferences, it is also potentially paralyzing.  -->
 
-The engineer brings background knowledge to bear on a question and deploys causal models of general processes to make inferences about particular cases. The philosopher brings a skeptical lense and asks for justifications that depend as little as possible on imported knowledge.
+<!-- The engineer brings background knowledge to bear on a question and deploys causal models of general processes to make inferences about particular cases. The philosopher brings a skeptical lense and asks for justifications that depend as little as possible on imported knowledge. -->
 
-Social scientists have been shifting between the poles staked out by the philosopher and the engineer for many years. This book is written for would-be engineers. It is a book about how we can mobilize our background knowledge about how the world works to learn more about the world. It is, more specifically, a study in how we can use causal models of the world to design and implement empirical strategies of causal inferences. 
+<!-- Social scientists have been shifting between the poles staked out by the philosopher and the engineer for many years. This book is written for would-be engineers. It is a book about how we can mobilize our background knowledge about how the world works to learn more about the world. It is, more specifically, a study in how we can use causal models of the world to design and implement empirical strategies of causal inferences.  -->
 
 <!-- Even still we will try to imagine throughout that the engineers have philosophers looking over their shoulders and will try to figure out ways to equip the engineers with plausible answers to the the philosophers' worries.  -->
 
-There are three closely related motivations for our move to side with the engineers. One is is a concern over the limits of design-based inference. A second is an interest in integrating qualitative knowledge with quantitative approaches, and a view that process tracing is a model-dependent endeavor.  A third is an interest in better connecting empirical strategies to theory. 
+<!-- There are three closely related motivations for our move to side with the engineers. -->
+
+There are three closely related motivations for embracing a causal models approach.
+One is is a concern over the limits of design-based inference. A second is an interest in integrating qualitative knowledge with quantitative approaches, and a view that process tracing is a model-dependent endeavor.  A third is an interest in better connecting empirical strategies to theory. 
 
 
 ### The limits to design-based inference 
 
-The engineer in our story tackles the problem of causal inference using models: theories of how the world works, generated from past experiences and applied to the situation at hand. The philosopher maintains a critical position, resisting models and the importation of beliefs not supported by evidence in the case at hand. 
+To caracticature positions a little bit we might imagine approaches represented by an engineer and a skeptic. The engineer  tackles the problem of causal inference using models: theories of how the world works, generated from past experiences and applied to the situation at hand. The skeptic maintains a critical position, resisting models and the importation of beliefs not supported by evidence in the case at hand. 
 
 The engineer's approach recalls the dominant orientation among social scientists until rather recently. At the turn of the current century, multivariate regression had become a nearly indispensable tool of quantitative social science, with a large family of statistical models serving as political scientists' and economists' analytic workhorses for the estimation of causal effects.  
 
-Over the last two decades, however, the philosophers have raised a set of compelling concerns about the assumption-laden nature of standard regression analysis, while also clarifying how valid inferences can be made with limited resort to models in certain research situations. The result has been a growth in the use of design-based inference techniques that, in principle, allow for model-free estimation of causal effects (see @dunning2012natural, @GerGreKap04, @druckman2011experimentation, @palfrey2009laboratory among others). These include lab, survey, and field experiments and natural-experimental methods exploiting either true or "as-if" randomization by nature. With the turn to experimental and natural-experimental methods has come a broader conceptual shift, with a growing reliance on the "potential outcomes" framework as a model for thinking about causation (see @Rubin1974, @splawa1990application among others) and a reduced reliance on models of data-generating processes.
+Over the last two decades, however, skeptics have raised a set of compelling concerns about the assumption-laden nature of standard regression analysis, while also clarifying how valid inferences can be made with limited resort to models in certain research situations. The result has been a growth in the use of design-based inference techniques that, in principle, allow for model-free estimation of causal effects (see @dunning2012natural, @GerGreKap04, @druckman2011experimentation, @palfrey2009laboratory among others). These include lab, survey, and field experiments and natural-experimental methods exploiting either true or "as-if" randomization by nature. With the turn to experimental and natural-experimental methods has come a broader conceptual shift, with a growing reliance on the "potential outcomes" framework as a model for thinking about causation (see @Rubin1974, @splawa1990application among others) and a reduced reliance on models of data-generating processes.
 
 The ability to estimate average effects and to calculate $p$-values and standard errors without resort to models is an extraordinary development. In Fisher's terms, with these tools, randomization processes provide a "reasoned basis for inference," placing empirical claims on a powerful footing.
 
@@ -181,7 +191,7 @@ Chapter 8 moves to mixed data problems --- situations in which a researcher cont
 
 The third part focuses on research design. In this framework the problem of case selection is equivalent to the kind of problem of clue selection discussed in Chapter 6. For a canonical multicase model however we use simulation approaches to provide guidance for how cases should be selected. The broad conclusion here is that researchers should go where the probative value lies, and all else equal, should select cases approximately proportional to the size of $XY$ strata---whether or not these are "on the regression line." 
 
-The fourth part steps back and puts the model-based approach into question. We have been advocating an embrace of models to aid inference. But the dangers of doing this are demonstrably large. The key problem is that with model-based inference, the inferences are only as good as the model. In the end, while we are supporting the efforts of engineers, we know that the philosopher is right. This final part  provides four responses to this (serious) concern. The first is that the dependence on models can sound more extreme than it is. Seemingly fixed parameters of models can themselves become quantities of interest in lower-level models, and there can be learning about these when higher-level models are studied. Thus models are both put to use and objects of interest. The second is that different types of conditional statements are possible; in particular as shown in work qualitative graphs.  The third response points to the sort of arguments that can be made to support models, most importantly the importation of knowledge from one study to another. The last argument, presented in the last substantive chapter, highlights the tools to *evaluate* models, using approaches that are increasingly standard in Bayesian analysis. 
+The fourth part steps back and puts the model-based approach into question. We have been advocating an embrace of models to aid inference. But the dangers of doing this are demonstrably large. The key problem is that with model-based inference, the inferences are only as good as the model. In the end, while we are supporting the efforts of engineers, we know that skeptics are right to distrust their models. This final part  provides four responses to this (serious) concern. The first is that the dependence on models can sound more extreme than it is. Seemingly fixed parameters of models can themselves become quantities of interest in lower-level models, and there can be learning about these when higher-level models are studied. Thus models are both put to use and objects of interest. The second is that different types of conditional statements are possible; in particular as shown in work qualitative graphs.  The third response points to the sort of arguments that can be made to support models, most importantly the importation of knowledge from one study to another. The last argument, presented in the last substantive chapter, highlights the tools to *evaluate* models, using approaches that are increasingly standard in Bayesian analysis. 
 
 Here we go.
 

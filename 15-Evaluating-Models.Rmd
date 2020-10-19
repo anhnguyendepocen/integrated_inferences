@@ -221,8 +221,8 @@ xlimC <- range(c(replicates_restricted$C, replicates_unrestricted$C))
 ## FLAG: ADD p values to others graphs
 
 p_two_sided <- function(Y, y, digits = 2){
-  if(y <  mean(Y)) return(round(2* mean(y > Y), digits))
-  if(y >= mean(Y)) return(round(2* mean(y <= Y), digits))
+  if(y <  mean(Y, na.rm = TRUE)) return(round(2* mean(y > Y, na.rm = TRUE), digits))
+  if(y >= mean(Y, na.rm = TRUE)) return(round(2* mean(y <= Y, na.rm = TRUE), digits))
 }
 p_temp <- p_two_sided(replicates_restricted$Y, mean(data$Y))
 hist(replicates_restricted$Y, 
@@ -589,7 +589,7 @@ p_two_sided <- function(Y, y, digits = 2){
   if(y >= mean(Y)) return(round(2* mean(y <= Y), digits))
 }
 
-p_temp2 <- p_two_sided(replicates_pimd$C, cor(data$M, data$I))
+p_temp2 <- p_two_sided(replicates_pimd$C, cor(data$M, data$I, use = "complete.obs"))
 hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$M, data$I, use = "complete.obs"), col = "blue")
 
@@ -598,34 +598,35 @@ hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
 # FLAG: WOULD LIKE THIS DONE WITH GGPLOT
 ```
 
-p_two_sided <- function(Y, y, digits = 2){
-  if(y <  mean(Y)) return(round(2* mean(y > Y), digits))
-  if(y >= mean(Y)) return(round(2* mean(y <= Y), digits))
-}
 
-hist(replicates_restricted$Y, 
-     main = paste("Y mean | stronger: p = ", p_temp),
-                  xlim = xlimY, xlab = "predictions") 
-     abline(v = mean(data$Y), col = "red")
+<!-- p_two_sided <- function(Y, y, digits = 2){ -->
+<!--   if(y <  mean(Y)) return(round(2* mean(y > Y), digits)) -->
+<!--   if(y >= mean(Y)) return(round(2* mean(y <= Y), digits)) -->
+<!-- } -->
 
-p_temp <- p_two_sided(replicates_restricted$C, cor(data$Y, data$X))
-hist(replicates_restricted$C, 
-     main = paste("X, Y covariance | stronger: p =", p_temp), 
-     xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+<!-- hist(replicates_restricted$Y,  -->
+<!--      main = paste("Y mean | stronger: p = ", p_temp), -->
+<!--                   xlim = xlimY, xlab = "predictions")  -->
+<!--      abline(v = mean(data$Y), col = "red") -->
 
-p_temp <- p_two_sided(replicates_unrestricted$Y, mean(data$Y))
-hist(replicates_unrestricted$Y, 
-     main = paste("Y mean | weaker: p = ", p_temp),
-     xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+<!-- p_temp <- p_two_sided(replicates_restricted$C, cor(data$Y, data$X)) -->
+<!-- hist(replicates_restricted$C,  -->
+<!--      main = paste("X, Y covariance | stronger: p =", p_temp),  -->
+<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
 
-p_temp <- p_two_sided(replicates_unrestricted$C, cor(data$Y, data$X))
-hist(replicates_unrestricted$C, 
-     main = paste("X, Y covariance | weaker: p = ", p_temp), 
-     xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+<!-- p_temp <- p_two_sided(replicates_unrestricted$Y, mean(data$Y)) -->
+<!-- hist(replicates_unrestricted$Y,  -->
+<!--      main = paste("Y mean | weaker: p = ", p_temp), -->
+<!--      xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red") -->
+
+<!-- p_temp <- p_two_sided(replicates_unrestricted$C, cor(data$Y, data$X)) -->
+<!-- hist(replicates_unrestricted$C,  -->
+<!--      main = paste("X, Y covariance | weaker: p = ", p_temp),  -->
+<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
 
 
-<!-- AJ: Should we also calculate a p-value? -->
-AJ: And what about comparing multiple models?
+<!-- <!-- AJ: Should we also calculate a p-value? --> 
+<!-- AJ: And what about comparing multiple models? -->
 
 
 ### LOO validation

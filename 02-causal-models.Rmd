@@ -172,7 +172,7 @@ As we have seen, beliefs about even more complex causal relations can be fully e
 
 To slightly shift the frame of our running example, suppose that we believe the level of economic inequality can have an effect on whether a country democratizes. We might believe inequality affects the likelihood of democratization by generating demands for redistribution, which in turn can cause the mobilization of lower-income citizens, which in turn can cause democratization. We might also believe that mobilization itself is not just a function of redistributive preferences but also of the degree of ethnic homogeneity, which shapes capacities of lower-income citizens for collective action. We can visualize this model in Figure \@ref(fig:simpleDAG).
 
-```{r simpleDAG, echo = FALSE, out.width='70%', fig.width = 7, fig.height = 7,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A simple causal model in which high inequality ($I$) affects the democratization ($D$) via redistributive demands and mass mobilization ($M$), which is also a function of ethnic homogeneity ($E$). The arrows show relations of causal dependence between variables.  The graph does not capture the ranges of the variables and the functional relations between them."}
+```{r simpleDAG, echo = FALSE, out.width='60%', fig.width = 7, fig.height = 4,  fig.align="center", out.width='80%', fig.cap = "A simple causal model in which high inequality ($I$) affects the democratization ($D$) via redistributive demands and mass mobilization ($M$), which is also a function of ethnic homogeneity ($E$). The arrows show relations of causal dependence between variables.  The graph does not capture the ranges of the variables and the functional relations between them."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 1, 2, 1, 3, 3),
        y = c(2, 2, 2, 0, 2, 3),
@@ -187,7 +187,7 @@ hj_dag(x = c(0, 1, 2, 1, 3, 3),
        arcs = cbind( c(1, 2, 4, 3, 6),
                      c(2, 3, 3, 5, 5)),
        title = "A Model of Inequality's Effect on Democratization",
-       padding = .4, contraction = .15) 
+       padding = .2, contraction = .15) 
 
 ```
 
@@ -197,7 +197,7 @@ In the context of this example, let us now consider the three components of a ca
 
 #### The variables.
 
-The first component of a causal model is the set of variables across which the model characterizes causal relations. On the graph in Figure \@ref(fig:simpleDAG), the 6 included variables are represented by the 6 nodes. 
+The first component of a causal model is the set of variables across which the model characterizes causal relations. On the graph in Figure \@ref(fig:simpleDAG), the six included variables are represented by the six nodes. 
 
 In a causal-model framework, we sometimes use familial terms to describe relations among variables. For instance, two nodes directly connected by an arrow are known as "parent" and "child," while two nodes with a child in common (both directly affect the same variable) are "spouses." We can also say that $I$ is an "ancestor" of $D$ (a node upstream from $D$'s parent) and conversely that $D$ is a descendant of $I$ (a node downstream from $I$'s child).
 
@@ -352,7 +352,7 @@ Of particular interest in Figure \@ref(fig:simpleDAG) is the implied independenc
 
 **Representing excluded common causes, unobserved confounding if you have it.**  It may be however that there are common causes for nodes that we simply do not understand. We are open to the idea that some unknown feature determines both $I$ and $D$. In this case it is as if $\theta^I$ and $\theta^D$ are not independently distributed. This is often represented by adding a dotted line, or a two headed arrow, connecting nodes whose shocks are not independent. Figure \@ref(fig:simpleDAGb) illustrates. In general we will allow for this kind of unobserved confounding in the models in this book and seek to learn about the joint distribution of errors in such cases. 
 
-```{r simpleDAGb, echo = FALSE, fig.cap="A DAG with unobserved confounding"}
+```{r simpleDAGb, echo = FALSE, fig.cap="A DAG with unobserved confounding", out.width = "60%", fig.height = 4, fig.width = 6, fig.align="center"}
 
 make_model("I -> D") %>% set_confound(list(I = "D[I=1]==1")) %>% plot
 ```
@@ -379,7 +379,7 @@ We say that two variables, $A$ and $C$, are "conditionally independent" given a 
 To take up another example, suppose that war is a cause of both military casualties and price inflation, as depicted in Figure \@ref(fig:warDAG). Casualties and inflation will then be (unconditionally) correlated with one another because of their shared cause. If I learn that there have been military casualties, this information will lead me to think it more likely that there is also war and, in turn, price inflation (and vice versa). However, assuming that war is their only common cause, we would say that military casualties and price inflation are *conditionally independent given war.* If we already know that there is war, then we can learn nothing further about the level of casualties (price inflation) by learning about price inflation (casualties). We can think of war, when observed, as blocking the flow of information between its two consequences; everything we would learn about inflation from casualties is already contained in the observation that there is war. Put differently, if we were just to look at cases where war is present (i.e., if we hold war constant), we should find no correlation between military casualties and price inflation; likewise, for cases in which war is absent.  
 
 
-```{r warDAG, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='.5\\textwidth', fig.cap = "This graph represents a simple causal model in which war ($W$) affects both military casualties ($C$) and price inflation ($P$)."}
+```{r warDAG, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width = "60%", fig.cap = "This graph represents a simple causal model in which war ($W$) affects both military casualties ($C$) and price inflation ($P$)."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 1, 1),
        y = c(1, 2, 0),
@@ -391,7 +391,7 @@ hj_dag(x = c(0, 1, 1),
        arcs = cbind( c(1, 1),
                      c(2, 3)),
        title = "A Model of War's Effect on Casualties and Prices",
-       padding = .4, contraction = .15) 
+       padding = .2, contraction = .15) 
 
 ```
 
@@ -419,21 +419,21 @@ As we will explore, however, relations of conditional independence are of more g
 To see more systematically how a DAG can reveal conditional independencies, it is useful spell out three pairs of features of the flow of information in causal graphs:
 
 
-```{r pathsexp, echo = FALSE, fig.width = 5, fig.height = 4,  fig.align="center", out.width='.9\\textwidth', fig.cap = "\\label{fig:CI} Three elementary relations of conditional independence."}
+```{r pathsexp, echo = FALSE, fig.width = 6, fig.height = 4,  fig.align="center", out.width='70%', fig.cap = "\\label{fig:CI} Three elementary relations of conditional independence."}
 par(mfrow = c(3,1))
 par(mar=c(1,1,3,1))
 hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(1, 2),
                      c(2, 3)),
-       title = "(a) A path of arrows pointing in the same direction.", padding = .4, contraction = .15) 
+       title = "(a) A path of arrows pointing in the same direction", padding = .2, contraction = .15) 
 hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(2, 2),
                      c(1, 3)),
-       title = "(b) A forked path.", padding = .4, contraction = .15) 
+       title = "(b) A forked path", padding = .2, contraction = .15) 
 hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(1, 3),
                      c(2, 2)),
-       title = "(c) An inverted fork (collision).", padding = .4, contraction = .15) 
+       title = "(c) An inverted fork (collision)", padding = .2, contraction = .15) 
 
 ```
 
@@ -478,7 +478,7 @@ Let us, further, allow the two primary causal variables---the existence of a fre
 Note that in this model, only the most "senior" specified variables, $X$ and $S$, have a stochastic component (i.e., $\lambda^X_1$ and $\lambda^S_1$ lie between 0 and 1). All other endogenous variables are deterministic functions of other specified variables (put differently: each node has only a single nodal type).
 
 
-```{r running, echo = FALSE, fig.width = 11, fig.height = 11.5, fig.align="center", out.width='\\textwidth', fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other variables fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE}
+```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other variables fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE}
 
 
 x = c(0,0, 1, 1, 2)
@@ -517,14 +517,14 @@ The argument in Pierson's 1994 book  *Dismantling the Welfare State?* challenged
 
  <!-- $C$=conservative government; $S$=socioeconomic pressures; $P$=program structure; $A$=retrenchment being on the agenda; $B$=blame-avoidance opportunities; $R$=retrenchment; $\theta^R$=random influences on retrenchment -->
 
-```{r pierson, echo = FALSE, fig.width = 10, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGPierson} A graphical representation of Pierson (1994).", warning = FALSE, message = FALSE}
+```{r pierson, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGPierson} A graphical representation of Pierson (1994).", warning = FALSE, message = FALSE}
 
 par(mfrow = c(1,1))
 par(mar=c(1,1,3,1))
 hj_dag(x = c(1,2,3,1,1,2,3),
        y = c(1,1,2,3,2,2,3),
        names = c(
-         expression(paste("P: Program structure")),
+         expression(paste("P: Program\nstructure")),
          expression(paste("B: Blame-avoidance\nopportunity")),  
          expression(paste("R: Retrenchment")),
          expression(paste("C: Conservative\ngovt")),
@@ -564,7 +564,7 @@ This last functional equation requires a little bit of explanation. Here we are 
 
 Figure \ref{fig:DAGSaunders} depicts the causal dependencies in Saunders' argument in DAG form. Working from left to right, we see that causal beliefs ($C$) affect the expected net relative benefits of the two strategies ($B$) both via a direct pathway and via an indirect pathway running through preparedness investments ($P$). Characteristics of a given target state or dispute ($T$) likewise influence $B$. The decision about whether to intervene ($I$) is then a function of three factors: causal beliefs ($C$), the expected relative net benefits of the strategies ($B$), and audience pressures ($A$). Finally, the choice of strategy ($S$) is a function of whether or not intervention occurs at all ($I$), cost-benefit comparisons between the two strategies ($B$), and other, idiosyncratic factors that may operate in various cases ($\theta^S$).
 
-```{r saunders, echo = FALSE, fig.width = 10, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGSaunders} A graphical representation of Saunders' (2011) argument.", warning = FALSE, message = FALSE}
+```{r saunders, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGSaunders} A graphical representation of Saunders' (2011) argument.", warning = FALSE, message = FALSE}
 
 par(mfrow = c(1,1))
 par(mar=c(1,1,3,1))
@@ -606,7 +606,7 @@ Turning to variable ranges and functional equations, it is not hard to see how o
 
 We represent Przeworski and Limongi's argument in the DAG in Figure \@ref(fig:DAGPL). The first thing to note is that we can capture dynamics by considering democracy at different points in time as separate nodes. According to the graph, whether a country is a democracy in a given period ($D_t$) is a function, jointly, of whether it was a democracy in the previous period ($D_{t-1}$) and of the level of per capita GDP in the current period, as well as of other unspecified forces ($\theta^{D_t}$) that lie outside the model.
 
-```{r DAGPL, echo = FALSE, fig.width = 10, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "A graphical representation of Przeworski and Limongi's argument, where $D_{t-1}$=democracy in the previous period; $GDP_t$=per capita GDP in the current period; $D_t$=democracy in the current period.", warning = FALSE, message = FALSE}
+```{r DAGPL, echo = FALSE, fig.width = 10, fig.height = 6, fig.align="center", out.width='.7\\textwidth', fig.cap = "A graphical representation of Przeworski and Limongi's argument, where $D_{t-1}$=democracy in the previous period; $GDP_t$=per capita GDP in the current period; $D_t$=democracy in the current period.", warning = FALSE, message = FALSE}
 
 par(mfrow = c(1,1))
 par(mar=c(1,1,3,1))
@@ -799,15 +799,15 @@ These steps are enough to fully describe a binary causal model. Later in this bo
 
 ### Test yourself! Can you read conditional independence from a graph?
 
-As an exercise, see whether you can identify the relations of conditional independence between $A$ and $D$ in Figure \ref{fig:CItest}. 
+As an exercise, see whether you can identify the relations of conditional independence between $A$ and $D$ in Figure \ref{fig:exercise}. 
 
-```{r exercise, echo = FALSE, fig.width = 5, fig.height = 2,  fig.align="center", out.width='.9\\textwidth', fig.cap = "\\label{fig:CItest} An exercise: $A$ and $D$ are conditionally independent, given which other variable(s)?"}
+```{r exercise, echo = FALSE, fig.width = 5, fig.height = 2,  fig.align="center", out.width='80%', fig.cap = "\\label{fig:CItest} An exercise: $A$ and $D$ are conditionally independent, given which other variable(s)?"}
 par(mfrow = c(1,1))
 par(mar=c(1,1,3,1))
 hj_dag(x = 1:4, y = c(1, 1,1,1), names = c( "A", "B", "C", "D" ),
        arcs = cbind( c(1, 3, 3),
                      c(2, 2, 4)),
-       title = " ", padding = .4, contraction = .15) 
+       title = " ", padding = .2, contraction = .15) 
 
 ```
 
