@@ -1,10 +1,5 @@
 # Integrated inferences {#mixing}
 
-***
-
-We argue that mixed methods can be thought of as the analysis of single cases with vector valued variables. Reconceptualizing as large n is useful primarily for computation reasons and often comes with hidden independence assumptions. We illustrate the single case approach and provide a set of models for the many case approach.
-
-***
 
 
 ```{r packagesused08, include = FALSE}
@@ -12,6 +7,16 @@ source("_packages_used.R")
 ```
 
 <!-- Lots of this likely to change with integration with DAGs. -->
+
+
+
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+We extend the analysis of Chapter \@ref(pt) to cases with population data. In these cases we get to learn   about the distribution of causal effects and are able to update the models we use for case level inference.
+::::
+
+<br>
 
 The main goal of this chapter is to  generalize the model developed in Chapter \@ref(pt) to research situations in which we have data on multiple cases. In doing so we generalize the model in @humphreys2015mixing to one that in which rather than the probative value of clues being  *assumed*, they are  derived from a causal structure. 
 
@@ -22,17 +27,21 @@ We start however  with a conceptual point: the exact structure introduced in Cha
 
 Conceptualized correctly, there is no difference at all between the data types or the inference used in within-case and cross-case inference. The reason is not, as @king1994designing suggest, that all causal inference is fundamentally correlational, even in seemingly single case studies. Nor is the point that, looked at carefully, single "case studies" can be disaggregated into many cases. The intuition runs in the opposite direction: fundamentally, model-based inference always involves comparing *a* pattern of data with the logic of the model. Looked at carefully, studies with multiple cases can be conceptualized of as single-case studies: the drawing of inferences from a single collection of clues.
 
-The key insight is that, when we move from a causal model with one observation to a causal model with multiple observations, all that we are doing is replacing nodes with a single value (i.e., scalars) with nodes containing multiple values (i.e., vectors). 
+The key insight is that, when we move from a causal model with one observation to a causal model with multiple observations, all we need to do is replace nodes with a single value (i.e., scalars) with nodes containing multiple values (i.e., vectors). In practice of course we do more than this: we introduce independence assumptions which allow us to work with a much more simplified parameter space than we would have if we operated as if we had only one case.   
 
-To illustrate the idea that multi-case studies are really single-case studies with vector valued variables, consider the following situation. There are two units studied, drawn from some population, a binary treatment $X$ is assigned independently with probability .5 to each case; an outcome $Y$ along with clue variable $K$ is observable.  We suppose  $X$ can affect $Y$ and in addition there is a background, unobserved, variable $\theta$ (causal type) that takes on values in $\{a,b,c,d\}$, that affects both $K$ and $Y$.  We will assume that $\theta$ is not independently assigned and that the two units are more likely to have the same values of $\theta$ than different values. For simplicity, we will suppose that for any given case $K=1$ whenever $X$ causes $Y$, and $K=1$ with a 50% probability otherwise. Thus, $K$ is informative about a unit's causal type.
+To illustrate the idea that multi-case studies are really single-case studies with vector valued variables, consider the following situation (described first at the unit level). There are two units studied, drawn from some population, a binary treatment $X$ is assigned independently with probability .5 to each case; an outcome $Y$ along with clue variable $K$ is observable.  We suppose  $X$ can affect $Y$ and in addition there is a background, unobserved, variable $\theta$ (causal type) that takes on values in $\{a,b,c,d\}$, that affects both $K$ and $Y$.  We will assume that $\theta$ is not independently assigned and that the two units are more likely to have the same values of $\theta$ than different values. For simplicity, we will suppose that for any given case $K=1$ whenever $X$ causes $Y$, and $K=1$ with a 50% probability otherwise. Thus, $K$ is informative about a unit's causal type.
 
-Note that we have described the problem at the unit level. We can redescribe it at the population level however as a situation in which a treatment vector $X$ can take on one of four values, $(0,0), (0,1), (1,0), (1,1)$ with equal probability (or more strictly: as determined by $\theta$). $\theta$ is also a vector with two elements that can take on one of 16 values $(a,a), (a,b),\dots (d,d)$ as determined by $U_\theta$. In this case we will assume that the 16 possibilities are not equally likely, which captures the failure of independence in the unit level assignments.  $Y$ is a vector that reflects the elements of $\theta$ and $X$ in the obvious way (e.g $X=(0,0), \theta=(a,b)$ generates outcomes $Y=(1,0)$; though it is immediately obvious that representing nodes in vector forms allows for more general vector-level mappings to allow for SUTVA violations. $K$ has the same domain as $X$ and $Y$, and element $K[j]=1$ if $\theta[j]=b$.
+Note that we have described the problem at the unit level. We can redescribe it at the population level however as a situation in which a treatment vector $X$ can take on one of four values, $(0,0), (0,1), (1,0), (1,1)$ with equal probability (or more strictly: as determined by $\theta$). $\theta$ is also a vector with two elements that can take on one of 16 values $(a,a), (a,b),\dots (d,d)$ as determined by $U_\theta$. 
+
+In this representation  we could assume that the 16 possibilities are not equally likely, which captures the failure of independence in the unit level assignments.  $Y$ is a vector that reflects the elements of $\theta$ and $X$ in the obvious way (e.g $X=(0,0), \theta=(a,b)$ generates outcomes $Y=(1,0)$; though it is immediately obvious that representing nodes in vector forms allows for more general vector-level mappings to allow for SUTVA violations. $K$ has the same domain as $X$ and $Y$, and element $K[j]=1$ if $\theta[j]=b$.
 
 Note that to describe the estimand, the Sample Average Treatment Effect, we also need to consider operations and queries defined at the vector level. In practice we consider three operations, one in which both units have $X$ forced to 0 and two in which one unit has $X$ set to 0 and the other has $X$ set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary---of the form: is it a $b$ type?--and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, etc...)
 
-Represented in this way we can use the tools of Chapters 6 and 7 to fully examine this seemingly multi-case study. In the below we examine a situation in which we consider the value of observing $K$ on one case --- in this set up this is equivalent to observing part of the vector $K$ and making inferences on the full vector $\theta$.
+Represented in this way we can use the tools of Chapters 6 and 7 to fully examine this seemingly multi-case study. 
 
-```{r models, eval = FALSE}
+<!-- In the below we examine a situation in which we consider the value of observing $K$ on one case --- in this set up this is equivalent to observing part of the vector $K$ and making inferences on the full vector $\theta$. -->
+
+```{r models, eval = FALSE, include = FALSE}
 library(gbiqq)
 
 model <- make_model("X->Y")
@@ -80,9 +89,10 @@ query_model(updated_3,
 
 In practice however thinking of nodes as capturing the outcomes on all units leads to enormous complexity. For example an exogeneous variable $X$ which takes on values of 0 or 1 at random for 10 units has $2^{10}$ types in this conceptualization, rather than just two when thought of at the case level. 
 
-We reduce complexity however by thinking of models as operating on units and learning about models by observing *multiple* realizations of processes covered by the model, rather than just one. Thinking about it this way is not free however as it requires invoking some kind of independence assumptions --- that outcomes in two units do not depend on each other. If we cannot stand by that assumption, then we have to build independence failures into our models.
+We reduce complexity however by thinking of models as operating on units and learning about models by observing *multiple* realizations of processes covered by the model, rather than just one. Thinking about it this way is not free however as it requires invoking  independence assumptions --- that outcomes in two units do not depend on each other. If we cannot stand by that assumption, then we have to build independence failures into our models.
 
-With multiple cases we...
+Taking this step the procedure we now use in the mixed methods works as follows:
+
 
 **A DAG**. As for process tracing, we begin with a graphical causal model specifying possible causal linkages between nodes.
 
@@ -90,23 +100,34 @@ With multiple cases we...
 
 **Causal types**. And, again, a full set of nodal types gives rise to a full set of causal types, encompassing all possible combinations of nodal types across all nodes in the model.
 
-**Priors**. The first difference between single- and multiple-case inference lies in how we set priors on causal types. In process tracing, we set parameter values for each nodal type (or conditional nodal type, for unobserved confounding). Our parameters---e.g., $\lambda^X_0$, $\lambda^Y_{01}$---represent our beliefs about the proportions of these types in the population. When we only observe a single data type---data on a single case---we do not have sufficient information to learn about the distribution of types in the population. And so we treat these population-level beliefs as fixed parameters, rather than priors that we update on. (What we update on, in process tracing, is our priors on whether a *given case* is of a particular type or set of types.) Likewise, uncertainty about those population-level parameters has no effect on our inferences for a single case.
+**Priors**. The first difference between single- and multiple-case inference lies in how we set priors on causal types. In process tracing, we set parameter values for each nodal type (or conditional nodal type, for unobserved confounding). Our parameters---e.g., $\lambda^X_0$, $\lambda^Y_{01}$---represent our beliefs about the proportions of these types in the population. When we only observe a single data type---data on a single case---we do not have sufficient information to learn about the distribution of types in the population. And so we treat these population-level beliefs as fixed parameters, rather than priors that we update on. (What we update on, in process tracing, is our priors on whether a *given case* is of a particular type or set of types.) Likewise, uncertainty about those population-level parameters has no effect on our inferences for a single case. When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. 
 
-When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. 
+While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). The parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
 
-While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). As will be recalled, the parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
 
-To first examine a situation with no observed confounding, we need to specify a prior distribution for each set of nodal types. For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. For $X$'s types, we specify $\alpha^X_0$ and $\alpha^X_1$, corresponding to the nodal types $\theta^X_0$ and $\theta^X_1$, respectively. For $Y$'s types, we specify $\alpha^Y_{00}$, $\alpha^Y_{10}$, $\alpha^Y_{01}$, and $\alpha^Y_{11}$, corresponding to the nodal types $\theta^Y_{00}$, etc. So, for instance, setting $\alpha^Y_{00}=1$, $\alpha^Y_{10}=1$, $\alpha^Y_{01}=1$, and $\alpha^Y_{11}=1$ yields a uniform distribution in which all share allocations of types in the population are equally likely. Setting $\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, and $\alpha^Y_{11}=3$ puts more weight on share allocations in which the shares are relatively equal. Setting $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, and $\alpha^Y_{11}=5$ puts greater weight positive causal effects than the other three types. And we can express greater certainty about that weighting by setting higher absolute alpha values, such as $\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$.
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+**Box: Setting priors**
 
-**NEED A DISCUSSION OF RESTRICTIONS APPROACH TO SETTING PRIORS**
+For a model with no unobserved confounding, setting priors requires  specifying a prior distribution for each set of nodal types. Parameters are provided as vectors of positive numbers with one number for each nodal type. These numbers correspond to thr $\alpha$ parameters of a Dirichlet distribution. The relative size of each number governs the the relative probability of each nodal type. The absolute sizes govern the certainty over the types. 
 
-A specified parameter set for node $j$, then, allows for a range of possible allocations of nodal types in the population, or $\lambda^j$'s while making some $\lambda^j$'s more likely than others. A set of $\alpha^j$'s, in other words, gives us a prior distribution over nodal types at node $j$. 
+To wit. For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. 
 
-Thus, under the parameter set for $Y$ ($\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, $\alpha^Y_{11}=3$), a relatively equal allocation like $\lambda^Y_{00}=0.26$, $\lambda^Y_{10}=0.24$, $\lambda^Y_{01}=0.2$, $\lambda^Y_{11}=0.3$ will have a higher probability than a highly skewed allocation like $\lambda^Y_{00}=0.1$, $\lambda^Y_{10}=0.1$, $\lambda^Y_{01}=0.7$, $\lambda^Y_{11}=0.1$. Likewise, $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, $\alpha^Y_{11}=5$ puts more prior weight on any $\lambda^Y$ with relatively more positive effects and an even distributon among other types than on a $\lambda^Y$ with an even spread across all types or than one skewed towards negative effects. Meanwhile, the tighter distribution given by ($\alpha^Y_{00}=50$, $\alpha^Y_{10}=50$, $\alpha^Y_{01}=100$, $\alpha^Y_{11}=5$) implies even steeper differences in those probabilities.
+For $X$'s types, we specify $\alpha^X_0$ and $\alpha^X_1$, corresponding to the nodal types $\theta^X_0$ and $\theta^X_1$, respectively. A distribution of the form ($\alpha^X_0=100, \alpha^X_1=100)$ implies a lot of confidence that a given unit has $X=1$ with probability .5. A distribution of the form ($\alpha^X_0=.1, \alpha^X_1=.1)$ implies that either $X=1$ with a high probability (for all units) or  $X=0$ with a low probability (for all units), but we are not sure which. 
 
-For a model with any number of nodes, we can then imagine a draw of one $\lambda^j$ from its prior distribution for each node, giving a full $\lambda$ vector.  Any particular $\lambda$ vector, in turn, implies a probability distribution over *causal* types ($\theta$). With the help of a parameter matrix (mapping from parameters to causal types), we can then, just as with process tracing, calculate the prior probability that a case is of any particular causal type, given the parameter ($\lambda$) values we have drawn. Implicitly, then, our prior distribution over $\lambda$ gives rise in turn to a prior distribution over the causal type shares in the population.
+For $Y$'s types, we specify $\alpha^Y_{00}$, $\alpha^Y_{10}$, $\alpha^Y_{01}$, and $\alpha^Y_{11}$, corresponding to the nodal types $\theta^Y_{00}$, etc. So, for instance:
 
-Where there is unobserved confounding, we now need parameter sets corresponding to the correlated types, as with the setup for process tracing. Thus, if we believe the likelihood of $X=1$ is correlated with whether or not $X$ has a positive effect on $Y$, we will need two parameter sets (rather than one) for $X$: one for $X$'s value when $\theta^Y = \theta^Y_{01}$ and one for $X$'s value when $\theta^Y \neq \theta^Y_{01}$. For each of these parameter sets, we specify two $\alpha$ parameters representing our beliefs about $X$'s assignment. We can draw $\lambda$ values for these conditional nodal types from the resulting Dirichlet distributions, as above, and can then calculate causal type probabilities in the usual way.
+* $\alpha^Y_{00}=1$, $\alpha^Y_{10}=1$, $\alpha^Y_{01}=1$, and $\alpha^Y_{11}=1$ yields a uniform distribution in which all share allocations of types in the population are equally likely. 
+* $\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, and $\alpha^Y_{11}=3$ puts more weight on share allocations in which the shares are relatively equal. 
+* $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, and $\alpha^Y_{11}=5$ puts greater weight positive causal effects than the other three types.
+::::
+
+
+
+**Unobserved confounding.** When there is unobserved confounding, we need parameter sets that allow for a joint distribution over nodal types. Thus, if we believe the likelihood of $X=1$ is correlated with whether or not $X$ has a positive effect on $Y$, we will need two parameter sets (rather than one) for $X$: one for $X$'s value when $\theta^Y = \theta^Y_{01}$ and one for $X$'s value when $\theta^Y \neq \theta^Y_{01}$. For each of these parameter sets, we specify two $\alpha$ parameters representing our beliefs about $X$'s assignment. We can draw $\lambda$ values for these conditional nodal types from the resulting Dirichlet distributions, as above, and can then calculate causal type probabilities in the usual way.
+
+**Distributions over causal types.** For a model with any number of nodes, we can then imagine a draw of one $\lambda^j$ from its prior distribution for each node, giving a full $\lambda$ vector.  Any particular $\lambda$ vector, in turn, implies a probability distribution over *causal* types ($\theta$). With the help of a parameter matrix (mapping from parameters to causal types), we can then, just as with process tracing, calculate the prior probability that a case is of any particular causal type, given the parameter ($\lambda$) values we have drawn. Implicitly, then, our prior distribution over $\lambda$ gives rise in turn to a prior distribution over the causal type shares in the population.
 
 **Event probabilities**. We now need to build a likelihood function that can map from beliefs about the world to data: i.e., that can tell us how likely we are to see a given data pattern---across multiple cases---under a given distribution of causal types in the population. The first step in building the likelihood function is to calculate event probabilities: the probability of observing a case of a particular data type given a particular population-level distribution of causal type shares (that is, given a $\lambda$ draw). We assume, for now, that we deploy the same data strategy for each case, collecting data on all nodes.
 
