@@ -16,7 +16,7 @@ do_diagnosis = FALSE
 
 ## Motivation
 
-Let us continue our journey through the space of research-design choices. Suppose, now, that we have identified those clues that will be most informative, given our beliefs about the world. A further question that we face is the quintessential dilemma of *mixing* methods: what mixture of quantitative and qualitative evidence is optimal? We have, of course, argued in in Chapter \ref(mixing) that the distinction between quantitative and qualitative inference is, in a causal-model framework, without much of a difference. But here we are framing a more precise question: given finite resources, how should we trade off between studying a larger number of cases and drilling down to learn more about some subset of the cases in our sample? How should we decide between going "wide" and going "deep"?
+We continue our journey through the space of research-design choices. Suppose, now, that we have identified those clues that will be most informative, given our beliefs about the world. A further question that we face is the quintessential dilemma of *mixing* methods: what mixture of quantitative and qualitative evidence is optimal? We have, of course, argued in in Chapter \ref(mixing) that the distinction between quantitative and qualitative inference is, in a causal-model framework, without much of a difference. But here we are framing a more precise question: given finite resources, how should we trade off between studying a larger number of cases and drilling down to learn more about some subset of the cases in our sample? How should we decide between going "wide" and going "deep"?
 
 Just as with the selection of clues and cases, how much we should expect to learn from going wide versus going deep will *depend* on how we think the world works. In this chapter, we separate out two forms that these prior beliefs might take: the structural causal model with which we start the analysis and any data that we have seen at the point of making the wide-versus-deep decision. As we will see, the expected opportunities for learning about different causal estimands depends greatly on both of these.
 
@@ -61,7 +61,7 @@ However, we can learn about average effects from clue data when we have few $X,Y
 
 3. Though not visible from the figure, clue data help us learn about a different population-level estimand --- the *distribution* of causal effects in the population --- even when we have a large $N$ and known propensities. The same average causal effect could be consistent with a large share of $a$'s and $b$'s combined, with few no-effect cases, or with a small share of $a$'s and $b$'s combined, with many no-effect cases. In other words, we don't actually learn from $X,Y$ data about the distribution of types, even with a large $X,Y$ sample and known propensities. But observation of clues identifying $b$ types in the $X=Y=1$ cell, while it does not change estimates of *average* treatment effects, tells us that there is greater *heterogeneity* of effects in the population. More $b$ types, holding the average effect constant, means that there must also be more $a$ types. Thus, we have learned that there are more offsetting effects playing out in the population --- positive effects alongside negative effects --- than we knew before we saw the clue data. In fact, we learn *more* about heterogeneity from clue data where the average causal effect is already known than where we are highly uncertain about the average effect.
 
-FLAG: Can we show the heterogenity point graphically, too? Seems odd to say it's not visible when we could make it so.
+`r flag()` Can we show the heterogenity point graphically, too? Seems odd to say it's not visible when we could make it so.
 
 
 ## Diagnosing mixes
@@ -643,8 +643,6 @@ How does this approach guide researchers in making choices about research design
 We address this question with a focus  on characterizing the kind of learning that emerges from gathering different sorts of data---such ,  *under different research conditions*. We report the results here of simulation-based experiments designed to tell us under what research conditions different mixes of methods can be expected to yield more accurate inferences. We also discuss, at a high level, the implications of the framework for strategies of qualitative case-selection.  
 
 
-
-
 ```{r model393}
 model <- make_model("X -> Y <- K") %>%
   set_restrictions("(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)") %>%
@@ -769,26 +767,26 @@ kable((wd2))
 
 
 
-## Evaluating strategies
+<!-- ## Evaluating strategies -->
 
-As a metric of the returns from different research strategies we calculate the *expected* inaccuracy in the estimation of the average treatment effect, as given by:
+<!-- As a metric of the returns from different research strategies we calculate the *expected* inaccuracy in the estimation of the average treatment effect, as given by: -->
 
-$$\mathcal{L}=\mathbb{E}_\theta(\mathbb{E}_{\mathcal{D}|\theta}(\tau(\theta)-\hat{\tau}(\mathcal{D}))^2) $$
-
-
-where $\tau(\theta)$ is the value of $\lambda_b-\lambda_a$ (the average treatment effect) given $\theta$, and $\hat{\tau}(\mathcal{D})$  is the *estimate* of this treatment effect (the mean posterior value) that is generated following some realization of data $\mathcal{D}$. Thus, if some $\theta$ characterized the true state of the world, then $\mathbb{E}_{\mathcal{D}|\theta}(\tau^\theta-\hat{\tau})^2$ is the expected error in estimation of the causal effect given different realizations of the data, $\mathcal{D}$,  that could obtain in this state of the world.  $\mathcal{L}$ is then the expected value of these errors given prior beliefs over possible values of $\theta$.
-
-Note that, while we focus on errors on estimated average causal effects, similar exercises could assess how cross- and within-case observations distinctively contribute to other estimands | including the causal explanations for individual cases and the validity of causal theories | as well as to learning about inferential assumptions themselves (assignment and clue probabilities). 
-For all simulations, prior distributions are drawn with parameters as described in the Supplementary Materials (\S \ref{AppSimNotes}, Table \@ref(tab:sims)). Priors on the type distribution are drawn from a Dirichlet distribution; priors for each of the $\pi$ and $\phi$ values are drawn independently from Beta distributions. We note that, while by construction priors on each parameter are independent, this will not generally be the case for posterior distributions. In most cases we simulate the prior distribution using 5200 draws of each parameter. For most experiments we then systematically vary the prior distribution for one parameter of the research situation between two extreme positions. We then calculate the expected posterior from each possible data realization and, in turn, the expected loss in estimates of treatment effects for a range of levels of investment in qualitative and quantitative evidence. 
+<!-- $$\mathcal{L}=\mathbb{E}_\theta(\mathbb{E}_{\mathcal{D}|\theta}(\tau(\theta)-\hat{\tau}(\mathcal{D}))^2) $$ -->
 
 
-A few further features of the experiments below are worth noting. First, our illustrations focus on learning about population-level causal effects; however, the model can yield results about the benefits of alternative research designs for estimating a wide range of other quantities of interest, such as case-specific causal explanations or clue probabilities. Second, while we focus on the search for a *single* clue in each case, the analysis can be extended to the case of an arbitrarily large set of clues. Third, in many of these experiments, the probative values are set at doubly decisive levels for all $\phi$ parameters, and thus focus on the very optimistic case of maximally informative process tracing. Fourth, we illustrate tradeoffs at low levels of $n$, but the model can be employed to make choices for arbitrarily large numbers of cases. Finally, we note that some results may be sensitive to the choice of priors. The results below should thus be understood as an illustration of the utility of the BIQQ framework for guiding research choices, rather than as a set of more general prescriptive design rules.
+<!-- where $\tau(\theta)$ is the value of $\lambda_b-\lambda_a$ (the average treatment effect) given $\theta$, and $\hat{\tau}(\mathcal{D})$  is the *estimate* of this treatment effect (the mean posterior value) that is generated following some realization of data $\mathcal{D}$. Thus, if some $\theta$ characterized the true state of the world, then $\mathbb{E}_{\mathcal{D}|\theta}(\tau^\theta-\hat{\tau})^2$ is the expected error in estimation of the causal effect given different realizations of the data, $\mathcal{D}$,  that could obtain in this state of the world.  $\mathcal{L}$ is then the expected value of these errors given prior beliefs over possible values of $\theta$. -->
+
+<!-- Note that, while we focus on errors on estimated average causal effects, similar exercises could assess how cross- and within-case observations distinctively contribute to other estimands | including the causal explanations for individual cases and the validity of causal theories | as well as to learning about inferential assumptions themselves (assignment and clue probabilities).  -->
+<!-- For all simulations, prior distributions are drawn with parameters as described in the Supplementary Materials (\S \ref{AppSimNotes}, Table \@ref(tab:sims)). Priors on the type distribution are drawn from a Dirichlet distribution; priors for each of the $\pi$ and $\phi$ values are drawn independently from Beta distributions. We note that, while by construction priors on each parameter are independent, this will not generally be the case for posterior distributions. In most cases we simulate the prior distribution using 5200 draws of each parameter. For most experiments we then systematically vary the prior distribution for one parameter of the research situation between two extreme positions. We then calculate the expected posterior from each possible data realization and, in turn, the expected loss in estimates of treatment effects for a range of levels of investment in qualitative and quantitative evidence.  -->
+
+
+<!-- A few further features of the experiments below are worth noting. First, our illustrations focus on learning about population-level causal effects; however, the model can yield results about the benefits of alternative research designs for estimating a wide range of other quantities of interest, such as case-specific causal explanations or clue probabilities. Second, while we focus on the search for a *single* clue in each case, the analysis can be extended to the case of an arbitrarily large set of clues. Third, in many of these experiments, the probative values are set at doubly decisive levels for all $\phi$ parameters, and thus focus on the very optimistic case of maximally informative process tracing. Fourth, we illustrate tradeoffs at low levels of $n$, but the model can be employed to make choices for arbitrarily large numbers of cases. Finally, we note that some results may be sensitive to the choice of priors. The results below should thus be understood as an illustration of the utility of the BIQQ framework for guiding research choices, rather than as a set of more general prescriptive design rules. -->
 
 
 
-## Varieties of mixing {#varieties}
+<!-- ## Varieties of mixing {#varieties} -->
 
-What are the marginal gains from additional pieces of correlational and process-tracing evidence for the  accuracy of causal estimates? Figure \ref{morn} displays  results,  plotting the errors associated with different mixes of correlational and process data. 
+<!-- What are the marginal gains from additional pieces of correlational and process-tracing evidence for the  accuracy of causal estimates? Figure \ref{morn} displays  results,  plotting the errors associated with different mixes of correlational and process data.  -->
 
 *  **Qualitative and quantitative data can act as partial substitutes for assessing causal effects**.
 *  **The *relative* marginal gains from going wider and going deeper vary with the study design**. 
@@ -797,12 +795,12 @@ What are the marginal gains from additional pieces of correlational and process-
 
 
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=\textwidth]{Figures/m_or_n.pdf}
-\caption{{Expected errors in the estimation of average treatment effects for designs in which $X, Y$, data is sought in $n$ studies (horizontal axis) and clue data is sought within $m$ of these. The shading of dots indicates the proportion of cases for which within-case data is sought (white = none; black = all). For small sample sizes ($n \in \{1,2,3,4\}$) we show results for all designs ($m \in \{1,2,\dots, n\})$. For larger sample sizes, we show only designs with clues sought in 0, half, and all cases.}}
-\label{morn}
-\end{figure}
+<!-- \begin{figure}[h!] -->
+<!-- \centering -->
+<!-- \includegraphics[width=\textwidth]{Figures/m_or_n.pdf} -->
+<!-- \caption{{Expected errors in the estimation of average treatment effects for designs in which $X, Y$, data is sought in $n$ studies (horizontal axis) and clue data is sought within $m$ of these. The shading of dots indicates the proportion of cases for which within-case data is sought (white = none; black = all). For small sample sizes ($n \in \{1,2,3,4\}$) we show results for all designs ($m \in \{1,2,\dots, n\})$. For larger sample sizes, we show only designs with clues sought in 0, half, and all cases.}} -->
+<!-- \label{morn} -->
+<!-- \end{figure} -->
 
 
 
@@ -851,12 +849,12 @@ kable(diagnosis$diagnoses_df, digits = 3)
 
 
 
-## Probative value of clues
+<!-- ## Probative value of clues -->
 
-## Effect Heterogeneity
+<!-- ## Effect Heterogeneity -->
 
-## Uncertainty Regarding Assignment Processes
+<!-- ## Uncertainty Regarding Assignment Processes -->
 
 
-## Uncertainty regarding the probative value of clues
+<!-- ## Uncertainty regarding the probative value of clues -->
 
