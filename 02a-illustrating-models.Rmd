@@ -1,0 +1,161 @@
+---
+title: "Illustrating causal models"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packagesused02, include = FALSE}
+source("_packages_used.R")
+```
+
+# Illustrating Causal Models {#illustratemodels}
+
+In this short chapter, we provide more of a sense of how one might encode prior knowledge in a causal model by asking how we might construct models in light of extant scholarly works. We undertake this exercise by drawing on three well-known works in comparative politics and international relations: Paul Pierson's seminal book on welfare-state retrenchment (@pierson1994dismantling); Elizabeth Saunders' research on leaders' choice of military intervention strategies (@saunders2011leaders); and Przeworski and Limongi's work on democratic survival (@przeworski1997modernization), an instructive counterpoint to Boix's (@boix2003democracy) argument about a related dependent variable. For each, we represent in the form of a causal model the causal knowledge that we might plausibly think we take away from the work in question. 
+
+Readers might represent these knowledge bases differently; our present aim is merely to illustrate how causal models are constructed, rather than to defend a particular representation (much less the works in question) as accurate.
+
+For each exercise below, we focus on a specific argument in the literature in order to fix in place a relatively clear set of background causal beliefs and simplify the exposition. We emphasize, however, that *in general* a causal model should be thought of as a representation of our state of knowledge or beliefs about causal relations within a domain, rather than as a representation of a specific argument. Suppose, for instance, that we are interested in testing a specific argument in which $X$ affects $Y$ through the mediator $M$. In constructing a causal model to guide our empirical analysis, we cannot simply draw that argument in DAG form ($X \rightarrow M \rightarrow Y$) and leave it at that. In line with the principles relating to conditional independence outlined in chapter \@ref(models), we must consult our beliefs about this causal domain in a broader sense. For instance, given what we know about the domain from prior observations or studies, is it plausible that $X$ could affect $Y$ through a pathway that does not go through $M$? If we believe it is possible, then we must also draw a direct $X \rightarrow Y$ arrow, or our causal model will steer us wrong --- even if our primary aim is to examine the pathway through $M$.^[Otherwise, our DAG will contain a relation of conditional independence ($X$ being conditionally independent of $Y$ given $M$) that we do not believe holds.] Thus, while we draw on specific works in the illustrations in this chapter, we urge readers to remember that in practice one would want to characterize a broader prior knowledge base in relation to a causal domain in generating a causal model.
+
+### Welfare state reform: Pierson (1994)
+
+The argument in Pierson's 1994 book  *Dismantling the Welfare State?* challenged prior notions of post-1980 welfare-state retrenchment in OECD countries as a process driven primarily by socioeconomic pressures (slowed growth, rising unemployment, rising deficits, aging populations) and the rise of market-conservative ideologies (embodied, e.g., the ascendance of Thatcher and Reagan). Pierson argues that socioeconomic and ideological forces put retrenchment on the policy agenda, but do not ensure its enactment because retrenchment is a politically perilous process of imposing losses on large segments of the electorate. Governments will only impose such losses if they can do so in ways that allow them avoid blame for doing so---by, for instance, making the losses hard to perceive or responsibility for them difficult to trace. These blame-avoidance opportunities are themselves conditioned by the particular social-program structures that governments inherit. 
+
+ <!-- $C$=conservative government; $S$=socioeconomic pressures; $P$=program structure; $A$=retrenchment being on the agenda; $B$=blame-avoidance opportunities; $R$=retrenchment; $\theta^R$=random influences on retrenchment -->
+
+```{r pierson, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGPierson} A graphical representation of Pierson (1994).", warning = FALSE, message = FALSE}
+
+par(mfrow = c(1,1))
+par(mar=c(1,1,3,1))
+hj_dag(x = c(1,2,3,1,1,2,3),
+       y = c(1,1,2,3,2,2,3),
+       names = c(
+         expression(paste("P: Program\nstructure")),
+         expression(paste("B: Blame-avoidance\nopportunity")),  
+         expression(paste("R: Retrenchment")),
+         expression(paste("C: Conservative\ngovt")),
+         expression(paste("S: Socioeconomic\npressures")),
+         expression(paste("A: On Agenda")),
+         expression(paste(U[R]: "Random influence\n on retrenchment"))),
+       arcs = cbind( c(1,2, 4,5,6,7),
+                     c(2,3, 6,6,3,3)),
+       title = "Government Rentenchment (Pierson, 1994)",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .2
+)
+
+
+```
+
+While the argument has many more specific features (e.g., different program-structural factors that matter, various potential strategies of blame-avoidance), its essential components can be captured with a relatively simple causal model. We propose such a model in graphical form in Figure \ref{DAGPierson}. Here, the outcome of retrenchment ($R$) hinges on whether retrenchment makes it onto the agenda ($A$) and on whether blame-avoidance strategies are available to governments ($B$), and on some unspecified random input ($\theta^R$). Retrenchment emerges on the policy agenda as a consequence of both socioeconomic developments ($S$) and the ascendance of ideologically conservative political actors ($C$). Inherited program structures ($P$), meanwhile, determine the availability of blame-avoidance strategies.
+
+A few features of this graph warrant attention. As we have discussed, it is the omitted arrows in any causal graph that imply the strongest statements. The graph in Panel (a) implies that $C$, $S$, $P$, and $\theta^R$---which are neither connected along a directed path nor downstream from a common cause---are independent of one another. This implies, for instance, that whether conservatives govern is independent of whether program structures will allow for blame-free retrenchment. Thus, as Pierson argues, a Reagan or Thatcher can come to power but nonetheless run up against an opportunity structure that would makes retrenchment politically perilous. 
+
+Further, this graph represents the belief that any effect of program structures on retrenchment *must* run through their effects on blame-avoidance opportunities. One could imagine relaxing this restriction by, for instance, drawing an arrow from $P$ to $A$: program structures might additionally affect retrenchment by conditioning the fiscal costliness of the welfare state, thus helping to determine whether reform makes it onto the agenda. If the current state of knowledge suggested that program structures could affect retrenchment via a pathway other than blame-avoidance opportunities, then we would indeed want to include a direct $P \rightarrow A$ arrow. 
+
+Where two variables *are* connected by an arrow, moreover, this does not imply that a causal effect will always operate. Consider, for instance, the arrow pointing from $A$ to $R$. The fact that $A$ sometimes affects $R$ and sometimes does not is, in fact, central to Pierson's argument: conservatives and socioeconomic pressures forcing retrenchment on the agenda will *not* generate retrenchment if blame-avoidance opportunities are absent. 
+
+The graph also reflects a choice about where to begin. We could, of course, construct a causal account of how conservatives come to power, how socioeconomic pressures arose, or why programs were originally designed as they were. Yet it is perfectly permissible for us to bracket these antecedents and start the model with $C$, $S$, and $P$, as long as we do not believe that these variables have any antecedents in common. If they do have common causes, then this correlation should be captured in the DAG.^[In DAG syntax, this correlation can be captured by placing the common cause(s) explicitly on the graph or by drawing a dashed line between the correlated nodes, leaving the source of the correlation unspecified.]
+
+The DAG itself tells us about the possible direct causal dependencies but is silent on the ranges of and functional relations among the variables. How might we express these? With three endogenous variables, we need three functions indicating how their values are determined. Moreover, every variable pointing directly into another variable must be part of that second variable's function. Let us assume all variables are binary, with each condition either absent or present. We can capture quite a lot of Pierson's theoretical logic with the following quite simple functional equations:
+
+* $A=CS$, implying that retrenchment makes it on the agenda if and only if both conservatives are in power and socioeconomic pressures are high.
+* $B=P$, implying that blame-avoidance opportunities arise when and only when program structures take a particular form
+* $R=ABU_R$. 
+
+This last functional equation requires a little bit of explanation. Here we are saying that retrenchment will only occur if retrenchment is on the agenda and blame-avoidance opportunities are present (as the expression zeroes out if either of these are 0). Yet even if both are present, the effect on retrenchment also hinges on the value of $\theta^R$. $\theta^R$ thus behaves as a causal-type variable with respect to the effect of an $AB$ combination on $R$ and allows for two possible types. When $\theta^R=1$, the $AB$ combination has a positive causal effect on retrenchment. When $\theta^R=0$, $AB$ has no causal effect: retrenchment will not occur regardless of the presence of $AB$. A helpful way to conceptualize what $\theta^R$ is doing is that is capturing a collection of features of a case's context that might render the case susceptible or not susceptible to an $AB$ causal effect. For instance, Pierson's analysis suggests that a polity's institutional structure might widely diffuse veto power such that stakeholders can block reform even when retrenchment is on the agenda and could be pursued without electoral losses. We could think of such a case as having a $\theta^R$ value of 0, implying that $AB$ has no causal effect. A $\theta^R=1$ case, with a positive effect, would be one in which the government has the institutional capacity to enact reforms that it has the political will to pursue.
+
+### Military Interventions: Saunders (2011) 
+
+@saunders2011leaders asks why, when intervening militarily abroad, do leaders sometimes seek to transform the *domestic* political institutions of the states they target but sometimes seek only to shape the states' external behaviors. Saunders' central explanatory variable is the nature of leaders' causal beliefs about security threats. When leaders are "internally focused," they believe that threats in the international arena derive from the internal characteristics of other states. Leaders who are "externally focused," by contrast, understand threats as emerging strictly from other states' foreign and security policies. These basic worldviews, in turn, affect the cost-benefit calculations they make about intervention strategies, via two mechanisms. Most simply, these beliefs affect perceptions of the likely security gains from a transformative intervention strategy. In addition, these beliefs affect the kinds of strategic capabilities in which leaders invest, which in turn effects the costliness and likelihood of success of alternative intervention strategies. Calculations about the relative costs and benefits of different strategies then shape the choice between a transformative and non-transformative approach to intervention. Yet leaders can, of course, only choose one of these options if they decide to intervene at all. The decision about whether to intervene depends, in turn, on at least two kinds of considerations. A leader is more likely to intervene against a given target when the nature of the dispute makes the leader's preferred strategy---given their causal beliefs---appear feasible in this situation; yet leaders may also be pushed to intervene by international or domestic audiences.
+
+Figure \ref{fig:DAGSaunders} depicts the causal dependencies in Saunders' argument in DAG form. Working from left to right, we see that causal beliefs ($C$) affect the expected net relative benefits of the two strategies ($B$) both via a direct pathway and via an indirect pathway running through preparedness investments ($P$). Characteristics of a given target state or dispute ($T$) likewise influence $B$. The decision about whether to intervene ($I$) is then a function of three factors: causal beliefs ($C$), the expected relative net benefits of the strategies ($B$), and audience pressures ($A$). Finally, the choice of strategy ($S$) is a function of whether or not intervention occurs at all ($I$), cost-benefit comparisons between the two strategies ($B$), and other, idiosyncratic factors that may operate in various cases ($\theta^S$).
+
+```{r saunders, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGSaunders} A graphical representation of Saunders' (2011) argument.", warning = FALSE, message = FALSE}
+
+par(mfrow = c(1,1))
+par(mar=c(1,1,3,1))
+hj_dag(x = c(1,2,2,1, 3, 3,3,3.5),
+       y = c(1,0,2,2, 2, 1,0, .5),
+       names = c(
+         expression(paste("C: Causal beliefs")),
+         expression(paste("P: Preparedness\ninvestment")),  
+         expression(paste("B: Benefits expected\nfrom transfers")),  
+         expression(paste("T: Target\ncharacteristics")),
+         expression(paste("A: Audience pressures")),
+         expression(paste("I: Intervention")),
+         expression(paste("S: Intervention strategy")),
+         expression(paste(U[S]: "Random influence\non strategy")) 
+         ),
+       arcs = cbind( c(1,1, 2,1, 4, 3, 3,5,6,8),
+                     c(2,3, 3,6, 3, 6, 7,6,7,7)),
+       title = "(b) Military intervention strategies (Saunders, 2011)",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .2
+)
+
+
+```
+
+This relatively complex DAG illustrates how readily DAGs can depict the multiple pathways through which a given variable might affect another variable, as with the multiple pathways linking $C$ to $I$ and $B$ (and, thus, all of its causes) to $S$. In fact, this graphical representation of the dependencies in some ways throws the multiplicity of pathways into even sharper relief than does a narrative exposition of the argument. For instance, Saunders draws explicit attention to how causal beliefs operate on expected net benefits via both a direct and indirect pathway, both of which are parts of an indirect pathway from $C$ to the outcomes of interest, $I$ and $S$. What is a bit easier to miss without formalization is that $C$ also acts *directly* on the choice to intervene as part of the feasibility logic: when leaders assess whether their generally preferred strategy would be feasible if deployed against a particular target, the generally preferred strategy is itself a product of their causal beliefs. The DAG also makes helpfully explicit that the two main outcomes of interest---the choice about whether to intervene and the choice about how---are not just shaped by some of the same causes but are themselves causally linked, with the latter depending on the former.
+
+Omitted links are also notable. For instance, the lack of an arrow between $T$ and $A$ suggests that features of the target that affect feasibility have no effect on audience pressures. If instead we believed, for instance, that audiences take feasibility into account in demanding intervention, we would want to include a $T \rightarrow A$ arrow.
+
+Turning to variable ranges and functional equations, it is not hard to see how one might readily capture Saunders' logic in a fairly straightforward set-theoretic manner. All variables except $S$ could be treated as binary with, for instance, $C=1$ representing internally focused causal beliefs, $P=1$ representing preparedness investments in transformation, $B=1$ representing expectations that transformation will be more net beneficial than non-transformation, $T=1$ meaning that a target has characteristics that make transformation a feasible strategy, and so on. Although there are two strategies, we in fact need three values for $S$ because it must be defined for all values of the other variables---i.e., it must take on a distinct categorical value if there is no intervention at all. We could then define functions, such as:
+
+* $B=CPT$, implying that transformation will only be perceived to be net beneficial in a case if and only if the leader has internally focused causal beliefs, the government is prepared for a transformative strategy, and the target has characteristics that make transformation feasible
+* $I=(1-|B-C|)+(1-(1-|B-C|))A$, implying that intervention can occur under (and only under) either of two alternative sets of conditions: if the generally preferred strategy and the more net-beneficial strategy in a given case are the same (i.e., such that $B-C=0$) or, when this alignment is absent (i.e., such that $|B-C|=0$), where audiences pressure a leader to intervene.
+
+### Development and Democratization: Przeworski and Limongi (1997)
+
+@przeworski1997modernization argue that democratization occurs for reasons that are, with respect to socioeconomic or macro-structural conditions, largely idiosyncratic; but once a country has democratized, a higher level of economic development makes democracy more likely to survive. Economic development thus affects whether or not a country is a democracy, but only after a democratic transition has occurred, not before. Thus, unlike in @boix2003democracy, democratization in Przeworski and Limongi's argument is exogenous, rather than being determined by other variables in the model. Moreover, the dynamic component of Przeworski and Limongi's argument---the fact that both the presence of democracy and the causal effect of development on democracy depend on whether a democratic transition occurred at a previous point in time---forces us to think about how to capture over-time processes in a causal model. 
+
+We represent Przeworski and Limongi's argument in the DAG in Figure \@ref(fig:DAGPL). The first thing to note is that we can capture dynamics by considering democracy at different points in time as separate nodes. According to the graph, whether a country is a democracy in a given period ($D_t$) is a function, jointly, of whether it was a democracy in the previous period ($D_{t-1}$) and of the level of per capita GDP in the current period, as well as of other unspecified forces ($\theta^{D_t}$) that lie outside the model.
+
+```{r DAGPL, echo = FALSE, fig.width = 10, fig.height = 6, fig.align="center", out.width='.7\\textwidth', fig.cap = "A graphical representation of Przeworski and Limongi's argument, where $D_{t-1}$=democracy in the previous period; $GDP_t$=per capita GDP in the current period; $D_t$=democracy in the current period.", warning = FALSE, message = FALSE}
+
+par(mfrow = c(1,1))
+par(mar=c(1,1,3,1))
+hj_dag(x = c(1,1,2,2),
+       y = c(2,0,1,2),
+       names = c(
+         expression(paste(D[t-1]: "Democracy,\nlast period")),
+         expression(paste(GDP[t]: "GDP per capita,\nthis period")),  
+         expression(paste(D[t]: "Democracy,\nthis period")),  
+         expression(paste(U[D[t]]: "Random influence\non democracy,\nthis period"))
+         ),
+       arcs = cbind( c(1,2, 4),
+                     c(3,3, 3)),
+       title = "(c) Democratization (Przeworski and Limongi, 1997)",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .2
+)
+
+
+```
+
+Second, the arrow running from $GDP_{t-1}$ to $D_t$ means that $GDP$ *may* affect democracy, not that it always does. Indeed, Przeworski and Limongi's argument is that development's effect depends on a regime's prior state: GDP matters for whether democracies continue to be democracies, but not for whether autocracies go on to become democracies. The *lack* of an arrow between $D_{t-1}$ and $GDP_{t-1}$, however, implies a (possibly incorrect) belief that democracy and $GDP$ in the last period are independent of one another.
+
+Finally, we might consider the kind of causal function that could capture Przeworski and Limongi's causal logic. In this function, $GDP$ should reduce the likelihood of a transition *away* from democracy but not affect the probability of a transition *to* democracy, which should be exogenously determined. One possible translation of the argument into functional terms is:
+
+
+$$d_t = 1 (p(1-d_{t-1}) + d_{t-1}(1-q(1-gdp)) > u_{D_t})$$
+
+
+where
+
+* $d_t$ and $d_{t-1}$ are binary, representing current and last-period democracy, respectively
+* $p$ is a parameter, varying from 0 to 1, representing the probability that an autocracy democratizes
+* $q$ is a parameter, varying from 0 to 1, representing the probability that a democracy with a GDP of 0 reverts to autocracy
+* $gdp$ represents national per capita GDP, normalized on a 0 to 1 scale for the population of interest.
+* $\theta^{D_t}$ represents a random, additional input into democracy with a uniform distribution on the 0 to 1 scale
+* the indicator function, ${1}$, evaluates the inequality and generates a value of $1$ if and only if it is true
+
+Unpacking the equation, the likelihood that a country is a democracy in a given period rises and falls with the expression to the left of the $>$-operator. This expression itself has two parts, reflecting the difference between the determinants of *transitions to* democracy (captured by the first part) and the determinants of democratic *survival* (captured by the second). The first part comes into play---i.e., is non-zero---only for non-democracies. For non-democracies, the expression evaluates simply to $p$, the exogenous probability of democratization. The second part is non-zero only for democracies, where it evaluates to $1-q$---the inverse of the reversion parameter---times $1-gdp$: thus, the reversion probability falls as national income rises. The inequality is then evaluated by "asking" whether the expression on the left (either $p$ or $(1-q)gdp$) is greater than a number ($\theta^{D_t}$) randomly drawn from a uniform distribution between 0 and 1. Thus, higher values for the expression increase the likelihood of democracy while the randomness of the $\theta^{D_t}$ threshold captures the role of other, idiosyncratic inputs.
+
+Note how, while the functional equation nails down certain features of the process, it leaves others up for grabs. In particular, the parameters $p$ and $q$ are assumed to be constant for all autocracies and for all democracies, respectively, but their values are left unspecified. And one could readily write down a function that left even more openness---by, for instance, including an unknown parameter that translates $GDP$ into a change in the probability of reversion or allowing for non-linearities, with unknown parameters, in this effect.
