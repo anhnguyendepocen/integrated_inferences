@@ -628,35 +628,68 @@ One interesting effect of eliminating a substantive exogenous node can be to ren
 
 ```{r lowercomplexdem, echo = FALSE, fig.width = 10, fig.height = 6,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A lower-level model  from which multiple higher level models can be derived."}
 
+x = c(0,0, 1, 1, 2)
+y = c(2,0, 2, 0, 1)
 
-par(mfrow = c(1,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,1,2,2,3),
-       y = c(2,1,2,1,1.5),
-       names = c(
-         expression(paste("I: Inequality")),
-         expression(paste("E: Ethnic\nhomogeneity")),
-         expression(paste("M: Mobilization")),
-         expression(paste("R: Redistributive\npreferences")),
-         expression(paste("D: Democratization"))
-         ),  
-       arcs = cbind( c(1, 3, 2, 2, 3, 4),
-                     c(3, 4, 4, 3, 5, 5)),
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
-)
+names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
+
+hj_dag(x =  x,
+       y = y,
+       names = c(names),
+       arcs = cbind( c(1,2,2, 3, 4, 3),
+                     c(3,3,4, 5, 5, 4)),
+       title = "Free Press and Government Survival",
+       add_functions = 0,
+       contraction = .15,
+       add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
+       padding = .2)
+
+# hj_dag(x =  c(x, 0, 0),
+#        y = c(y, 0.25, 1.75),
+#        names = c(names),
+#        arcs = cbind( c(1,2,2, 3, 4, 3),
+#                      c(3,3,4, 5, 5, 4)),
+#        title = "Free Press and Government Survival",
+#        add_functions = 0,
+#        contraction = .15,
+#        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
+#        padding = .2)
+
+# text(c(0,0), c(.25, 1.75), c(expression(paste(theta^X[1])), expression(paste(theta^S[1]))))
+
 ```
 
+<!-- ```{r lowercomplexdem, echo = FALSE, fig.width = 10, fig.height = 6,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A lower-level model  from which multiple higher level models can be derived."} -->
 
 
-```{r runningsubs, echo = FALSE, fig.width = 12, fig.height = 13.5, fig.cap = "Higher level models derived from the lower level model of Figure X. Nodes that are eliminated are marked in grey; circles denote exogenous nodes that are replaced in subgraphs by unidentified variables. (A circled node pointing into two other nodes could equivalently be indicated as an undirected edge connecting the two.) Note that $M$, $R$, and $D$ are deterministic functions of $I$ and $E$ in this example."}
+<!-- par(mfrow = c(1,1)) -->
+<!-- par(mar=c(1,1,3,1)) -->
+<!-- hj_dag(x = c(1,1,2,2,3), -->
+<!--        y = c(2,1,2,1,1.5), -->
+<!--        names = c( -->
+<!--          expression(paste("I: Inequality")), -->
+<!--          expression(paste("E: Ethnic\nhomogeneity")), -->
+<!--          expression(paste("M: Mobilization")), -->
+<!--          expression(paste("R: Redistributive\npreferences")), -->
+<!--          expression(paste("D: Democratization")) -->
+<!--          ),   -->
+<!--        arcs = cbind( c(1, 3, 2, 2, 3, 4), -->
+<!--                      c(3, 4, 4, 3, 5, 5)), -->
+<!--        add_functions = 0,  -->
+<!--        contraction = .16,  -->
+<!--        padding = .2 -->
+<!-- ) -->
+<!-- ``` -->
+
+
+
+```{r runningsubs, echo = FALSE, fig.width = 12, fig.height = 13.5, fig.cap = "Higher level models derived from the lower level model of Figure X. Nodes that are eliminated are marked in grey; circles denote exogenous nodes that are replaced in subgraphs by unidentified variables. (A circled node pointing into two other nodes could equivalently be indicated as an undirected edge connecting the two.) Note that $C$, $R$, and $Y$ are deterministic functions of $S$ and $X$ in this example."}
 
 par(mfrow = c(5,5))
 par(mar=c(1,1,3.5,1))
 x = c(0,0, 1, 1, 2)
 y = c(2,0, 2, 0, 1)
-names = c("I", "E", "M", "R", "D")
+names = c("S", "X", "C", "R", "Y")
 
 M <- matrix(0, 5, 5)
 M[1, c(3)] <-1
@@ -695,14 +728,14 @@ for(i in 1:ncol(M)) if((sum(M[,i])==0) & (i%in% GO)) points(x[i], y[i], cex = 3,
 ```
 
 
-We can apply these principles to a model of any complexity. We illustrate a wider range of simplifications by starting with Figure \@ref(fig:lowercomplexdem), which represents a somewhat amended version of our inequality and democratization model from Chapter \@ref(models), with more complex causal relations. Then, in Figure \@ref(fig:runningsubs), we show all permissible reductions of the more elaborate model. We can think of these reductions as the full set of simpler claims (involving at least two nodes) that can be derived from the lower-level theory. In each subgraph, 
+We can apply these principles to a model of any complexity. We illustrate a wider range of simplifications by starting with Figure \@ref(fig:lowercomplexdem), our government corruption model from Chapter \@ref(models). Then, in Figure \@ref(fig:runningsubs), we show all permissible reductions of the more elaborate model. We can think of these reductions as the full set of simpler claims (involving at least two nodes) that can be derived from the lower-level theory. In each subgraph, 
 
 * we mark eliminated nodes in grey; 
 * those nodes that are circled must be replaced with $U$ terms; and
 * arrows represent the causal dependencies that must be preserved. 
 
 
-Note, for instance, that neither $E$ (because it has a spouse) nor $I$ (because it has multiple children) can be simply eliminated; each must be replaced with a $U$ term. Also, the higher-level graph with nodes missing can contain arrows that do not appear at all in the lower-level graph: eliminating $M$, for instance, forces an arrow running from $X$ to $R$ and another running from $X$ to $Y$, as $X$ must adopt $M$'s children. The simplest elimination is of $D$ itself since it does not encode any dependencies between other variables.
+Note, for instance, that neither $S$ (because it has a spouse) nor $X$ (because it has multiple children) can be simply eliminated; each must be replaced with a $U$ term. Also, the higher-level graph with nodes missing can contain arrows that do not appear at all in the lower-level graph: eliminating $C$, for instance, forces an arrow running from $X$ to $R$ (though that is there already) and another running from $X$ to $Y$, as $X$ must adopt $M$'s children. The simplest elimination is of $Y$ itself since it does not encode any dependencies between other variables.
 <!-- ^[Put differently, and in language that we introduce below, colliding arrowheads do not represent a path in DAG analysis.]  -->
 
 We can also read Figure \@ref(fig:runningsubs) as telling us the set of claims for which the lower-level graph in Figure \ref{fig:running} can serve as a theory. As we can see, the range of claims that a moderately complex model can theorize is vast. For each simpler claim, moreover, there may be other possible lower-level graphs---theories besides ---consistent with it.
