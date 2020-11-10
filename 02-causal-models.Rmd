@@ -265,7 +265,7 @@ Box: Nodal types, causal types
 **term**          |**symbol** |**meaning**
 :-------------:|:---------:|:-----------------------------------------:
 nodal type        |$\theta^X$ | The way that a node responds to the values of its parents. Example: $\theta^Y_{10}$, written `Y10`: $Y$ takes the value 1 if $X=0$ and 0 if $X=1$.  
-causal type       |$\theta$   | A causal type is a concatenation of nodal types, one for each node. Example:  $(\theta^X_0, \theta^Y_{00})$, written `X0.Y00`,  is a type that has $X=0$ and $Y=0$ no matter what the value of $X$. 
+causal type       |$\theta$   | A causal type is a concatenation of nodal types, one for each node. Example:  $(\theta^X_0, \theta^Y_{00})$, written in `Causal Queries` code as `X0.Y00`,  is a type that has $X=0$ and $Y=0$ no matter what the value of $X$. 
 ::::
 
 <br>
@@ -332,7 +332,7 @@ P(v_1,v_2,\dots v_n) = \prod P(v_i|pa_i)
 <br>
 
 
-Once we introduce beliefs about the distribution of values of the exogenous terms in a model, we have specified a *probabilistic causal model.* We need not say much more, for the moment, about the probabilistic components of causal models. But to foreshadow the argument to come, our prior beliefs about the likelihoods of different contexts play a central role in the framework that we present in this book. We will see how the encoding contextual knowledge---beliefs that some kinds of conditions are more common than others---forms a key foundation for causal inference. At the same time, our expressions of *uncertainty* about context represent scope for learning: it is the very things that we are, at a study's outset, uncertain about that we can update our beliefs about as we encounter evidence.
+Once we introduce beliefs about the distribution of values of the exogenous terms in a model, we have specified a *probabilistic causal model.* We need not say much more, for the moment, about the probabilistic components of causal models. But to foreshadow the argument to come, our prior beliefs about the likelihoods of different contexts play a central role in the framework that we present in this book. We will see how the encoding of contextual knowledge---beliefs that some kinds of conditions are more common than others---forms a key foundation for causal inference. At the same time, our expressions of *uncertainty* about context represent scope for learning: it is the very things that we are, at a study's outset, uncertain about that we can update our beliefs about as we encounter evidence.
 
 
 ### Rules for graphing causal models
@@ -347,7 +347,7 @@ Returning to Figure \@ref(fig:simpleDAG), we have here expressed the belief that
 
 The same goes for the effects of $I$ on $M$, $I$ on $D$, and $E$ on $D$: the graph in Figure \@ref(fig:simpleDAG) implies that we believe that these effects also do not operate directly, but only along the indicated, mediated paths.
 
-**Sometimes causes.** The existence of an arrow from $A$ to $B$ does not imply that $A$ always has a direct effect on $B$. Consider, for instance, the arrow running from $R$ to $M$. The existence of this arrow requires that $M$ appears somewhere in $R$'s functional equation, as a variable's functional equation must include all variables pointing directly into it. Imagine, though, that $M$'s causal function is specified as: $M = RE$. This function allows for the *possibility* that $R$ affects $M$, as it will whenever $E=1$. However, it also allows that $R$ will have no effect, as it will when $E=0$. 
+**Sometimes-causes.** The existence of an arrow from $A$ to $B$ does not imply that $A$ always has a direct effect on $B$. Consider, for instance, the arrow running from $R$ to $M$. The existence of this arrow requires that $M$ appears somewhere in $R$'s functional equation, as a variable's functional equation must include all variables pointing directly into it. Imagine, though, that $M$'s causal function is specified as: $M = RE$. This function allows for the *possibility* that $R$ affects $M$, as it will whenever $E=1$. However, it also allows that $R$ will have no effect, as it will when $E=0$. 
 
 This example also, incidentally, demonstrates another important consequence of context, the values of the exogenous variables: a case's context determines not just the settings on the endogenous variables, but also the causal *effects* that prevail among the variables. Under the functional equation $M=RE$, a case's ethnic-compositional context determines whether or not redistributive preferences will have an effect on mobilization. 
 
@@ -468,7 +468,7 @@ Using these basic principles, conditional independencies can be read off any DAG
 
 ### A simple running example
 
-We will illustrate these core ideas with a simple running example of a model of government corruption and survival.
+We can illustrate these core ideas with a simple example of a model of government corruption and survival, one that we will return to in future chapters.
 
 We begin with two binary features of context. Consider, first, that a country may or may not have a free press ($X$). Second, the country's government may or may not be sensitive to public opinion ($S$).^[Government sensitivity here can be thought of as government sophistication (does it take the actions of others into account when making decisions?) or as a matter of preferences (does it have a dominant strategy to engage in corruption?).] Let us then stipulate what follows from these conditions. The government will engage in corruption ($C=1$) unless it is sensitive to public opinion and there is a free press. Moreover, if and only if there is both government corruption and a free press, the press will report on the corruption ($R=1$). Finally, the government will be removed from office ($Y=1$) if it has acted corruptly and this gets reported in the press; otherwise, the government remains in office.
 
