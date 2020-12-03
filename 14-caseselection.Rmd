@@ -648,10 +648,8 @@ Graph full set
 
 ## Read and display
 ## PARAMETERS
-rds_files <- data.frame(name = dir("saved"), stringsAsFactors = F) %>% 
-  filter(str_detect(name,"^M") & str_detect(name,"rds$")) 
-
-
+rds_files <- dir("saved") %>% 
+  str_subset("^M.+(chain|restricted|base).+(flat|regr).+rds$")
 
 ## UPLOAD MODEL DIAGNOSIS
 upload_df <- function(file){
@@ -671,7 +669,7 @@ upload_df <- function(file){
   df <- bind_rows(df, toappend)
 }
 
-df <- do.call(rbind,lapply(rds_files$name, upload_df))
+df <- do.call(rbind,lapply(rds_files, upload_df))
 
 ## TIDY UP DF
 df$strategy2                            <- df$strategy
@@ -687,8 +685,15 @@ df <- df %>% mutate(
     strategy21 == "all" ~ "on x, on y",
     TRUE                ~ strategy21),
   strategy21 = factor(strategy21, levels = c("on diagonal","off diagonal","on x, on y","spread")),
-  given      = factor(given, levels = c("flat","regr","conc","necs","suff"))
-)
+  given      = factor(given, levels = c("flat","regr","conc","necs","suff")),
+  model_given = factor(str_c(word(model,1,sep ="_"), "\n", given), 
+                       levels = c("chain\nflat",
+                                  "chain\nregr",
+                                  "restricted\nflat",
+                                  "restricted\nregr",
+                                  "base\nflat",
+                                  "base\nregr"))
+  )
 
 
 df  <- df %>%
@@ -700,15 +705,17 @@ df  <- df %>%
   select(model,Query,starts_with("strategy"),given,N,everything()) %>% 
   arrange(model,Query,strategy,given)
 
-# Lists for loops
-mq <- as.list(as.data.frame(t(df %>% select(model,Query) %>% distinct()), stringsAsFactors = F))
-
+# Iterate over estimands
+estimands <- df %>%
+  select(Query) %>% 
+  distinct() %>% 
+  pull
+  
 # GRAPHS
-for (i in 1:length(mq)) {
+for (i in 1:length(estimands)) {
 print(
   ggplot(df %>%
-         filter(model == mq[[i]][1]   &
-         Query == mq[[i]][2] & 
+         filter(Query == estimands[i] & 
          strategy2 != "spread"),
          aes(x=strategy22, y=gain_prior, group = N, colour = N)) +
     # Line at 0 
@@ -721,11 +728,11 @@ print(
       aes(ymin=gain_prior_upp_ci, ymax=gain_prior_low_ci),
       position = position_dodge(width = 0.4)) +
     # Faceting
-    facet_grid(given ~ strategy21, scale = "free_x") +
+    facet_grid(model_given ~ strategy21, scale = "free") +
     # Labeling & Styling
     ylab("Gain in posterior variance over prior (%)") +
-    labs(title = paste0("Strategy diagnosis: ",mq[[i]][1]," & ",mq[[i]][2]," estimand"),
-         subtitle = "Grouped by strategy & given") + 
+    labs(title = paste0("Strategy diagnosis for the ",estimands[i]," estimand"),
+         subtitle = "Grouped by strategy & model/given") + 
     theme_bw() + scale_colour_hue(l = 50, c = 50)  + 
     theme(
       legend.title.align = 0.5,
