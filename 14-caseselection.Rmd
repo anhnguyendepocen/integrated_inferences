@@ -134,6 +134,64 @@ It may be better to select a case that is not "like" the cases you want to make 
 
 Which cases to learn $K$ from.
 
+## New section (Dec 2020)
+
+We turn now to a more general approach for deriving case-selection guidance from a causal model, given the causal query we wish to address and any data that we have already observed. This approach can be implemented using `CausalQueries` together with `CQTools`.
+
+### Procedure
+
+We imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which cases to investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
+
+The general intuition of the case-selection approach that we develop here is that we can use our causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
+
+We proceed as follows:
+
+**DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustrations, we consider two different DAGS: a simple mediation (or "chain") model, $X \rightarrow M \rightarrow Y$, and a two-path model, $X \rightarrow M \rightarrow Y \leftarrow X$.
+
+**Priors**. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. We can also indicate our uncertainty over the latter, by setting the $\alpha$ parameters of the relevant Dirichlet distributions. For the current example, we start by setting flat priors over all nodal types and assume no unobserved confounding.
+
+**Given data.** If we have already made observations of any of the model's nodes in some set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed $X$'s and $Y$'s value in a set of cases, we might select cases for process tracing based on their values of $X$ and/or $Y$. And, importantly, what we have already observed in the cases will affect the inferences we will draw when we observe additional data, including how *informative* a particular new observation is likely to be. For the present examples, we assume that we have already observed $X$ and $Y$ in a set of cases and found a positive correlation.
+
+**Query**. We define our query. This could, for instance, be the share of cases in the population in which $X$ has a positive effect on $Y$, or it might be $X$'s average effect on $Y$. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. For instance, the best case-selection strategy for estimating the average causal effect of $X$ on $Y$ may not be the same as the best strategy for figuring out for what proportion of the population $X$ has a positive effect on $Y$. In the example below, we focus on a set of conditional queries, asking what the effect of $X$ on $Y$ is in cases with different $X$, $Y$, and $M$ values. 
+
+FLAG: MAke sure above query definition lines up with what we end up doing.
+
+**Define one or more strategies**. A strategy is defined, generically, as the search for data on a given set of *nodes*, in a given *number* of cases that are randomly selected *conditional* on some information we already have about potential cases. Let us assume here that our strategy will involve uncovering $M$'s value in 1 or 2 cases. What we are wondering is how to choose this one or two cases for deeper analysis. For illustrative purposes, we focus in on four possible strategies, conditional on the $X$ and $Y$ values that we already know: 
+
+1 examine $M$ in 1 $X=Y=1$ case; 
+2 examine $M$ in 1 $X=1, Y=0$ case; 
+3 examine $M$ in 2 cases, an $X=Y=1$ and an $X=Y=0$; and 
+4 examine $M$ in 2 cases, an $X=1, Y=0$ and an $X=0, Y=1$.
+
+In light of the positive $X,Y$ correlation already observed, we can think of strategies 1 and 3 as "on-the-regression line" strategies, while strategies 2 and 4 are "off-the-regression line" strategies.
+
+**Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus some pattern of $M$ observations. Thus, for instance, for strategy 1, we could end up observing the initial $X,Y$ pattern plus $M=0$ in one of the $X=1, Y=1$ cases, or the initial $X,Y$ pattern plus $M=1$ in one of the $X=1, Y=1$ cases. For strategy 3, we could observe four possible combinations of $M$ values, with $M$ being 0 or 1 in each of the cases. 
+
+**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data that we have already observed. In practice, we do this in `CQtools` via simulation. Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the previously observed data. This posterior now represents our *prior* for the purposes of the process tracing. In the present example, we are using the already-observed $X,Y$ correlation to update our beliefs about causal-type share allocations in the population, having seen the $X,Y$ data only. We then use this posterior to draw a series of $\lambda$ values. 
+
+Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that particular $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.
+
+**Posterior on estimate given the data**. For each data possibility, we can then use `CQtools` to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies. 
+
+**Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each *strategy*. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We can think of the expected gains from a strategy as the expected *reduction* in posterior variance arising from that strategy.
+
+Complicated as the procedure might seem, it can all be done in code using a single command from the `CQtools` package.  
+
+
+### Inferences from Strategies and Data Realizations
+
+In Tables XXXXX, we examine how different process-tracing case-selection strategies will play out by looking at the inferences we would draw about different kinds of causal effects depending on the results of the process tracing.
+
+Starting with the chain model, for the analyses displayed in Table XXXX, we assume that we have previously observed a positive $X,Y$ correlation in 6 cases (with 4 cases on the regression line, 2 cases off). Now we see what can happen for different queries when we implement each of the four case-selection strategies. The set of queries we are interested in are, what is the effect of $X$ on $Y$ for:
+
+* any case in the population
+* any $X=1, Y=1$ case in the population
+* any $X=1, M=1, Y=1$ case in the population
+* any $X=0, Y=1$ case in the population
+* any $X=0, M=1, Y=1$ case in the population
+
+In the top row, we see our pure prior on these queries before we have even seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. To return to our convenient $a, b, c, d$ typology, we start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types. Likewise for the $M \rightarrow Y$ relationship.  population of cases to be evenly split among these four types   
+
 
 ## Logic of strategy comparison
 
