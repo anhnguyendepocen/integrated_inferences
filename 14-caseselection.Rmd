@@ -334,31 +334,39 @@ For each of these possible strategies we can assess the posterior that we would 
 ```{r illustration, echo = FALSE}
 
 if(do_diagnosis){
+
+# We define a model
+model <- make_model("X->M->Y")  %>%
+ set_restrictions(c("(Y[M=1]<Y[M=0])", "(M[X=1]<M[X=0])")) %>%
+ set_parameter_matrix() %>%
+ set_parameters(type = "jeffreys")
   
- if(!exists("fit")) fit  <- update_model(make_model("X->Y"), keep_fit = TRUE)
- 
  strategies <- 
    list(A_on_regression_line, B_off_regression_line, C_X1Y1_only)
 
- 	write_rds(strategies, "saved/illustration_strategies.rds")
+ 	write_rds(strategies, "saved/14_illustration_strategies.rds")
   
  
  estimates_dbs <- lapply(strategies, function(s) 
-    make_estimates_database(model, observed, possible_data = s[, -2], queries = "Y[X=1]-Y[X=0]")
+    make_estimates_database(model, observed, possible_data = s, queries = "Y[X=1]-Y[X=0]")
     )
     
-	write_rds(estimates_dbs, "saved/illustration_estimates.rds")
+	write_rds(estimates_dbs, "saved/14_illustration_estimates.rds")
 
 # The reference model is the original model updated with the XY data we've already seen.
- reference_model <- update_model(model, data, stan_model = fit)
+ reference_model <- update_model(model, data)
  
-	write_rds(reference_model, "saved/reference_XMY_updated_model.rds")
+	write_rds(reference_model, "saved/14_reference_XMY_updated_model.rds")
 
  probabilities <- lapply(strategies, function(s) 
-    average_data_probabilities(reference_model, s, using = "posteriors", sims = 3000)
-    )
+#    average_data_probabilities(reference_model, s, using = "posteriors", sims = 3000)
+
+   apply(reference_model$posterior_distribution, 1, function(pars) {
+  					make_data_probabilities(model = reference_model, pars = pars, possible_data = s, normalize = TRUE)
+  			})
+   )
    
-	write_rds(probabilities, "saved/illustration_probabilities.rds")
+	write_rds(probabilities, "saved/14_illustration_probabilities.rds")
 
 }
 
