@@ -1,0 +1,250 @@
+---
+title: "Wide deep"
+author: "M"
+date: "12/6/2020"
+output: 
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+library(CausalQueries)
+library(tidyverse)
+library(knitr)
+library(rstan)
+knitr::opts_chunk$set(echo = TRUE)
+options(mc.cores = min(6, parallel::detectCores()))
+rstan_options(auto_write = TRUE)
+path <- "wide_deep_2"
+run      <- FALSE
+n_chains <- 6
+n_iter   <- 6000
+n_sims   <- 200
+n_large  <- c(100, 200, 400)
+n_small  <- c(0, 50, 100)
+```
+
+# Models
+
+```{r}
+
+chain_model <- make_model("X -> M -> Y") %>% set_priors(distribution = "jeffreys") %>%
+  set_priors(node = "X", alphas = 10) %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+chain_model_homog <- make_model("X -> M -> Y") %>% set_priors(alphas = .25) %>% set_priors(node = "X", alphas = 10) %>%
+  set_priors(node = "X", alphas = 10) %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+moderator_model <- make_model("X -> Y <- M") %>% set_priors(distribution = "jeffreys") %>%
+  set_priors(node = "X", alphas = 10) %>%
+  set_priors(node = "M", alphas = 10) %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+base_model <- make_model("X -> M -> Y <- X") %>% set_priors(distribution = "jeffreys") %>%
+  set_priors(node = "X", alphas = 10) %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+confounded_model <- make_model("M -> X -> Y <- M") %>% set_priors(distribution = "jeffreys") %>%
+  set_priors(node = "M", alphas = 10) %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+restricted_model <- make_model("X -> M -> Y <- X") %>%
+  set_restrictions("M[X=1] < M[X=0]") %>%
+  set_restrictions("(Y[M=1] < Y[M=0])") %>%
+  set_priors(distribution = "jeffreys") %>%
+  set_priors(node = "X", alphas = 10) %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+```
+
+
+
+
+# Functions
+
+```{r}
+
+comparisons <- function(model, data, query = "Y[X=1] - Y[X=0]", given = c(TRUE, "X==1 & Y==1"), ...)
+  
+  update_model(model, data, keep_transformed = TRUE, ...) %>%
+  query_model(
+    query =  query,
+    given = given,
+    using = list("posteriors"), case_level = FALSE, expand_grid = TRUE) %>%
+    arrange(Case.estimand, Given)
+
+new_datas_sets <- function(model, n_large=c(100, 200, 400), n_small = c(0, 50, 100), n_sims=2, param_type = 'prior_draw') {
+  
+  schedule <- expand.grid(n_large, n_small)
+  
+  dfs <- apply(schedule, 1, function(j) 
+    lapply(1:n_sims, function(i) make_data(model, n_steps = j, nodes = list(c("X","Y"), "M"), param_type = param_type)))
+  names(dfs) <- apply(schedule, 1, function(j) paste0("dfs_", paste(j, collapse = "-"))) 
+  dfs
+  }
+
+# Function to make a distribution of data sets given some given data
+# New observations drawn from posterior and combine with old observations
+datas <- function(model,  n_large=c(100, 200, 400), n_small = c(0, 50, 100), n_sims=2, observed = NULL){
+  
+  if(is.null(observed)) 
+    return(new_datas_sets(model, n_large = n_large, n_small = n_small, n_sims=n_sims, param_type = 'prior_draw'))
+  
+  model   <- update_model(model, observed) 
+  new_dfs <- new_datas_sets(model, n_large, n_small, n_sims, param_type = 'posterior_draw')
+  
+  # Add in original data
+  lapply(new_dfs, function(dfs) lapply(dfs, function(df) bind_rows(df, observed)))
+}
+
+
+
+wide_or_deep <- function(model, n_large=c(10, 20), n_small=c(0,5), n_sims=3, given = c(TRUE, "X==1 & Y==1"), refresh = 0, iter = n_iter, chains = n_chains, observed = NULL, ...){
+  
+  schedule <- expand.grid(n_large, n_small)
+
+  datas(model, n_large,  n_small, n_sims, observed) %>%
+  lapply(function(d) {
+    lapply(d, function(j) comparisons(model, j, refresh = refresh, iter = iter, chains = chains,  given = given, ...)) %>%
+      bind_rows(.id = "strategy")}) %>%  
+    bind_rows(.id = "design") %>% mutate(wide_n = rep(schedule[,1], each = n_sims*length(given)), 
+                                         deep_n = rep(schedule[,2], each = n_sims*length(given)))
+}
+
+
+# test <- wide_or_deep(chain_model, 5, 1:2, 2, chains =1)
+```
+
+# Chain
+
+```{r}
+if(run) 
+  wide_or_deep(chain_model, n_large = n_large, n_small = n_small,  n_sims = n_sims) %>%
+  write_rds(paste0(path, "/chain.rds"))
+
+chain <- read_rds(paste0(path, "/chain.rds")) 
+
+#should have 0 mean
+mean(chain$mean)
+
+```
+
+# Confounded
+
+```{r}
+if(run) 
+  wide_or_deep(confounded_model, n_large = n_large, n_small = n_small, n_sims = n_sims) %>%
+  write_rds(paste0(path, "/confounded.rds"))
+
+if(run) 
+  wide_or_deep(confounded_model, n_large = n_large*4, n_small = n_small, n_sims = n_sims) %>%
+  write_rds(paste0(path, "/confounded_large.rds"))
+
+
+```
+
+# Base
+
+```{r}
+if(run) 
+  wide_or_deep(base_model, n_large = n_large, n_small = n_small,  n_sims = n_sims) %>%
+  write_rds(paste0(path, "/base.rds"))
+```
+
+
+# Case with prior information
+Chain with confusing prior information
+
+```{r}
+if(run) 
+  wide_or_deep(chain_model, n_large = n_large, n_small = n_small,  n_sims = n_sims, observed = data.frame(X=c(0,0,1,1), Y=c(0,0,1,1), M = c(0,1,0,1))) %>%
+  write_rds(paste0(path, "/chain_with_prior.rds"))
+
+```
+
+
+# Homogeneouns chains
+
+
+```{r}
+if(run) 
+  wide_or_deep(chain_model_homog, n_large = n_large, n_small = n_small,  n_sims = n_sims) %>%
+  write_rds(paste0(path, "/chain_homog.rds"))
+
+```
+
+# Restricted
+
+```{r}
+if(run) 
+  wide_or_deep(restricted, n_large = n_large, n_small = n_small,  n_sims = n_sims) %>%
+  write_rds(paste0(path, "/restricted.rds"))
+```
+
+# Together
+
+```{r, fig.width = 10, fig.height = 5}
+results <- 
+  list(
+    Chain = read_rds(paste0(path, "/chain.rds")),
+    Confounded = read_rds(paste0(path, "/confounded.rds")),
+    Confounded_large_n = read_rds(paste0(path, "/confounded_large.rds")),
+    Restricted = read_rds(paste0(path, "/restricted.rds")),
+    Base = read_rds(paste0(path, "/base.rds")),
+    Chain_homogeneous = read_rds(paste0(path, "/chain_homog.rds")),
+    Chain_with_priors = read_rds(paste0(path, "/chain_with_prior.rds"))
+) %>% bind_rows(.id = "Model") %>%
+    mutate(Model = ifelse(Model == "Confounded_large_n", "Confounded", Model))
+
+results %>% 
+  ggplot(aes(sd^2)) +
+  geom_histogram() + 
+  facet_grid(design ~ Given + Model ) + 
+  xlab("Posterior variance")
+```
+
+```{r, fig.width = 10, fig.height = 6}
+results %>% filter(Model == "Chain"  & Given =="-") %>%
+  ggplot(aes(sd^2)) +
+  geom_histogram() + 
+  facet_grid(deep_n ~ wide_n, labeller = label_both) + 
+  xlab("Posterior variance")  + ggtitle("Chain model | ATE")
+
+results %>% filter(Model == "Chain"  & Given !="-") %>%
+  ggplot(aes(sd^2)) +
+  geom_histogram() + 
+  facet_grid(deep_n ~ wide_n, labeller = label_both) + 
+  xlab("Posterior variance")  + ggtitle("Chain model | PC")
+
+results %>% filter(Model == "Confounded" & Given =="-") %>%
+  ggplot(aes(sd^2)) +
+  geom_histogram() + 
+  facet_grid(deep_n ~ wide_n, labeller = label_both) + 
+  xlab("Posterior variance") + ggtitle("Confounded model | ATE") 
+
+
+results %>% filter(Model == "Confounded" & Given !="-") %>%
+  ggplot(aes(sd^2)) +
+  geom_histogram() + 
+  facet_grid(deep_n ~ wide_n, labeller = label_both) + 
+  xlab("Posterior variance") + ggtitle("Confounded model | PC") 
+
+
+short <- results %>% group_by(Model, design, Given) %>% 
+  dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5, deep = mean(deep_n), wide = mean(wide_n))  %>%
+  mutate(Estimand = ifelse(Given == "-", "Effect of X on Y", "X=1 caused Y=1")) %>%
+  mutate(Wide = factor(wide))
+
+short %>%  # filter(Model %in% c("Chain", "Confounded")) %>%
+  ggplot(aes(deep, mean_post_var, color = Wide)) +
+  geom_line() + 
+  facet_grid(Estimand ~ Model, scales = "free_y") +
+  ylab("Expected posterior variance")+ scale_x_continuous(breaks = c(0, 50, 100))
+
+
+# results %>% group_by(Model, design) %>% 
+#   dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5) %>%
+#   kable(caption = "models and designs", digits = 4)
+
+```

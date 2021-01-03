@@ -1,0 +1,325 @@
+---
+title: "Case selection strategies"
+author: "M"
+date: "12/6/2020"
+output: 
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(CausalQueries)
+library(tidyverse)
+
+library(knitr)
+
+run <- FALSE
+```
+
+# Set up
+
+```{r}
+
+comparisons <- function(model, prior_data, query, given, ...)
+  
+  update_model(model, prior_data, keep_transformed = TRUE, ...) %>%
+  query_model(
+    query =  query,
+    given = given,
+    using = list("posteriors"), case_level = c(TRUE, FALSE), expand_grid = TRUE) %>%
+    arrange(Case.estimand, Given)
+  
+
+chain_model <- make_model("X -> M -> Y") %>% set_priors(distribution = "jeffreys") %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+moderator_model <- make_model("X -> Y <- M") %>% set_priors(distribution = "jeffreys") %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+base_model <- make_model("X -> M -> Y <- X") %>% set_priors(distribution = "jeffreys") %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+restricted_model <- make_model("X -> M -> Y <- X") %>%
+  set_restrictions("M[X=1] < M[X=0]") %>%
+  set_restrictions("(Y[M=1] < Y[M=0])") %>%
+  set_priors(distribution = "jeffreys") %>%
+  set_prior_distribution() %>% set_parameter_matrix()
+
+
+query <- "Y[X=1] - Y[X=0]"
+
+given <- c(TRUE, "X == 1 & Y == 1", "X == 1 & M == 1 & Y == 1", "X == 0 & Y == 1", "X == 0 & M == 1 & Y == 1")
+
+base_data <- data.frame(X=c(1,1,1,0,0,0),  Y=c(1,1,0,1,0,0))
+
+datas <- 
+  list(
+    prior = data.frame(X=NA,  Y=NA, M = NA),
+    XY_only = mutate(base_data, M = c(NA, NA, NA, NA, NA, NA)),
+    one_on  = mutate(base_data, M = c(1, NA, NA, NA, NA, NA)),
+    one_off = mutate(base_data,  M = c(NA, NA, 1, NA, NA, NA)),
+    two_on_pos  = mutate(base_data, M = c(1, NA, NA, NA, NA, 0)),
+    two_on_neg  = mutate(base_data, M = c(1, NA, NA, NA, NA, 1)),
+    two_off_var = mutate(base_data, M = c(NA, NA, 1, 0, NA, NA)),
+    two_off_novar = mutate(base_data, M = c(NA, NA, 1, 1, NA, NA)))
+       
+
+
+```
+
+# Chain model
+
+```{r}
+if(run) lapply(datas, function(j) comparisons(chain_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_chain.rds")
+
+read_rds("case_selection/XMY_chain.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Chain model", digits = 2)
+
+```
+
+# Base model
+
+```{r}
+
+if(run) lapply(datas, function(j) comparisons(base_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_base.rds")
+
+read_rds("case_selection/XMY_base.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Base model", digits = 2)
+
+
+
+```
+
+
+# Restricted model
+
+```{r}
+if(run) lapply(datas, function(j) comparisons(restricted_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/restricted_model.rds")
+
+
+read_rds("case_selection/restricted_model.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Restricted model", digits = 2)
+
+```
+
+# Moderator model
+
+```{r}
+
+if(run) lapply(datas, function(j) comparisons(moderator_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_moderator.rds")
+
+read_rds("case_selection/XMY_moderator.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Moderator model", digits = 2)
+
+```
+
+# Chain stronger priors
+
+```{r}
+base_data_2 <- data.frame(X=c(1,1,1,0,0,0, 0,1),  Y=c(1,1,0,1,0,0, 0, 1))
+
+datas_2 <- 
+  list(
+    prior = data.frame(X=NA,  Y=NA, M = NA),
+    XMY = mutate(base_data_2,     M = c(NA, NA, NA, NA, NA, NA, 0,1)),
+    one_on  = mutate(base_data_2, M = c(1, NA, NA, NA, NA, NA, 0,1)),
+    one_off = mutate(base_data_2,  M = c(NA, NA, 1, NA, NA, NA, 0,1)),
+    two_on_pos  = mutate(base_data_2, M = c(1, NA, NA, NA, NA, 0, 0,1)),
+    two_on_neg  = mutate(base_data_2, M = c(1, NA, NA, NA, NA, 1, 0,1)),
+    two_off_var = mutate(base_data_2, M = c(NA, NA, 1, 0, NA, NA, 0,1)),
+    two_off_novar = mutate(base_data_2, M = c(NA, NA, 1, 1, NA, NA, 0,1)))
+
+if(run) lapply(datas_2, function(j) comparisons(chain_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_chain_2.rds")
+
+ read_rds("case_selection/XMY_chain_2.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%   left_join(data.frame(strategy = names(datas_2), order = 1:length(datas))) %>% arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Chain model; stronger prior data", digits = 2)
+
+```
+
+
+# Moderator stronger priors
+
+```{r}
+
+if(run) lapply(datas_2, function(j) comparisons(moderator_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_moderator_2.rds")
+
+ read_rds("case_selection/XMY_moderator_2.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%   left_join(data.frame(strategy = names(datas_2), order = 1:length(datas))) %>% arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Moderator model; stronger prior data", digits = 2)
+
+```
+
+# Base: stronger priors
+
+
+```{r}
+if(run) lapply(datas_2, function(j) comparisons(base_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_base_2.rds")
+
+
+ read_rds("case_selection/XMY_base_2.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%  left_join(data.frame(strategy = names(datas_2), order = 1:length(datas))) %>%  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Base model; stronger prior data", digits = 2)
+```
+
+# Flat data
+
+```{r}
+base_data_flat <- data.frame(X=c(0,0,1,1),  Y=c(0,1,0,1))
+
+datas_flat <- 
+  list(
+    prior = data.frame(X=NA,  Y=NA, M = NA),
+    XY_only = mutate(base_data_flat, M = c(NA, NA, NA, NA)),
+    one_on  = mutate(base_data_flat, M = c(NA, NA, NA, 1)),
+    one_off = mutate(base_data_flat,  M = c(NA, NA, NA, 0)),
+    two_on_pos  = mutate(base_data_flat, M = c(0, NA, NA,  1)),
+    two_on_neg  = mutate(base_data_flat, M = c(1, NA, NA, 1)))
+
+
+
+```
+
+# Chain model flat
+
+```{r}
+if(run) lapply(datas_flat, function(j) comparisons(chain_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_chain_flat.rds")
+
+read_rds("case_selection/XMY_chain_flat.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Chain model flat", digits = 2)
+
+```
+
+# Base model flat
+
+```{r}
+
+if(run) lapply(datas_flat, function(j) comparisons(base_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_base_flat.rds")
+
+read_rds("case_selection/XMY_base_flat.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Base model flat", digits = 2)
+
+
+
+```
+
+
+# Restricted model flat
+
+
+```{r}
+if(run) lapply(datas_flat, function(j) comparisons(restricted_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/restricted_model_flat.rds")
+
+
+read_rds("case_selection/restricted_model_flat.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Restricted model flat", digits = 2)
+
+```
+
+# Moderator model flat
+
+```{r}
+
+if(run) lapply(datas_flat, function(j) comparisons(moderator_model, j, query, given, chains = 8, iter = 6000, refresh = 0)) %>% bind_rows(.id = "strategy") %>% write_rds("case_selection/XMY_moderator_flat.rds")
+
+read_rds("case_selection/XMY_moderator_flat.rds") %>% select(-sd, - Query, -Using) %>% spread(Given, mean) %>% rename(unconditional = "-", inference = "Case.estimand") %>%
+  left_join(data.frame(strategy = names(datas), order = 1:length(datas))) %>%
+  arrange(inference, order) %>% select(strategy, inference, unconditional, given[-1]) %>% mutate(inference = ifelse(inference, "case", "population")) %>% kable(caption = "Moderator model flat", digits = 2)
+
+```
+
+# Graphs
+
+```{r, fig.width=10}
+
+plot_findings <- function(df)
+  df %>% 
+  mutate(n = ifelse(strategy=="prior" | strategy=="XY_only", 0, 2))  %>%
+  mutate(n = ifelse(strategy=="one_on" | strategy=="one_off", 1, n)) %>%
+  group_by(Case.estimand, Given) %>% mutate(root = mean(mean[n==0])) %>%
+  mutate(strategy_2 = strategy) %>%
+  mutate(strategy_2 = ifelse(strategy_2=="one_off" | strategy_2=="one_on", "one", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_off", strategy_2, fixed = TRUE), "two_off", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_on", strategy_2, fixed = TRUE), "two_on", strategy_2)) %>% 
+  filter(strategy != "prior") %>%
+  ungroup()  %>% 
+  ggplot(aes(n, mean, color = strategy_2)) + geom_point() +
+  facet_grid(Case.estimand  ~ Given) + scale_x_continuous(breaks = c(0:2))
+
+plot_findings(read_rds("case_selection/XMY_chain.rds"))
+
+
+results <- list(
+  chain = read_rds("case_selection/XMY_chain.rds"),
+  base = read_rds("case_selection/XMY_base.rds"),
+  restricted = read_rds("case_selection/restricted_model.rds"),
+  moderator = read_rds("case_selection/XMY_moderator.rds")) %>%
+  bind_rows(.id = "model") %>% 
+  mutate(n = ifelse(strategy=="prior" | strategy=="XY_only", 0, 2))  %>%
+  mutate(n = ifelse(strategy=="one_on" | strategy=="one_off", 1, n)) %>%
+  group_by(Case.estimand, Given) %>% mutate(root = mean(mean[n==0])) %>%
+  mutate(strategy_2 = strategy) %>%
+  mutate(strategy_2 = ifelse(strategy_2=="one_off" | strategy_2=="one_on", "one", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_off", strategy_2, fixed = TRUE), "two_off", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_on", strategy_2, fixed = TRUE), "two_on", strategy_2)) %>% 
+  filter(strategy != "prior") %>%
+  filter(Case.estimand == "FALSE") %>%
+  ungroup()  %>% 
+  mutate(Given = factor(Given, 
+         c("-", "X == 1 & Y == 1", "X == 1 & M == 1 & Y == 1",
+"X == 0 & Y == 1", "X == 0 & M == 1 & Y == 1"), 
+c("ATE", "PC 11: X == 1 & Y == 1", "PC | M == 1",
+"PC 01: X == 0 & Y == 1", "PC 01 | M == 1")))
+
+
+results %>%
+  ggplot(aes(n, mean, color = strategy_2)) + geom_point() +
+  facet_grid(model  ~ Given, scales = "free_y") + 
+  scale_x_continuous(breaks = c(0:2)) +
+  xlab("Number of cases with M observed")  +
+  ylab("Inferences") + 
+  ggtitle("Moderate XY")
+
+# read_rds("case_selection/XMY_chain_2.rds")
+# read_rds("case_selection/XMY_moderator_2.rds") 
+# read_rds("case_selection/XMY_base_2.rds")    
+
+
+
+results_2 <- list(
+  chain = read_rds("case_selection/XMY_chain_2.rds"),
+  base = read_rds("case_selection/XMY_base_2.rds"),
+  moderator = read_rds("case_selection/XMY_moderator_2.rds")) %>%
+  bind_rows(.id = "model") %>%
+  mutate(n = ifelse(strategy=="prior" | strategy=="XY_only", 0, 2))  %>%
+  mutate(n = ifelse(strategy=="one_on" | strategy=="one_off", 1, n)) %>%
+  group_by(Case.estimand, Given) %>% mutate(root = mean(mean[n==0])) %>%
+  mutate(strategy_2 = strategy) %>%
+  mutate(strategy_2 = ifelse(strategy_2=="one_off" | strategy_2=="one_on", "one", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_off", strategy_2, fixed = TRUE), "two_off", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_on", strategy_2, fixed = TRUE), "two_on", strategy_2)) %>% 
+  filter(strategy != "prior") %>%
+  filter(Case.estimand == "FALSE") %>%
+  ungroup()  %>% 
+  mutate(Given = factor(Given, 
+         c("-", "X == 1 & Y == 1", "X == 1 & M == 1 & Y == 1",
+"X == 0 & Y == 1", "X == 0 & M == 1 & Y == 1"), 
+c("ATE", "PC 11: X == 1 & Y == 1", "PC | M == 1",
+"PC 01: X == 0 & Y == 1", "PC 01 | M == 1")))
+
+
+results_2 %>%
+  ggplot(aes(n, mean, color = strategy_2)) + geom_point() +
+  facet_grid(model  ~ Given, scales = "free_y") + 
+  scale_x_continuous(breaks = c(0:2)) +
+  xlab("Number of cases with M observed")  +
+  ylab("Inferences") + 
+  ggtitle("Stronger XY")
+
+
+# read_rds("case_selection/XMY_chain_flat.rds")
+# read_rds("case_selection/XMY_base_flat.rds")
+# read_rds("case_selection/XMY_moderator_flat.rds") 
+```

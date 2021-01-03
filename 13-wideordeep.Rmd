@@ -1,20 +1,587 @@
-# Going wide and going deep {#wide}
+# Mixed methods data strategies {#caseselection}
 
-
-:::: {.headerbox data-latex=""}
-::: {.center data-latex=""}
-:::
-Researchers often need to choose between collecting data on a greater number of cases or collecting more data within a given set of cases. This is a choice, we might say, between going "wide" and going "deep." We discuss the tradeoffs and communicate an intuition that clue data, even on a small number of cases, can be informative even when there is $X, Y$ data on a very large number of cases, but only if it provides information that cannot be gathered from $X,Y$ data, such as selection into treatment. Simulations suggest that going deep is especially valuable for observational research, situations with homogeneous treatment effects, and, of course, when clues have strong probative value.
-::::
-<br>
-
-
-```{r packagesused12, include = FALSE}
+```{r packagesused13, include = FALSE}
 source("_packages_used.R")
 do_diagnosis = FALSE
 ```
 
-## Motivation
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+With a causal model in hand, together with priors over parameters, you can assess in advance what conclusions you will draw from different observations and assess what kinds of observations are most worth seeking. We draw out the implications of this idea for case selection. We then turn to the problem of choosing between going "wide" and going "deep." We discuss the tradeoffs and communicate an intuition that clue data, even on a small number of cases, can be informative even when there is $X, Y$ data on a very large number of cases, but only if it provides information that cannot be gathered from $X,Y$ data, such as selection into treatment. Simulations suggest that going deep is especially valuable for observational research, situations with homogeneous treatment effects, and, of course, when clues have strong probative value.
+::::
+
+
+A critical decision for scholars employing mixed methods is to determine when and where to look deep and when to look wide. We address this question if two steps, first addressing the problem of case selection and second the question of qualitative/quantitative mixing.  
+
+## Case selection strategies
+
+A host of different strategies have been proposed for selecting cases for in-depth study based on the observed values of $X$, $Y$ data. Perhaps the most common strategy is to select cases in which $X=1$ and $Y=1$ and look to see whether in fact $X$ caused $Y$ in the case in question (using some more or less formal strategy for inferring causality from within-case evidence). But many other strategies have been proposed, including strategies to select cases "on the regression line" or, for some purposes, cases "off the regression line" (e.g., @Lieberman2005nested). Some scholars suggest ensuring variation in $X$ (most prominently, @king1994designing), while others have proposed various kinds of matching strategies. Some have pointed to the advantages of random sampling of cases, either stratified or unstratified by values on $X$ or $Y$ (@FL2008, @HerronQuinn). 
+
+Which cases you should choose will likely depend on the purposes to which you want to put them. 
+
+A matching strategy for instance---selecting cases that are comparable on many features but that differ on $X$---replicates at a small scale the kind of inference done by matching estimators with large-$n$ data. The strategy emphasize the inferences to be made from $X,Y$ variation rather than inferences drawn specifically from within case information beyond what is available in the measurement of $X$ and $Y$. (Citations needed.)
+
+Other treatments seek to use qualitative information to check assumptions made in $X, Y$ analysis: for example, is the measurement of $X$ and $Y$ reliable in critical cases? (Citations needed) For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the $X,Y$ inferences: for example influential cases that have unusually extreme values on $X$ and $Y$.^[Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.] Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.
+
+A third purpose is to use a case to generate alternative or richer theories of causal processes, as in Lieberman's "model-building" mode of "nested analysis" (@Lieberman2005nested). Here it may be cases off the regression line that are of interest.
+
+Weller and Barnes (CITE article) on case selection focus on (a) X/Y relations and (b) whether the cases are useful for hypothesis generation. 
+
+In what follows, we focus on a simpler goal: given existing $X, Y$ data for a set of cases and a given clue (or set of clues) that we can go looking for in the intensive analysis of some subset of these cases, for which cases would process tracing yield the greatest learning about the population-level causal effect of $X$ on $Y$?
+
+The basic insight of this chapter is simple enough: *the optimal strategy for case selection for a model-based analysis can be determined by the model and the query*, just as we saw for the optimal clue-selection strategy in Chapter \@ref(Clues). Using this strategy yields guidance that is consistent with some common advice but at odds with other advice. The main principles that emerge from the analysis can be summarized as:
+
+* go where the probative value is, and
+* sample from $X$ and $Y$ values in proportion to their occurrence in the population,
+* invest in collections of cases that provide complementary learning. 
+
+Beyond these general principles, other patterns are more complex and thus more difficult to neatly summarize. The most general message of this chapter is about the general approach: that is, that we can use a causal model to tell us what kinds of cases are likely to yield the greatest learning, given the model and a strategy of inference. We provide a tool for researchers to undertake this analysis, at least for simple problems with $X, Y, K$ data.
+
+
+Most closely related to our analysis in this chapter is the contribution of @HerronQuinn, who build on @SeawrightGerring2008. While Seawright and Gerring provide a taxonomy of approaches to case selection, they do not provide a strategy for assessing the relative merits of these different approaches.  As we do, @HerronQuinn focus on a situation with binary $X,Y$ data and assess the gains from learning about causal type in a set of cases (interestingly in their treatment causal type, $Z_i$  is called a confounder rather than being an estimand of direct interest; in our setup, confounding as normally understood arises because of different probabilities of different causal types of being assigned to "treatment", or an $X=1$ value). @HerronQuinn assume that in any given case selected for analysis a qualitative researcher is able to infer the causal type perfectly.  
+
+Our setup differs from that in @HerronQuinn in a few ways.  @HerronQuinn paramaterize differently, though this difference is not important.^[@HerronQuinn have a parameter $\theta$ that governs the distribution of data over $X$ and $Y$ and then, conditional on $X,Y$ values, a set of parameters $\psi_{xy}$ that describe the probability of a case's being of a given causal type. We take both $\theta$ and $\psi_{xy}$ to derive from the fundamental distribution of causal types and assignment probabilities. Thus, for example, $\psi_{00}$ from @HerronQuinn corresponds to $\frac{(1-\pi_b)\lambda_b}{(1-\pi_b)\lambda_b + (1-\pi_c)\lambda_c}$ in our notation. The difference in  paramaterization does have implications for interpretations of the priors. For example flat priors over $\theta$ and $\psi$ implies a tighter distribution that a uniform prior over the causal types. In fact @HerronQuinn use priors with greater variance than uniform in any event.] Perhaps the most important difference between our analysis and that in @HerronQuinn  is that we connect the inference strategy to process-tracing approaches. Whereas @HerronQuinn assume that causal types can be read directly, we assume that these are inferred *imperfectly* from clues. As in our baseline model, our ability to make inferences for causal types can differ by type and as a function of $X$. And, as in the baseline model, not only can we have uncertainty about the probative value of clues, but researchers can learn about the probative value of clues by examining cases.
+
+<!-- Are Herron and Quinn's priors Jeffrey priors? -->
+
+Here we assume that the case selection decision is made after observing the $XY$ distribution and we explore a range of different possible contingency tables. In  @HerronQuinn the distribution from which the contingency tables are drawn is fixed, though set to  exhibit an expected  observed difference in means (though not necessarily a true treatment effect) of 0.2. They assume large $XY$ data sets (with 10,000) units and case selection strategies ranging from 1 to 20 cases.
+
+Another important difference, is that in many of their analyses, @HerronQuinn take the perspective of an outside analyst who knows the true treatment effect; they then assess the expected bias generated by a research strategy over the possible data realizations. We, instead, take the perspective of a researcher who has *beliefs* about the true treatment effect that correspond to their priors, and for whom there is therefore no *expected* bias. This has consequences also for the assessment of expected posterior variance, as in our analyses the expectation of the variance is taken with respect to the researcher's beliefs about the world, rather than being made conditional on some specific world (ATE). We think that this setup is addressed to the question that a researcher must answer when deciding on a strategy: given what they know now, what will produce the greatest reduction in uncertainty (the lowest expected posterior variance)?
+
+Finally, we proceed somewhat differently in our identification of strategies from Herron and Quinn: rather than pre-specifying particular sets of strategies (operationalizations of those identified by @SeawrightGerring2008) and evaluating them, we define a strategy as the particular distribution over $XY$ cells to be examined and proceed to examine *every possible strategy* given a choice of a certain number of cases in which to conduct process tracing. We thus let the clusters of strategies---those strategies that perform similarly---emerge from the analysis rather than being privileged by past conceptualizations of case-selection strategies.
+
+Despite these various differences, our results will agree in key ways with those in @HerronQuinn.
+
+
+### No general rules
+
+Case selection logics depends on probative value and queries.
+
+Although it might be tempting to seek general rules of the form "examine cases in which $X=1$ and $Y=1$" or, "ignore cases in which $X=0$ and $Y=0$", it is easily demonstrated that which choices are more informative depend on how waht can be learned within a case contributes to infernecnce, and that hte contributions depend on the query in question.
+
+Say we know in a given population that:
+
+  * $X \rightarrow Y \leftarrow K$
+  * $\Pr(Y=1|X=0, K = 0) = 1$
+  * $\Pr(Y=1|X=1, K = 0) = .5$
+  * $\Pr(Y=1|X=0, K = 1) = 0$
+  * $\Pr(Y=1|X=1, K = 1) = .9$
+
+We do not know, however how common $K$ is. Thus we do not know either unit level causal effects or population level effects.
+
+Given the information above we can see that if $X=Y=1$, then $K$ is a "doubly decisive" clue for assessing whether, in a given case, $X$ causes $Y$. In particular we have that for an $X=Y=1$ case, seeing $K=1$ implies  $X$ caused $Y$ Since otherwise $Y$ would have been 0) and seeing $K=0$ implies   $X$ did not cause $Y$ (since othereise $Y$ would have been 1 in any event.
+
+However, if we had a case in which $X=Y=0$ then learning $K$ would be entirely uninformative for the case. In particular, we already know that $K=1$ in this case as we know there are not cases in which  $X=Y=0$ and $K=0$. And this knowledge is not enough in this case to know whether $X=0$ caused $Y=0$.
+
+For the same reason, if, off the diagonal, $X=0, Y=1$ we learn nothing from $K$, since we learn about $K$ from $Y$. If however we had a case in which $X=1, Y=0$, if $K$ were 1 then we would know that $X=1$ did not cause $Y=0$; if $K$ were 0 we would know that  $X=1$ caused $Y=1$.
+
+
+```{r, eval= FALSE, echo = FALSE}
+py_k0 = .5
+py_k1 = .9
+
+py_k1 / (py_k0 + py_k1)
+
+(1-py_k1) / (1-py_k0 + 1-py_k1)
+
+```
+
+Say now we were interested in the population estimand: the average effect of $X$ on $Y$. We can see that this is equal to $\Pr(K=1)\times.9 + (1-\Pr(K-0))\times(-.5)) = 1.4\Pr(K=1)-.5$. For this estimand we are only interested in the prevalence of $K$ in the population. It might seem that this means that it is irrelevant what type of case you choose; however, as noted above, we have more information about the likely value of $K$ in some cases than in others. So for this estimand also, in this case, selecting an $X=Y=1$ case  is informative for the population effect; selecting $X=Y=0$ case is not informative. 
+
+Say now we had a case in which $X=1$. Should we choose: a case in which $Y=1$ or a case in which $Y=0$. In both cases $K$ is doubly decisive for the case level estimand. However for a $Y=1$ case we think it likely that $K=1$ (specifically, assuming a prior of $\Pr(K=1)$ we think $\Pr(K=1 | X=1, Y=1) = \frac{.9}{.9+.5}=.64$); for the  $Y=0$ case we think  $\Pr(K=1 | X=1, Y=0) = \frac{.1}{.5+.1}=.17$. Thus we are much more uncertain about the value of $K$ in the $X=Y=1$ case. We would learn more for the avergae treatment effect then by choosing off the diagonal.
+
+Specifically let $\kappa$ denote $\Pr(K=1)$. say we begin thinking it equally likely that $\kappa=\kappa^H = .5$ and $\kappa=\kappa^L=0$. Say $\Pr(X=1) = .5$. Say we observe one case with $X=Y=1$ and another with $X=1, Y=0$. From that informaation alone we can update over $\kappa$. Specifically, conditioning on the probability that $X=1$ for both cases and focuseing only on the probability that Y=0 in one case and Y=1 in the other:
+
+$$p(\kappa = \kappa^L|D) =  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kappa^L)}=\frac{.5}{.5 + .25\times(2\times.5\times.5 + 2\times.9\times.1 + 2\times(.9\times.5 +.1\times.5))}$$
+
+
+
+In summary in this case it makes sense to select and $X=Y=1$ case if you are interested in teh population estimand or if you are interested in teh case level estimand for an $X=Y=1$ case. If you are interested in the case level estimand for an $X=Y=0$ case then there are no gains from either selection strategy.
+
+Sometimes however you learn more in a $X=Y=0$ than in a  $X=Y=1$ case. Say instead that you knew that: 
+
+  * $X \rightarrow Y \leftarrow K$
+  * $\Pr(Y=1|X=0, K = 0) = .5$
+  * $\Pr(Y=1|X=1, K = 0) = 0$
+  * $\Pr(Y=1|X=0, K = 1) = .5$
+  * $\Pr(Y=1|X=1, K = 1) = 1$
+
+In this case you learn nothing from observing a case in which $X=Y=1$---in this case you already expect that $K=1$. In contrast if $X=Y=0$ then if you learn that $K=1$ you know that were $X=1$ the $Y$ would have been 1; but if you learn that $K=0$ you know that *were* $X=1$ then $Y$ would have (still) been 0. So in this case $K$ is doubly decisive for an $X=Y=0$ case but not for a   $X=Y=1$ case. 
+
+
+This logic also holds for the off diagonals.
+
+Say instead that you knew that: 
+
+  * $X \rightarrow Y \leftarrow K$
+  * $\Pr(Y=1|X=0, K = 0) = 0$
+  * $\Pr(Y=1|X=1, K = 0) = .5$
+  * $\Pr(Y=1|X=0, K = 1) = 1$
+  * $\Pr(Y=1|X=1, K = 1) = .5$
+
+Say you have a case in which $X=1, Y=0$, then if $K=1$ you know that if $X$ were 0, Y would have been 1; but if $K=0$ you know that if $X$ were 0, $Y$ would have been 0. In that case $K$ would be doubly decisive for $X=1$ causing $Y=0$.  
+
+Say you have a case in which $X=0, Y=1$, then it must be that $K=0$.   
+  
+Say instead that you knew that: 
+
+  * $X \rightarrow Y \leftarrow K$
+  * $\Pr(Y=1|X=0, K = 0) = .5$
+  * $\Pr(Y=1|X=1, K = 0) = 0$
+  * $\Pr(Y=1|X=0, K = 1) = .5$
+  * $\Pr(Y=1|X=1, K = 1) = 1$
+
+It may be better to select a case that is not "like" the cases you want to make inferences about.
+
+
+### An approach to comparing strategies
+
+```{r selectioncode, echo = FALSE}
+
+# We define a model
+model <- make_model("X->M->Y")  %>%
+ set_restrictions(c("(Y[M=1]<Y[M=0])", "(M[X=1]<M[X=0])")) %>%
+ set_parameter_matrix() %>%
+ set_parameters(type = "flat")
+
+# We imagine some preexisting data we have observed
+data  <-  data.frame(X = c(0,0,0,1,1,1), M = NA, Y = c(0,0,1,0,1,1))
+observed <-  collapse_data(data, model, drop_family = TRUE)
+
+# We can then imagine what data we might observe if we examine M inside some subset of cases
+A_on_regression_line <- 
+  make_possible_data(
+    model, 
+    observed = observed, vars = "M", 
+    N = c(1,1), 
+    condition = c("X==1 & Y==1", "X==0 & Y==0"), 
+    prefix = "A")
+names(A_on_regression_line)[-c(1:2)] <- c("A1", "A2", "A3", "A4")
+
+B_off_regression_line <- 
+  make_possible_data(model, observed = observed, vars = "M", N = c(1,1), 
+                     condition = c("X==1 & Y==0", "X==0 & Y==1"), prefix = "B")
+names(B_off_regression_line)[-c(1:2)] <- c("B1", "B2", "B3", "B4")
+
+C_X1Y1_only <- 
+  make_possible_data(model, observed = observed, vars = "M", N = 2, 
+                     condition = c("X==1 & Y==1"), prefix = "C")
+names(C_X1Y1_only)[-c(1:2)] <- c("C1", "C2", "C3")
+
+```
+
+Consider a situation in which one has access to $X,Y$ data on just six cases of the form:
+
+```{r observed, echo = FALSE}
+kable(observed)
+```
+
+We want to examine data on $M$ for two of these cases and are wondering about what strategy we should use to select the cases. We are considering three strategies:
+
+* Strategy $A$ chooses two cases on the regression line (one in the $X=Y=0$ cell and one in the $X=Y=1$ cell)
+* Strategy $B$ chooses off the regression line 
+* Strategy $C$ selects on the dependent variable -- choosing cases with $X=1, Y = 1$.
+
+Different strategies yield different possible types of data. Each one of these is likely to arise with a different probability and is associated with a different inference. Drawing on the prior beliefs embedded in a causal model, we can thus assess the *expected* posterior variance associated with each strategy. 
+
+
+```{r dtypes, echo = FALSE}
+# Combine data types
+df <- A_on_regression_line[,-2] %>% 
+  merge(B_off_regression_line[,-2], by = "event", all = TRUE) %>%
+  merge(C_X1Y1_only[,-2], by = "event", all = TRUE) %>%
+  dplyr:::mutate_if(is.numeric, ~replace(., is.na(.), 0))
+
+# table(duplicated(t(df)))
+```
+
+For each of these possible strategies we can assess the posterior that we would obtain for each type of data we might observe.
+
+```{r illustration, echo = FALSE}
+
+if(do_diagnosis){
+
+# We define a model
+model <- make_model("X->M->Y")  %>%
+ set_restrictions(c("(Y[M=1]<Y[M=0])", "(M[X=1]<M[X=0])")) %>%
+ set_parameter_matrix() %>%
+ set_parameters(type = "jeffreys")
+  
+ strategies <- 
+   list(A_on_regression_line, B_off_regression_line, C_X1Y1_only)
+
+ 	write_rds(strategies, "saved/14_illustration_strategies.rds")
+  
+ 
+ estimates_dbs <- lapply(strategies, function(s) 
+    make_estimates_database(model, observed, possible_data = s, queries = "Y[X=1]-Y[X=0]")
+    )
+    
+	write_rds(estimates_dbs, "saved/14_illustration_estimates.rds")
+
+# The reference model is the original model updated with the XY data we've already seen.
+ reference_model <- update_model(model, data)
+ 
+	write_rds(reference_model, "saved/14_reference_XMY_updated_model.rds")
+
+ probabilities <- lapply(strategies, function(s) 
+#    average_data_probabilities(reference_model, s, using = "posteriors", sims = 3000)
+
+   apply(reference_model$posterior_distribution, 1, function(pars) {
+  					make_data_probabilities(model = reference_model, pars = pars, possible_data = s, normalize = TRUE)
+  			})
+   )
+   
+	write_rds(probabilities, "saved/14_illustration_probabilities.rds")
+
+}
+
+  reference_model <- read_rds("saved/reference_XMY_updated_model.rds")
+	probabilities   <- read_rds("saved/illustration_probabilities.rds")
+  strategies      <- read_rds("saved/illustration_strategies.rds")
+  estimates_db    <- read_rds("saved/illustration_estimates.rds")
+  
+  digits <- 3
+
+  df <- rbind(df, 
+          c("Probability", round(unlist(probabilities),digits)),
+          c("Posterior mean",   (unlist(lapply(estimates_db, function(j)   unlist(unlist(lapply(j, function(k) k$mean))))))),
+          c("Posterior variance",   round(unlist(lapply(estimates_db, function(j)   unlist(unlist(lapply(j, function(k) k$mean^2))))), digits)))
+```
+
+The data possibilities, probabilities of each, and inferences given each, are shown in Table \@ref(tab:chselillustration).
+  
+```{r chselillustration, echo = FALSE}  
+kable(df, caption = "Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.", digits = 2)
+```
+
+Each of the first two strategies generates one of four different data patterns. The third data strategy generates up to three data patterns. None of these data patterns overlap across strategies. 
+From the calculated  probability of each data type, given the data seen so far, and the posterior variance given each data realization, the implied *expected* variance is  easily calculated. These are summarized below:
+
+```{r exppostvar, echo = FALSE}
+expected_posterior_var <- sapply(1:3, function(i) 
+  sum(probabilities[[i]]*unlist(lapply(estimates_db[[i]], function(x) x$sd^2)))
+ )
+kable(data.frame(Strategy = c("Online", "Offline", "X=1, Y=1"), Variance = expected_posterior_var), digits = 3)
+```
+
+
+In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing her process-tracing efforts where a greater share of the population of cases lies: on the regression line.  
+
+Why is this?
+
+
+```{r test, include = FALSE}
+# source("_packages_used.R")
+
+model <- make_model("X -> M -> Y")
+  
+gen_observed_data <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
+  data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
+    tidyr::uncount(ns) %>%
+    collapse_data(model, drop_family = TRUE)}
+
+
+# Data strategies
+
+data_strats <- function(N = 4) {
+  if(N%%2 != 0) stop("even Ns only please")
+  list(
+    all_on = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+                  conditions = list("X==0 & Y==0", "X==1 & Y==1")),
+    all_off = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+                   conditions = list("X==0 & Y==1", "X==1 & Y==0")),
+    all_x1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+                   conditions = list("X==1 & Y==0", "X==1 & Y==1")),
+    all_y1 = list(N=c(N,N)/2, withins = TRUE, vars = "M",
+                   conditions = list("X==0 & Y==1", "X==1 & Y==1"))
+  )
+}
+
+# Queries
+
+# if(!exists("fit")) fit <- fitted_model()
+
+# Diagnosis function 
+
+if(do_diagnosis){
+test_corr <- 
+  diagnose_strategies(
+    analysis_model = model,
+    data_strategies = data_strats(2),
+    given = gen_observed_data(6,2,2,6),
+    queries = list(ATE = "Y[X=1]-Y[X=0]", 
+                   a = "Y[X=1]<Y[X=0]", 
+                   b = "Y[X=1]>Y[X=0]", 
+                   c = "(Y[X=1]==0) & (Y[X=0]==0)", 
+                   d = "(Y[X=1]==1) & (Y[X=0]==1)",
+                   a1 = "M[X=1]<M[X=0]", 
+                   b1 = "M[X=1]>M[X=0]", 
+                   c1 = "(M[X=1]==0) & (M[X=0]==0)", 
+                   d1 = "(M[X=1]==1) & (M[X=0]==1)",
+                   a2 = "Y[M=1]<Y[M=0]", 
+                   b2 = "Y[M=1]>Y[M=0]", 
+                   c2 = "(Y[M=1]==0) & (Y[M=0]==0)", 
+                   d2 = "(Y[M=1]==1) & (Y[M=0]==1)"
+                   ),
+    subsets = list(TRUE, TRUE,  TRUE,  TRUE),
+    sims = 8000,
+    fit = fit, 
+    refresh = 1000,
+    iter = 8000)
+
+write_rds(test_corr, "saved/test_corr.rds")
+
+test_flat <- 
+  diagnose_strategies(
+    analysis_model = model,
+    data_strategies = data_strats(2),
+    given = gen_observed_data(4,4,4,4),
+    queries = list(ATE = "Y[X=1]-Y[X=0]", 
+                   a = "Y[X=1]<Y[X=0]", 
+                   b = "Y[X=1]>Y[X=0]", 
+                   c = "(Y[X=1]==0) & (Y[X=0]==0)", 
+                   d = "(Y[X=1]==1) & (Y[X=0]==1)",
+                   a1 = "M[X=1]<M[X=0]", 
+                   b1 = "M[X=1]>M[X=0]", 
+                   c1 = "(M[X=1]==0) & (M[X=0]==0)", 
+                   d1 = "(M[X=1]==1) & (M[X=0]==1)",
+                   a2 = "Y[M=1]<Y[M=0]", 
+                   b2 = "Y[M=1]>Y[M=0]", 
+                   c2 = "(Y[M=1]==0) & (Y[M=0]==0)", 
+                   d2 = "(Y[M=1]==1) & (Y[M=0]==1)"
+                   ),
+    subsets = list(TRUE, TRUE,  TRUE,  TRUE),
+    sims = 8000, fit = fit, refresh = 1000, iter = 8000)
+
+
+write_rds(test_flat, "saved/test_flat.rds") 
+}
+
+test_corr <- read_rds("saved/test_corr.rds") 
+test_flat <- read_rds("saved/test_flat.rds") 
+
+# key thing to note is for $all_x1[[1]] a2 = b2
+# and for $all_x1[[2]] a1 = b1 
+# so in both cases shareas of a and b remains contstant
+
+
+```
+
+For intuition consider first the case with flat prior data:
+
+* if we examine two cases in different quadrants *on the diagonal* (one $X=Y=0$ case and one $X=Y=1$ case) :
+  * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a positive or a negative effect on $Y$. Since we are looking on the regression line however, our confidence that $X$ had a *positive* effect on $Y$ is more strongly reduced, producing a  posterior centered on a small negative effect. 
+  * Conversely if we see that $M$ is different in the two cases, then we have a correlation of the same sign between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general an din particular that it had a positive effect, resulting in a posterior centered on a small positive ATE.
+
+* if we examine two cases in different quadrants *off the diagonal* (one $X=0, Y=1$ case and one $X=1, Y=0$ case) :
+  * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a negative effect  $Y$ (producing a  posterior centered on a small positive effect). 
+  * Conversely if we see that $M$ is different in the two cases, then we have a correlation (of different signs) between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general and in particular that it had a negative effect, resulting in a posterior centered on a small negative ATE.
+
+* If we examine data conditioning on the value of $X$ but with variation on $Y$ (for instance $X=1, Y=0$ and   $X=1, Y=1$) 
+data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In teh case with flat data this changes beliefs on positve and negative effects but not the difference between them. The ate then remains unchanged. FLAG work though intuition  more
+
+* If we examine data conditioning on the value of $Y$ but with variation on $X$ (for instance $X=0, Y=1$ and   $X=1, Y=1$) 
+data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In teh case with flat data this changes beliefs on positve and negative effects but not the difference between them. The ate then remains unchanged.
+
+For correlated data similar logics apply, but the effects are stronger for evidence on the regression line. The reason is that given correlated data we believe there are more units with positive effects than negative effects. When we find evidence against causal relations on the regression line that reduces our confidence for types with positive effects more than for types with negative effects and teh difference between teh shares with positive effects and negative eeffects smaller due to the fact that the beliefs in the shares with negative effects is not so strongly reduced. Wehen we find evidence for causal relations this magnifies teh difference between beliefs in shares positive and shares negatives; these effects are magnified however since our confidence for the positive effects change more than for the negative effects, since we are examining cases on the regression line. Conversely when examining cases of teh regression line, the two forces offset each other. 
+
+
+
+```{r cinfer, include = FALSE}
+# Make sense given process tracing approach
+
+long_data <-  expand_data(gen_observed_data(4,2,2,4), model)
+
+if(do_diagnosis){
+  updated <- update_model(model, long_data, iter = 14000, chains = 12) %>%
+  set_parameters(param_type = "posterior_mean")
+  write_rds(updated, "saved/ch13_longupdated.rds") 
+}
+updated <- read_rds("saved/ch13_longupdated.rds") 
+
+get_parameters(updated)
+
+conditional_inferences(updated, query = "Y[X=1]!=Y[X=0]", given = "!is.na(X) & !is.na(Y) & !is.na(M)") %>%
+  arrange(X, Y, M)
+```
+
+
+
+### Case selection: Lessons from simulations
+
+We turn now to a more general approach for deriving case-selection guidance from a causal model, given the causal query we wish to address and any data that we have already observed. This approach can be implemented using `CausalQueries` together with `CQTools`.
+
+We imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which cases to investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
+
+The general intuition of the case-selection approach that we develop here is that we can use our causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
+
+We proceed as follows:
+
+**DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustrations, we consider two different DAGS: a simple mediation (or "chain") model, $X \rightarrow M \rightarrow Y$, and a two-path model, $X \rightarrow M \rightarrow Y \leftarrow X$.
+
+**Priors**. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. We can also indicate our uncertainty over the latter, by setting the $\alpha$ parameters of the relevant Dirichlet distributions. For the current example, we start by setting flat priors over all nodal types and assume no unobserved confounding.
+
+**Given data.** If we have already made observations of any of the model's nodes in some set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed $X$'s and $Y$'s value in a set of cases, we might select cases for process tracing based on their values of $X$ and/or $Y$. And, importantly, what we have already observed in the cases will affect the inferences we will draw when we observe additional data, including how *informative* a particular new observation is likely to be. For the present examples, we assume that we have already observed $X$ and $Y$ in a set of cases and found a positive correlation.
+
+**Query**. We define our query. This could, for instance, be the share of cases in the population in which $X$ has a positive effect on $Y$, or it might be $X$'s average effect on $Y$. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. For instance, the best case-selection strategy for estimating the average causal effect of $X$ on $Y$ may not be the same as the best strategy for figuring out for what proportion of the population $X$ has a positive effect on $Y$. In the example below, we focus on a set of conditional queries, asking what the effect of $X$ on $Y$ is in cases with different $X$, $Y$, and $M$ values. 
+
+FLAG: MAke sure above query definition lines up with what we end up doing.
+
+**Define one or more strategies**. A strategy is defined, generically, as the search for data on a given set of *nodes*, in a given *number* of cases that are randomly selected *conditional* on some information we already have about potential cases. Let us assume here that our strategy will involve uncovering $M$'s value in 1 or 2 cases. What we are wondering is how to choose this one or two cases for deeper analysis. For illustrative purposes, we focus in on four possible strategies, conditional on the $X$ and $Y$ values that we already know: 
+
+1 examine $M$ in 1 $X=Y=1$ case; 
+2 examine $M$ in 1 $X=1, Y=0$ case; 
+3 examine $M$ in 2 cases, an $X=Y=1$ and an $X=Y=0$; and 
+4 examine $M$ in 2 cases, an $X=1, Y=0$ and an $X=0, Y=1$.
+
+In light of the positive $X,Y$ correlation already observed, we can think of strategies 1 and 3 as "on-the-regression line" strategies, while strategies 2 and 4 are "off-the-regression line" strategies.
+
+**Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus some pattern of $M$ observations. Thus, for instance, for strategy 1, we could end up observing the initial $X,Y$ pattern plus $M=0$ in one of the $X=1, Y=1$ cases, or the initial $X,Y$ pattern plus $M=1$ in one of the $X=1, Y=1$ cases. For strategy 3, we could observe four possible combinations of $M$ values, with $M$ being 0 or 1 in each of the cases. 
+
+**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data that we have already observed. In practice, we do this in `CQtools` via simulation. Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the previously observed data. This posterior now represents our *prior* for the purposes of the process tracing. In the present example, we are using the already-observed $X,Y$ correlation to update our beliefs about causal-type share allocations in the population, having seen the $X,Y$ data only. We then use this posterior to draw a series of $\lambda$ values. 
+
+Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that particular $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.
+
+**Posterior on estimate given the data**. For each data possibility, we can then use `CQtools` to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies. 
+
+**Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each *strategy*. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We can think of the expected gains from a strategy as the expected *reduction* in posterior variance arising from that strategy.
+
+Complicated as the procedure might seem, it can all be done in code using a single command from the `CQtools` package.  
+
+
+### Inferences from Strategies and Data Realizations
+
+In Figure \@ref(figcaseselection), we examine how different process-tracing case-selection strategies will play out by looking at the inferences we would draw about different kinds of causal effects depending on the results of the process tracing.
+
+
+
+```{r caseselection, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs from possible data realizations"}
+
+results <- list(
+  chain = read_rds("rep/case_selection/XMY_chain.rds"),
+  base = read_rds("rep/case_selection/XMY_base.rds"),
+  restricted = read_rds("rep/case_selection/restricted_model.rds"),
+  moderator = read_rds("rep/case_selection/XMY_moderator.rds")) %>%
+  bind_rows(.id = "model") %>% 
+  mutate(n = ifelse(strategy=="prior" | strategy=="XY_only", 0, 2))  %>%
+  mutate(n = ifelse(strategy=="one_on" | strategy=="one_off", 1, n)) %>%
+  group_by(Case.estimand, Given) %>% mutate(root = mean(mean[n==0])) %>%
+  mutate(strategy_2 = strategy) %>%
+  mutate(strategy_2 = ifelse(strategy_2=="one_off" | strategy_2=="one_on", "one", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_off", strategy_2, fixed = TRUE), "two_off", strategy_2)) %>%
+  mutate(strategy_2 = ifelse(grepl("two_on", strategy_2, fixed = TRUE), "two_on", strategy_2)) %>% 
+  filter(strategy != "prior") %>%
+  filter(Case.estimand == "FALSE") %>%
+  ungroup()  %>% 
+  mutate(Given = factor(Given, 
+         c("-", "X == 1 & Y == 1", "X == 1 & M == 1 & Y == 1",
+"X == 0 & Y == 1", "X == 0 & M == 1 & Y == 1"), 
+c("ATE", "PC 11: X == 1 & Y == 1", "PC | M == 1",
+"PC 01: X == 0 & Y == 1", "PC 01 | M == 1")))
+
+
+results %>%
+  ggplot(aes(n, mean, color = strategy_2)) + geom_point() +
+  facet_grid(model  ~ Given, scales = "free_y") + 
+  scale_x_continuous(breaks = c(0:2)) +
+  xlab("Number of cases with M observed")  +
+  ylab("Inferences") + 
+  ggtitle("Moderate XY")
+
+```
+
+
+
+
+Starting with the chain model, for the analyses displayed in Table XXXX, we assume that we have previously observed a positive $X,Y$ correlation in 6 cases (with 4 cases on the regression line, 2 cases off). Now we see what can happen for different queries when we implement each of the four case-selection strategies. The set of queries we are interested in are, what is the effect of $X$ on $Y$ for:
+
+* any case in the population
+* any $X=1, Y=1$ case in the population
+* any $X=1, M=1, Y=1$ case in the population
+* any $X=0, Y=1$ case in the population
+* any $X=0, M=1, Y=1$ case in the population
+
+#### Priors (Chain model)
+
+In the top row, we see our pure prior on these queries before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0. 
+
+Moving across the row, we see our prior beliefs for cases with more specific features. For cases with $X=1, Y=1$, our priors imply a positive effect 25\% of the time.^[This belief arises from a straightforward calculation involving the different combinations of nodal types that could generate $X=1, Y=1$ and their prior probabilities.] As we have flat priors over $M$'s type and its effects on $Y$, conditioning $M$'s value leaves this belief unaffected. By a parallel logic, the model and flat priors imply the belief that 0.25 of all $X=0, Y=1$ cases to involve a negative effect of $X$ on $Y$.
+
+In the next row, we see how the initial set of 6 $X,Y$ observations shift our beliefs. In this model (as there is no confounding) a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a larger expected effect for a randomly selected case as well as for an $X=1, Y=1$ case since we now think there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1. (Again, conditioning on $M$'s value has no effect since we still have no information to shift us off our flat priors relating to $M$'s causes or effects.) Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.]
+
+#### $N=1$ strategies (Chain model)
+
+Now, what can we learn by selecting a single case for process tracing, that is, the observation of the additional clue, $M$? We assume here, specifically, that we observe $M=1$ when we go looking for $M$. We can see in the third and fourth rows how our beliefs shift if we observe $M=1$, respectively, in one case *on* the regression line (an $X=Y=1$ case) or in one case *off* the regression line (an $X=1, Y=0$ case). We see that we cannot learn anything about the causal effect of $X$ on $Y$---whether unconditionally, conditioning on $X=Y=1$, or conditioning on $X=0, Y=1$---from observing $M=1$ in an $X=Y=1$ case. Nor can we learn about these quantities from process-tracing in a single off-the-line case. To see why, let's first take the on-the-line strategy. Not having observed $M$ previously, we still have flat priors over the nodal types governing $X$'s effect on $M$ and $M$'s effect on $Y$. That is to say, we still have no idea whether $X$'s positive effect on $Y$ (where present) more commonly operates through a chain of positive effects or a chain of negative effects. Thus, the observation $M=1$ in an $X=1, Y=1$ case is equally consistent with a positive $X \rightarrow Y$ (to the extent that effect operates via linked positive effects) and with no $X \rightarrow Y$ effect (to the extent positive effects operate through linked negative effects). Observing $M=1$ in an $X=1, Y=1$ case therefore tells us nothing about the causal effect in the typical case or in the typical $X=Y=1$ case. Similarly, we have no idea whether $X$'s negative effect on $Y$ (where present) operates through a positive-negative chain or a negative-positive chain, making $M=1$ in an $X=1, Y=0$ case equally consistent with a negative or null $X \rightarrow Y$ effect, yielding no information about whether a random $X=0, Y=1$ case has a negative or null effect. (By a similar logic, observing $M=1$ in the $X=1, Y=1$ case is uninformative about negative effects in an $X=0, Y=1$ case, and observing $M=1$ in an $X=1, Y=0$ case tells us nothing about positive effects in an $X=1, Y=1$ case.)
+
+Interestingly, however, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$. Recall that the $X,Y$ pattern tells us that (with respect to the $X \rightarrow Y$ relationship) there are relatively more $b$'s than other types in the population. This means, in turn, that an $X=1, Y=1$ case is more likely to be a $b$ than a $d$. If we now observe $M=1$ in an $X=1, Y=1$---a case we think is probably a $b$---we now have reason to believe that positive $X \rightarrow Y$ effects operate through a positive $X \rightarrow M$ effect followed by a positive $M \rightarrow Y$ effect. (And had we seen $M=0$ in this case, we'd believe positive effects more likely operate through a negative effect followed by a positive effect.) Put differently, we now believe that $M=1$ in an $X=1, Y=1$ case is a clue that that case is likely a $b$ type---and our belief about the causal effect in an $X=1, M=1, Y=1$ case shifts upward. It shifts upward in two senses. 
+
+Thus, while we do not learn about the overall population from an N=1 process-tracing exercise, process-tracing in that single case does make $M$ *informative* about *other* cases. We can see this by comparing our beliefs about an $X=1, M=1, Y=1$ case in the row in which we have only observed the $X,Y$ correlation to our beliefs about that same kind of case in the row in which we have process-traced in an on-the-line case. While in the first instance conditioning on $M=1$ has no impact on the estimated causal effect (because we haven't previously learned about $M$), it does have an impact in the latter instance.
+
+We also see that our belief about the causal effect in an $X=0, M=1, Y=1$ case shifts upward. Why? Updating toward the belief that positive effects --- which we believe to be relatively common --- more often operate via linked positive positive effects implies that $X$ more often has a positive than a negative effect on $M$. Yet for an $X=0, M=1, Y=1$ to be a case with a negative causal effect, $X$'s effect on $M$ would have to be negative. Thus, interestingly, evidence from *on* the regression line can inform inferences about cases *off* the regression line via information about mediating processes.
+
+FLAG: Haven't figured out why seeing M=1 in an X=1, Y=0 case reduces the estimated causal effect for an X=1, M=1, Y=1 case relative to just seeing the X,Y pattern. If we see M=1 in this off-line case, we have evidence in favor of X having a positive effect on M, and M having a negative effect on Y. So this should generally speak against positive effects in  X=1, M=1, Y=1 cases. But if we'd seen M=0, wouldn't this have the same effect? It would suggest negative X->M effects and positive M->Y effects, which would also speak against a positive effect in an  X=1, M=1, Y=1 case. So how does observing M help?
+
+We see even stronger learning about an off-the-line $X=0, M=1, Y=1$, however, if we process trace off-the-line. The observation of $M=1$ in an $X=1, Y=0$ case counts as evidence against the operation of *both* steps in the causal chain through which $X$ could have a negative effect on $Y$ in an $X=0, M=1, Y=1$ case: it suggests that $X$'s effect on $M$ is more likely positive than negative *and* that $M$'s effect on $Y$ is more likely negative---precisely the opposite of what would have to be true for a negative effect to emerge in this kind of case. Thus, we now think this kind of case is less likely to involve a causal effect.
+
+#### $N=2$ Strategies (Chain model)
+
+Next, we consider the process tracing of *two* of our cases. Now, because we are observing $M$ in two cases, we can learn from the variation in $M$ across these cases---or, more specifically, from its covariation with $X$ aand with $Y$. In other words, there is a critical difference between process tracing one case and process tracing two cases. When we only process trace one case in a setup like this one, we do not learn about causal effects in the cases we process-trace because we have no information about intermediate causal effects (e.g., whether they are more likely positive or negative). Thus, while we have pointed out that observing $M$ within a case can lend $M$ probative value for *other* cases in which we might choose to observe $M$, $M$ has no probative value *for* that one case. In contrast, if we observe $M$ in two or more cases, we *do* learn about causal effects for those cases because of the leverage provided by observing covariation between the process-tracing clue and other variables.
+
+We consider first, in the 5th row, a situation in which we look at $M$ in two on-the-line cases, an $X=Y=0$ case and an $X=Y=1$ case, and where we observe $M=0$ in the first case and $M=1$ in the second case. What we are seeing, then, is that $M$ covaries with both $X$ and $Y$. Seeing that the mediator covaries across cases with both the cause and the outcome is evidence of a causal effect of $X$ on $Y$. Since the observed pattern covariation is consistent with a positive effect (linked positive effects), our belief about the unconditional effect of $X$ on $Y$ goes up. For the same reason, so too does our belief about the causal effect conditional on $X=1, Y=1$. 
+
+We see an even bigger boost in our estimate of the effect in an $X=1, Y=1$ case conditional on $M$ also being 1. Two things are generating this upward updating. First, just as for the unconditional estimate and the estimate conditional on $X=1, Y=1$, the process tracing generates a stronger belief that $X$ generally has a positive effect on $Y$. Second, as for the $N=1$ process tracing, seeing $M=1$ in two on-the-line cases (which we already believe are mostly positive-effect cases) makes $M$ informative as a clue in favor of a positive effect---indeed, more informative than if we'd only seen $M=1$ in one on-the-line case.
+
+Moving across the columns, we also see that process-tracing the on-the-line cases and finding evidence consistent with positive effects in those cases leads us to update in favor of *negative* effects as well, conditional on $X=0, Y=1$ (including conditional on $M=1$). Why is that? 
+
+Our answer is somewhat speculative, but we think there are two things going on. One is simply that the correlations between $M$ and $X$ and between $M$ and $Y$ across the two process-traced cases constitutes evidence of *effects*, period, at the intervening steps---a necessary condition for *any* $X \rightarrow Y$ effect, positive or negative. So, for an $X=0, Y=1$ case, a stronger belief that $X$ has some effect on $M$ and that $M$ has some effect on $Y$ implies a strong belief in a negative $X \rightarrow Y$ effect. 
+
+The second thing that is probably going on is constraint imposed by prior beliefs. Having seen the $X,Y$ data, we have previously formed a belief that the *average* effect of $X$ on $Y$ is 0.05. When we find evidence in favor of positive effects, we update to a set of beliefs that are a compromise between the new data and prior beliefs. On the one hand, we upwardly update on the unconditional $X \rightarrow Y$ effect. On the other hand, our beliefs are constrained from moving *too* far away from an unconditional effect of 0.05. Recall that, in a binary setting, the average effect in a population is the share of cases with positive effects minus the share with negative effects. Thus, the conservative influence of our priors means that, as we upwardly update on positive effects, we also upwardly update our beliefs about the prevalence of *negative* effects, though not by as much, with the result that our beliefs about the unconditional effect do not shift as much as they would if we had had flat priors. By anchoring our beliefs about average effects, then, the prior $X,Y$ evidence means that any evidence in favor of positive effects also constitutes evidence in favor of negative effects. 
+
+To put this point another way, while we learn *directly* about positive effects from process-tracing the on-the-line cases since these are cases in which positive effects can possible occur. And we then learn *indirectly* about negative effects from these cases *via* the prior-imposed constraint on the average effect.
+
+Now, supppose we chose the same case-selection strategy---we examine two on-the-line cases, from opposite cells---but instead of observing $M$ covary with $X$ and $Y$, $M=1$ in both cases. We see the results in the 6th row. This data-realization, under the same strategy, represents clear evidence *against* positive effects, while also counting against *any* effects. We have observed that $M$ is unresponsive to changes in $X$, and that $Y$ varies without $M$ varying---null effects at both stages of the chain. Now we see that our posterior on the unconditional effect drops to 0, and we see a sharp movement toward zero conditional on $X=1, Y=1$, representing our updated belief that there are few positive effects. Interestingly, whereas conditioning additionally on $M=1$ generated in a *higher* estimated effect when we observed $M$ correlated with $X$ and $Y$, it generates a *lower* estimated effect when we observe $M=1$ in both cases. One reason is likely that we have updated our belief about $\theta^M$ such that we now believe that $X=1, M=1$ cases are more likely to be $\theta^M_{11}$'s (no effect) than $\theta^M_{01}$'s. We have not similarly updated with respect to $X=1, M=0$ cases and the $\theta^M_{00}$'s than $\theta^M_{10}$ shares. Thus, for an $X=1,Y=1$ case, additionally specifying that $M=1$ implies an even higher likelihood that the case contains a null effect. 
+
+For $X=0, Y=1$ cases, we see similar movements toward zero, reflecting the fact the $M$ pattern speaks against any effects. And, again, the movement is stronger when we condition on $M=1$.
+
+Finally, we consider an off-the-line $N=2$ strategy and two possible data-realizations under that strategy. We select for process tracing one $X=1, Y=0$ case and one $X=0, Y=1$ case. The two possible data-realizations we consisder are that $M$ varies positively with $X$ across the two cases (7th row) or that $M=1$ in both cases (8th row). One thing we can observe immediately is that we get less leverage from this strategy: across all columns, the difference in our posterior beliefs between the two data-realizations is smaller than it is for the two data-realizations of the on-the-line strategy. For instance, while we see $0.08$ swing in the unconditional effect under the on-the-line strategy, we see only a $0.02$ swing under the off-the-line strategy.
+
+Unpacking this further, we know that we can learn directly about *negative* $X \rightarrow Y$ effects through process-tracing off-the-line cases. If we see $M$ covary positively with $X$ across these two cases---which also means covarying negatively with $Y$---we have found evidence in favor of the operation of negative $X \rightarrow Y$ effects. Hence the movement in our posterior away from 0 when we condition on $X=0, Y=1$. We also see updating away from zero for positive effects (conditioning on $X=1, Y=1$), though by a smaller amount (using the $X,Y$-data only as our baseline). Again, some of this movement is likely attributable to the constraint imposed by the prior generated from the $X,Y$ data. Some of this updating is also likely attributable to the fact that we have found evidence against null intermediate effects.
+
+Curiously, under this strategy and data-realization, our beliefs about effects conditional on $X=0, M=1, Y=1$ move in the *opposite* direction from our beliefs conditional just on $X=0,Y=1$. Why might this be? This is likely because of the way in which the process-tracing has lent probative value to $M$. The pattern of $M$ data is most consistent with any negative $X \rightarrow Y$ effect operating via a *positive* $X \rightarrow M$ effect followed by a *negative* $M \rightarrow Y$ effect. Yet the intermediate effects would have to have the opposite sign for $X=0, M=1, Y=1$ to be consistent with an $X \rightarrow Y$ effect. In other words, $M=1$ rules out the likeliest way in which an $X=0, Y=1$ case could contain an effect. 
+
+If on the other hand we observe $M=1$ in both off-the-line cases, we have found "direct" evidence against the operation of negative effects. Hence the the strong movement of our posterior toward 0 for effects conditional on $X=0, Y=1$ and, even more so, if also conditioning on $M=1$ (since we now have evidence that $M=1$ cases are more likely $\theta^M_{11}$'s than $\theta^M_{01}$'s). Likewise, we see upward movement in our posterior on the unconditional effect and, for reasons discussed earlier, in our posterior on positive effects (conditioning on $X=1, Y=1$).
+
+The remaining puzzle is why the learning from the off-the-line strategy is weaker than the learning from the on-the-line strategy. Both strategies generate symmetrical opportunities to observe an $M$ pattern that is consistent or inconsistent with causal effects. We believe there are two reasons, both relating to the fact that we learn "directly" about positive effects from the on-the-line strategy (and "indirectly" about negative effects) and that we learn "directly" about negative effects (and "indirectly" about positive effects) from the off-the-line strategy. 
+
+The first, more mechanical reason is that we start, given the $X,Y$ data, with a higher and higher-variance posterior on the prevalence of positive effects as compared to negative effects. So there is simply more scope for the data to influence our beliefs about positive effects, and the on-the-line cases are those in which we can learn "directly" about positive effects. Note, for instance, the $0.17$ differential in beliefs about effects conditional on $X=1, Y=1$ depending on what we observe under the on-the-line strategy, as compared to the $0.1$ differential for effects conditional on $X=0, Y=1$ under the off-the-line strategy.
+
+The second reason is prevalence: given the $X,Y$ correlation, we believe that there are more cases out there that potentially contain positive effects than there are cases that potentially contain negative effects. Thus, *whatever* it is we learn about positive effects is going to have a bigger impact on our beliefs about the population as a whole than is whatever we learn about negative effects. Since on-the-line case yield the most direct learning about positive effects, they are therefore the most informative about the population.
+
+Note, importantly, that this finding is consistent with recommendations in the literature to investigate on-the-line cases (@Lieberman2005nested, @goertz2017multimethod).^[We set aside here Lieberman's recommendation to choose off-the-line cases for discovery-oriented "model-building" because we see that enterprise as distinct from the estimation endeavor to which our analysis is oriented.] Yet, the reason is very different. Lieberman and Goertz emphasize the importance of examining cases where the theorized mechanism connecting $X$ to $Y$ might potentially play out, arguing that this would be in the set of cases that conform to theory in their $X,Y$ values. We would emphasize that, in the causal-model framework, one *can* learn about both overall effects and intermediate effects from off-the-line cases. The reason why on-the-line cases is simply that they are more *representative* about the universe about which we aim to learn (assuming we want to learn about the population from which the $X,Y$ pattern is drawn).  
+
+
+
+#### Two-path model
+
+Case-selection strategies depend on the model. To see this, consider the results of the same analysis conducted for a two-path model in which $X$ can have both an indirect effect on $Y$ via $M$ and a direct effect on $Y$. We first examine a version with flat priors over all nodal types and then a version in which we impose some monotonicity restrictions. 
+
+In Table XXXXXX, we see the results of the case-selection exercise for a two-path model with flat priors. The takeaway here is simple: it does not matter what kind of case(s) we choose for process-tracing because nothing can be learned from observing $M$. We learn about effects from the $X,Y$ data. But, after that, adding observations $M$ yields no change in beliefs. The reason, we think, is the combination of the double pathway and uninformtativeness of priors. We go in with a flat distribution across nodal types $\theta^M$ and nodal types $\theta^Y$. We then acquire some information on the $X \rightarrow Y$ effect from the $X,Y$ data, but those effects are equally consistent with all possible pathways---direct, indirect, or combined. Suppose we then find evidence that cuts against the operation of the indirect pathway: $M=1$ is observed in two on-the-line cases with different $X$ values. So we downgrade the probability of $\theta^M_{01}$ relative to $\theta^M_{11}$. However, we are still able to preserve our prior on the effect of $X$ on $Y$ (whether conditional or unconditional) by updating our beliefs about $\theta^Y$ in a manner that places greater weight on direct effects. To put the point in the language of levels of theory: high flexibility in our lower-level beliefs impedes learning about higher-level quantities from observations at the lower level. This is true regardless of which quadrants we select our cases from.
+
+The situation changes, however, if we come in with informative beliefs at the lower level. In Table XXXXXXX, we see results for a two-path model with restrictions, such that negative $X \rightarrow M$ and negative $M \rightarrow Y$ effects are ruled out. 
+
+FLAG: Cannot yet see why we learn more from the restricted 2-path model than from the flat 2-path. Yes, we can learn from n=1 about the indirect path. But in both cases, we can still have compensating updating on the direct path for anything we learn about the indirect path. In fact, the prior probability of positive effects on each path is very similar across the two models. Ignoring interactions, for indirect path, b share is like 1/8 in flat model, and 1/9 in restricted, vs. 1/4 for direct path. Is it just that the learning about the indirect path is stronger with restricted priors because M starts out as informative about the indirect path? So the learning about the indirect path more easily swamps the prior?
+
+FLAG: Incorporate as needed above and below any implications of Jeffreys priors.
+
+
+#### Moderation models
+
+
+
+
+## Wide or Deep
 
 We continue our journey through the space of research-design choices. Suppose, now, that we have identified those clues that will be most informative, given our beliefs about the world. A further question that we face is the quintessential dilemma of *mixing* methods: what mixture of quantitative and qualitative evidence is optimal? We have, of course, argued in in Chapter \ref(mixing) that the distinction between quantitative and qualitative inference is, in a causal-model framework, without much of a difference. But here we are framing a more precise question: given finite resources, how should we trade off between studying a larger number of cases and drilling down to learn more about some subset of the cases in our sample? How should we decide between going "wide" and going "deep"?
 
@@ -23,7 +590,7 @@ Just as with the selection of clues and cases, how much we should expect to lear
 We examine here both queries commonly associated with extensive, quantitative strategies of analysis (such as average treatment effects) and queries commonly associated with more intensive, qualitative approaches (queries about causal pathways and about causal effects at the case level). The analysis in this chapter makes clear the opportunities for integration across these lines of inquiry. We show that investing in-depth process tracing will sometimes make sense even when one aims to learn about average effects in a population. Likewise, collecting $X, Y$ data can sometimes help us draw inferences that will aid in case-level explanation. Particular kinds of case-level information can teach us about populations, and understanding population-level patterns can help us get individual cases right. 
 
 
-## Developing some intuitions
+### Developing some intuitions
 
 To build up our intuitions about how the optimal mix of strategies might depend on how the world works, let us explore a simple example. We focus here on the question of how much we can learn from drilling deeper, given an initial set of $X,Y$ data and beliefs about the world. To simplify the exposition, we revert here to using our four basic causal types from Chapter \ref(models): $a, b, c, and d$.^[For this illustration, we just need to keep track of $b$ (positive effect), $a$ (negative effect), and $d$ (no effect, $Y$ fixed at $1$).]
 
@@ -47,7 +614,10 @@ We consider what happens as the number of cases on which we collect $K$ increase
 
 We would expect that seeking a clue in a case---which, in this simulation, always delivers evidence consistent with a positive causal effect in that case---will lead the researcher to believe there are more $b$ types and that there is thus a higher average causal effect. But how strong will these shifts be? And how does the amount of belief change depend on the amount of $X, Y$ data available and the underlying data-generating process? When does the signal from the $X,Y$ data drown out any signal from the $K$ data, and when does $K$ data add value?
 
-Figure \ref{morn} reports answers to these questions. In the top row, we report the average causal effect that we will estimate for different combinations of $X,Y$ and $K$ data. In the bottom row, we show the reductions in uncertainty (posterior variance) that we get with each strategy. On the left, we allow for unobserved confounding, and on the right we have random assignment. Each curve represents a different sample size for which we have $X,Y$ data. The number of cases in which we go "deep," collecting $K$ data, is represented on the horizontal axis. 
+Figure MISSING reports answers to these questions. In the top row, we report the average causal effect that we will estimate for different combinations of $X,Y$ and $K$ data. In the bottom row, we show the reductions in uncertainty (posterior variance) that we get with each strategy. On the left, we allow for unobserved confounding, and on the right we have random assignment. Each curve represents a different sample size for which we have $X,Y$ data. The number of cases in which we go "deep," collecting $K$ data, is represented on the horizontal axis. 
+
+
+
 
 1. With unobserved confounding, we see clear gains to collecting clues on a greater number of cases across the 1 to 5 range. Collecting clue information on a greater number of cases shifts our beliefs about the average causal effect and reduces our uncertainty about that quantity. Moreover, with unobserved confounding, the value of the clue information is *independent* of how many $X,Y$ cases there are. 
 
@@ -64,797 +634,42 @@ However, we can learn about average effects from clue data when we have few $X,Y
 `r flag()` Can we show the heterogenity point graphically, too? Seems odd to say it's not visible when we could make it so.
 
 
-## Diagnosing mixes
-
-The stylized example above is intended to help us see how our choices about depth vs. breadth can depend on the process through which we believe the data have been generated. Our more general point is that we can systematically assess different possible mixes of extensiveness and intensiveness given a causal model and any data that have already been observed. 
-
-The basic procedure, in `gbiqq`, is as follows. 
-
-1. **Define a model.** Specify the causal graph (possibly with unobserved confounding), any restrictions on causal effects, and any priors over parameters. We consider five different models: 
-
-* One-path model, with a single, mediated path
-* Two-path model, with a direct and an indirect path 
-* Restricted model, the two-path model with monotonicity restrictions, excluding negative effects at each step
-* Observed-confound model, in which there is only a direct $X \rightarrow Y$ path and the clue is a confound 
-* Unobserved-confound model, the chain model with unobserved $X$ <-> $Y$ confounding
-
-2. **Specify the given data.** We imagine starting with a certain amount of $X,Y$ data, from 32 cases, and we vary the pattern in those data.^[We need to start with some given data to imagine strategies that involve going "deep" without going "wide"; that is we have to already have some cases within which additional data can be collected.] The given data patterns we examine are a strong positive $X,Y$ relationship; the absence of any $X,Y$ relationship; a pattern suggestive of $X=1$ being almost sufficient for $Y=1$; and a pattern suggestive of $X=1$ being almost necessary for $Y=1$.
-
-3. **Specify wide and deep data strategies.** In examples below, we assume a baseline set of $X, Y$ data that have already been observed. We pose the wide-vs.-deep question at the margins: how much do we expect to gain from collecting $X,Y$ data for a given number of additional, randomly selected cases, and how much from looking for a clue, $M$, within a given number of cases in our sample (for which we already have $X,Y$ data)? To simplify the analysis, we assume that clue data are sought on a positive regression line, with half sought in the $X=0, Y=0$ cell and half in the $X=1, Y=1$ cell. A data strategy is defined as a combination of width and depth: adding $X,Y$ data on 0, 2, or 4 cases, and hunting for a clue within 0, 2, or 4 cases.
-
-4. **Formulate queries.** As our discussion in the last section already suggests, the optimal mix may depend on the causal question we are interested in answering. We assess learning about three distinct causal queries:
-
-* Average treatment effect
-* Probability of positive causation: the probability that $X=1$ caused $Y=1$ in an $X=Y=1$ case? 
-* Probability of mediated positive causation: the probability that $X=1$ caused $Y=1$ through a particular mechanism --- a positive effect of $X$ on $M$ and a positive effect of $M$ on $Y$ --- in an $X=Y=1$ case.
-
-It is worth noting that the second two queries are conditioned on particular $X,Y$ values but that the data strategies we are examining in these analyses do not limit our inquiry to those values. The "wide" component of any strategy is a random draw from the population; and the "deep" componeny involves looking *both* in the $X=Y=1$ cell *and* in the $X=Y=0$ cell. Of course, it is not hard to imagine that seeing what is going on in an $X=Y=0$ case could be informative about causal relations in an $X=Y=1$ case.
-
-5. **Diagnose each strategy, conditional on model and given data.** For each strategy, we implement a separate diagnosis under each combination of model and given data, using `gbiqq`'s `diagnose_strategy` function. For each strategy, model, and given data pattern, the function:
-
-* identifies all possible new data realizations
-* calculates the probability of each possible data realization
-* updates posterior distributions on all parameters for each possible data realization
-* calculates expected posteriors on all parameters by averaging across posteriors from all possible data-realizations, weighted by their probability of arising
-* uses the expected posteriors on parameters to generate expected posterior distributions on each of the specified queries.
-
-What we are interested in is the expected variance of the posteriors, which tells us how uncertain we expect to be about our estimate after implementing the strategy, given the model and the given data.^[While we also might expect the posterior mean to change depending on what data-realization we encounter, the *expected* posterior will be equal to the prior mean since any beliefs about what we are most likely to find are already reflected in the prior.] A greater reduction in expected posterior variance implies greater expected learning from the strategy. 
-
-The results of these diagnoses are represented in Figures **flag: labels here**. In each figure, we consider learning about all three queries under a single model, with each row of subplots considering a different pattern of given data as the starting point. The "wide" data strategies (collecting $X, Y$ data for an additionl 0, 2, or 4 randomly selected cases) are represented by movement across the columns of subplots; the "deep" strategies (collecting a clue for 0, 2, or 4 $X=Y$ cases within the sample) are represented within each subplot. Within each subplot, we provide the expected posterior variance for a particular level of "width" and given data, providing error bars representing 95 percent of the simulation variability.
-
-We summarize key features of the results, and suggest some intuitions that might explain them, for each model in turn. Whemn referring to unit types, we continue here to use our simpler $a, b, c, d$ notation to help simplfy the discussion. We should also note that the setup of these simulations is, in some sense, generically tilted against breadth in the sense that we always assume that we have collected a moderate amount of $X, Y$ data, and no data on $M$, prior to making the choice. We are thus likely to be at a steeper point on the "yield curve" when it comes to $M$ data than for $X, Y$ data. This is, of course, mostly an idiosyncratic feature of these particular experiments, rather than a fundamental feature of optimizing across strategies. So we encourage readers to pay more attention to the differences in the relative gains to depth and breadth across models, queries, and given-data patterns rather than to the average relative differences.
-
-
-### 1-path model
-
-**$ATE$**
-
-One striking feature of the simulations with a 1-path model is how difficult it is to learn about average effects from either additional depth or additional breadth. We see less learning about the $ATE$ than about other queries for all data-mixes examined here. 
-
-We learn the most about the $ATE$ when we start with data consistent with a strong treatment effect (regr). If we examine the tradeoffs here, we see that -- if we're going to collect more data on two cases -- process tracing two cases already in the sample yields about as much expected gain as expanding the sample by two cases on which we collect only $X, Y$ data. There are hints that the tradeoff shifts slightly as we move to the right: process tracing 4 cases may be marginally better than expanding the $X,Y$ sample by 4 cases. Likewise, a mix of 4-deep and 2-wide looks slightly better than the reverse (4 wide and 2 deep). For both comparisons, however, the apparent differences are well within the simulation error intervals. We do not see clear evidence here of gains from mixing *per se* -- i.e., that we learn more about the ATE from mixing forms of data than from concentrating our efforts on either depth or breadth. 
-
-The potential for learning weakens as the given data pattern weakens. The opportunity to learn, from either greater extensive or greater intensive data-collection, is weaker for given data suggestive of necessity or sufficiency (which are, essentially, both moderately strong positive correlations) and essentially disappears when we start with completely flat data. This effect is likely driven by the level of uncertainty that the model plus the given data leave us with. At the extreme, flat priors on the original model plus flat data together make us quite certain that the $ATE$ is 0; this very low uncertainty is evident from the position of the ATE line in the row of graphs for flat given data. This leaves very little expected scope for additional learning. 
-
-Suppose, for instance, that we were to collect clue data on two $X=Y=1$ cases that yielded evidence that these cases were likely $b$ types. We would now update our beliefs toward thinking that there are more $b$'s than $d$'s in the $X=Y=1$ cell. However, given our high level of certainty that the $ATE=0$, we would then also upwardly update our beliefs about the share of $a$ types, preserving our original $ATE$ estimate. In principle, observing new $X,Y$ data that deviated from a flat pattern could shift our beliefs about the ATE. But, given current beliefs, we strongly expect *not* to observe such a data pattern, and so this hypothetical outcome has little effect on the learning we expect to reap from collecting more data.
-
-On the other hand, when we start with flat priors and then observe a strong positive correlation in the given data (regr), such that the priors and given data pull in opposite directions, we bring a more dispersed (new) prior distribution to the design problem. This greater prior uncertainty allows the new data to move our beliefs much more.
-
-
-**ProbPos**
-
-When it comes to estimating the probability of causation -- is there a positive causal effect in an $X=Y=1$ case? -- the tradeoffs shift somewhat. Starting with given data falling along a positive regression line, the gains to going wide appear about the same for the probability of causation as they do for estimating the $ATE$. However, depth has a distinct advantage in estimating the probability of causation that it did not have for the $ATE$: the gains to process tracing 2 (or 4) cases are much greater than the gains to collecting $X,Y$ data on an additional 2 (or 4) cases. In fact, we expect to be better off going deep into 2 cases than expanding the sample by 4 cases. 
-
-Why might depth be of greater value in assessing the probability of causation than in estimating the $ATE$? The reason is likely that process tracing helps us estimate the share of types in a manner more directly related to the probability of causation than to the $ATE$. When we conduct process tracing on an $X=Y$ case, we are learning about the probability that that case is a $b$ type, rather than a $c$ (for $X=Y=0$ cases) or a $d$ (for $X=Y=1$ cases). Whether we are in the $X=Y=0$ cell or the $X=Y=1$ cell, we can then update our beliefs about the share of cases in the $X=Y=1$ that are $b$'s.^[Since the model assumes exogenous assignment of $X$, the updating for the two cells will in fact be identical.] This is exactly the quantity of interest for the probability of causation question: if I see an $X=Y=1$ case, what are the chances $X=1$ caused $Y=1$ (is it a $b$?)? 
-
-On the other hand, updating on the share of $b$'s versus $c$'s and $d$'s gives us only indirect leverage on the $ATE$ (the share of $b$'s minus the share in $a$'s) since it contains no direct information about the share of $a$'s. If we observe evidence of an additional handful of $b$ cases, any upward shift in our beliefs about the $ATE$ will be constrained by our prior beliefs (given the existing data) about the $ATE$. Our updating will be some combination of upward movement in the $ATE$ estimate and upward movement in our estimate of the share of $a$'s (which moderates the change in the $ATE$ estimate).
-
-We also see here evidence of a substitution effect between depth and breadth. As the amount of process-tracing data increases, it appears that the gains to adding $X,Y$ data diminishes.^[This does not seem to simply be a function of generic diminishing returns to data as the gains appear linear within a given type of data.]
-
-As for the $ATE$, flatter prior data in combination with our initial flat priors also limits learning about the probability of causation, for all kinds of data. We do, however, continue to see an advantage of depth over breadth, regardless of the given data pattern. And we expect slightly more learning from additional data given a "necessity" pattern in the prior data than given a "sufficiency" pattern. This is probably because, given the necessity pattern, we start out with a higher estimate of the probability of causation and more uncertainty.^[The necessity pattern has fewer $X=0, Y=1$ cases than does the sufficiency pattern, implying a lower likelihood that an $X=Y=1$ case *would* still have $Y=1$ if $X$ were 0.]
-
-**Via_M**
-
-What if we want to learn about the probability that, in an $X=Y=1$ case, $X$ had a positive effect on $Y$ through a chain of positive effects running through $M$? Of course, in this model, if there *is* an effect in an $X=Y=1$ case, it has to be positive and it has to run through $M$. So the query reduces here to asking about (a) the probability that there is an effect in an $X=Y=1$ case and (b) the probability that it runs through linked positive effects as opposed to linked negative effects. What can we expect to learn about these questions from going wide as compared to going deep?
-
-If we start with a strong regression pattern, we can expect to reap very large gains from drilling deeper within the current sample, far greater than from expanding the $X,Y$ dataset. The reason is straightforward: while $X,Y$ data alone can speak to one part of the query -- the probability of an effect -- they are completely silent on the other part -- whether the effect operates through linked positive or linked negative effects. Meanwhile, data on $M$ can speak to *both* parts of the query, informing us about both the causal effect within a case *and* the mechanism through which it operates. 
-
-The gains to increased breadth, on its own, are considerable though they decline rapidly as we obtain clue data. We also see steeply diminishing returns to clue data itself. The sharp reduction in marginal gains on both counts is likely a consequence of our ignorance at the outset. We are starting with given data that provide no information on a key part of the query, allowing for massive early gains to seeing small amounts of relevant data but also steeply diminishing returns. This is a very different situation from the one we are in with the $ATE$ and probability of causation queries, where we have already learned a great deal from the given data.
-
-As the pattern in the given data weakens -- becoming less and less consistent with a strong effect of $X$ on $Y$ -- we again learn less from new data. Interestingly, we still do learn from new data even when flat given data have made us quite certain that there is no average effect. We do not expect to learn here from going wide since $X,Y$ data can only inform us about the overall effect, and we have seen already that (with flat given data) we expect to learn very little from new data about that effect. However, process tracing can still provide unique insight into the pathway through which positive effects in the sample take place. Still, the learning from depth is much more modest here than it is given a strong regression pattern. This is likely because, given flat data, we are much less confident that a given $X=Y$ case *has* a positive effect. 
-
-
-**2-path model**
-
-*Via_M*
-
-We start with perhaps the most surprising result for the 2-path model: learning about whether $X=1$ caused $Y=1$, in an $X=Y=1$ case via linked positive effects through $M$. Regardless of the given data, we expect to learn extremely little from observing $M$ itself! What makes this so counterintuitive is that observing $M$ seems potentially dispositive: if we see $M=0$ in an $X=Y=1$ case, or $M=1$ in an $X=Y=0$ case, we know for sure that that case fails to satisfy the query; the opposite observation leaves the query in contention. This divergence in beliefs conditional on the data-realization seems like a setup for potential learning.
-
-Perhaps less surprisingly, we also learn almost nothing about the pathway from additional $X, Y$ observations. Why is this? 
-
-The reason is that, under the 2-path model, this query defines a state of affairs that is highly unlikely to begin with. In an $X=1$ case, there is only one combination of nodal types (or unit type) that satisfies the query: we need the types in which $X$ has a positive effect on $M$; $M$ has a positive effect on $Y$ (when $X$ is at the value it takes on); and $X$ does *not* have an effect when $M$ is fixed at 1. The first of these conditions requires $\theta^M_{01}$ while the second and third jointly require $Y^_{0011}$. With four possible nodal types at $M$, 16 nodal types at $Y$, and flat priors across all nodal types, the probability of this particular combination start out as very low; the given $X, Y$ data do little to increase it, regardless of their pattern. 
-Thus, when we observe $M=0$ in an $X=Y=1$ case, say, while we now know for sure that this case does not satisfy the query, we believed this probability to be very low before we saw the data. Thus, our beliefs about the proportion of cases in the population that satisfy the query hardly budges. If we observe $M=1$ in the case, we can now continue to believe that the query might be satisfied, but that probability still edges up only slightly because there remain a large number of unit types in contention. The data pattern is consistent with all unit types involving a combination of $\theta^M_{01}$ or $\theta^M_{11}$ and any of the 8 $Y$-types in which $Y=1$ when $X=1$ and $M=1$.^[Specifically: $\theta^Y_{0001}$, $\theta^Y_{1001}$, $\theta^Y_{0101}$, $\theta^Y_{1101}$, $\theta^Y_{0011}$, $\theta^Y_{1011}$, $\theta^Y_{0111}$, or $\theta^Y_{1111}$.] And, again, only one of these 16 unit types satisfies the query.]
-
-To put the point differently, it is very hard to learn from data -- even informative data -- about a query that is at the outset very unlikely to be true. And how likely a query is to be true will depend both on how few unit types satisfy it and how much weight our priors place on those unit types.
-
-
-*$ATE$ and ProbPos* 
-
-We see that we can learn about the $ATE$ by collecting additional $X, Y$ data. Indeed, we learn about as much from greater breadth in the 2-path model as we do in the 1-path model, suggesting that learning about average effects from $X, Y$ data is fairly insensitve to the number of causal paths between $X$ and $Y$ in our model. We also can learn about the probability of positive causation in an $X=Y=1$ case from collecting additional $X,Y$ data. 
-
-In contrast, we expect to learn almost nothing about the $ATE$ or probability of causation from depth in the 2-path model, a striking contrast from the situation in the 1-path model. The reason is that, in the 2-path model with flat priors, the observation of $M$ will always eliminate a set of causal types balanced around our priors --- that is, a set of types over which the $ATE$ is equal to our prior.
-
-To see how this works, for both estimands, let us think this through for the probability of causation since any learning about the $ATE$ from depth must operate through updating on causal effects within the cases examined. Imagine that we start with an $X=Y=1$ case.^[To simplify, we set aside the given data in this illustration.] Of the original $16$ nodal types for $Y$ (given that $Y$ has two parents), now only $12$ are consistent with the data. We believe now that the probability that $X$ had a positive effect on $Y$ in this case is 0.5. The causal types in which $X$ has a negative effect on $Y$ have been eliminated. We are left with a set of causal types in which half of the probability is on those with a $0$ effect and half is on those with an effect of $1$. For instance, there are four causal types in which $M$ is fixed at $0$ and $X$ has a direct positive effect on $Y$; but there are also four types in which $M$ is fixed at $0$ and $X$ has no effect on $Y$ (whether because any effect of $X$ on $Y$ would require either a change in $M$ or $M$'s value to be $1$, or because $X$ never affects $Y$). And the probabilities of the first set sum to an equal value to those of the latter set.
-
-Now, suppose that we look for $M$ and observe $M=1$. A few things happen. 
-
- 1 We eliminate a set of causal types containing $Y$-nodal types in which $Y$ cannot be 1 when $M$ is $1$. These types are perfectly balanced around our prior of 0.5, however. To loosely illustrate, one pair of eliminated causal types are those involve either $\theta^M_{00}$ or $\theta^M_{10}$, combined with $\theta^Y_{0100}$. Both of these types are consistent with $X=Y=1$ but are *not* consistent with the additional observation of $M=1$. Under both causal types, $X$ has a positive effect on $Y$: either via a direct effect (with $\theta^M_{00}$) or a chain of negative effects (with $\theta^M_{10}$). At the same time, observing $M=1$ also eliminates a pair of causal types in which we $X$ will have $0$ effect on $Y$: those involving either $\theta^M_{00}$ or $\theta^M_{10}$, combined with $\theta^Y_{1100}$. Given the flat priors in our model and the prior observation of $X=Y=1$, both pairs of causal types have equal prior weights; their elimination thus does not move our beliefs about the probability of causation off of $0.5$.  
-
- 2 We also learn about $M$'s nodal type from observing $M=1$, and thus eliminate a set of causal types in which $M$ cannot be $1$ when $X=1$: specifically, $\theta^M_{00}$ and $\theta^M_{10}$. Yet the eliminative effect is again perfectly balanced around $0.5$. For instance, seeing $M=1$ eliminates the two causal types in which we have $\theta^Y_{0101}$ and either $\theta^M_{00}$ and $\theta^M_{10}$. In both of these, $X$ has a positive effect on $Y$. Yet seeing $M=1$ likewise eliminates the two causal types containing $\theta^Y_{1111}$ and either $\theta^M_{00}$ and $\theta^M_{10}$ -- in both of which $X$ has $0$ effect. And both pairs of types, again, have equal prior weights attached to them.
- 
-To put the point more intuitively, our model contains too little information to make $M$ informative about $X \rightarrow Y$ effects. Any observation of $M$ is equally consistent with a positive effect and with no effect; and given flat priors across these two possibilities, there is no possibility to update on either estimand. 
-
-Overall, then, if we start with a 2-path model, embedding in the model no beliefs beyond the causal linkages, our prior beliefs do not contain sufficient information to lend probative value to observation of a potential mediator, at least for the three queries examined here.
-
-
-**2-path model with restrictions**
-
-Now, suppose that we have information about the possible direction of causal effects and impose restrictions on the nodel types accordingly. In particular, imagine that we believe negative direct effects to be impossible. We would then want to set restrictions to exclude nodal types that imply a negative effect of $X$ on $M$; a negative effect of $X$ on $Y$ at any value of $M$; and a negative effect of $M$ on $Y$ at any value of $X$. How much can we learn now from depth or additional breadth?
-
-*Via-M*
-
-We appear to learn virtually nothing about our pathway query from additional $X, Y$ cases. On the other hand, we learn far more about the pathway query from within-case analysis in the restricted model than we did in the unrestricted model. The key reason is that the restrictions now substantially boost the prior probability of the query being true. While ruling out negative direct effects eliminates one nodal type at $M$ ($\theta^M_{10}$), it eliminates 10 of the 16 nodal types at $Y$ (all but $\theta^Y_{0000}$, $\theta^Y_{0001}$, $\theta^Y_{0101}$, $\theta^Y_{0011}$, $\theta^Y_{0111}$, $\theta^Y_{1111}$. Observing $X=Y=1$ (the kind of case in which we are posing the query) eliminates $\theta^Y_{0000}$. 
-
-With the causal-type space so dramatically reduced, the causal types that *satisfy* the query now have a substantially higher prior probability. Thus, when we find evidence, say, that a given case does not satisfy the query (observing $M=0$), there is far more scope (as compared to under the unrestricted model) for our beliefs about the share of cases satisfying the query to shift downward. Likewise, evidence consistent with the query ($M=1$) has more of an upward impact on beliefs when we start with a prior further from 0. 
-
-*ProbPos and $ATE$*
-
-Expected learning from breadth about the probability of causation and the $ATE$ does not look very different in the restricted than in the unrestricted model: we can still learn about both from enlarging our $X, Y$ sample. 
-
-More significantly, the restrictions now make it possible for us to learn about causal effects from observing $M$ within cases in our sample. Under the restricted model, we now will think it is a little more likely that $X$ caused $Y$ in an $X=Y=1$ case if we observe $M=0$ and a little less likely if we observe $M=1$. It is difficult to formulate a simple story aabout how this updating operates. Indeed, most readers' intuitions (as did ours) likely run in the *opposite* direction, expecting $M=1$ to generate a higher probability of positive causation than $M=0$. If causal effects cannot be negative, then isn't $M=1$ more consistent than $M=0$ with $X=1$ causing $Y=1$? This setup is, in fact, a good example of how difficult it can be to informally reason our way through inference for even fairly simple models. 
-
-One aspect of the setup that our intuitions might miss is the difference between how a model affects our *prior beliefs* on a query and how the model conditions *learning* from new evidence. It *is* the case that our restricted model implies a higher probability of positive causation *before* we see $M$ than does our unrestricted model. For instance, the prior probability of positive causation in an $X=Y=1$ case in the unrestricted 2-path model is 0.5 (assuming no given data); in the restricted model, that prior probability is 0.6. The restricted model is thus a world in which positive causation in an $X=Y=1$ case is in general more likely. However, *conditional* on being in that world, observing $M=1$ is actually less consistent with positive causation than is $M=0$.
-
-Each realization of $M$ actually pushes our beliefs in two directions. When we observe $M=1$, there is one set of implications that pushes in the direction of a higher probability of causation. One way to think about this is that, before knowing $M$'s value, we were unsure whether the nodal types $\theta^Y_{0001}$ or $\theta^Y_{0011}$ were consistent with the observations we had already made of $X=Y=1$. That is because these types are *only* consistent with $X=Y=1$ if $M=1$. Knowing that $M=1$ thus boosts the probability that a case is of one of these two types (relative to the other 3 possible $Y$-types, $\theta^Y_{0101}$, $\theta^Y_{0111}$, $\theta^Y_{1111}$). And it happens that these two types are also the types with a higher average probability of causation as compared to the other 3 $Y$-types that were consistent with $X=Y=1$.
-
-Meanwhile, observing $M=1$ also eliminates any expected effect of $X$ on $Y$ *if* the $Y-type$ is $\theta^Y_{0111}$. The reason can be straightforwardly read off this type: when the $Y$ type is $\theta^Y_{0111}$, $X$ has an effect on $Y$ *only* at $M=0$.
-
-On net, this downward effect is larger than the upward effect, leading to a net reduction in the posterior probability of causation. Likewise, seeing $M=0$ eliminates $Y$ types with a high expected effect but boosts the probability of causation for $\theta^Y_{0111}$, with the net result of increasing our posterior probability of causation. 
-
-In sum, the restrictions placed on the model generate the unevenness in weights across types that give us a foothold for learning from the clue. When observing $M$ eliminates some types and changes the probability of causation for others, the effects do not simply cancel out, as they do in the unrestricted model. 
-
-Note that learning from $M$ about the $ATE$ is also made possible by the restrictions since this learning flows from learning about causation at the case level. However, learning about the $ATE$ is going to be attenuated compared to learning about the probability of positive causation because, as discussed above, learning about the $ATE$ from within-case evidence is more indirect than is learning about the probability of positive causation. 
-
-For the $ATE$, then the expected gains to learning from a given amount of breadth (two more $X, Y$ cases) are greater than the expected gains from an equivalent amount of depth (observing $M$ within 2 cases), even after we have already observed $X, Y$ data for 32 cases. For the probability of positive causation, the breadth/depth tradeoff looks roughly balanced at this point.
-
-
-**Model with observable confound**
-
-Now we turn to an unrestricted model in which $M$ affects both $X$ and $Y$, operating as an observable confound for their relationship. What can we learn by observing a confound in this model?
-
-*Via_M*
-
-The simplest takeaway is that we can learn nothing about our pathway query, for the simple reason that we have no uncertainty about it, given the model on its own. Under this model, there is no possibility for $X$ to exert a positive effect on $Y$ *through* $M$ since $M$ is not positioned as a mediator between these two variables. Data cannot make us any more certain of this!
-
-*$ATE$ and $ProbPos$*
-
-We can see that we can learn about both the $ATE$ and $ProbPos$ both from additional $X, Y$ data and from observing $M$ within our sample. Despite the possibility of a confound, $X,Y$ data are still informative insofar as $X=1, Y=0$ and $X=0, Y=1$ observations are both inconsistent with a positive effect of $X$ on $Y$.
-
-
-
-
-
-
-
-
-
-Full set of analyses
-
-```{r modelsprepdiag, echo = FALSE, eval = TRUE}
-# Models
-
-models <- list(
-  
-  chain_model     = make_model("X->M->Y"),
-
-  base_model     = make_model("X->M->Y<-X"),
-  
-  restricted_model = make_model("X->M->Y<-X") %>%
-    set_restrictions(c(decreasing("X", "Y"), 
-                       decreasing("X", "M"),
-                       decreasing("M", "Y"))),
-  
-  obs_confound   = make_model("M->X->Y<-M"),
-  
-  unobs_confound = make_model("X->M->Y<-X; X<->Y"))
-
-gen_observed <- function(n00=1, n01=1, n10=1, n11=1,times = 1) {
-  data.frame(X = c(0,0,1,1), Y =c(0,1,0,1), M = NA, ns = c(n00, n01, n10, n11)*times) %>%
-    tidyr::uncount(ns) %>%
-    collapse_data(models$base_model, drop_family = TRUE)}
-
-# Givens
-observed <- list(
-  regr   = gen_observed(12,4,4,12),
-  flat   = gen_observed(8,8,8,8),
-  suff   = gen_observed(8,8,4,12),
-  necs   = gen_observed(12,4,8,8),
-  conc   = gen_observed(8,4,4,16))
-
-
-# Data strategies
-
-data_strats  <- {
-
-  out <- list()
-  j <-1
-  for(N_wide in c(0, 2, 4)) { for(N_deep in c(0,2,4)) {
-    
-  add <- list(N = c(N_wide, N_deep/2, N_deep/2), 
-                     withins = c(FALSE, TRUE, TRUE), 
-                     vars = list(c("X", "Y"), "M", "M"), 
-                     conditions = list(TRUE, c("X==0 & Y==0"), c("X==1 & Y==1")))
-  out[[j]] <- add 
-  names(out)[[j]] <- paste0("w_", N_wide, "_d_", N_deep)
-  j <- j+1
-  }}
-  out
-}
-
-
-# Queries
-
-queries <- list(
-  ATE = "Y[X=1]-Y[X=0]", 
-  ProbPos = "Y[X=1]>Y[X=0]",
-  via_M = "(Y[X=1] > Y[X=0]) & (M[X=1] > M[X=0]) & (Y[M=M[X=1]] > Y[M=M[X=0]]) & (Y[X=1, M=M[X=1]] == Y[X=0, M=M[X=1]])"
-)
-
-given <- list(TRUE, "X==1 & Y==1", "X==1 & Y==1")
-
-# Diagnosis function 
-
-case_selection_diagnose <- function(model, observed,  sims = 4000, ...)
-  
-  diagnose_strategies(
-    analysis_model = model,
-    data_strategies = data_strats,
-    observed = observed,
-    queries = queries,
-    given = given,
-    sims = sims,
-    fit = fit, 
-    iter = 4000,
-    refresh = 1000,
-    ...)
-
+### Results from simulations
+
+
+```{r morn, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE}
+path = "rep/wide_deep_2"
+results <- 
+  list(
+    Chain = read_rds(paste0(path, "/chain.rds")),
+    Confounded = read_rds(paste0(path, "/confounded.rds")),
+    Confounded_large_n = read_rds(paste0(path, "/confounded_large.rds")),
+    Restricted = read_rds(paste0(path, "/restricted.rds")),
+    Base = read_rds(paste0(path, "/base.rds")),
+    Chain_homogeneous = read_rds(paste0(path, "/chain_homog.rds")),
+    Chain_with_priors = read_rds(paste0(path, "/chain_with_prior.rds"))
+) %>% bind_rows(.id = "Model") %>%
+    mutate(Model = ifelse(Model == "Confounded_large_n", "Confounded", Model))
+
+short <- results %>% group_by(Model, design, Given) %>% 
+  dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5, deep = mean(deep_n), wide = mean(wide_n))  %>%
+  mutate(Estimand = ifelse(Given == "-", "Effect of X on Y", "X=1 caused Y=1")) %>%
+  mutate(Wide = factor(wide))
+
+short %>%  # filter(Model %in% c("Chain", "Confounded")) %>%
+  ggplot(aes(deep, mean_post_var, color = Wide)) +
+  geom_line() + 
+  facet_grid(Estimand ~ Model, scales = "free_y") +
+  ylab("Expected posterior variance")+ scale_x_continuous(breaks = c(0, 50, 100))
 ```
 
 
-```{r dodiagnosis, echo = FALSE, eval = FALSE}  
-## Implement
+## Principles
 
-if(do_diagnosis){
-  
-  {if(!exists("fit")) fit <- fitted_model()}
-  
-for(m in  1:length(models)) {for(g in 1:length(observed)) {	
-#  for(m in  1) {for(g in 1) {	
-    filename <-  paste0("saved/Ch12_", names(models)[m], "_",  names(observed)[g], ".rds")
-    
-    print(filename)
-    
-    write_rds(case_selection_diagnose(models[[m]], observed[[g]]), 
-              filename)
-    
-  }}
-}
-```
+*  Qualitative and quantitative data can act as partial substitutes for assessing causal effects.
+*  The *relative* marginal gains from going wider and going deeper vary with the study design. 
+* Optimal strategies might involve going deep in a subsample of cases only.
 
- Graph full set
 
-```{r basemodel, echo = FALSE, eval = FALSE}
 
-#Graph
-library(tidyverse)
-
-observed <- c("regr", "suff", "flat", "necs")
-
-process <- function(observed) {
-
- readRDS(paste0("saved/Ch12_base_model_", observed, ".rds"))$diagnoses_df %>%
-    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
-    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
-    dplyr::filter(!is.na(Deep)) %>%
-    dplyr::mutate(upper = post_var + 2*post_var_sd,
-                   lower = post_var - 2*post_var_sd,
-                   observed = observed) %>%
-    dplyr::mutate(Wide=paste0("Wide N=", Wide))
-}
-
-df <- lapply(observed, process) %>%
-  bind_rows()
-
-
-df$observed<- factor(df$observed,levels=c("flat","regr", "necs", "suff"))
-
-labs <- c("estimate | flat
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | regr
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | necs
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | suff
-ATE= ##
-Prob Pos= ##
-Via M = ##"
-)
-names(labs) <- c("flat", "regr", "necs", "suff")
-
-ggplot(df, aes(x= Deep, y=post_var)) +
-  geom_point(aes(shape=Query), size=2) +
-  geom_line(aes(linetype=Query)) +
-  facet_grid(vars(observed), vars(Wide), 
-  labeller = labeller(observed = labs)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
-  scale_x_continuous(breaks=c(0, 2, 4), limits=c(0, 4))+
-  theme_bw() +
-  theme(strip.text.y = element_text(angle=0)) +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a 2-path model")
-
-
-
-```
-
-```{r chainmodel, echo = FALSE, eval = FALSE}
-
-#Graph
-
-process <- function(observed) {
-
- readRDS(paste0("saved/Ch12_chain_model_", observed, ".rds"))$diagnoses_df %>%
-    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
-    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
-    dplyr::filter(!is.na(Deep)) %>%
-    dplyr::mutate(upper = post_var + 2*post_var_sd,
-                   lower = post_var - 2*post_var_sd,
-                   observed = observed) %>%
-    dplyr::mutate(Wide=paste0("Wide N=", Wide))
-}
-
-df <- lapply(observed, process) %>%
-  bind_rows()
-
-
-df$observed<- factor(df$observed,levels=c("flat","regr", "necs", "suff"))
-
-labs <- c("estimate | flat
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | regr
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | necs
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | suff
-ATE= ##
-Prob Pos= ##
-Via M = ##"
-)
-names(labs) <- c("flat", "regr", "necs", "suff")
-
-
-ggplot(df, aes(x= Deep, y=post_var)) +
-  geom_point(aes(shape=Query), size=2) +
-  geom_line(aes(linetype=Query)) +
-  facet_grid(vars(observed), vars(Wide), 
-  labeller = labeller(observed = labs)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
-  scale_x_continuous(breaks=c(0, 2, 4), limits=c(0, 4)) +
-  theme_bw() +
-  theme(strip.text.y = element_text(angle=0)) +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a 1-path model")
-
-
-```
-
-
-```{r restrictedmodel, echo = FALSE, eval = FALSE}
-
-#Graph
-
-observed <- c("regr", "suff", "flat", "necs")
-
-process <- function(observed) {
-
- readRDS(paste0("saved/Ch12_restricted_model_", observed, ".rds"))$diagnoses_df %>%
-    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
-    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
-    dplyr::filter(!is.na(Deep)) %>%
-    dplyr::mutate(upper = post_var + 2*post_var_sd,
-                   lower = post_var - 2*post_var_sd,
-                   observed = observed) %>%
-    dplyr::mutate(Wide=paste0("Wide N=", Wide))
-  
-}
-
-
-df <- lapply(observed, process) %>%
-  bind_rows()
-
-
-df$observed<- factor(df$observed,levels=c("flat","regr", "necs", "suff"))
-
-labs <- c("estimate | flat
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | regr
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | necs
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | suff
-ATE= ##
-Prob Pos= ##
-Via M = ##"
-)
-names(labs) <- c("flat", "regr", "necs", "suff")
-
-ggplot(df, aes(x= Deep, y=post_var)) +
-  geom_point(aes(shape=Query), size=2) +
-  geom_line(aes(linetype=Query)) +
-  facet_grid(vars(observed), vars(Wide), 
-  labeller = labeller(observed = labs)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+
-  ylim(0,.025) + 
-  scale_x_continuous(breaks=c(0, 2, 4), limits=c(0, 4)) + 
-  theme_bw() +
-  theme(strip.text.y = element_text(angle=0)) +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a Restricted Model")
-
-
-
-```
-
-```{r obs_confound, echo = FALSE, eval = FALSE}
-
-#Graph
-
-observed <- c("regr", "suff", "flat", "necs")
-
-process <- function(observed) {
-
- readRDS(paste0("saved/Ch12_obs_confound_", observed, ".rds"))$diagnoses_df %>%
-    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
-    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
-    dplyr::filter(!is.na(Deep)) %>%
-    dplyr::mutate(upper = post_var + 2*post_var_sd,
-                   lower = post_var - 2*post_var_sd,
-                   observed = observed) %>%
-    dplyr::mutate(Wide=paste0("Wide N=", Wide))
-  
-}
-
-
-df <- lapply(observed, process) %>%
-  bind_rows()
-
-
-df$observed<- factor(df$observed,levels=c("flat","regr", "necs", "suff"))
-
-labs <- c("estimate | flat
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | regr
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | necs
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | suff
-ATE= ##
-Prob Pos= ##
-Via M = ##"
-)
-names(labs) <- c("flat", "regr", "necs", "suff")
-
-ggplot(df, aes(x= Deep, y=post_var)) +
-  geom_point(aes(shape=Query), size=2) +
-  geom_line(aes(linetype=Query)) +
-  facet_grid(vars(observed), vars(Wide), 
-  labeller = labeller(observed = labs)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+ 
-  ylim(0,.025) + 
-  scale_x_continuous(breaks=c(0, 2, 4), limits=c(0, 4))  +
-  theme_bw() +
-  theme(strip.text.y = element_text(angle=0)) +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a Model with Observed Confound")
-
-
-
-```
-
-```{r unobs_confound, echo = FALSE, eval = FALSE}
-
-#Graph
-
-observed <- c("regr", "suff", "flat", "necs")
-
-process <- function(observed) {
-
- readRDS(paste0("saved/Ch12_unobs_confound_", observed, ".rds"))$diagnoses_df %>%
-    dplyr::mutate(Wide = as.numeric(sub(".*w[_]([^.]+)[_]d.*", "\\1", strategy))) %>%
-    dplyr::mutate(Deep = as.numeric(sub(".*_d_", "", strategy))) %>%
-    dplyr::filter(!is.na(Deep)) %>%
-    dplyr::mutate(upper = post_var + 2*post_var_sd,
-                   lower = post_var - 2*post_var_sd,
-                   observed = observed) %>%
-    dplyr::mutate(Wide=paste0("Wide N=", Wide))
-  
-}
-
-
-df <- lapply(observed, process) %>%
-  bind_rows()
-
-
-df$observed<- factor(df$observed,levels=c("flat","regr", "necs", "suff"))
-
-labs <- c("estimate | flat
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | regr
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | necs
-ATE= ##
-Prob Pos= ##
-Via M = ##",
-"estimate | suff
-ATE= ##
-Prob Pos= ##
-Via M = ##"
-)
-names(labs) <- c("flat", "regr", "necs", "suff")
-
-ggplot(df, aes(x= Deep, y=post_var)) +
-  geom_point(aes(shape=Query), size=2) +
-  geom_line(aes(linetype=Query)) +
-  facet_grid(vars(observed), vars(Wide), 
-  labeller = labeller(observed = labs)) +
-  geom_errorbar(aes(ymin  = lower, ymax  = upper, width = 0.15))+ 
-  ylim(0,.025) + 
-  scale_x_continuous(breaks=c(0, 2, 4), limits=c(0, 4))  +
-  theme_bw() +
-  theme(strip.text.y = element_text(angle=0)) +
-  ylab("Expected Posterior Variance") +
-  ggtitle("Wide and Deep Stategies for a Model with Unobserved Confound")
-
-
-
-```
-
-
-
-How does this approach guide researchers in making choices about research designs?
-
-We address this question with a focus  on characterizing the kind of learning that emerges from gathering different sorts of data---such ,  *under different research conditions*. We report the results here of simulation-based experiments designed to tell us under what research conditions different mixes of methods can be expected to yield more accurate inferences. We also discuss, at a high level, the implications of the framework for strategies of qualitative case-selection.  
-
-
-```{r model393}
-model <- make_model("X -> Y <- K") %>%
-  set_restrictions("(Y[X=0, K=1]==1) | (Y[X=0, K=0]==0)") %>%
-  set_parameters(c(0.01, .99, .5, .5, .25, .25, .25, .25))
-```
-
-We see that prior beliefs are for a 0 average effect which rises to approximately .5 for cases in which $K=1$ is observed and falls to -.5 for cases in which $K=0$ is observed.  
-
-```{r querymodel, echo = FALSE}
-kable(
-  query_model(model, queries = list(ATE = "Y[X=1] - Y[X=0]"), 
-              using =  "priors", 
-              given = list(TRUE, "K==1", "K==0")))
-```
-
-We see little  difference in the prior on estimands. Despite this an important difference is that the model that allows for confounding also allows for updating on confounding, which the simple model does not.
-
-```{r ch12allowconfound, echo  = FALSE}
-model_confound <-   set_confound(model, list(X = "(Y[X=1] > Y[X=0])")) %>%
-  set_parameters(c(0.001, .999, .5, .5, .2, .8, .25, .25, .25, .25)) 
-
-  q2 <- query_model(model_confound, 
-              queries = list(ATE = "Y[X=1] - Y[X=0]"), 
-              using = "priors",
-              given = list(TRUE, "K==1", "K==0"))
-kable(q2)
-
-#x <- (get_types(model_confound, query = "Y[X=1] - Y[X=0]", join_by = "|")$types)
-```
-
-We now examine inferences given different data strategies:
-
-
-```{r ch12diagnosiswd, echo = FALSE, message = FALSE}
-
-obs_fold <- function(n_fold) 
-  data.frame(X = c(0,0,0,1,1,1), Y = c(0,0,1,0,1,1), K = NA) %>%
-        slice(rep(row_number(), n_fold)) %>%
-        collapse_data(model, drop_family = TRUE)
-
-
-wd <- function(n_fold=2, sims = 600)  {
-      
-  diagnose_strategies(
-    
-   analysis_model = model,
-   
-   observed = obs_fold(n_fold),
-
-   data_strategies = list(
-     QL1 =  list(N = 1, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
-     QL2 =  list(N = 2, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
-     QL3 =  list(N = 3, within = TRUE, vars = "K", conditions = c("X==1 & Y==1")),
-     QL4 =  list(N = 4, within = TRUE, vars = "K", conditions = c("X==1 & Y==1"))),
-   
-   queries = "Y[X=1] - Y[X=0]",
-   
-   sims = sims
-   
-   )
-}
-
-if(do_diagnosis) {
-  diagnosis <- wd(2)
-  write_rds(diagnosis, "saved/ch12diagnosiswd.rds")
-  }
-
-
-# diagnosis <- read_rds("saved/ch12diagnosiswd.rds")
-
-# plot(0:4, diagnosis$diagnoses_df$MSE, ylim = c(0, max(diagnosis$diagnoses_df$MSE)), ylab = "MSE", xlab = "Cases with within case data", type = "b")
-```
-
-```{r wdXMY2, eval = FALSE}
-if(do_diagnosis){
-  wd_1_2 <- wide_or_deep(model, 1, 2)
-  write_rds( wd_1_2, "saved/wd_1_2.rds")
-}
-
-wd_1_2 <- read_rds("saved/wd_1_2.rds")
-
-
-wd_sim <- function(model, n_K, n_fold) {
-  
-    df <- data.frame(X = c(0,0,1,1), Y = c(0,0,0,1), K = NA) %>%
-      slice(rep(row_number(), n_fold))
-    df <- mutate(df, K = c(rep(1, n_K), rep(NA, n()-n_K)))
-    
-    given <-  collapse_data(df, model)
-
-    updated <- gbiqq::gbiqq(model, data = df, stan_model = fit)
-    query_model(updated, 
-                  queries = list(ATE = "Y[X=1] - Y[X=0]"), 
-                  using = "posteriors")
-  
-}
-
-if(do_diagnosis){
-  if(!exists("fit")) fit <- gbiqq::fitted_model()
-  out <- sapply(c(4,8), function(n_K) {sapply(c(2, 10, 20), function(k) wd_sim(model, n_K, k))})
-  write_rds(out, "saved/wide_or_deep_XMY.rds")
-  }
-
-wd <- read_rds("saved/wide_or_deep_XMY.rds")
-wd <- t(wd[c(4,9,14), ])
-rownames(wd) <- c("Clues on 4 cases", "Clues on 8 cases")
-colnames(wd) <- c("N=8", "N=40", "N=80")
-kable((wd))
-
-if(do_diagnosis){
-  if(!exists("fit")) fit <- gbiqq::fitted_model()
-  out <- sapply(c(4,8), function(n_K) {sapply(c(2, 10, 20), function(k) wd_sim(model_confound, n_K, k))})
-  write_rds(out, "saved/wide_or_deep_XMY2.rds")
-  }
-
-wd2 <- read_rds("saved/wide_or_deep_XMY2.rds")
-wd2 <- t(wd2[c(4,9,14), ])
-rownames(wd2) <- c("Clues on 4 cases", "Clues on 8 cases")
-colnames(wd2) <- c("N=8", "N=40", "N=80")
-kable((wd2))
-```
-
-
-
-<!-- ## Evaluating strategies -->
-
-<!-- As a metric of the returns from different research strategies we calculate the *expected* inaccuracy in the estimation of the average treatment effect, as given by: -->
-
-<!-- $$\mathcal{L}=\mathbb{E}_\theta(\mathbb{E}_{\mathcal{D}|\theta}(\tau(\theta)-\hat{\tau}(\mathcal{D}))^2) $$ -->
-
-
-<!-- where $\tau(\theta)$ is the value of $\lambda_b-\lambda_a$ (the average treatment effect) given $\theta$, and $\hat{\tau}(\mathcal{D})$  is the *estimate* of this treatment effect (the mean posterior value) that is generated following some realization of data $\mathcal{D}$. Thus, if some $\theta$ characterized the true state of the world, then $\mathbb{E}_{\mathcal{D}|\theta}(\tau^\theta-\hat{\tau})^2$ is the expected error in estimation of the causal effect given different realizations of the data, $\mathcal{D}$,  that could obtain in this state of the world.  $\mathcal{L}$ is then the expected value of these errors given prior beliefs over possible values of $\theta$. -->
-
-<!-- Note that, while we focus on errors on estimated average causal effects, similar exercises could assess how cross- and within-case observations distinctively contribute to other estimands | including the causal explanations for individual cases and the validity of causal theories | as well as to learning about inferential assumptions themselves (assignment and clue probabilities).  -->
-<!-- For all simulations, prior distributions are drawn with parameters as described in the Supplementary Materials (\S \ref{AppSimNotes}, Table \@ref(tab:sims)). Priors on the type distribution are drawn from a Dirichlet distribution; priors for each of the $\pi$ and $\phi$ values are drawn independently from Beta distributions. We note that, while by construction priors on each parameter are independent, this will not generally be the case for posterior distributions. In most cases we simulate the prior distribution using 5200 draws of each parameter. For most experiments we then systematically vary the prior distribution for one parameter of the research situation between two extreme positions. We then calculate the expected posterior from each possible data realization and, in turn, the expected loss in estimates of treatment effects for a range of levels of investment in qualitative and quantitative evidence.  -->
-
-
-<!-- A few further features of the experiments below are worth noting. First, our illustrations focus on learning about population-level causal effects; however, the model can yield results about the benefits of alternative research designs for estimating a wide range of other quantities of interest, such as case-specific causal explanations or clue probabilities. Second, while we focus on the search for a *single* clue in each case, the analysis can be extended to the case of an arbitrarily large set of clues. Third, in many of these experiments, the probative values are set at doubly decisive levels for all $\phi$ parameters, and thus focus on the very optimistic case of maximally informative process tracing. Fourth, we illustrate tradeoffs at low levels of $n$, but the model can be employed to make choices for arbitrarily large numbers of cases. Finally, we note that some results may be sensitive to the choice of priors. The results below should thus be understood as an illustration of the utility of the BIQQ framework for guiding research choices, rather than as a set of more general prescriptive design rules. -->
-
-
-
-<!-- ## Varieties of mixing {#varieties} -->
-
-<!-- What are the marginal gains from additional pieces of correlational and process-tracing evidence for the  accuracy of causal estimates? Figure \ref{morn} displays  results,  plotting the errors associated with different mixes of correlational and process data.  -->
-
-*  **Qualitative and quantitative data can act as partial substitutes for assessing causal effects**.
-*  **The *relative* marginal gains from going wider and going deeper vary with the study design**. 
-* **Optimal strategies might involve going deep in a subsample of cases only.**
-
-
-
-
-<!-- \begin{figure}[h!] -->
-<!-- \centering -->
-<!-- \includegraphics[width=\textwidth]{Figures/m_or_n.pdf} -->
-<!-- \caption{{Expected errors in the estimation of average treatment effects for designs in which $X, Y$, data is sought in $n$ studies (horizontal axis) and clue data is sought within $m$ of these. The shading of dots indicates the proportion of cases for which within-case data is sought (white = none; black = all). For small sample sizes ($n \in \{1,2,3,4\}$) we show results for all designs ($m \in \{1,2,\dots, n\})$. For larger sample sizes, we show only designs with clues sought in 0, half, and all cases.}} -->
-<!-- \label{morn} -->
-<!-- \end{figure} -->
-
-
-
-
-```{r ch13diagnosis, echo = FALSE}
-
-model <- make_model("K-> X -> Y <- K")
-
-if(do_diagnosis){
-
- data_strategies = list(
- 		N4L0 =  list(N=4, withins = FALSE, vars = list(c("X", "Y")), conditions = TRUE),
- 		N2L2 =  list(N=2, withins = FALSE, vars = list(c("X", "K", "Y")), conditions = TRUE)
- 		#,
- 		#N3L1 =  list(N=list(1,2), withins = FALSE, vars = list(c("X", "K", "Y"), c("X", "Y")), conditions = TRUE)
- 		)
- 	
- 	possible_data_list = lapply(data_strategies, function(ds)
- 		with(ds, make_possible_data(model = model, given = NULL, 
- 		N = N, withins = withins, conditions = conditions, vars = vars)))
- 	
-
-diagnosis <- 
-  
-  diagnose_strategies(
-    
-   analysis_model = model,
-   
-   possible_data_list = possible_data_list,
-   
-   data_strategies = data_strategies,
-
-   queries = "Y[X=1] - Y[X=0]",
-   
-   sims = 400
-   
-   )
-
-write_rds(diagnosis, "saved/ch11diagnosisa.rds")
-}
-
-diagnosis <- read_rds("saved/ch13diagnosis.rds")
-kable(diagnosis$diagnoses_df, digits = 3)
-
-```
-
-
-
-<!-- ## Probative value of clues -->
-
-<!-- ## Effect Heterogeneity -->
-
-<!-- ## Uncertainty Regarding Assignment Processes -->
-
-
-<!-- ## Uncertainty regarding the probative value of clues -->
 
