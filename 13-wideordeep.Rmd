@@ -457,7 +457,7 @@ In Figure \@ref(figcaseselection), we examine how different process-tracing case
 
 
 
-```{r caseselection, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs from possible data realizations"}
+```{r caseselection, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs from possible data realizations", fig.width = 10}
 
 results <- list(
   chain = read_rds("rep/case_selection/XMY_chain.rds"),
@@ -592,52 +592,76 @@ We examine here both queries commonly associated with extensive, quantitative st
 
 ### Developing some intuitions
 
-To build up our intuitions about how the optimal mix of strategies might depend on how the world works, let us explore a simple example. We focus here on the question of how much we can learn from drilling deeper, given an initial set of $X,Y$ data and beliefs about the world. To simplify the exposition, we revert here to using our four basic causal types from Chapter \ref(models): $a, b, c, and d$.^[For this illustration, we just need to keep track of $b$ (positive effect), $a$ (negative effect), and $d$ (no effect, $Y$ fixed at $1$).]
+To build up our intuitions about how the optimal mix of strategies might depend on how the world works, let us explore a simple example. We focus here on the question of how much we can learn from drilling deeper, given an initial set of $X,Y$ data and beliefs about the world.
 
-<!-- e begin by considering the learning that occurs upon observing outcomes from varying numbers of cases given different $XY$ data ranging from small to quite large.  -->
+Imagine a world in which we have lots of data on $X$ and $Y$ (2000 observations) and we see $X$ and $Y$ are perfectly correlated. We might be tempted to infer that $X$ causes $Y$ surely. If $X$ were randomly assigned then we might be able to justify that inference. Say however that our data is observational and in particular we were aware of an observed confound (gender say) that might determine both $X$ and $Y$, then what are we to infer? In that case the effect of $X$ on $Y$ is not identified. As shown by @manski1995identification,  different priors could support beliefs anywhere between 0 and 1. From @pearl2009causality we know that if the right model is $X \rightarrow Y \leftarrow M \rightarrow X$ then if we had data on $M$ the effect of $X$ on $Y$ would be identified. We could essentially find the effect of $X$ on $Y$ for men and women and take the average effect. 
 
-<!-- The goal here is to build up intuitions on how beliefs change given different observations and how this affects posterior variance. We address the question in a very controlled setting in which  -->
+Say though that we had a choice between gathering a lot *more* data on $X$ and $Y$ or gathering a *little* data on $M$ for a subset of cases---just 20 in this illustration. Which should we do? Is 20 cases enough to probe the causal model to see whether the correlation between $X$ and $Y$ is spurious or not?
 
-Suppose that:
-
-* a researcher is confronted with $X,Y$ data that exhibits no correlation; observations are balanced across the 4 cells defined by possible combinations of $X, Y$ values.
-* the researcher can seek information on a highly informative ("doubly decisive") clue, $K$, within cases in the $X=Y=1$ cell; thus, we are imagining a scenaior in which the information we will get about the case in question is about as informative about that case as it could possibly be.
-* although not known in advance, each time the researcher collects a within-case clue, she finds evidence suggesting that the case is a $b$ type.
-
-We consider two different data-generating processes: 
-
-1 There may be unobserved confounding between $X$ and $Y$, and we have flat priors over this confounding. Put differently, assignment propensities are unknown.
-
-2 There is no confounding; $X$ can be treated as randomly assigned. 
-
-We consider what happens as the number of cases on which we collect $K$ increases from 0 to 5. We also consider different amounts of initial $X,Y$ data, considering situations in which we have 5, 10, 50, and 5000 observations in each $X,Y$ cell.
-
-We would expect that seeking a clue in a case---which, in this simulation, always delivers evidence consistent with a positive causal effect in that case---will lead the researcher to believe there are more $b$ types and that there is thus a higher average causal effect. But how strong will these shifts be? And how does the amount of belief change depend on the amount of $X, Y$ data available and the underlying data-generating process? When does the signal from the $X,Y$ data drown out any signal from the $K$ data, and when does $K$ data add value?
-
-Figure MISSING reports answers to these questions. In the top row, we report the average causal effect that we will estimate for different combinations of $X,Y$ and $K$ data. In the bottom row, we show the reductions in uncertainty (posterior variance) that we get with each strategy. On the left, we allow for unobserved confounding, and on the right we have random assignment. Each curve represents a different sample size for which we have $X,Y$ data. The number of cases in which we go "deep," collecting $K$ data, is represented on the horizontal axis. 
+We get an intuition for the answer by imagining the inferences we might draw in 3 extreme cases and compare these to the base case. Figure \@ref(fig:widedeepXYMX) illustrates. The figures are generated by forming a model with $X\rightarrow Y \leftarrow M \rightarrow Y$ strong priors that $\Pr(M=1)=0.5$ and flat priors otherwise. Thus in our priors we think that $M$ is equally likely to be a 0 or 1 but do not make assumptions about how it is related to $X$ and $Y$. We then update the model with the base data and then with the base data combined with three types of additional data. 
 
 
 
 
-1. With unobserved confounding, we see clear gains to collecting clues on a greater number of cases across the 1 to 5 range. Collecting clue information on a greater number of cases shifts our beliefs about the average causal effect and reduces our uncertainty about that quantity. Moreover, with unobserved confounding, the value of the clue information is *independent* of how many $X,Y$ cases there are. 
+```{r widedeepXYMX, echo = FALSE, fig.width = 10, fig.height = 8, fig.cap = "Posteriors on the ATE given different wide or deep data patterns."}
 
-What is happening here is that the clues are providing information on assignment propensities, which are informative about the share of each type in each cell. With flat priors over assignment propensities, our beliefs are centered around equal propensities for all types (though we're also very uncertain about this). Moreover, given equal assignment propensities, the flat data $X,Y$ pattern has us believing that there the average treatment effect is 0 (also with great uncertainty). For every additional $X=1, Y=1$ for which we observe $K=1$, however, we shift upward our belief about the share of $b$'s in the cell. We are, thus, now learning about assignment propensities: now it looks like $b$ types were more commonly assigned to $X=1$, implying that $d$'s must have been more commonly assigned to $X=0$. Put differently, we are learning that the flat data pattern has arisen via confounding that is "suppressing" a positive treatment effect. 
+if(do_diagnosis){
+  
+  M <- make_model("X -> Y <- M -> X") %>% set_priors(node = "M", alpha = 100)
 
-The value of the clue data, moreover, does not depend on how many $X,Y$ cases we've observed because no amount of $X,Y$ data can tell us about $X$<->$Y$ confounding. As we see in the bottom-left graph, we end up more certain, the more $X, Y$ data we have. But there's just as much to be *gained* from a given amount of clue data whether we've started with 5 $X,Y$ cases or 5000.
+  dfM2 <- dfM1 <- df <-
+    data.frame(X = rep(0:1, 1000), Y = rep(0:1, 1000), M = NA)  
+  
+  dfM1$M[1:20] <- rep(0:1, each = 10)
+  dfM2$M[1:20] <- rep(0:1)
+  
+  out <- list(
+    base = update_model(M, df, keep_transformed = TRUE, iter = 5000) %>% 
+      query_distribution("Y[X=1]  - Y[X=0]", using = "posteriors"),
+    wide = update_model(M, rbind(df, df), keep_transformed = TRUE, iter = 5000) %>% 
+      query_distribution("Y[X=1]  - Y[X=0]", using = "posteriors"),
+    deep1 = update_model(M, dfM1, keep_transformed = TRUE, iter = 5000) %>% 
+      query_distribution("Y[X=1]  - Y[X=0]", using = "posteriors"),
+    deep2 = update_model(M, dfM2, keep_transformed = TRUE, iter = 5000) %>% 
+      query_distribution("Y[X=1]  - Y[X=0]", using = "posteriors"),
+        deep1check = update_model(M, dfM1[1:20,], keep_transformed = TRUE, iter = 5000) %>% 
+      query_distribution("Y[X=1]  - Y[X=0]", using = "posteriors")
+  )
+  
+  write_rds(out, "saved/ch13_wide_deep_histograms.rds")
+  }
 
-2. When assignment propensities are known (and so we can treat the data as experimental), the learning from clue data depends heavily on how many $X,Y$ cases we start out with. Where we have a large amount of $X,Y$ data, clue evidence adds little to nothing to our inferences about average treatment effects. There is nothing to be learned from the clues about assignment propensities since these are already known. And, with assignment propensities known, $X,Y$ information alone are sufficient for convergence on the average treatment effect as sample size increases. Clue information shifts beliefs about the types of the particular cases for which clue data is gathered --- i.e., for this case-level-estimand --- but has almost no effect on estimates of the population estimand. 
+out <- read_rds("saved/ch13_wide_deep_histograms.rds")
+par(mfrow = c(2,2))
+hist(out[[1]], main = "2000 XY observations", xlab = "ATE", xlim = 0:1, freq = FALSE)
+hist(out[[2]], main = "Add another 2000 XY observations", xlab = "ATE", xlim = 0:1, freq = FALSE)
+hist(out[[3]], main = "Add 20 M observations (a)", xlab = "ATE", xlim = 0:1, freq = FALSE)
+hist(out[[4]], main = "Add 20 M observations (b)", xlab = "ATE", xlim = 0:1, freq = FALSE)
 
-However, we can learn about average effects from clue data when we have few $X,Y$ cases. While we can infer the average causal effect from a known $X,Y$ distribution (and known assignment propensities), we have a lot of uncertainty about that distribution when we only have a handful of $X,Y$ cases. Thus, clue data help us by uniquely providing information about the types of individual cases. It is still only from observing $K=1$ in a case that we can learn that that case is a $b$ type, allowing us to update upwardly on the relative proportions of $b$'s and $d$'s. With little other information on the average effect, this pushes our belief about average effects upward.^[We also, by implication, update upwardly on the share of $a$'s relative to $d$'s in the $X=0, Y=1$ cell; but the direct learning about the $X=1, Y=1$ cell will be sharper than the indirect learning about the $a$'s, generating a net increase in the estimated average causal effect.] And, in the absence of a large amount of of $X,Y$ data, knowing there is one more $b$ and one less $d$ type still benefits from learning  
+```
 
-3. Though not visible from the figure, clue data help us learn about a different population-level estimand --- the *distribution* of causal effects in the population --- even when we have a large $N$ and known propensities. The same average causal effect could be consistent with a large share of $a$'s and $b$'s combined, with few no-effect cases, or with a small share of $a$'s and $b$'s combined, with many no-effect cases. In other words, we don't actually learn from $X,Y$ data about the distribution of types, even with a large $X,Y$ sample and known propensities. But observation of clues identifying $b$ types in the $X=Y=1$ cell, while it does not change estimates of *average* treatment effects, tells us that there is greater *heterogeneity* of effects in the population. More $b$ types, holding the average effect constant, means that there must also be more $a$ types. Thus, we have learned that there are more offsetting effects playing out in the population --- positive effects alongside negative effects --- than we knew before we saw the clue data. In fact, we learn *more* about heterogeneity from clue data where the average causal effect is already known than where we are highly uncertain about the average effect.
 
-`r flag()` Can we show the heterogenity point graphically, too? Seems odd to say it's not visible when we could make it so.
+The first panel in  Figure \@ref(fig:widedeepXYMX) shows our posterior distributions over the average effect from observation of the base data: 2000 cases with $X$ and $Y$ perfectly correlated. The distribution is quite wide given that the data is perfectly correlated. The reason is that the posterior includes our uncertainty over the nature of confounding.  Our estimate for the ATE is `r round(mean(out$base), 2)` but with posterior standard deviation of  `r round(sd(out$base), 4)`. We have positive weight on all positive value of the ATE.
+
+The second panel shows inferences in the case in which we have twice as many data points and the new points also display a perfect $X,Y$ correlation---like the first set. We coudldn't imagine data that more strongly confirms a positive relation. The main thing to note here however is that investing in gathering data on 2000 additional points does not help us very much.
+Our estimate for the ATE is `r round(mean(out$wide), 2)` but with posterior standard deviation of  `r round(sd(out$wide), 4)`. So the changes are slight.
+
+The third panel shows inferences in the case in which we again keep the number of cases fixed but now examine data on $M$ for 20 cases. In this example we imagine that $M$ is uncorrelated with both $X$ and $Y$. Our estimate for the ATE is `r round(mean(out$deep1), 2)` but with posterior standard deviation of  `r round(sd(out$deep1), 4)`. The few cases we have are enough to convince us that the $X,Y$ relationship is not spurious.  
+
+Note also that the same confidence can not be generated simply by updating on the 20 datapoints for which we have full $X$, $M$, $Y$ data---were we to use only the subset with complete data our estimate for the ATE is `r round(mean(out$deep1check), 2)` but a large posterior standard deviation of  `r round(sd(out$deep1check), 4)`.
+
+The fourth panel shows inferences in the case in which we keep the number of cases fixed but now examine data on $M$ for 20 cases. In this example we imagine that $M$ is also perfectly correlated with $X$ and $Y$. Our estimate for the ATE is `r round(mean(out$deep2), 2)` but with posterior standard deviation of  `r round(sd(out$deep2), 4)`.
+
+The lessons in this example are quite stark: in some settings, such as when there is confounding, going wide can stop aiding inference. More data of the same form does not change beliefs. However, going deep---even if only in a few cases---can add more valuable and help us figure out whether the patterns we are seeing in the wide data reflect real relations or not.
+
+
 
 
 ### Results from simulations
 
+The results in the last section were striking but they depended upon particular realizations of the data under each strategy. When selecting strategies we do not know of course how the data will look. Our problem becomes, as in the previous section, one of figuring out the expected posterior variance from different strategies. 
 
-```{r morn, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE}
+```{r morn1, fig.width = 6, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Distributions of posterior variances from many simulated datasets"}
 path = "rep/wide_deep_2"
 results <- 
   list(
@@ -651,6 +675,26 @@ results <-
 ) %>% bind_rows(.id = "Model") %>%
     mutate(Model = ifelse(Model == "Confounded_large_n", "Confounded", Model))
 
+r2 <- results %>% filter(Model == "Confounded" & wide_n %in% c(800, 1600) & deep_n %in% c(0, 100) & Case.estimand == "FALSE" & Given == "-")
+
+r2 %>%
+  ggplot(aes(sd^2)) +
+  geom_histogram() + 
+  facet_grid(deep_n ~ wide_n, labeller = label_both) + xlab("Posterior variance on the ATE")
+```
+
+
+```{r, echo = FALSE, message = FALSE}
+r2 %>% group_by(wide_n, deep_n) %>% summarize(expected = mean(sd^2))  %>% kable(caption = "Expected posterior variance on the ATE", digits = 4)
+
+```
+
+
+Figure \@ref(fig:morn1) shows the *distribution* of posterior variances we might obtain from many possible data draws, where each data draw is based on our current beliefs about the world. In this example we compare strategies with 800 and 1600 data points on $X$ and $Y$ and with 0 and 100 data points on $M$. We see here that the expected variance is lower when new data on $M$ is sought --- more data on $X$ and $Y$ does not add much in expectation. This is consistent with the analysis above with the important difference that hte strategy we use here does not depend on the specification of a particular dataset but can be applied to *any* model, with *any* query, and *any* prior data.
+
+We explore strategies for a range of models and present the results in a compact form in Figure \@ref(morn2).
+
+```{r morn2, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
 short <- results %>% group_by(Model, design, Given) %>% 
   dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5, deep = mean(deep_n), wide = mean(wide_n))  %>%
   mutate(Estimand = ifelse(Given == "-", "Effect of X on Y", "X=1 caused Y=1")) %>%
