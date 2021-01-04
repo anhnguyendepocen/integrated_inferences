@@ -32,14 +32,14 @@
   
 <link rel="prev" href="pt.html"/>
 <link rel="next" href="mixing.html"/>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
-<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
-<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+<script src="libs/jquery/jquery.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -49,7 +49,15 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<script src="libs/accessible-code-block/empty-anchor.js"></script>
+<script src="libs/htmlwidgets/htmlwidgets.js"></script>
+<link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding/datatables.js"></script>
+<link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk/js/crosstalk.min.js"></script>
 
 
 <style type="text/css">
@@ -336,7 +344,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="17.3" data-path="final-words.html"><a href="final-words.html#thinking-about-learning"><i class="fa fa-check"></i><b>17.3</b> Thinking about learning</a></li>
 <li class="chapter" data-level="17.4" data-path="final-words.html"><a href="final-words.html#worries-about-what-you-have-to-put-in"><i class="fa fa-check"></i><b>17.4</b> Worries about what you have to put in</a></li>
 <li class="chapter" data-level="17.5" data-path="final-words.html"><a href="final-words.html#limits-on-what-you-can-get-out"><i class="fa fa-check"></i><b>17.5</b> Limits on what you can get out</a></li>
-<li class="chapter" data-level="17.6" data-path="final-words.html"><a href="final-words.html#looking-ahead"><i class="fa fa-check"></i><b>17.6</b> Looking ahead</a></li>
+<li class="chapter" data-level="17.6" data-path="final-words.html"><a href="final-words.html#know-what-you-impose-when-you-impose-structure"><i class="fa fa-check"></i><b>17.6</b> Know what you impose when you impose structure</a></li>
+<li class="chapter" data-level="17.7" data-path="final-words.html"><a href="final-words.html#looking-ahead"><i class="fa fa-check"></i><b>17.7</b> Looking ahead</a></li>
 </ul></li>
 <li class="part"><span><b>V Appendices</b></span></li>
 <li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
@@ -386,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">8.2</span> A Structural Causal Model</h2>
 <p>We now need to express this background knowledge in the form of a structural causal model. Suppose that we are interested in the case-level causal effect of inequality on democratization of a previously autocratic political system. Suppose further, to simplify the illustration, that we conceptualize both variables in binary terms: inequality is either high or low, and democratization either occurs or does not occur. This means that we want to know, for a given case of interest, whether high inequality (as opposed to low inequality) causes democracy to emerge, prevents democracy from emerging, or has no effect (i.e., with democratization either occurring or not occurring independent of inequality). We can represent this query in the simple, high-level causal model shown in Figure <a href="ptapp.html#fig:dagdemochigh">8.1</a>. Here, the question, “What is the causal effect of high inequality on democratization in this case?” is equivalent to asking what the value of <span class="math inline">\(\theta^D\)</span> is in the case, where the possible values are <span class="math inline">\(\theta_{00}^D, \theta_{01}^D, \theta_{10}^D\)</span>, and <span class="math inline">\(\theta_{11}^D\)</span>. We assume here that the case’s response type, <span class="math inline">\(\theta^D\)</span>, is not itself observable, and thus we are in the position of having to make inferences about it.</p>
 <p>Drawing on the grammar of causal graphs discussed in Chapter 5, we can already identify possibilities for learning about <span class="math inline">\(\theta^D\)</span> from the other nodes represented in this high-level graph. Merely observing the level of inequality in a case will tell us nothing since <span class="math inline">\(I\)</span> is not <span class="math inline">\(d-\)</span>connected to <span class="math inline">\(\theta^D\)</span> if we have observed nothing else. On the other hand, only observing the outcome—regime type—in a case <em>can</em> give us information about <span class="math inline">\(\theta^D\)</span> since <span class="math inline">\(D\)</span> <em>is</em> <span class="math inline">\(d-\)</span>connected to <span class="math inline">\(\theta^D\)</span>. For instance, if we observe <span class="math inline">\(D=1\)</span> (that a case democratized), then we can immediately rule out <span class="math inline">\(\theta_{00}^D\)</span> as a value of <span class="math inline">\(\theta^D\)</span> since this type does not permit democratization to occur. Further, conditional on observing <span class="math inline">\(D\)</span>, <span class="math inline">\(I\)</span> is now <span class="math inline">\(d-\)</span>connected to <span class="math inline">\(\theta^D\)</span>: in other words, having observed the outcome, we can additionally learn about the case’s type from observing the status of the causal variable. For example, if <span class="math inline">\(D=1\)</span>, then observing <span class="math inline">\(I=1\)</span> allows us additionally to rule out the value <span class="math inline">\(\theta_{10}^D\)</span> (a negative causal effect).</p>
-<p>Now, observing just <span class="math inline">\(I\)</span> and <span class="math inline">\(D\)</span> alone will always leave two response types in contention. For instance, seeing <span class="math inline">\(I=D=1\)</span> (the case had high inequality and democratized) would leave us unsure whether high inequality caused the democratization in this case (<span class="math inline">\(\theta^D=\theta_{01}^D\)</span>) or the democratization would have happened anyway (<span class="math inline">\(\theta^D=\theta_{11}^D\)</span>). This is a limitation of <span class="math inline">\(X, Y\)</span> data that we refer to in <span class="citation">Humphreys and Jacobs (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span> as the “fundamental problem of type ambiguity.” Note that this does not mean that we will be left indifferent between the two remaining types. Learning from <span class="math inline">\(X, Y\)</span> data alone—narrowing the types down to two—can be quite significant, depending on our priors over the distribution of types. For example, if we previously believed that a <span class="math inline">\(\theta_{00}^D\)</span> type (cases in which democracy will never occur, regardless of inequality) was much more likely than a <span class="math inline">\(\theta_{11}^D\)</span> type (democracy will always occur, regardless of inequality) and that positive and negative effects of inequality were about equally likely, then ruling out the <span class="math inline">\(\theta_{00}^D\)</span> and <span class="math inline">\(\theta_{10}^D\)</span> values for a case will shift us toward the belief that inequality caused democratization in the case.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Now, observing just <span class="math inline">\(I\)</span> and <span class="math inline">\(D\)</span> alone will always leave two response types in contention. For instance, seeing <span class="math inline">\(I=D=1\)</span> (the case had high inequality and democratized) would leave us unsure whether high inequality caused the democratization in this case (<span class="math inline">\(\theta^D=\theta_{01}^D\)</span>) or the democratization would have happened anyway (<span class="math inline">\(\theta^D=\theta_{11}^D\)</span>). This is a limitation of <span class="math inline">\(X, Y\)</span> data that we refer to in <span class="citation">Humphreys and Jacobs (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span> as the “fundamental problem of type ambiguity.” Note that this does not mean that we will be left indifferent between the two remaining types. Learning from <span class="math inline">\(X, Y\)</span> data alone—narrowing the types down to two—can be quite significant, depending on our priors over the distribution of types. For example, if we previously believed that a <span class="math inline">\(\theta_{00}^D\)</span> type (cases in which democracy will never occur, regardless of inequality) was much more likely than a <span class="math inline">\(\theta_{11}^D\)</span> type (democracy will always occur, regardless of inequality) and that positive and negative effects of inequality were about equally likely, then ruling out the <span class="math inline">\(\theta_{00}^D\)</span> and <span class="math inline">\(\theta_{10}^D\)</span> values for a case will shift us toward the belief that inequality caused democratization in the case.<a href="#fn59" class="footnote-ref" id="fnref59"><sup>59</sup></a></p>
 <div class="figure" style="text-align: center"><span id="fig:dagdemochigh"></span>
 <img src="ii_files/figure-html/dagdemochigh-1.png" alt="Simple democracy, inequality model" width="576" />
 <p class="caption">
@@ -482,7 +491,7 @@ Figure 8.2:  A lower-level model of democratization in which inequality may affe
 <p>We now need to express prior beliefs about the probability distribution from which values of <span class="math inline">\(\theta^M\)</span> and <span class="math inline">\(\theta^D_{lower}\)</span> are drawn. We place structure on this problem by drawing a set of beliefs about the likelihood or monotonicity of effects and interactions among variables from the theories in Boix, Acemoglu and Robinson, and Ansell and Samuels. As a heuristic device, we weight more heavily those propositions that are more widely shared across the three works than those that are consistent with only one of the frameworks. We intend this part of the exercise to be merely illustrative of how one might go about forming priors from an existing base of knowledge; there are undoubtedly other ways in which one could do so from the inequality and democracy literature.</p>
 <p>Specifically, the belief that we embed in our priors about <span class="math inline">\(\theta^M\)</span> is:</p>
 <ul>
-<li><strong>Monotonicity of <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(M\)</span></strong>: In Acemoglu and Robinson, inequality should generally increase the chances of—and, in Boix, should never prevent—mobilization by the poor. Only in Ansell and Samuels’ model does inequality have a partial downward effect on the poor’s demand for democracy insofar as improved material welfare for the poor increases the chances of autocratic expropriation; and this effect is countervailed by the greater redistributive gains that the poor will enjoy under democracy as inequality rises.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> Consistent with the weight of prior theory on this effect, in our initial run of the analysis, we rule out negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. We are indifferent in our priors between positive and null effects and between the two types of null effects (mobilization always occurring or never occurring, regardless of the level of inequality). We thus set our prior on <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.0\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.25\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.25\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.5\)</span>. We relax this monotonicity assumption, to account for the Ansell and Samuels logic, in a second run of the analysis.</li>
+<li><strong>Monotonicity of <span class="math inline">\(I\)</span>’s effect on <span class="math inline">\(M\)</span></strong>: In Acemoglu and Robinson, inequality should generally increase the chances of—and, in Boix, should never prevent—mobilization by the poor. Only in Ansell and Samuels’ model does inequality have a partial downward effect on the poor’s demand for democracy insofar as improved material welfare for the poor increases the chances of autocratic expropriation; and this effect is countervailed by the greater redistributive gains that the poor will enjoy under democracy as inequality rises.<a href="#fn60" class="footnote-ref" id="fnref60"><sup>60</sup></a> Consistent with the weight of prior theory on this effect, in our initial run of the analysis, we rule out negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. We are indifferent in our priors between positive and null effects and between the two types of null effects (mobilization always occurring or never occurring, regardless of the level of inequality). We thus set our prior on <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.0\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.25\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.25\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.5\)</span>. We relax this monotonicity assumption, to account for the Ansell and Samuels logic, in a second run of the analysis.</li>
 </ul>
 <p>For our prior on democracy’s responses to inequality, mobilization, and international pressure (<span class="math inline">\(\theta^D_{lower}\)</span>), we extract the following beliefs from the literature:</p>
 <ul>
@@ -911,14 +920,14 @@ Figure 8.2:  A lower-level model of democratization in which inequality may affe
 <h2><span class="header-section-number">8.5</span> Model definition and inference in code</h2>
 <p>How is this model defined and used in practice?</p>
 <p>Using the <code>gbiqq</code> package we can set this model up, along with restrictions, in a few lines a follows.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="ptapp.html#cb1-1"></a>model &lt;-<span class="st"> </span></span>
-<span id="cb1-2"><a href="ptapp.html#cb1-2"></a><span class="st">  </span><span class="kw">make_model</span>(<span class="st">&quot;I -&gt; M -&gt; D &lt;- P; I -&gt; D&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb1-3"><a href="ptapp.html#cb1-3"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="st">&quot;(M[I=1] &lt; M[I=0])&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb1-4"><a href="ptapp.html#cb1-4"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="st">&quot;(D[I=1] &gt; D[I=0]) | (D[M=1] &lt; D[M=0]) | (D[P=1] &lt; D[P=0])&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="ptapp.html#cb4-1"></a>model &lt;-<span class="st"> </span></span>
+<span id="cb4-2"><a href="ptapp.html#cb4-2"></a><span class="st">  </span><span class="kw">make_model</span>(<span class="st">&quot;I -&gt; M -&gt; D &lt;- P; I -&gt; D&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb4-3"><a href="ptapp.html#cb4-3"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="st">&quot;(M[I=1] &lt; M[I=0])&quot;</span>) <span class="op">%&gt;%</span></span>
+<span id="cb4-4"><a href="ptapp.html#cb4-4"></a><span class="st">  </span><span class="kw">set_restrictions</span>(<span class="st">&quot;(D[I=1] &gt; D[I=0]) | (D[M=1] &lt; D[M=0]) | (D[P=1] &lt; D[P=0])&quot;</span>)</span></code></pre></div>
 <p>We can then calculate conditional inferences as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="ptapp.html#cb2-1"></a><span class="kw">conditional_inferences</span>(model, </span>
-<span id="cb2-2"><a href="ptapp.html#cb2-2"></a>                       <span class="dt">query =</span> <span class="st">&quot;D[I=0]==0&quot;</span>,</span>
-<span id="cb2-3"><a href="ptapp.html#cb2-3"></a>                       <span class="dt">given =</span> <span class="st">&quot;D==1 &amp; I==1&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="ptapp.html#cb5-1"></a><span class="kw">conditional_inferences</span>(model, </span>
+<span id="cb5-2"><a href="ptapp.html#cb5-2"></a>                       <span class="dt">query =</span> <span class="st">&quot;D[I=0]==0&quot;</span>,</span>
+<span id="cb5-3"><a href="ptapp.html#cb5-3"></a>                       <span class="dt">given =</span> <span class="st">&quot;D==1 &amp; I==1&quot;</span>)</span></code></pre></div>
 </div>
 <div id="concluding-thoughts" class="section level2">
 <h2><span class="header-section-number">8.6</span> Concluding thoughts</h2>
@@ -974,9 +983,9 @@ Figure 8.2:  A lower-level model of democratization in which inequality may affe
 </div>
 <div class="footnotes">
 <hr />
-<ol start="1">
-<li id="fn1"><p>This is because we are ruling out both a negative effect and the type of null effect that we had considered the most likely, leaving a null effect that we consider relatively unlikely.<a href="ptapp.html#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>In addition, as the industrial bourgeoisie become richer, which increases the Gini, this group faces a greater risk of autocratic expropriation. If we consider the rising bourgeosie’s mobilization to be mobilization by a materially disadvantaged group, then this constitutes an additional positive effect of inequality on mobilization.<a href="ptapp.html#fnref2" class="footnote-back">↩︎</a></p></li>
+<ol start="59">
+<li id="fn59"><p>This is because we are ruling out both a negative effect and the type of null effect that we had considered the most likely, leaving a null effect that we consider relatively unlikely.<a href="ptapp.html#fnref59" class="footnote-back">↩︎</a></p></li>
+<li id="fn60"><p>In addition, as the industrial bourgeoisie become richer, which increases the Gini, this group faces a greater risk of autocratic expropriation. If we consider the rising bourgeosie’s mobilization to be mobilization by a materially disadvantaged group, then this constitutes an additional positive effect of inequality on mobilization.<a href="ptapp.html#fnref60" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
@@ -988,15 +997,15 @@ Figure 8.2:  A lower-level model of democratization in which inequality may affe
 <a href="mixing.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
-<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
-<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
-<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
-<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/lunr.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
