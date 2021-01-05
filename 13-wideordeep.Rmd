@@ -143,6 +143,8 @@ FLAG: Not getting the point here. How is this different from the setup two up fr
 
 ### Specific case walk through
 
+FLAG: AJ: I don't think this section helps. It basically walks through the chain model results, which we're already doing in the next section. And it uses a different set of strategies, which will just be confusing. The one thing maybe that's added here is the table showing the possible data. We could perhaps generate one for illustrative purposes for the four strategies we consider in the sims section.
+
 ```{r selectioncode, echo = FALSE}
 
 # We define a model
@@ -415,7 +417,7 @@ conditional_inferences(updated, query = "Y[X=1]!=Y[X=0]", given = "!is.na(X) & !
 
 
 
-### Case selection: Lessons from simulations
+### Case selection from causal models: a simulation-based approach
 
 We turn now to a more general approach for deriving case-selection guidance from a causal model, given the causal query we wish to address and any data that we have already observed. This approach can be implemented using `CausalQueries` together with `CQTools`.
 
@@ -457,7 +459,7 @@ Given that the ambiguity matrix gives us the mapping from causal types to data r
 Complicated as the procedure might seem, it can all be done in code using a single command from the `CQtools` package.  
 
 
-In Figure \@ref(figcaseselection), we examine how different process-tracing case-selection strategies will play out by looking at the inferences we would draw about different kinds of causal effects depending on the results of the process tracing.
+In Figure \@ref(fig:caseselection), we examine the informativeness of different process-tracing case-selection strategies by looking at the inferences we would draw for a set of queries depending on what we observe when we delve into the cases.
 
 
 
@@ -499,21 +501,30 @@ results %>%
 
 
 
-Starting with the chain model, for the analyses displayed in Table XXXX, we assume that we have previously observed a positive $X,Y$ correlation in 6 cases (with 4 cases on the regression line, 2 cases off). Now we see what can happen for different queries when we implement each of the four case-selection strategies. The set of queries we are interested in are, what is the effect of $X$ on $Y$ for:
+For the analyses displayed in Figure \@ref(fig:caseselection), we assume that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. Now we see what can happen for different queries when we implement each of the four case-selection strategies. The set of queries we are interested in are, what is the effect of $X$ on $Y$ for:
 
-* any case in the population
-* any $X=1, Y=1$ case in the population
-* any $X=1, M=1, Y=1$ case in the population
-* any $X=0, Y=1$ case in the population
-* any $X=0, M=1, Y=1$ case in the population
+* the $ATE$ for the population
+* the probability of causation in a $X=1, Y=1$ case randomly drawn from the population
+* the probability of causation in a $X=0, Y=1$ case randomly drawn from the population
 
-#### Priors (Chain model)
+In the figure, each row of graphs represents a single model. Each column of graphs represents a query. Within a graph, we plot the inference on the query for all data-realization possibilities for, in turn, an $N=0$ strategy, meaning that we use only the $X,Y$ data and do not process-trace; our two $N=1$ strategies; and our two $N=2$ strategies. In principle each strategy is plotted twice on each graph since it can generate two data patterns.^[The $N=2$ strategies can generate 4 data possibilities, but we group these into two categories: $M$ varies across the cases or $M$ is constant across the cases.]
 
-In the top row, we see our pure prior on these queries before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0. 
+#### From the $X,Y$ data (Chain model)
 
-Moving across the row, we see our prior beliefs for cases with more specific features. For cases with $X=1, Y=1$, our priors imply a positive effect 25\% of the time.^[This belief arises from a straightforward calculation involving the different combinations of nodal types that could generate $X=1, Y=1$ and their prior probabilities.] As we have flat priors over $M$'s type and its effects on $Y$, conditioning $M$'s value leaves this belief unaffected. By a parallel logic, the model and flat priors imply the belief that 0.25 of all $X=0, Y=1$ cases to involve a negative effect of $X$ on $Y$.
 
-In the next row, we see how the initial set of 6 $X,Y$ observations shift our beliefs. In this model (as there is no confounding) a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a larger expected effect for a randomly selected case as well as for an $X=1, Y=1$ case since we now think there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1. (Again, conditioning on $M$'s value has no effect since we still have no information to shift us off our flat priors relating to $M$'s causes or effects.) Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.]
+<!-- we see our pure prior on each query before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0.  -->
+
+<!-- Moving across the row, we see our prior beliefs for cases with more specific features. For cases with $X=1, Y=1$, our priors imply a positive effect 25\% of the time.^[This belief arises from a straightforward calculation involving the different combinations of nodal types that could generate $X=1, Y=1$ and their prior probabilities.] As we have flat priors over $M$'s type and its effects on $Y$, conditioning $M$'s value leaves this belief unaffected. By a parallel logic, the model and flat priors imply the belief that 0.25 of all $X=0, Y=1$ cases to involve a negative effect of $X$ on $Y$. -->
+
+We turn first to the chain model. Before examining inferences from data, it is worth noting what a chain model with flat priors implies about the queries of interest. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the average effect of $X$ on $Y$, given nothing but the model, is 0. Moreover, for an $X=1, Y=1$ case, the probability of a (positive) causal effect is also 0.25, as it is for a negative effect in an $X=0, Y=1$ case.
+
+Now, we introduce data. In the $N=0$ column of each graph, we see our inferences from the initial set of 6 $X,Y$ observations. In this model, as there is no confounding, a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a positive treatment effect as well as a greater than 0.25 chance of causation for an $X=1, Y=1$ case since the $X,Y$ pattern suggests that there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1. 
+
+Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.]
+
+
+
+<!-- (Again, conditioning on $M$'s value has no effect since we still have no information to shift us off our flat priors relating to $M$'s causes or effects.) -->
 
 #### $N=1$ strategies (Chain model)
 
