@@ -463,51 +463,65 @@ In Figure \@ref(fig:caseselection), we examine the informativeness of different 
 
 
 
-```{r caseselection, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs from possible data realizations", fig.width = 10}
+```{r caseselection, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs on average effcts from possible data realizations", fig.width = 10}
 
-results <- list(
-  chain = read_rds("rep/case_selection/XMY_chain.rds"),
-  base = read_rds("rep/case_selection/XMY_base.rds"),
-  restricted = read_rds("rep/case_selection/restricted_model.rds"),
-  moderator = read_rds("rep/case_selection/XMY_moderator.rds")) %>%
-  bind_rows(.id = "model") %>% 
+
+prep_data <- function(df)
+  df %>%
   mutate(n = ifelse(strategy=="prior" | strategy=="XY_only", 0, 2))  %>%
-  mutate(n = ifelse(strategy=="one_on" | strategy=="one_off", 1, n)) %>%
-  group_by(Case.estimand, Given) %>% mutate(root = mean(mean[n==0])) %>%
-  mutate(strategy_2 = strategy) %>%
-  mutate(strategy_2 = ifelse(strategy_2=="one_off" | strategy_2=="one_on", "one", strategy_2)) %>%
-  mutate(strategy_2 = ifelse(grepl("two_off", strategy_2, fixed = TRUE), "two_off", strategy_2)) %>%
-  mutate(strategy_2 = ifelse(grepl("two_on", strategy_2, fixed = TRUE), "two_on", strategy_2)) %>% 
   filter(strategy != "prior") %>%
   filter(Case.estimand == "FALSE") %>%
-  ungroup()  %>% 
+  mutate(outcome = strategy) %>%
+  mutate(n = ifelse(grepl("one_", strategy, fixed = TRUE), 1, n)) %>%
+  mutate(strategy = ifelse(grepl("one_off", strategy, fixed = TRUE), "one_off", strategy)) %>%
+  mutate(strategy = ifelse(grepl("one_on", strategy, fixed = TRUE),  "one_on", strategy)) %>%
+  mutate(strategy = ifelse(grepl("two_off", strategy, fixed = TRUE), "two_off", strategy)) %>%
+  mutate(strategy = ifelse(grepl("two_on", strategy, fixed = TRUE),  "two_on", strategy)) %>% 
+  mutate(strategy = ifelse(grepl("one_off", strategy, fixed = TRUE), "one_off", strategy)) %>%
+  mutate(strategy = ifelse(grepl("one_on", strategy, fixed = TRUE),  "one_on", strategy)) %>% 
   mutate(Given = factor(Given, 
          c("-", "X == 1 & Y == 1", "X == 1 & M == 1 & Y == 1",
 "X == 0 & Y == 1", "X == 0 & M == 1 & Y == 1"), 
-c("ATE", "PC 11: X == 1 & Y == 1", "PC | M == 1",
+c("ATE", "PC 11: X == 1 & Y == 1", "PC 11 | M == 1",
 "PC 01: X == 0 & Y == 1", "PC 01 | M == 1")))
 
-
-results %>%
-  ggplot(aes(n, mean, color = strategy_2)) + geom_point() +
-  facet_grid(model  ~ Given, scales = "free_y") + 
+read_rds("rep/case_selection/base_data_many_models.rds") %>%
+  bind_rows(.id = "model") %>% 
+  prep_data %>%
+  filter(Given == "ATE" | Given == "PC 11: X == 1 & Y == 1" | Given == "PC 01: X == 0 & Y == 1") %>%
+  mutate(mean = ifelse(Given == "PC 01: X == 0 & Y == 1", -mean, mean)) %>%
+  ggplot(aes(n, mean, shape = strategy)) + geom_point() +
+  facet_grid(Given ~ model, scales = "free_y") + 
   scale_x_continuous(breaks = c(0:2)) +
   xlab("Number of cases with M observed")  +
-  ylab("Inferences") + 
-  ggtitle("Moderate XY")
+  ylab("Inferences") 
 
 ```
 
 
 
 
+
+
+```{r caseselection2, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs on average effcts from possible data realizations", fig.width = 10}
+read_rds("rep/case_selection/base_data_many_models.rds") %>%
+  bind_rows(.id = "model") %>% 
+  prep_data %>%
+  filter(Given == "ATE" | Given == "PC 11: X == 1 & Y == 1" | Given == "PC 01: X == 0 & Y == 1") %>%
+  ggplot(aes(n, sd^2, shape = strategy)) + geom_point() +
+  facet_grid(Given ~ model, scales = "free_y") + 
+  scale_x_continuous(breaks = c(0:2)) +
+  xlab("Number of cases with M observed")  +
+  ylab("Posterior variance") 
+
+```
 For the analyses displayed in Figure \@ref(fig:caseselection), we assume that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. Now we see what can happen for different queries when we implement each of the four case-selection strategies. The set of queries we are interested in are, what is the effect of $X$ on $Y$ for:
 
 * the $ATE$ for the population
 * the probability of causation in a $X=1, Y=1$ case randomly drawn from the population
 * the probability of causation in a $X=0, Y=1$ case randomly drawn from the population
 
-In the figure, each row of graphs represents a single model. Each column of graphs represents a query. Within a graph, we plot the inference on the query for all data-realization possibilities for, in turn, an $N=0$ strategy, meaning that we use only the $X,Y$ data and do not process-trace; our two $N=1$ strategies; and our two $N=2$ strategies. In principle each strategy is plotted twice on each graph since it can generate two data patterns.^[The $N=2$ strategies can generate 4 data possibilities, but we group these into two categories: $M$ varies across the cases or $M$ is constant across the cases.]
+In the figure, each column represents a single model. Each row represents a query. Within a graph, we plot the inference on the query for all data-realization possibilities for, in turn, an $N=0$ strategy, meaning that we use only the $X,Y$ data and do not process-trace; our two $N=1$ strategies; and our two $N=2$ strategies. In principle each strategy is plotted twice on each graph since it can generate two data patterns.^[The $N=2$ strategies can generate 4 data possibilities, but we group these into two categories: $M$ varies across the cases or $M$ is constant across the cases.]
 
 #### From the $X,Y$ data (Chain model)
 
