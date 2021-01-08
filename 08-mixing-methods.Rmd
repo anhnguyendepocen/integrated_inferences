@@ -110,7 +110,7 @@ While different distributions may be appropriate to the task in general, uncerta
 :::
 **Box: Setting priors**
 
-For a model with no unobserved confounding, setting priors requires  specifying a prior distribution for each set of nodal types. Parameters are provided as vectors of positive numbers with one number for each nodal type. These numbers correspond to thr $\alpha$ parameters of a Dirichlet distribution. The relative size of each number governs the the relative probability of each nodal type. The absolute sizes govern the certainty over the types. 
+For a model with no unobserved confounding, setting priors requires  specifying a prior distribution for each set of nodal types. Parameters are provided as vectors of positive numbers with one number for each nodal type. These numbers correspond to the $\alpha$ parameters of a Dirichlet distribution. The relative size of each number governs the the relative probability of each nodal type. The absolute sizes govern the certainty over the types. 
 
 To wit. For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. 
 
@@ -207,15 +207,15 @@ The probability of each data type is as given in table below:
 
 |type:     |prob:                        |
 |----------|-----------------------------|
-|$X0Y0$    |$\lambda^X_0(\lambda^Y_{00}+\lambda^Y_{01}))$                               |
-|$X0Y1$    |$\lambda^X_0(\lambda^Y_{11}+\lambda^Y_{10}))$                               |
-|$X1Y0$    |$\lambda^X_1(\lambda^Y_{00}+\lambda^Y_{10}))$                               |
-|$X1M0Y1$  |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{11}+\lambda^Y_{10}))$|
-|$X1M1Y1$  |$\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01}))$|
+|$X1M0Y1$  |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{11}+\lambda^Y_{10})$|
+|$X1M1Y1$  |$\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01})$|
+|$X0Y0$    |$\lambda^X_0(\lambda^M_{00}+\lambda^M_{01})(\lambda^Y_{00}+\lambda^Y_{01}) + \lambda^X_0(\lambda^M_{10}+\lambda^M_{11})(\lambda^Y_{00}+\lambda^Y_{10})$|
+|$X0Y1$    |$\lambda^X_0(\lambda^M_{00}+\lambda^M_{01})(\lambda^Y_{10}+\lambda^Y_{11}) + \lambda^X_0(\lambda^M_{10}+\lambda^M_{11})(\lambda^Y_{01}+\lambda^Y_{11})$|
+|$X1Y0$    |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{00}+\lambda^Y_{01}) + \lambda^X_1(\lambda^M_{01}+\lambda^M_{11})(\lambda^Y_{00}+\lambda^Y_{10})$|
 
 The two observations can be thought of as a multinomial draw from these five event types.
 
-Alternatively they can also be thought of as the product of a draw from a strategy in which a set of units is drawn with observations on $X,Y$ only and another set is drawn with observations on $X, M,Y$.
+Alternatively they can also be thought of as the product of a draw from a strategy in which a set of units is drawn with observations on $X,Y$ only and another set is drawn with observations on $X, M, Y$.
 
 In the single multinomial view we have the probability of seeing data with $X=Y=0$ in one case and $X=1, M=0, Y=1$ in another is:
 
@@ -235,15 +235,14 @@ Say rather than conditioning $X=Y=1$ to examine $M$ one of the two cases were ch
 
 | type:    | prob:                                                                         |
 |----------|-------------------------------------------------------------------------------|
-|$X0Y0$    |$.5\lambda^X_0(\lambda^Y_{00}+\lambda^Y_{01}))$                                |
-|$X0Y1$    |$.5\lambda^X_0(\lambda^Y_{11}+\lambda^Y_{10}))$                                |
-|$X1Y0$    |$.5\lambda^X_1(\lambda^Y_{00}+\lambda^Y_{10}))$                                |
-|$X1Y1$    |$.5\lambda^X_1(\lambda^Y_{11}+\lambda^Y_{01}))$                                |
-|$X0M0Y0$  |$.5\lambda^X_0(\lambda^M_{00}+\lambda^M_{01}))(\lambda^Y_{00}+\lambda^Y_{01}))$|
-|$X0M1Y0$  |$.5\lambda^X_0(\lambda^M_{11}+\lambda^M_{10}))(\lambda^Y_{00}+\lambda^Y_{10}))$|
+|$X0Y0$    |$0.5\lambda^X_0(\lambda^M_{00}+\lambda^M_{01})(\lambda^Y_{00}+\lambda^Y_{01}) + 0.5\lambda^X_0(\lambda^M_{10}+\lambda^M_{11})(\lambda^Y_{00}+\lambda^Y_{10})$|
+|$X0Y1$    |$0.5\lambda^X_0(\lambda^M_{00}+\lambda^M_{01})(\lambda^Y_{10}+\lambda^Y_{11}) + 0.5\lambda^X_0(\lambda^M_{10}+\lambda^M_{11})(\lambda^Y_{01}+\lambda^Y_{11})$|
+|$X1Y0$    |$0.5\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{00}+\lambda^Y_{01}) + 0.5\lambda^X_1(\lambda^M_{01}+\lambda^M_{11})(\lambda^Y_{00}+\lambda^Y_{10})$|
+|$X1Y1$    |$0.5\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{10}+\lambda^Y_{11}) + 0.5\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01})$ + |
+|$X0M0Y0$  |$0.5\lambda^X_0(\lambda^M_{00}+\lambda^M_{01}))(\lambda^Y_{00}+\lambda^Y_{01})$|
+|$X0M1Y0$  |$0.5\lambda^X_0(\lambda^M_{11}+\lambda^M_{10}))(\lambda^Y_{00}+\lambda^Y_{10})$|
 |...       |                                                                               |
-|$X1M0Y1$  |$\lambda^X_1(\lambda^M_{00}+\lambda^M_{10})(\lambda^Y_{11}+\lambda^Y_{10}))$   |
-|$X1M1Y1$  |$\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01}))$   |
+|$X1M1Y1$  |$0.5\lambda^X_1(\lambda^M_{11}+\lambda^M_{01})(\lambda^Y_{11}+\lambda^Y_{01})$|
 
 
 In the single multinomial view we have the probability of seeing data with $X=Y=0$ in one case and $X=1, M=0, Y=1$ in another is now:
