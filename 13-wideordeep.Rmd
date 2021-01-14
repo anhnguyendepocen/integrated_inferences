@@ -419,6 +419,8 @@ conditional_inferences(updated, query = "Y[X=1]!=Y[X=0]", given = "!is.na(X) & !
 
 ### Case selection from causal models: a simulation-based approach
 
+#### Procedure
+
 We turn now to a more general approach for deriving case-selection guidance from a causal model, given the causal query we wish to address and any data that we have already observed. This approach can be implemented using `CausalQueries` together with `CQTools`.
 
 We imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which cases to investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
@@ -456,72 +458,133 @@ Given that the ambiguity matrix gives us the mapping from causal types to data r
 
 **Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each *strategy*. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We can think of the expected gains from a strategy as the expected *reduction* in posterior variance arising from that strategy.
 
-Complicated as the procedure might seem, it can all be done in code using a single command from the `CQtools` package.  
+
+#### Results
+
+For our analyses we imagine that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. Now we see what can happen for different queries when we implement each of the seven different case-selection strategies given five different background models and three primary queries. 
+
+The primary queries we are interested in are:
 
 
-In Figure \@ref(fig:caseselection), we examine the informativeness of different process-tracing case-selection strategies by looking at the inferences we would draw for a set of queries depending on what we observe when we delve into the cases.
+* what is the $ATE$ for the population?
+* what is the probability that $Y=1$ is due to $X=1$ for a randomly drawn case among those with $X=1, Y=1$
+* what is the probability that $Y=1$ is due to $X=0$ for a randomly drawn case among those with $X=0, Y=1$
+
+In the figure, each column represents a single model. Each row represents a query. Within a graph, we plot the inference on the query for all data-realization possibilities for, in turn:
+
+* no new data: beliefs are based on the $X,Y$ data only
+* two $N=1$ strategies (one in which data on $M$ is sought in the $X=1, Y=0$ cell and one in which it is sought in the $X=1, Y=1$ cell)
+* an on the regression line straetgy: with data sought in one $X=1, Y=1$ case and one $X=0, Y=0$ case
+* an off the regression line straetgy: with data sought in one $X=0, Y=1$ case and one $X=1, Y=0$ case
+* an on-on strategy with data on $M$ sought for two cases in teh $X=1, Y=1$ cell
+* a strategy in which we look at two cases in which treatment was given with $X$ fixed at 1; one with $Y=0$ and one with $Y=1$
+* a strategy in which we look at two cases in which a postive outcome was observed, with $Y$ fixed at 1; one with $X=0$ and one with $X=1$
+
+These are all "pure" strategies in hte sense that the number of units for which data on $M$ is sought in each cell is fixed. One could also imagine random strategies in which a reearcher choses at radnom which cells to look. For example if they choose one point at random, they are randomly chooseing between one point on the regression ine and one off it. The performance of the strategy will be wa waiting average of tehe pure strateigs over which they are randomizing.
+
+The main results are shown in Figure \@ref(fig:caseselectionest) and Figure \@ref(fig:caseselectionvar), we examine the informativeness of different process-tracing case-selection strategies by looking at the inferences we would draw for a set of queries depending on what we observe when we delve into the cases.
+
+For each strategy we figure out (a) all the possible data realizations (b) what inferences would be made from each (c) how likely these are each to arise and (d) what is the implied expected reduction in variance from each strategy.  Figure \@ref(fig:caseselectionest)  shows (a)-(c), with shading used to show (c).  Figure \@ref(fig:caseselectionvar) shows (d). These figures  are close connected of course, with a higher dispersion of estimates in Figure \@ref(fig:caseselectionest) implying a greater reduction in variance in Figure \@ref(fig:caseselectionvar).
 
 
 
-```{r caseselection, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs on average effcts from possible data realizations", fig.width = 10}
 
 
-prep_data <- function(df)
-  df %>%
-  mutate(n = ifelse(strategy=="prior" | strategy=="XY_only", 0, 2))  %>%
-  filter(strategy != "prior") %>%
-  filter(Case.estimand == "FALSE") %>%
-  mutate(outcome = strategy) %>%
-  mutate(n = ifelse(grepl("one_", strategy, fixed = TRUE), 1, n)) %>%
-  mutate(strategy = ifelse(grepl("one_off", strategy, fixed = TRUE), "one_off", strategy)) %>%
-  mutate(strategy = ifelse(grepl("one_on", strategy, fixed = TRUE),  "one_on", strategy)) %>%
-  mutate(strategy = ifelse(grepl("two_off", strategy, fixed = TRUE), "two_off", strategy)) %>%
-  mutate(strategy = ifelse(grepl("two_on", strategy, fixed = TRUE),  "two_on", strategy)) %>% 
-  mutate(strategy = ifelse(grepl("one_off", strategy, fixed = TRUE), "one_off", strategy)) %>%
-  mutate(strategy = ifelse(grepl("one_on", strategy, fixed = TRUE),  "one_on", strategy)) %>% 
-  mutate(Given = factor(Given, 
-         c("-", "X == 1 & Y == 1", "X == 1 & M == 1 & Y == 1",
-"X == 0 & Y == 1", "X == 0 & M == 1 & Y == 1"), 
-c("ATE", "PC 11: X == 1 & Y == 1", "PC 11 | M == 1",
-"PC 01: X == 0 & Y == 1", "PC 01 | M == 1")))
 
-read_rds("rep/case_selection/base_data_many_models.rds") %>%
-  bind_rows(.id = "model") %>% 
-  prep_data %>%
-  filter(Given == "ATE" | Given == "PC 11: X == 1 & Y == 1" | Given == "PC 01: X == 0 & Y == 1") %>%
-  mutate(mean = ifelse(Given == "PC 01: X == 0 & Y == 1", -mean, mean)) %>%
-  ggplot(aes(n, mean, shape = strategy)) + geom_point() +
-  facet_grid(Given ~ model, scales = "free_y") + 
-  scale_x_continuous(breaks = c(0:2)) +
-  xlab("Number of cases with M observed")  +
-  ylab("Inferences") 
+```{r caseselectionest, fig.height = 5, fig.width = 10, fig.cap = "Inferences given observations", echo = FALSE} 
+
+all_results <- read_rds("saved/case_selection_16_10000.rds")  
+
+all_results <-   
+all_results %>%
+  mutate(mean = ifelse(Query == "PC_01", -mean, mean)) %>%
+  mutate(
+    model = factor(model, c("chain_model", "moderator_model","base_model", "half_chain",    "restricted_model"), c("Chain: X->M->Y", "Moderator: X->Y<-M","Two path: X->Y; X->M->Y", "Two path: Weak direct",    "Two path: Monotonic")), 
+    Query =
+      factor(Query,
+             c("ATE", "PC_01", "PC_11", "ATE_MY", "ATE_XM", "DIR_M0", "DIR_M1", "IND_X0", "IND_X1", "M1"),
+             c("ATE", "PC 01", "PC 11", "ATE (MY)", "ATE (XM)", "DIR | M=0", "DIR | M=1", "IND | X=0", "IND | X=1", "Pr(M=1)")
+         ),
+    strategy = factor(strategy, 
+                      c("prior", "off_10", "on_11", "off_01_10", "XY_11_11",  "on_00_11", "onX1_10_11", "onY1_01_11"),
+                      c("prior", "1 off (10)", "1 on (11)", "2 off (01,10)", "2 pos (11, 11)",  "2 on (00, 11)", "fix X (10, 11)", "fix Y (01, 11)"))) 
+
+
+all_results %>%
+  filter( Query %in% c("ATE", "PC 01", "PC 11")) %>%
+ggplot(aes(strategy, mean)) + 
+  geom_point(aes(colour = prob),size = 2) +
+  geom_point(shape = 1,size = 2,colour = "black") +
+  facet_grid(Query ~ model, scales = "free_y") + 
+  xlab("Strategy")  +
+    ylab("Inferences") + theme_bw()  + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  scale_colour_gradient(low = "white", high = "black")
+
+```
+
+
+```{r caseselectionvar, fig.height = 5, fig.width = 10, fig.cap = "Reduction in variance on ATE and PC given strategies", echo = FALSE} 
+
+weighted.var <- function(x, w = rep(1, length(x))) {
+  # No degrees of freedom adjustment as we are dealing with population
+    if(length(x)==1) return(0)
+    if(all(is.na(x))) return(NA)
+    w <- w/sum(w)
+    sum(w*(x - sum(w*x))^2)
+}
+
+expected_var <- 
+
+all_results %>% 
+  select(-data, -Using, - Given, -Case.estimand) %>% group_by(Query, model, strategy) %>% 
+  summarize(check_prob = sum(prob), n = n(), 
+            #weighted_var = Hmisc::wtd.var(mean, prob),
+            weighted_var = weighted.var(mean, prob),
+            expected_posterior_var = weighted.mean(sd^2, prob),
+            expected_posterior_mean = weighted.mean(mean, prob), .groups = 'drop')  %>%
+  group_by(model, Query) %>% mutate(prior_var = expected_posterior_var[1]) %>% ungroup %>%
+  mutate(expected_learning = 100*(1-expected_posterior_var/prior_var),
+         expected_learning_2 = 100*(weighted_var/prior_var))
+
+
+
+expected_var %>% 
+  filter( Query %in% c("ATE", "PC 01", "PC 11")) %>%
+  ggplot(aes(strategy, expected_learning_2)) + 
+  geom_point() +
+#  facet_grid(Query ~ model, scales = "free_y") + 
+   facet_grid(Query ~ model, scales = "free_y") + 
+ xlab("Strategy")  +
+    ylab("Reduction in variance")  +
+    theme_bw() +
+#  geom_hline(yintercept = 0, color = "red") + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + coord_trans(y="sqrt")
 
 ```
 
 
 
+Figure \@ref(fig:caseselectionvar2) we show the reduction in variance for otehr estimands, notably the effects of $X$ on $M$, the effects of $M$ on $Y$ and the direct and indirect effects. We include these to help with interpretation of teh main results but they also usefully demonstrate the applicability of the procedure to different types of queries we might be concerned with.
+
+```{r caseselectionvar2, fig.height = 10, fig.width = 10, fig.cap = "Reduction in variance, other estimands", echo = FALSE, warning = FALSE} 
 
 
-
-```{r caseselection2, echo = FALSE, fig.cap="Case selection: Distribution of possible posterior beliefs on average effcts from possible data realizations", fig.width = 10}
-read_rds("rep/case_selection/base_data_many_models.rds") %>%
-  bind_rows(.id = "model") %>% 
-  prep_data %>%
-  filter(Given == "ATE" | Given == "PC 11: X == 1 & Y == 1" | Given == "PC 01: X == 0 & Y == 1") %>%
-  ggplot(aes(n, sd^2, shape = strategy)) + geom_point() +
-  facet_grid(Given ~ model, scales = "free_y") + 
-  scale_x_continuous(breaks = c(0:2)) +
-  xlab("Number of cases with M observed")  +
-  ylab("Posterior variance") 
+expected_var %>% 
+  filter( !(Query %in% c("ATE", "PC 01", "PC 11")))  %>%
+  ggplot(aes(strategy, expected_learning_2)) + 
+  geom_point() +
+#  facet_grid(Query ~ model, scales = "free_y") + 
+   facet_grid(Query ~ model, scales = "free_y") + 
+ xlab("Strategy")  +
+    ylab("Reduction in variance")  +
+    theme_bw() +
+#  geom_hline(yintercept = 0, color = "red") + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + coord_trans(y="sqrt")
 
 ```
-For the analyses displayed in Figure \@ref(fig:caseselection), we assume that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. Now we see what can happen for different queries when we implement each of the four case-selection strategies. The set of queries we are interested in are, what is the effect of $X$ on $Y$ for:
 
-* the $ATE$ for the population
-* the probability of causation in a $X=1, Y=1$ case randomly drawn from the population
-* the probability of causation in a $X=0, Y=1$ case randomly drawn from the population
 
-In the figure, each column represents a single model. Each row represents a query. Within a graph, we plot the inference on the query for all data-realization possibilities for, in turn, an $N=0$ strategy, meaning that we use only the $X,Y$ data and do not process-trace; our two $N=1$ strategies; and our two $N=2$ strategies. In principle each strategy is plotted twice on each graph since it can generate two data patterns.^[The $N=2$ strategies can generate 4 data possibilities, but we group these into two categories: $M$ varies across the cases or $M$ is constant across the cases.]
 
 #### From the $X,Y$ data (Chain model)
 
@@ -534,7 +597,7 @@ We turn first to the chain model. Before examining inferences from data, it is w
 
 Now, we introduce data. In the $N=0$ column of each graph, we see our inferences from the initial set of 6 $X,Y$ observations. In this model, as there is no confounding, a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a positive treatment effect as well as a greater than 0.25 chance of causation for an $X=1, Y=1$ case since the $X,Y$ pattern suggests that there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1. 
 
-Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.]
+Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X \rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.]
 
 FLAG: Stuff above on N=0 needs adjustment once we've figured out how the XY correlation affects things.
 
@@ -602,7 +665,11 @@ Why? When we select on-the-line or off-the-line, we are building in variation in
 This finding is particularly interesting in light of canonical advice in the qualitative methods literature. King, Keohane, and Verba [-@king1994designing] advise selecting for variation on the explanatory variable and, as a second-best approach, on the dependent variable. And they warn sternly against selection for variation on both at the same time. But note what happens if we follow their advice. Suppose we decide to select for variation on $X$, ignoring $Y$. We might end up with a pair of informative on-the-line or off-the-line cases. But we might just as easily (depending on the joint $X,Y$ distributon in the population) end up with a fairly uninformative $X=0, Y=1$, $X=1, Y=1$ pair. King, Keohane, and Verba's advice makes sense if all we are interested in is examining covariation between $X$ and the $Y$: then we can learn from forcing $X$ to vary and letting $Y$'s values fall where they may. However, seeking leverage from a mediator is a different affair. As our simulations indicate, for at least some common causal structures, we actually stand to learn the most from observing that mediator when we choose to examine it across a set of cases selected for variation in both $X$ and $Y$.
 
 
-#### Two-path model
+#### Moderator models
+
+What if $M$ appears in the model as a moderator, rather than a mediator, of $X$'s effect on $Y$: $X \rightarrow Y \leftarrow M$? We can think of the learning from examining a moderator as deriving from the fact that a moderator is an alternative potential cause. So, for instance, if we see $M$ constant while $Y$ varies, or vice versa, this is evidence against $M$'s effect and, in turn, for $X$'s effect on $Y$. The relative patterns across strategies are quite similar to those in the chain model --- for similar reasons, we think---though the learning opportunities are more muted. They are likely more muted essentially because of the issue of degrees of freedom: with two causes, it takes more cases to achieve the same degree of leverage.
+
+#### Two-path models
 
 Case-selection strategies depend on the model. To see this, consider the results of the same analysis conducted for a two-path model in which $X$ can have both an indirect effect on $Y$ via $M$ and a direct effect on $Y$. We first examine a version with flat priors over all nodal types and then a version in which we impose some monotonicity restrictions. 
 
@@ -629,9 +696,6 @@ Looking on the line, in the restricted two-path model, also yields opportunities
 FLAG: Incorporate as needed above and below any implications of Jeffreys priors.
 
 
-#### Moderator models
-
-What if $M$ appears in the model as a moderator, rather than a mediator, of $X$'s effect on $Y$: $X \rightarrow Y \leftarrow M$? We can think of the learning from examining a moderator as deriving from the fact that a moderator is an alternative potential cause. So, for instance, if we see $M$ constant while $Y$ varies, or vice versa, this is evidence against $M$'s effect and, in turn, for $X$'s effect on $Y$. The relative patterns across strategies are quite similar to those in the chain model --- for similar reasons, we think---though the learning opportunities are more muted. They are likely more muted essentially because of the issue of degrees of freedom: with two causes, it takes more cases to achieve the same degree of leverage.
 
 
 ## Wide or Deep
