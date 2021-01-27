@@ -143,7 +143,7 @@ FLAG: Not getting the point here. How is this different from the setup two up fr
 
 ### Specific case walk through
 
-**FLAG: AJ: I don't think this section helps. It basically walks through the chain model results, which we're already doing in the next section. And it uses a different set of strategies, which will just be confusing. The one thing maybe that's added here is the table showing the possible data. We could perhaps generate one for illustrative purposes for the four strategies we consider in the sims section.**
+We introduce a flexible model-based approach to comparing the prospective learning from alternative case-selection strategies. To help explore the intuition behind this strategy, we start by walking through a simplified setup.
 
 ```{r selectioncode, echo = FALSE}
 
@@ -179,19 +179,28 @@ names(C_X1Y1_only)[-c(1:2)] <- c("C1", "C2", "C3")
 
 ```
 
-Consider a situation in which one has access to $X,Y$ data on just six cases of the form:
+Consider a situation in which our model is $X \rightarrow M \rightarrow Y$. Suppose, further, that we restrict the nodal types such that $X$ cannot have a negative effect on $M$, and $M$ cannot have a negative effect on $Y$. Imagine then that we begin by collecting only $X,Y$ data on six cases and obtain the following data pattern:
 
 ```{r observed, echo = FALSE}
 kable(observed)
 ```
 
-We want to examine data on $M$ for two of these cases and are wondering about what strategy we should use to select the cases. We are considering three strategies:
+These $X,Y$ data already give us some information about the causal effect of $X$ on $Y$. Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by colelcting data on $M$ for two of these cases. Which cases should we select? We are considering two strategies, each conditional on $X$ and $Y$ values:
 
-* Strategy $A$ chooses two cases on the regression line, one in the $X=Y=0$ cell and one in the $X=Y=1$ cell
-* Strategy $B$ chooses off the regression line, one in the $X=1, Y=0$ cell and one in the $X=0, Y=1$ cell
-* Strategy $C$ selects jointly on the independent and dependent variables, choosing two cases with $X=1, Y = 1$.
+* Strategy $A$ chooses two cases on the regression line, one randomly drawn from the $X=Y=0$ cell and one randomly drawn from the $X=Y=1$ cell
+* Strategy $B$ chooses off the regression line, one randomly drawn from the $X=1, Y=0$ cell and one randomly drawn from the $X=0, Y=1$ cell
 
-Different strategies yield different possible types of data. Each one of these is likely to arise with a different probability and is associated with a different inference. Drawing on the prior beliefs embedded in a causal model, we can thus assess the *expected* posterior variance associated with each strategy. 
+How can we evaluate these strategies prospectively? 
+
+We start by recognizing that different strategies yield different *possible* data patterns. For instance, Strategy $A$ (on the line) could possibly give us a data pattern that includes the observation $X=0, M=0, Y=0$. Yet Strategy $A$ cannot possibly yield a data pattern that includes the observation $X=1, M=0, Y=0$ --- because it does not involve the inspection of $M$ in an $X=1, Y=0$ case --- whereas Strategy $B$ (off the line) *can* yield a pattern that includes this observation. And neither strategy can possibly yield a pattern that includes both $X=1, M=0, Y=0$ and $X=0, M=1, Y=0$. 
+
+In Table \@ref(tab:chselillustration), we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy $A$ or $B$ labeled $A1, A2$, etc. or $B1, B2$, etc., respectively. As we can see, there are four possible data patterns from each, representing the 4 different combinations of $M$ values we might find across the two cases selected for deeper investigation. In the comparison presented here, none of the possible data patterns overlap across strategies.
+
+The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally *likely* to emerge. We represent the data probabilities (calculated by CQTools) near the bottom of the table. How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure $X,Y$ data. Note, for instance, that data pattern $A3$ is much more likely to emerge than the other data patterns possible under Strategy $A$. This is for two reasons. One is that $A3$ involves $M$ covarying with $X$ and $Y$, a pattern consistent with $X$ having an effect on $Y$ -- since, in this model, $X$ can only affect $Y$ if it affects $M$ and if $M$ effects $Y$. Data patterns $A1$ and $A4$ have $M$ constant between the two cases, even as $X$ and $Y$ vary; this is a pattern inconsistent with $X$ having an effect on $Y$. $A3$, then, is more likely than $A1$ or $A4$ because the restrictions on the model plus the evidence from the $X,Y$ data make us believe that $X$ *does* have an average effect on $Y$. Second, we believe $A3$ is more probable than $A2$ because of the model's restrictions: the model allows positive effects of $X$ on $M$ and of $M$ on $Y$ (a way of generating $A3$), but rules out negative intermediate effects (a way of generating $A2$).
+
+Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table \@ref(tab:chselillustration), we can see the mean of the posterior distribution (for the $ATE$ of $X$ on $Y$) under each data pattern. What is of particular interest in assessing case-selection strategies is the *variance* of the posterior distribution, which represents our *uncertainty*. This posterior variance on the $ATE$, for each data pattern, is represented in the table's final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the *expected* reduction in posterior variance. 
+
+FLAG: Need to redo Table to conform to text: 2 strategies only.
 
 
 ```{r dtypes, echo = FALSE}
@@ -204,7 +213,6 @@ df <- A_on_regression_line[,-2] %>%
 # table(duplicated(t(df)))
 ```
 
-For each of these possible strategies we can assess the posterior that we would obtain for each type of data we might observe.
 
 ```{r illustration, echo = FALSE}
 
@@ -258,14 +266,12 @@ model <- make_model("X->M->Y")  %>%
           c("Posterior variance",   round(unlist(lapply(estimates_db, function(j)   unlist(unlist(lapply(j, function(k) k$mean^2))))), digits)))
 ```
 
-The data possibilities, probabilities of each, and inferences given each, are shown in Table \@ref(tab:chselillustration).
-  
 ```{r chselillustration, echo = FALSE}  
 kable(df, caption = "Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.", digits = 2)
 ```
 
-Each of the first two strategies generates one of four different data patterns. The third data strategy generates up to three data patterns. None of these data patterns overlap across strategies. 
-From the calculated  probability of each data type, given the data seen so far, and the posterior variance given each data realization, the implied *expected* variance is  easily calculated. These are summarized below:
+ 
+From the probability of each data type (given the model and the $X,Y$ data seen so far) and the posterior variance given each data realization, the implied *expected* variance is  easily calculated. These are summarized in Table \@ref(tab:exppostvar):
 
 ```{r exppostvar, echo = FALSE}
 expected_posterior_var <- sapply(1:3, function(i) 
@@ -275,9 +281,15 @@ kable(data.frame(Strategy = c("Online", "Offline", "X=1, Y=1"), Variance = expec
 ```
 
 
-In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing her process-tracing efforts where a greater share of the population of cases lies: on the regression line.  
+In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing our process-tracing efforts on the regression line than off the regression line. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below. 
 
-Why is this?
+The key takeaway here are the core elements of our model-based approach to assessing case-selection strategies:
+
+1. Derive from the model the full set of possible data patterns under each case-selection strategy being assessed
+2. Calculate the probability of each data pattern given the model (with any priors or restrictions), the prior $X,Y$ data, and the strategy
+3. Generate a posterior distribution on the query of interest for each data pattern 
+4. Use the probability of and posterior variance under each data pattern toalculate the expected posterior distribution on the query of interest for each strategy
+
 
 
 ```{r test, include = FALSE}
@@ -377,23 +389,23 @@ test_flat <- read_rds("saved/test_flat.rds")
 
 ```
 
-For intuition consider first the case with flat prior data:
+<!-- For intuition consider first the case with flat prior data: -->
 
-* if we examine two cases in different quadrants *on the diagonal* (one $X=Y=0$ case and one $X=Y=1$ case) :
-  * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a positive or a negative effect on $Y$. Since we are looking on the regression line however, our confidence that $X$ had a *positive* effect on $Y$ is more strongly reduced, producing a  posterior centered on a small negative effect. 
-  * Conversely if we see that $M$ is different in the two cases, then we have a correlation of the same sign between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general an din particular that it had a positive effect, resulting in a posterior centered on a small positive ATE.
+<!-- * if we examine two cases in different quadrants *on the diagonal* (one $X=Y=0$ case and one $X=Y=1$ case) : -->
+<!--   * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a positive or a negative effect on $Y$. Since we are looking on the regression line however, our confidence that $X$ had a *positive* effect on $Y$ is more strongly reduced, producing a  posterior centered on a small negative effect.  -->
+<!--   * Conversely if we see that $M$ is different in the two cases, then we have a correlation of the same sign between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general an din particular that it had a positive effect, resulting in a posterior centered on a small positive ATE. -->
 
-* if we examine two cases in different quadrants *off the diagonal* (one $X=0, Y=1$ case and one $X=1, Y=0$ case) :
-  * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a negative effect  $Y$ (producing a  posterior centered on a small positive effect). 
-  * Conversely if we see that $M$ is different in the two cases, then we have a correlation (of different signs) between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general and in particular that it had a negative effect, resulting in a posterior centered on a small negative ATE.
+<!-- * if we examine two cases in different quadrants *off the diagonal* (one $X=0, Y=1$ case and one $X=1, Y=0$ case) : -->
+<!--   * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a negative effect  $Y$ (producing a  posterior centered on a small positive effect).  -->
+<!--   * Conversely if we see that $M$ is different in the two cases, then we have a correlation (of different signs) between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general and in particular that it had a negative effect, resulting in a posterior centered on a small negative ATE. -->
 
-* If we examine data conditioning on the value of $X$ but with variation on $Y$ (for instance $X=1, Y=0$ and   $X=1, Y=1$) 
-data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In the  case with flat data this changes beliefs on positive and negative effects but not the difference between them. The ate then remains unchanged. FLAG work though intuition  more
+<!-- * If we examine data conditioning on the value of $X$ but with variation on $Y$ (for instance $X=1, Y=0$ and   $X=1, Y=1$)  -->
+<!-- data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In the  case with flat data this changes beliefs on positive and negative effects but not the difference between them. The ate then remains unchanged. FLAG work though intuition  more -->
 
-* If we examine data conditioning on the value of $Y$ but with variation on $X$ (for instance $X=0, Y=1$ and   $X=1, Y=1$) 
-data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In the  case with flat data this changes beliefs on positive and negative effects but not the difference between them. The ate then remains unchanged.
+<!-- * If we examine data conditioning on the value of $Y$ but with variation on $X$ (for instance $X=0, Y=1$ and   $X=1, Y=1$)  -->
+<!-- data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In the  case with flat data this changes beliefs on positive and negative effects but not the difference between them. The ate then remains unchanged. -->
 
-For correlated data similar logics apply, but the effects are stronger for evidence on the regression line. The reason is that given correlated data we believe there are more units with positive effects than negative effects. When we find evidence against causal relations on the regression line that reduces our confidence for types with positive effects more than for types with negative effects and the  difference between the  shares with positive effects and negative effects smaller due to the fact that the beliefs in the shares with negative effects is not so strongly reduced. When we find evidence for causal relations this magnifies the  difference between beliefs in shares positive and shares negatives; these effects are magnified however since our confidence for the positive effects change more than for the negative effects, since we are examining cases on the regression line. Conversely when examining cases of the  regression line, the two forces offset each other. 
+<!-- For correlated data similar logics apply, but the effects are stronger for evidence on the regression line. The reason is that given correlated data we believe there are more units with positive effects than negative effects. When we find evidence against causal relations on the regression line that reduces our confidence for types with positive effects more than for types with negative effects and the  difference between the  shares with positive effects and negative effects smaller due to the fact that the beliefs in the shares with negative effects is not so strongly reduced. When we find evidence for causal relations this magnifies the  difference between beliefs in shares positive and shares negatives; these effects are magnified however since our confidence for the positive effects change more than for the negative effects, since we are examining cases on the regression line. Conversely when examining cases of the  regression line, the two forces offset each other.  -->
 
 
 
@@ -419,9 +431,7 @@ conditional_inferences(updated, query = "Y[X=1]!=Y[X=0]", given = "!is.na(X) & !
 
 ### Case selection from causal models: a simulation-based approach
 
-#### Procedure
-
-We turn now to a more general approach for deriving case-selection guidance from a causal model, given the causal query we wish to address and any data that we have already observed. This approach can be implemented using `CausalQueries` together with `CQTools`.
+In this section, we illustrate the model-based approach to case-selection more extensively by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using `CausalQueries` together with `CQTools`.
 
 We imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which cases to investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
 
@@ -698,12 +708,18 @@ Observing $M$ vary in the opposite direction across the two off-the-line cases -
 
 Looking on the line, in the monotonic two-path model, also yields opportunities to learn, but weaker ones. If we see $M$ vary in concert with $X$ and $Y$ across the one-the-line cases, we certainly shift our beliefs in indirect effects and the $ATE$ upward. But the shift is smaller than in the off-the-line comparison because these are cases in which we started out with a stronger expectation that the indirect path would be operating and, in turn, that $M$ would covary with $X$ and $Y$. There is simply less opportunity for surprise.
 
-Notably, when we turn to our pathway query (indirect effects), the monotonicity restrictions do not make nearly as a big difference to the possibility of learning as they do for the $X \rightarrow Y$ effects. We also see that the on-the-line strategy performs best for the mediation query, in constrast to the $ATE$ query.
+Notably, when we turn to our pathway query (indirect effects), the monotonicity restrictions do not make nearly as a big difference to the possibility of learning as they do for the $X \rightarrow Y$ effects. We also see that the on-the-line strategy performs best for the mediation query, in constrast to the $ATE$ query, as it does for the pathway query in the unrestricted version of the model.
+
+*Two-path model with weak priors on direct path* Finally, we consider a model in which we have no restrictions but adopt priors under which the direct path is believed to be relatively weak. To think about what this means, recall that the limits to learning from $M$ in the two-path model with no informative priors or restrictions derive from the lack of constraint on countervailing updating about the direct path as we learn about the indirect path. When we start with a greater prior weight on the indirect than the direct path, however, we are dampening this countervailing updating. We should expect therefore to see more opportunities for learning from $M$.
+
+As we see in Figure \@ref(fig:caseselectionvar), the priors do not make a large difference, but they do allow for strategies beyond the strategy of selecting two $X=1, Y=1$ cases to provide leverage on the $ATE$ and, even more so, on the probability of positive and negative causation. The second-most promising strategy for the $ATE$ is the on-the-line strategy, followed by the off-the-line strategy. As with the simple chain model, we see that the off-the-line strategy performs best for the negative probability of causation query, while the on-the-line strategy performs best for the probability of positive causation --- and, in fact, dominates the $X=1, Y=1$ strategy for that query.
 
 
 <!-- FLAG: Cannot yet see why we learn more from the restricted 2-path model than from the flat 2-path. Yes, we can learn from n=1 about the indirect path. But in both cases, we can still have compensating updating on the direct path for anything we learn about the indirect path. In fact, the prior probability of positive effects on each path is very similar across the two models. Ignoring interactions, for indirect path, b share is like 1/8 in flat model, and 1/9 in restricted, vs. 1/4 for direct path. Is it just that the learning about the indirect path is stronger with restricted priors because M starts out as informative about the indirect path? So the learning about the indirect path more easily swamps the prior? -->
 
 FLAG: Incorporate as needed above and below any implications of Jeffreys priors.
+
+FLAG: Let's move the 2-pos strategy to the right of the 2 on strategy in the graphs. 
 
 
 
