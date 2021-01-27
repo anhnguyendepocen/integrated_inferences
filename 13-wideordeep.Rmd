@@ -179,7 +179,7 @@ names(C_X1Y1_only)[-c(1:2)] <- c("C1", "C2", "C3")
 
 ```
 
-Consider a situation in which our model is $X \rightarrow M \rightarrow Y$. Suppose, further, that we restrict the nodal types such that $X$ cannot have a negative effect on $M$, and $M$ cannot have a negative effect on $Y$. Imagine then that we begin by collecting only $X,Y$ data on six cases and obtain the following data pattern:
+Consider a situation in which our model is $X \rightarrow M \rightarrow Y$. Suppose, further, that we restrict the nodal types such that $X$ cannot have a negative effect on $M$, and $M$ cannot have a negative effect on $Y$, with flat priors over all remaining nodal types. Imagine then that we begin by collecting only $X,Y$ data on six cases and obtain the following data pattern:
 
 ```{r observed, echo = FALSE}
 kable(observed)
@@ -271,7 +271,7 @@ kable(df, caption = "Each column shows a possible distribution of data that can 
 ```
 
  
-From the probability of each data type (given the model and the $X,Y$ data seen so far) and the posterior variance given each data realization, the implied *expected* variance is  easily calculated. These are summarized in Table \@ref(tab:exppostvar):
+From the probability of each data type (given the model and the $X,Y$ data seen so far) and the posterior variance given each data realization, the implied *expected* variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table \@ref(tab:exppostvar):
 
 ```{r exppostvar, echo = FALSE}
 expected_posterior_var <- sapply(1:3, function(i) 
@@ -431,9 +431,9 @@ conditional_inferences(updated, query = "Y[X=1]!=Y[X=0]", given = "!is.na(X) & !
 
 ### Case selection from causal models: a simulation-based approach
 
-In this section, we illustrate the model-based approach to case-selection more extensively by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using `CausalQueries` together with `CQTools`.
+In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using `CausalQueries` together with `CQTools`.
 
-We imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which cases to investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
+In all scenarios examined here, we imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming throughout that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which subset of the cases --- among those we have already gathered some data on --- we should investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
 
 The general intuition of the case-selection approach that we develop here is that we can use our causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer. 
 
@@ -441,55 +441,66 @@ We proceed as follows:
 
 **DAG**. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustrations, we consider two different DAGS: a simple mediation (or "chain") model, $X \rightarrow M \rightarrow Y$, and a two-path model, $X \rightarrow M \rightarrow Y \leftarrow X$.
 
-**Priors**. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. We can also indicate our uncertainty over the latter, by setting the $\alpha$ parameters of the relevant Dirichlet distributions. For the current example, we start by setting flat priors over all nodal types and assume no unobserved confounding.
+**Restrictions or priors**. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. We can also indicate our uncertainty over the latter, by setting the $\alpha$ parameters of the relevant Dirichlet distributions. For the current example, we start by setting flat priors over all nodal types and assume no unobserved confounding.
 
 **Given data.** If we have already made observations of any of the model's nodes in some set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed $X$'s and $Y$'s value in a set of cases, we might select cases for process tracing based on their values of $X$ and/or $Y$. And, importantly, what we have already observed in the cases will affect the inferences we will draw when we observe additional data, including how *informative* a particular new observation is likely to be. For the present examples, we assume that we have already observed $X$ and $Y$ in a set of cases and found a positive correlation.
 
-**Query**. We define our query. This could, for instance, be the share of cases in the population in which $X$ has a positive effect on $Y$, or it might be $X$'s average effect on $Y$. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. For instance, the best case-selection strategy for estimating the average causal effect of $X$ on $Y$ may not be the same as the best strategy for figuring out for what proportion of the population $X$ has a positive effect on $Y$. In the example below, we focus on a set of conditional queries, asking what the effect of $X$ on $Y$ is in cases with different $X$, $Y$, and $M$ values. 
+**Query**. We define our query. This could, for instance, be $X$'s average effect on $Y$ or it might be the probability that $X$ has a negative effect on $Y$ in an $X=1, Y=0$ case. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. The best case-selection strategy for answering one query may not be the best case-selection strategy for another query. 
 
-FLAG: MAke sure above query definition lines up with what we end up doing.
+**Define one or more strategies**. A strategy is defined, generically, as the search for data on a given set of *nodes*, in a given *number* of cases that are randomly selected *conditional* on some information we already have about potential cases. In the simulations below, our strategy will always involve uncovering $M$'s value in 1 or 2 cases. What we are wondering is how to choose these one or two cases for deeper analysis. 
 
-**Define one or more strategies**. A strategy is defined, generically, as the search for data on a given set of *nodes*, in a given *number* of cases that are randomly selected *conditional* on some information we already have about potential cases. Let us assume here that our strategy will involve uncovering $M$'s value in 1 or 2 cases. What we are wondering is how to choose this one or two cases for deeper analysis. For illustrative purposes, we focus in on four possible strategies, conditional on the $X$ and $Y$ values that we already know: 
+**Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus some pattern of $M$ observations. 
 
-1 examine $M$ in 1 $X=Y=1$ case; 
-2 examine $M$ in 1 $X=1, Y=0$ case; 
-3 examine $M$ in 2 cases, an $X=Y=1$ and an $X=Y=0$; and 
-4 examine $M$ in 2 cases, an $X=1, Y=0$ and an $X=0, Y=1$.
-
-In light of the positive $X,Y$ correlation already observed, we can think of strategies 1 and 3 as "on-the-regression line" strategies, while strategies 2 and 4 are "off-the-regression line" strategies.
-
-**Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus some pattern of $M$ observations. Thus, for instance, for strategy 1, we could end up observing the initial $X,Y$ pattern plus $M=0$ in one of the $X=1, Y=1$ cases, or the initial $X,Y$ pattern plus $M=1$ in one of the $X=1, Y=1$ cases. For strategy 3, we could observe four possible combinations of $M$ values, with $M$ being 0 or 1 in each of the cases. 
-
-**Probability of the data**. We now calculate a probability of each possible data realization, given the model and the data that we have already observed. In practice, we do this in `CQtools` via simulation. Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the previously observed data. This posterior now represents our *prior* for the purposes of the process tracing. In the present example, we are using the already-observed $X,Y$ correlation to update our beliefs about causal-type share allocations in the population, having seen the $X,Y$ data only. We then use this posterior to draw a series of $\lambda$ values. 
+**Probability of the data**. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed. In practice, we do this in `CQtools` via simulation. Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the previously observed data. This posterior now represents our *prior* for the purposes of the process tracing. In the analyses below, we use the already-observed $X,Y$ correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of $\lambda$ values. 
 
 Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that particular $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.
 
 **Posterior on estimate given the data**. For each data possibility, we can then use `CQtools` to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies. 
 
-**Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each *strategy*. Calculating this expectation is now elementary as we have both the posterior variance arising from each data possibility and the probability of each data possibility (given our prior beliefs and the data already observed). The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We can think of the expected gains from a strategy as the expected *reduction* in posterior variance arising from that strategy.
+**Expected posterior variance under each strategy**. The quantity of ultimate interest is the posterior variance that we expect to end up with under each strategy. The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We operationalize the expected learning under a strategy as the expected *reduction* in posterior variance arising from that strategy.
 
 
-#### Results
+#### Models, queries, and strategies
 
-For our analyses we imagine that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. Now we see what can happen for different queries when we implement each of the seven different case-selection strategies given five different background models and three primary queries. 
+Here we describe the dimensions along which we vary the features of the simulations.
+
+*Models*
+
+We illustrate the approach using a set of relatively simply models with core structural features that we believe will be fairly common in applied settings. These are:
+
+* Chain model: an $X \rightarrow M \rightarrow Y$ model, where $M$ is a mediator
+* Moderator model: an $X \rightarrow Y \leftarrow M$, where $M$ is a moderator
+* Two-path model: a model in which $X \rightarrow M \rightarrow Y \leftarrow X$, meaning that $X$ can affect $Y$ both through a direct path and indirectly via $M$
+* Two-path model with monotonicity restrictions: a two-path model in which negative effects at each node are ruled out
+* Two-path model with weak direct effect: a two-path model where our priors place a low probability on the operation of the direct pathway
+* Confound model: a model where $M$ is a confound for the $X \rightarrow Y$ relationship ($X \leftarrow M \rightarrow Y \leftarrow X$)
+
+*Queries*
 
 The primary queries we are interested in are:
 
-* what is the $ATE$ for the population?
-* what is the probability that $Y=1$ is due to $X=1$ for a randomly drawn case among those with $X=1, Y=1$
-* what is the probability that $Y=1$ is due to $X=0$ for a randomly drawn case among those with $X=0, Y=1$
+* $ATE$: what is the average effect of $X$ on $Y$ for the population?
+* Probability of positive causation: what is the probability that $Y=1$ is due to $X=1$ for a randomly drawn case among those with $X=1, Y=1$
+* Probability of negative causation: what is the probability that $Y=1$ is due to $X=0$ for a randomly drawn case among those with $X=0, Y=1$
+* Pathway: defined only for the two-path models, we examine the causal effect along the indirect pathway, through $M$. We calculate two indirect effects, one conditional on $X=0$ and one conditional on $X=1$. Each of these effects is defined as the effect on $Y$ of the change in $M$ that *would* result from a change in $X$ (from 0 to 1 or from 1 to 0, respectively), but with $X$ held constant (at 0 or 1, respectively).
 
-In the figure, each column represents a single model. Each row represents a query. Within a graph, we plot the inference on the query for all data-realization possibilities for, in turn:
+*Strategies*
 
 * Prior: beliefs are based on the $X,Y$ data only
-* $N=1$ strategies: one strategy in which data on $M$ is sought in the $X=1, Y=0$ cell and one in which it is sought in the $X=1, Y=1$ cell
-* $N=2$, on-the-regression-line: with data sought in one $X=1, Y=1$ case and one $X=0, Y=0$ case
+* $N=1$, $X=1, Y=0$: a strategy in which data on $M$ is sought in one case in the $X=1, Y=0$ cell
+* $N=1$, $X=1, Y=1$: a strategy in which data on $M$ is sought in one case in the $X=1, Y=1$ cell
 * $N=2$, off-the-regression-line: with data sought in one $X=0, Y=1$ case and one $X=1, Y=0$ case
-* $N=2$, "1-1" quadrant: with data on $M$ sought for two cases in the $X=1, Y=1$ cell
+* $N=2$, on-the-regression-line: with data sought in one $X=1, Y=1$ case and one $X=0, Y=0$ case
+* $N=2$, $X=1, Y=1$: with data on $M$ sought for two cases in the $X=1, Y=1$ cell
 * $N=2$, $X$-fixed: a strategy in which we look at two cases in which treatment was given with $X$ fixed at 1, one with $Y=0$ and one with $Y=1$
 * $N=2$, $Y$-fixed: a strategy in which we look at two cases in which a positive outcome was observed, with $Y$ fixed at 1, one with $X=0$ and one with $X=1$
 
 These are all "pure" strategies in the sense that the number of units for which data on $M$ is sought in each cell is fixed. One could also imagine random strategies in which a researcher chooses at random in which cells to look. For example, if we choose one point at random, we are randomly choosing between a case on the regression line and a case off the line. The performance of a random strategy will be a weighted average of the pure strategies over which the random strategy is randomizing.
+
+For all analyses, we imagine that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. 
+
+
+#### Results
 
 The main results are shown in Figure \@ref(fig:caseselectionest) and Figure \@ref(fig:caseselectionvar). In these graphs, we examine the informativeness of different process-tracing case-selection strategies by looking at the inferences we would draw for a set of queries depending on what we observe when we delve into the cases.
 
@@ -595,7 +606,7 @@ expected_var %>%
 
 
 
-#### From the $X,Y$ data (Chain model)
+#### From the $X,Y$ data only (Chain model)
 
 
 <!-- we see our pure prior on each query before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0.  -->
@@ -694,7 +705,7 @@ There is, however, one case-selection strategy that stands out: the selection of
 
 What if instead of the  $X \rightarrow Y$ causal effect, we are interested in the *pathway* along which that effect unfolds? Here $M$ can be informative, as we can see from the results in Figure \@ref(fig:caseselectionvar2), displaying expected reductions in posterior variance for a range of additional queries. Moving down the graph, we first see learning emerge for the intermediate causal effects, of $X$ on $M$ and of $M$ on $Y$. Indeed, even observing $M$ in a single case yields leverage on these two effects (since, for instance, $M=1$ in an $X=1$ case is inconsistent with a negative $X \rightarrow M$ effect in that case). As for our other queries, it is the on-the-line cases that are most informative about the intermediate effects.
 
-We also see that we can learn from $M$ about the pathway through which $X$'s effect on $Y$ operates. To get at the strength of the effect running through $M$, we define two indirect effects, one conditional on $X=0$ and one conditional on $X=1$. Each of these effects is defined as the effect on $Y$ of the change on $M$ that *would* result from a change in $X$ (from 0 to 1 or 1 to 0, respectively), but with $X$ held constant (at 0 or 1, respectively). We see that we need at least 2 cases to learn about these effects. We also see that, for $N=2$, we learn more about them from on-the-line than off-the-line cases. It is striking, however, that we still can learn about the mechanism through which a positive effect unfolds *by studying cases in which only a negative effect is possible*. 
+We also see that we can learn from $M$ about the pathway through which $X$'s effect on $Y$ operates. Focusing on the indirect effect rows (one conditioning on $X=1$, one conditioning on $X=0$), we see that we need at least 2 cases to learn about these effects. We also see that, for $N=2$, we learn more about them from on-the-line than off-the-line cases. It is striking, however, that we still can learn about the mechanism through which a positive effect unfolds *by studying cases in which only a negative effect is possible*. 
 
 *Two-path model with monotonicity restrictions.* The situation changes considerably if we come in with informative beliefs at the lower level. In the two-path-monotonic set of graphs, we see results for a two-path model in which we have imposed stronger beliefs about the direction of causation at the lower level, ruling out negative $X \rightarrow M$ and negative $M \rightarrow Y$ effects. Now we see in Figure \@ref(fig:caseselectionvar) that we can learn from all of the strategies. Perhaps most striking is that we can learn even just from $N=1$ strategies in this model. Observing $M=0$ in an $X=1, Y=1$ case decisively rules out the indirect pathway as a mechanism of causation, thus making a positive effect overall less likely in the case than if we observed $M=1$. 
 
