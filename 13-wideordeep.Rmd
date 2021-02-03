@@ -841,17 +841,31 @@ r2 %>%
 ```
 
 
-```{r, echo = FALSE, message = FALSE}
+```{r morn2, echo = FALSE, message = FALSE}
 r2 %>% group_by(wide_n, deep_n) %>% summarize(expected = mean(sd^2))  %>% kable(caption = "Expected posterior variance on the ATE", digits = 4)
 
 ```
 
 
-Figure \@ref(fig:morn1) shows the *distribution* of posterior variances we might obtain from many possible data draws, where each data draw is based on our current beliefs about the world. In this example we compare strategies with 800 and 1600 data points on $X$ and $Y$ and with 0 and 100 data points on $M$. We see here that the expected variance is lower when new data on $M$ is sought --- more data on $X$ and $Y$ does not add much in expectation. This is consistent with the analysis above with the important difference that the strategy we use here does not depend on the specification of a particular dataset but can be applied to *any* model, with *any* query, and *any* prior data.
+The more general, simulation-based approach that we introduce here is parallel to the approach for case-selection. The steps of this procedure are:
 
-We explore strategies for a range of models and present the results in a compact form in Figure \@ref(morn2).
+1. We posit a causal model, with any priors or restrictions.
+2. We specify the data we have in hand. Those should be data on some but not all nodes in the model for some number of cases.
+3. We then specify a set of mixing strategies to assess. A strategy, in this context, is defined as any combination of collecting data on the same nodes for a given number of additional cases (randomly drawn from the population) and collecting data on new nodes for a random sample of the original set of cases.
+4. For each strategy, we define the set of possible data realizations. Whereas for case-selection, the structure of the possible datasets will be the same for all strategies, possible data patterns in wide-versus-deep analyses involve much greater complexity and will vary in structure across strategies.
+5. As for case-selection, we use the model and prior data to calculate the probability of each data possibility under each strategy.
+6. Again, as for case-selection, we update the model using each possible data pattern to derive a posterior distribution. 
+7. We then average the posterior distributions across the possible data patterns under a given strategy, weighted by the probability of each data pattern.
 
-```{r morn2, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
+We illustrate the last two steps in Figure \@ref(fig:morn1), using a similar setup to the one above. We again posit the same $X \rightarrow Y \leftarrow M \rightarrow X$. We assume that we have started with $X,Y$ observations for 800 cases. We then choose among drawing another 800 cases for $X,Y$ analysis, going deeper in 100 of our cases, or both. What Figure \@ref(fig:morn1) shows is the distribution of *posterior variances* that we obtain from many possible data draws under each strategy.  In the top row, we are comparing two levels of breadth, with no depth. Moving to the bottom row, we introduce depth in 100 cases, for each level of breadth. We see here a distinct shift in the distributon to the left --- meaning, a reduction in the expected posterior variance -- when we drill down to gather data on $M$. In contrast, we see no such shift in the expected posterior variance when we increase the number of cases for which we gather data on $X$ and $Y$. For greater precision, we report the expected value for each distribution of posterior variances in Table \@ref(tab:morn2). The pattern here is consistent with the analysis above, although here we have averaged across all *possible* data patterns arising from the strategies, rather than focusing on just a couple of data possibilities. 
+
+This approach can be applied to *any* model, with *any* query, and *any* prior set of data. 
+
+We now explore strategies for a range of models and present the results in compact form in Figure \@ref(morn2). For the purposes of this illustration, we focus on the $ATE$ and the probability of positive causation as queries, and the results of the exercise would likely differ for different queries. On each graph, we plot 3 lines, each representing a different number of "wide" ($X,Y$-data only) cases, ranging from 100 to 1600. Each line then shows how the expected posterior variance changes as we add "depth," going from observing $M$ in 0 cases to observing it in 50 and then 100 cases.
+
+Starting with the chain model ($X \rightarrow Y$), we see that there are gains to be reaped from both breadth and depth, for both queries. We can also get a sense of the nature of the tradeoffs. One thing we observe is that, for the $ATE$, the gains to breadth are greater the less depth we have. Once we have process-traced 100 cases, the difference in the posterior variance we expect between having $X,Y$ data only on those 100 cases and having $X,Y$ data on an additional 300 cases is very modest compared to the situation in which we have done no process tracing. Likewise, the gains to depth diminish with breadth: the slope of the depth line flattens as we add $X,Y$ cases. Further, there appear to be diminishing returns to each strategy on its own terms: note, for instance, how the move from 50 to 100 process-tracing cases deliver less expected learning than does the move from 0 to 50.
+
+```{r morn3, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
 short <- results %>% group_by(Model, design, Given) %>% 
   dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5, deep = mean(deep_n), wide = mean(wide_n))  %>%
   mutate(Estimand = ifelse(Given == "-", "Effect of X on Y", "X=1 caused Y=1")) %>%
