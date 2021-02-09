@@ -865,6 +865,8 @@ We now explore strategies for a range of models and present the results in compa
 
 Starting with the chain model ($X \rightarrow Y$), we see that there are gains to be reaped from both breadth and depth, for both queries. We can also get a sense of the nature of the tradeoffs. One thing we observe is that, for the $ATE$, the gains to breadth are greater the less depth we have. Once we have process-traced 100 cases, the difference in the posterior variance we expect between having $X,Y$ data only on those 100 cases and having $X,Y$ data on an additional 300 cases is very modest compared to the situation in which we have done no process tracing. Likewise, the gains to depth diminish with breadth: the slope of the depth line flattens as we add $X,Y$ cases. Further, there appear to be diminishing returns to each strategy on its own terms: note, for instance, how the move from 50 to 100 process-tracing cases deliver less expected learning than does the move from 0 to 50.
 
+We can also how the tradeoff varies by estimand. For the $ATE$, the gains to going deep in an additional 50 cases look roughly equivalent to those of expanding the dataset by 100 cases. However, for the probability of positive causation, the scales tip quite dramatically in favor of depth: The gains to depth in 50 cases are more than double the gains of broadening by as many as 300 cases. 
+
 ```{r morn3, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
 short <- results %>% group_by(Model, design, Given) %>% 
   dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5, deep = mean(deep_n), wide = mean(wide_n))  %>%
