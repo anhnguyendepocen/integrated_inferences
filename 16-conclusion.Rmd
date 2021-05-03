@@ -6,9 +6,9 @@ The central idea of this book is that we can usefully learn about the world by c
 
 This way of thinking about learning is very different to many standard approaches in the social sciences. It promises benefits, but it also comes with risks. We try to describe both in this closing chapter. 
 
-The approach stands in particularly stark contrast to the  design based approach to causal inference, which has gained prominence in recent years. Design based approaches have shown that  it is possible to greatly diminish the role of background assumptions for some research questions and contexts. This is a remarkable achievement that has put the testing of some hypotheses and estimation of some causal quantities on a firmer footing. It allows researchers to maintain agnostic positions and base their inferences more solidly on what they know to be true---such as how units were sampled and how treatments were assigned---and less on speculations about background data generating processes. 
+The approach stands in particularly stark contrast to the  design based approach to causal inference, which has gained prominence in recent years. Design based approaches have shown that  it is possible to greatly diminish the role of background assumptions for some research questions and contexts. This is a remarkable achievement that has put the testing of some hypotheses and estimation of some causal quantities on a firmer footing. It allows researchers to maintain agnostic positions and base their inferences more solidly on what they know to be true---such as how units were sampled and how treatments were assigned---and less on speculations about background data generating processes. Nothing here argues against these strengths.
 
-At the same time, there are limits to model-free social science that affect the kinds of questions we can ask and the conditions we need to be in place to able to generate an answer.  
+At the same time, there are limits to model-free social science that affect the kinds of questions we can ask and the conditions we need to be in place to able to generate an answer. Most simply we often don;t understand the design very well, we cannot control the processes we want to study, or the quantities we care can not be identified with design based inferential tools.    
 <!-- , . In particular, design-based inference relies on (as-good-as) random assignment by the researcher or by nature, placing bounds on the kinds of causes and contexts we can investigate. The approach is also generally limited to estimating a single causal quantity: the average causal effect. -->
 
 Building on pioneering work by scholars in computer science, statistics, and philosophy, we have outlined a principled approach to mobilizing prior knowledge to learn from new data in situations where randomization is unavailable and to answer questions for which randomization is unhelpful. In this approach, causal models are *guides* to research design, *machines* for inference, and *objects* of inquiry. As guides, the models yield expectations about the learning that can be derived from a given case or set of cases and from a given type of evidence, conditional on the question being asked. As inferential machines, models allow updating on that query once the data are in hand. Finally, when we confront a model with data, we learn about the parameters of the model itself, which can be used to answer a range of other causal questions and allowing cumulation of knowledge across studies.  To complement the conceptual infrastructure we have provided software tools that let researchers build, update, and query binary causal models.
@@ -59,7 +59,7 @@ A second is with regards to the relationship between beliefs about queries and b
 
 While we have found the syntax of Directed Acyclic Graphs to provide a flexible framework for setting up causal models, we have also become more keenly aware of some of the limitations of DAGs in representing causal processes. We discuss a few of these here.
 
-**Well defined nodes?** A DAG presupposes a set of well-defined nodes that come with location and time stamps. [Point to be elaborated.] This involves a discretization of the world that may not align with how qualitative researchers study the world. For instance, qualitative researchers do not just observe that (a) domino 1 fell and (b) domino 2 fell. They observe that domino 2 fell *just* as domino 1 hit it. 
+**Well defined nodes?** A DAG presupposes a set of well-defined nodes that come with location and time stamps. Income in time $t$ affects democracy in time $t+1$ which affects income in time $t$. Yet it is not always easy to figure out how to partition the world into such near event bundles. Income in 1985 is not an "event" exactly but a state, and the temporal ordering with respect to "Democracy 1985" is none too clear. Moreover, even if events are coded into well ordered nodes values on these nodes may poorly capture actual processes, even in simple systems. Consider the simplest set up with a line of dominos. You are interested in whether the fall of the first domino cases the fall of the last one. But the observations of the states of the dominos do not fully capture the causal process even  in this simplest of systems. The data might report that (a) domino 1 fell and (b) domino 2 fell. But the observer will notice that domino 2 fell *just as* domino 1 hit it. 
 
 <!-- AJ: I am not exactly sure what point you mean to make here. If you spell ouit a bit more in point form, I can clean up. -->
 
@@ -82,12 +82,25 @@ Consider three examples:
 
 * You specify a model $X  \rightarrow Y$ and assume flat priors over nodal types. The implied prior that $X$ has a positive effect on $Y$ is then 0.25. You add detail by specifying $X \rightarrow M \rightarrow Y$ but continue to hold flat priors. In your more detailed model however the probability of a positive effect of $X$ on $Y$ is just 0.125. Adding the detail requires either moving from flat priors on nodal types of changing priors on aggregate causal relations.
 
+
+<!-- * You specify a model with $X\rightarrow Y$ and update given some data on $X$ and $Y$. You then add detail and specify $X \rightarrow M \rightarrow Y$ with teh same prior beliefs over how $X$ affects $Y$. You update with teh same data but come to different results. -->
+
+```{r, echo = FALSE, eval = FALSE}
+
+M1 <- make_model("X->Y")
+
+k <- (1/8)^.5
+kk <- 3.5
+M2 <- make_model("X->M->Y") %>% set_priors(alpha = c(1,1, c((1-2*k)/2, k, k, ((1-2*k)/2))*kk, c((1-2*k)/2, k, k, ((1-2*k)/2))*kk))
+
+Q1 <- query_model(M1, c("Y[X=1]==0 & Y[X=0]==0 ", "Y[X=1] > Y[X=0]"), using = "priors" )
+Q2 <- query_model(M2, c("Y[X=1]==0 & Y[X=0]==0 ", "Y[X=1] > Y[X=0]"), using = "priors" )
+
+```
+
 * You specify a model $X  \rightarrow Y \leftarrow W$ and build in that $W$ is a smoking gun for the effect of $X$ on $Y$. You add detail by specifying $X \rightarrow M \rightarrow Y \leftarrow W$. This means however that $W$ cannot be a smokung gun for $Y$ unless teh $X \rightarrow M$ relation is certain. Why? To be a smoking gun it must be that if $W=1$ you are sure that $X$ causes $M$ and that $M$ causes $Y$ which requires an arrow from $W$ to $M$ and not just from $W$ to $X$.
 
-* If you specify X->M->Y <-W and W is a smoking gun then it must be smokoning gund for M and for Y
 
-
-* beliefs about share a in a X->Y model fom reg data are different to learning from the saem data in a X->M->Y model wiht M unobserved. 
 
 
 **Model-dependence of conclusions** One striking finding of some of the analyses presented here is see how sensitive conclusions can be to what would seem to be quite modest changes to models. We see two ways of thinking about the implications of this fact for a causal-models framework. 
@@ -102,25 +115,50 @@ We do not see causal models as the only way forward or as a panacea, and we are 
 
 ## The future
 
-The two of us began this intellectual journey by developing an approach to Bayesian mixed-method analysis in which the researcher stipulates priors beliefs about estimands, the probative value of the evidence, and selection into assignment. A dissatisfcation we had with this approach was that it seemed to lack foundations: where do prior beliefs about estimands, probative value, and assignment come from? And how do we ensure internal consistency across these beliefs? This book answer represents our answer to that problem: a causal model allows the researcher to write down a set of elemental causal beliefs, from which all else --- priors, probative value, selection effects -- flows.
 
-Yet this answer raises its own question about foundations: where do our causal models come from? While we have provided some guidance on how to construct models and evaluate them, we have largely bracketed the question of how researchers might form, extract, or elicit the substantive causal beliefs that inform models.
+We began this intellectual journey developing an approach to Bayesian mixed-method analysis in which the researcher stipulates priors beliefs about estimands and the probative value of new evidence, and selection into assignment. Over time we became increasingly dissatisfied with the fact that this approach lacked foundations. These translate into the inputs you need to apply Bayes rule and you can apply Bayes rule without any justification for any of these inputs. Where do prior beliefs about estimands, probative value, and assignment come from? On what basis should readers accept your outputs if you cannot justify your inputs?
 
-We see the development of transparent, systematic approaches to model construction as an important next step in the elaboration of the framework. One could imagine multiple approaches to model-generation, and we seek here to outline a set of desiderata toward which any model-generating technique might plausibly be oriented.
+This book represents our answer to that problem: a causal model allows the researcher to write down a set of more foundational causal beliefs, from which priors, probative value, and selection effects can be derived. Doing so forces a coherence that is otherwise not required when you turn to Bayes: from the same model you can derive both the prior probability that $X$ affects $Y$ and that $M$ is informative for $X$ affects $Y$ and for the probability that $X=1$ depending on whether or not $X$ affects $Y$. This model may itself be justified by reference to a more fundamental model that has been updated with prior data or to a model that reflects the beliefs of a community of research consumers. 
 
-**1. Theoretical grounding and coherence.** One desirable feature of a causal model is that its implied claims make sense. Another way to put the point is that a good causal model will usually be interpretable by reference to a plausible theoretical logic. For instance, if our model allows for high inequality to cause mass mobilization, we might place a value on that feature of the model being underwritten by a set of defensible claims about the mechanism through which that effect might unfold.  
+Yet this answer raises its own question about foundations: where do our foundational causal models come from?  While we have provided some guidance on how to construct models and evaluate them, we have largely bracketed the question of how researchers might form, extract, or elicit the substantive causal beliefs that inform models. We see the development of transparent, systematic approaches to model construction as an important next step in the elaboration of the framework. 
 
-A further concern might be the *coherence* of the model. Suppose that we write down a $Inequality \rightarrow Mobilization \rightarrow Democratization \leftarrow PriceInflation$ model. Do the claims embedded in this model hold together, given the underlying theoretical logics? For instance, is it consistent to allow inequality to have an effect on mobilization but exclude inflation from operating through mobilization? If economic grievances can provoke mass mobilization, as in inequality's effect, should we not also allow for rising food prices to have a similar effect? 
+### The goal: A compendium of models
 
-A theoretical logic will almost never be *sufficient* to justify a particular model, as there will generally be too many potential theoretical logics around a given domain to narrow down the possibilities sufficiently (especially taking the complexity desideratum, below, into account). Not will a theoretical logic be strictly necessary for a useful causal model. One could imagine allowing for an effect on $X$ on $M$ in a model based on empirical -- perhaps experimental -- evidence of such an effect, absent a theorization of the mechanism. 
+* Shared models
+* Models we can defend
+* Models we can reject
+* We know what we learn when we learn something new
 
-**2. Consistency with all prior information.** Another desirable property of a procedure for generating causal models would be a maximally complete, accurate incorporation of the information available prior to analysis that speaks to causal relationships within the domain of interest. In general, this desideratum is likely to act as a conservative constraint on the strength of beliefs embedded within a model. For instance, one set of prior information might point toward an $X \rightarrow M \rightarrow Y$ chain of effects, yet this is a relatively restrictive model. Incorporating *more* prior information is unlikely to definitively discredit the possibility of this causal chain, but it might well yield evidence of pathways from $X$ to $Y$ that do not include $M$. And if it does, then consistency with prior information would require us to add a direct link from $X$ to $Y$, generating a less restrictive model. IS THIS POINT FRAMED RIGHT? OR SHOULD IT INSTEAD BE ABOUT NOT MAKING STRONGER CLAIMS THAN THE PRIOR INFO JUSTIFIES (WHEREAS THE NEXT POINT IS ABOUT NOT MAKING WEAKER CLAIMS THAN YOU CAN)?
 
-**3. Leverage.** As we have shown throughout this book, some models will provide more empirical leverage than others, in the sense that observations of their nodes will have greater probative value. Leverage typically derives from the strength of the prior beliefs embedded in a model. For instance, the causal model $X \rightarrow M \rightarrow Y$ will tend to provide strong opportunities for updating than the model $X \rightarrow M \rightarrow Y$ *if* we also have non-uniform beliefs over $X$'s effects on $M$ and $M$'s effects on $Y$. One way to put this is that we don't want to leave precision on the table. While we do not want our models to build in stronger beliefs than prior information can justify, we also would not want a model-generating procedure to yield models that are weaker than they could be.
+### The properties of  models
 
-**4. Tractability.** More complex models are harder to work with. As the number of a node's parents increases, for instance, the number of nodal types increases steeply. It becomes accordingly harder for researchers to conceptualize and form meaningful priors over these nodal types. Moreover, the computational demands of operating even moderately complex models can be very high. 
+One could imagine multiple approaches to model-generation, and we seek here to outline a set of desiderata toward which any model-generating technique might plausibly be oriented.
 
-**5. Transparency.** Ideally, we would want any model-generating procedure to make use of prior information via an explicit, transparent set of procedures. If one researcher derives a model, a second researcher should be able to see clearly how the model was generated and, in turn, to assess how the model might have changed if additional or different information had been incorporated. 
+**1. Theory based causal models.** 
+
+A good causal model will usually be interpretable by reference to a plausible theoretical logic. For instance, if our model allows for high inequality to cause mass mobilization, we might place a value on that feature of the model being underwritten by a set of defensible claims about the mechanism through which that effect might unfold.  
+<!-- Conversely an incoherent model may be suspect. Consider the model: -->
+<!-- $$\text{Inequality} \rightarrow \text{Mobilization} \rightarrow \text{Democratization} \leftarrow \text{Price Inflation}$$ -->
+<!-- Is it consistent to allow inequality to have an effect on mobilization but exclude inflation from operating through mobilization? If economic grievances can provoke mass mobilization, as in inequality's effect, should we not also allow for rising food prices to have a similar effect?  -->
+A theoretical logic is not likely to be *sufficient* to justify a particular causal model, as there will generally be too many potential theoretical logics around a given domain to narrow down the possibilities sufficiently (especially taking the complexity desideratum, below, into account). Nor will a theoretical logic be strictly necessary for a useful causal model. One could imagine allowing for an effect on $X$ on $M$ in a model based on empirical -- perhaps experimental -- evidence of such an effect, absent a theorization of the mechanism. Nevertheless underlying theory can clarify what one has to be believe in order to buy the structure of a model. 
+
+**Would be nice to have an example where theory suggests that X woud be random or soemthing like that**
+
+**2. History subsuming causal models.** 
+
+A second justification for causal models would be a maximally complete, accurate incorporation of the information available prior to analysis that speaks to causal relationships within the domain of interest. In general, this desideratum is likely to act as a conservative constraint on the strength of beliefs embedded within a model. For instance, one set of prior information might point toward an $X \rightarrow M \rightarrow Y$ chain of effects, yet this is a relatively restrictive model. Incorporating *more* prior information is unlikely to definitively discredit the possibility of this causal chain, but it might well yield evidence of pathways from $X$ to $Y$ that do not include $M$. And if it does, then consistency with prior information would require us to add a direct link from $X$ to $Y$, generating a less restrictive model. IS THIS POINT FRAMED RIGHT? OR SHOULD IT INSTEAD BE ABOUT NOT MAKING STRONGER CLAIMS THAN THE PRIOR INFO JUSTIFIES (WHEREAS THE NEXT POINT IS ABOUT NOT MAKING WEAKER CLAIMS THAN YOU CAN)?
+
+**3. Leverage.** 
+
+As we have shown throughout this book, some models will provide more empirical leverage than others, in the sense that observations of their nodes will have greater probative value. Leverage typically derives from the strength of the prior beliefs embedded in a model. For instance, the causal model $X \rightarrow M \rightarrow Y$ will tend to provide strong opportunities for updating than the model $X \rightarrow M \rightarrow Y$ *if* we also have non-uniform beliefs over $X$'s effects on $M$ and $M$'s effects on $Y$. One way to put this is that we don't want to leave precision on the table. While we do not want our models to build in stronger beliefs than prior information can justify, we also would not want a model-generating procedure to yield models that are weaker than they could be.
+
+**4. Tractable models.**
+
+More complex models are harder to work with. As the number of a node's parents increases, for instance, the number of nodal types increases steeply. It becomes accordingly harder for researchers to conceptualize and form meaningful priors over these nodal types. Moreover, the computational demands of operating even moderately complex models can be very high. 
+
+**5. Transparent.** 
+
+Ideally, we would want any model-generating procedure to make use of prior information via an explicit, transparent set of procedures. If one researcher derives a model, a second researcher should be able to see clearly how the model was generated and, in turn, to assess how the model might have changed if additional or different information had been incorporated. 
 
 **6. Reliability** The procedure should ideally yield the same model, with the same restrictions and priors, when repeated and regardless of which researcher is implementing the procedure. COMBINE WITH TRANSPARENCY??
 
@@ -128,9 +166,13 @@ A theoretical logic will almost never be *sufficient* to justify a particular mo
 
 There will tend to be tradeoffs across these desiderata. For instance, tractability will sometimes be in tension with a full, accurate use of prior information. As we broaden the base of prior information, we are likely to add nodes as well as arrows (representing possible direct causal effects) between existing nodes. Likewise, taking more prior information into account may mean giving up leverage if, for instance, additional information makes us less certain about the prior weights over nodal types. Some desiderata will be complementary, however: models with more leverage will often include restrictions on nodal types, which will also reduce complexity. In any case, we expect that no single procedure will be able to maximize all desiderata at the same time. 
 
+### Procedures to get there
+
 Consider a few operational possibilities:
 
-* Crowdsourcing: One could imagine a platform that allowed researchers to gather and aggregate prior causal beliefs from a set of experts within a field of inquiry. Experts could be asked to weigh in on relationships among a fixed set of variables: which variables have direct effects on which? Experts could also be invited to add nodes, for instance, as mediators between the original set of nodes, as confounders, or as colliders. To generate restrictions and priors, experts could also be asked what kinds of effects (positive, negative, null) are relatively more and less likely. 
+**Crowdsourcing**
+
+One could imagine a platform that allowed researchers to gather and aggregate prior causal beliefs from a set of experts within a field of inquiry. Experts could be asked to weigh in on relationships among a fixed set of variables: which variables have direct effects on which? Experts could also be invited to add nodes, for instance, as mediators between the original set of nodes, as confounders, or as colliders. To generate restrictions and priors, experts could also be asked what kinds of effects (positive, negative, null) are relatively more and less likely. 
 Instruments for eliciting such beliefs might vary widely, but one approach could be a conjoint design: for each node, respondents are presented, successively, with paired sets of assigned values for the node's parents and then asked for which pair of parental values they expect the node itself to take on a higher value.
 
 Crowdsourcing would likely perform well in achieving comprehensiveness of the prior information base insofar as experts will be, at least implicitly, drawing on a wide range of observations, findings in the literature, and theoretical insights. The procedure is transparent insofar as the elicitation methods, expert sampling frame, and expert responses can be shared; on the other hand, we would have little insight into what information experts themselves have drawn on in arriving at their beliefs. The reliability of a crowdsourced procedure would depend in part on how large the "crowd" is: how many experts can be polled on a given causal domain. A key challenge would be implementing a crowdsourcing in a way that yielded a clear grounding in internally consistent theoretical logics. It is also our hunch that crowdsourced models will tend to be more complex, given that they will likely represent a broader range of causal possibilities and a more diffuse set of beliefs over causal effects. Crowdsourcing could also be implemented adaptively, with some additional effort. One could imagine a platform that would allow new experts to register their views at any time or for "old" experts to update their responses as their beliefs change.  
@@ -143,14 +185,15 @@ The limitations of a data-driven approach are, effectively, the flip side of its
 
 Even a maximally data-driven approach cannot be assumption-free. One inescapable assumption is portability: we need to believe that the model that describes the context in which the prior data were generated also applies to the context in which new data are to be generated.
 
-Crodsourced models;
-discpline wide agreement on models
 
-building structures so research can contribute to models
+<!-- Crodsourced models; -->
+<!-- discpline wide agreement on models -->
 
-connecting more thoroughly to formal theorey
-logical coherence
+<!-- building structures so research can contribute to models -->
 
-modularization
+<!-- connecting more thoroughly to formal theorey -->
+<!-- logical coherence -->
 
-  
+<!-- modularization -->
+
+
