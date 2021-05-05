@@ -93,8 +93,9 @@ We reduce complexity however by thinking of models as operating on units and lea
 
 Taking this step the procedure we now use in the mixed methods works as follows:
 
+**INTROUDCE CONCEPTS AND THEN ILLUSTRATE**
 
-**A DAG**. As for process tracing, we begin with a graphical causal model specifying possible causal linkages between nodes.
+**A DAG**. As for process tracing, we begin with a graphical causal model specifying possible causal linkages between nodes. Our "chain" model for instance has DAG: $X \rightarrow M \rightarrow Y$.
 
 **Nodal types**. Just as in process tracing, the DAG and variable ranges define the set of possible nodal types in the model---the possible ways in which each variable is assigned (if exogenous) or determined by its parents (if endogenous).
 
@@ -103,6 +104,8 @@ Taking this step the procedure we now use in the mixed methods works as follows:
 **Priors**. The first difference between single- and multiple-case inference lies in how we set priors on causal types. In process tracing, we set parameter values for each nodal type (or conditional nodal type, for unobserved confounding). Our parameters---e.g., $\lambda^X_0$, $\lambda^Y_{01}$---represent our beliefs about the proportions of these types in the population. When we only observe a single data type---data on a single case---we do not have sufficient information to learn about the distribution of types in the population. And so we treat these population-level beliefs as fixed parameters, rather than priors that we update on. (What we update on, in process tracing, is our priors on whether a *given case* is of a particular type or set of types.) Likewise, uncertainty about those population-level parameters has no effect on our inferences for a single case. When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. 
 
 While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). The parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
+
+**ADD MULTILEVEL GRAPH**
 
 
 :::: {.headerbox data-latex=""}
@@ -196,11 +199,12 @@ $$
 <!-- |            $\lambda^Y_{11}$            |              0             |              0             |              0             |              0             |              0             |              0             |              1             |              1             |                    0.3                    | -->
 <!-- Table: (\#tab:parammmatrixmix). A parameter matrix for a simple $X \rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\lambda$ values from the prior distribution. -->
 
+BOX
 
-### Estimation
+#### Likelihood and sampling
 
 
-Say a data strategy seeks data on $X$ and $Y$ in 2 cases and seeks data on $K$ if ever $X=Y=1$.
+Say a data strategy seeks data on $X$ and $Y$ in 2 cases and seeks data on $M$ if ever $X=Y=1$.
 
 The probability of each data type is as given in table below:
 
@@ -260,136 +264,74 @@ In the two strategy view we have
 which is the same up to a constant.
 
 
-## Illustration 
+### Estimation
 
-Consider a generalization of the models introduced in Chapter 6 in which a treatment $X$ is a cause of both $K$ and $Y$, and outcome $Y$ is a product of both $X$ and $K$. Though $K$ is both a mediator and a moderator for the effect of $X$. There are now 16 nodal types for $Y$, 4 for $K$ and 2 for $X$, yielding 32 causal types.
+WRITE GENERAL APPROACH
 
-To allow for the possibility of non-random selection of $X$ we will assume that the assignment probability for $X$ depends on $U^Y$. This is a feature shared also in the baseline model when we specify $\pi$ as a function of types $a$,$b$,$c$,$d$.
-
-Our piors requires specifying:
-
-1. A distribution over the 15-dimensional simplex representing possible values of $\lambda^Y$--which in turn determine types $u^Y$.
-2. A distribution over the 3-dimensional vector representing possible values of $\lambda^K$,  which in turn determine types $u^K$.
+WEITE BAYES RULE AND REFER BACK TO CHAPTER
 
 
-The model is restricted in various ways. We assume now confounding in the assignemnt of $X$. Less obviously we implicitly assume that $K$ is independent of $\theta^Y$ conditional on $X$.
+### Query
 
-With these elements in hand, however, all we need now is to provide a mapping from these fundamental parameters to the parameters used in the baseline model to form the likelihood. 
-
-
-The key transformation is the identification of causal types resulting from the 64 combinations of $\lambda^Y$ and $\lambda^K$. These are shown below.
-
-TABLE TO SHOW CAUSAL TYPES
-
-Consider the following matrices of values for $u_Y$ and $u_K$, where $\lambda_{pq}^{rs}$ is the probability that $u^Y = t_{pq}^{rs}$, meaning that $Y$ would take the value $p$ when $X=0, K=0$,  $q$ when $X=0, K=1$,  $r$ when $X=1, K=0$,  and $s$ when $X=1, K=1$. Similarly $\lambda_{w}^{z}$ is the probability that $u^K$ takes value  $t_{w}^{z}$  meaning that $K$ takes the value $w$ when $X=0$ and $z$ when $X=1$.
+Describe and illustrate
 
 
-TABLE TO SHOW CONDITIONAL PROBABILITIES OF K GIVEN X=1 AND TYPE
+<!-- ## Illustration  -->
 
-These types are the *transformed parameters*; the probability of a type is just the sum of the probabilities of the fundamental types that compose it, formed by taking the product of the $\lambda^Y$ and $\lambda^K$ values marked in the rows and columns of  table \ref{tab:types}. 
+<!-- Consider a generalization of the models introduced in Chapter 6 in which a treatment $X$ is a cause of both $K$ and $Y$, and outcome $Y$ is a product of both $X$ and $K$. Though $K$ is both a mediator and a moderator for the effect of $X$. There are now 16 nodal types for $Y$, 4 for $K$ and 2 for $X$, yielding 32 causal types. -->
 
-Similarly $\phi_{tx}$ can be constructed as the probability of observing $K$ conditional on this type (again, sums of products of probabilities associated with cells in table  \ref{tab:types}). For instance, using the row and column indices in exponents (GIVE FULL LABELS) from table \ref{tab:types}:
+<!-- To allow for the possibility of non-random selection of $X$ we will assume that the assignment probability for $X$ depends on $U^Y$. This is a feature shared also in the baseline model when we specify $\pi$ as a function of types $a$,$b$,$c$,$d$. -->
 
-$$\phi_{b1}=\frac{\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}{
-\lambda_K^1(\lambda_Y^3+\lambda_Y^4+\lambda_Y^7+\lambda_Y^8)+\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^3(\lambda_Y^3+\lambda_Y^4+\lambda_Y^11+\lambda_Y^{12})+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}$$
+<!-- Our piors requires specifying: -->
+
+<!-- 1. A distribution over the 15-dimensional simplex representing possible values of $\lambda^Y$--which in turn determine types $u^Y$. -->
+<!-- 2. A distribution over the 3-dimensional vector representing possible values of $\lambda^K$,  which in turn determine types $u^K$. -->
+
+
+<!-- The model is restricted in various ways. We assume now confounding in the assignemnt of $X$. Less obviously we implicitly assume that $K$ is independent of $\theta^Y$ conditional on $X$. -->
+
+<!-- With these elements in hand, however, all we need now is to provide a mapping from these fundamental parameters to the parameters used in the baseline model to form the likelihood.  -->
+
+
+<!-- The key transformation is the identification of causal types resulting from the 64 combinations of $\lambda^Y$ and $\lambda^K$. These are shown below. -->
+
+<!-- TABLE TO SHOW CAUSAL TYPES -->
+
+<!-- Consider the following matrices of values for $u_Y$ and $u_K$, where $\lambda_{pq}^{rs}$ is the probability that $u^Y = t_{pq}^{rs}$, meaning that $Y$ would take the value $p$ when $X=0, K=0$,  $q$ when $X=0, K=1$,  $r$ when $X=1, K=0$,  and $s$ when $X=1, K=1$. Similarly $\lambda_{w}^{z}$ is the probability that $u^K$ takes value  $t_{w}^{z}$  meaning that $K$ takes the value $w$ when $X=0$ and $z$ when $X=1$. -->
+
+
+<!-- TABLE TO SHOW CONDITIONAL PROBABILITIES OF K GIVEN X=1 AND TYPE -->
+
+<!-- These types are the *transformed parameters*; the probability of a type is just the sum of the probabilities of the fundamental types that compose it, formed by taking the product of the $\lambda^Y$ and $\lambda^K$ values marked in the rows and columns of  table \ref{tab:types}.  -->
+
+<!-- Similarly $\phi_{tx}$ can be constructed as the probability of observing $K$ conditional on this type (again, sums of products of probabilities associated with cells in table  \ref{tab:types}). For instance, using the row and column indices in exponents (GIVE FULL LABELS) from table \ref{tab:types}: -->
+
+<!-- $$\phi_{b1}=\frac{\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}{ -->
+<!-- \lambda_K^1(\lambda_Y^3+\lambda_Y^4+\lambda_Y^7+\lambda_Y^8)+\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^3(\lambda_Y^3+\lambda_Y^4+\lambda_Y^11+\lambda_Y^{12})+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}$$ -->
 
 
 
-With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model.
+<!-- With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model. -->
 
 ## Illustrated inferences
 
 
-### XY model
+### Chain model
 
-Consider the simple model in which $X$ causes $Y$ without confounding. 
-
-Assuming flat priors on types, what inferences do we draw from different sorts of (small) datasets. Do we learn more about effects from two cases that are the same, two cases that differ on X and Y only or two cases that differ on both.
-
-The results are given in table \@ref(tab:XYresultstable).
-
-```{r XYresultstable, echo = FALSE}
-
-model <- make_model("X->Y") %>% set_parameter_matrix()
-
-if(do_diagnosis){
-types_inferences <- function(model, data = data.frame(X = 0, Y = 1), stan_model, label){
-
-  M <- gbiqq::gbiqq(model, data = data, fit = stan_model)
-
-  a <- get_estimands(M, using = "posteriors", queries = "Y[X=1]<Y[X=0]")
-  b <- get_estimands(M, using = "posteriors", queries = "Y[X=1]>Y[X=0]")
-  c <- get_estimands(M, using = "posteriors", queries = "(Y[X=.]==0)", join_by = "&")
-  d <- get_estimands(M, using = "posteriors", queries = "(Y[X=.]==1)", join_by = "&")
-  data.frame(data = label, a = a$mean, b = b$mean, c = c$mean, d = d$mean, ate = b$mean - a$mean, bd = b$mean/d$mean, bc = b$mean/c$mean)
- }
-
-
-M_1_0 <- types_inferences(model, data = data.frame(X = 0, Y = 0),stan_model = fit, label = "00")
-M_1_1 <- types_inferences(model, data = data.frame(X = 0, Y = 1),stan_model = fit, label = "01")
-M_1_2 <- types_inferences(model, data = data.frame(X = 1, Y = 1),stan_model = fit, label = "11")
-M_2_1 <- types_inferences(model, data = data.frame(X = c(0,0), Y = c(1,1)),stan_model = fit, label = "01, 01")
-M_2_2 <- types_inferences(model, data = data.frame(X = c(1,1), Y = c(1,1)),stan_model = fit, label = "11, 11")
-M_2_3 <- types_inferences(model, data = data.frame(X = c(0,1), Y = c(1,1)),stan_model = fit, label = "01, 11")
-M_2_4 <- types_inferences(model, data = data.frame(X = c(1,1), Y = c(0,1)),stan_model = fit, label = "10, 11")
-M_2_5 <- types_inferences(model, data = data.frame(X = c(0,1), Y = c(0,1)),stan_model = fit, label = "00, 11")
-M_3_1 <- types_inferences(model, data = data.frame(X = c(1,1, 1), Y = c(1,1,1)),stan_model = fit, label = "11, 11, 11")
-
-xy_results_table <- rbind(M_1_0, M_1_1, M_1_2, M_2_1, M_2_2, M_2_3, M_2_4, M_2_5, M_3_1)
-write_rds(xy_results_table, "saved/xy_results_table.rds")
-}
-xy_results_table <- read_rds("saved/xy_results_table.rds")
-
-kable(xy_results_table, digits = 2, caption = "Inferences for different data observations in a simple X->Y model")
-```
-
-We note a number of features:
-
-* $X=1, Y=1$ data does not discriminate between $\theta^Y_{01}$ and $\theta^Y_{11}$ and so while more of this data puts greater weight on both   $\lambda^Y_{01}$ and $\lambda^Y_{11}$, it does nothing to discriminate between them.
-* Similarly $X=0, Y=0$ data does not discriminate between $\theta^Y_{01}$ and $\theta^Y_{00}$ though it puts greater weight (uniformly) on $\lambda^Y_{01}$ and $\lambda^Y_{00}$,
-* For this reason, greatest weight is placed on  $\theta^Y_{01}$ when data on both $X=Y=0$ and $X=Y=1$ cases are found. 
-* The fractions suggest a common formula:
-
-$$\lambda^Y|n_{xy} \sim Dirichlet\left(1+\frac{n_{01} + n_{10}}2, 1+\frac{n_{00} + n_{11}}2, 1+\frac{n_{00} + n_{10}}2, 1+\frac{n_{01} + n_{11}}2\right)$$
-
-Posterior mean on ATE is then $\frac{n_{00} + n_{11} - n_{01} - n_{10}}n$.
-
-```{r XMYresultstable, echo = FALSE}
-if(do_diagnosis){
-XMY_model <- make_model("X ->M -> Y")
-med_1 <- types_inferences(XMY_model, data = data.frame(
-  X = c(1),
-  M = c(1),
-  Y = c(1)),
-  stan_model = fit, label = "111")
-med_2 <- types_inferences(XMY_model, data = data.frame(
-  X = c(1,1),
-  M = c(1,1),
-  Y = c(1,1)),
-  stan_model = fit, label = "111, 111")
-med_3 <- types_inferences(XMY_model, data = data.frame(
-  X = c(0,1),
-  M = c(0,1),
-  Y = c(0,1)),
-  stan_model = fit, label = "000, 111")
-med_4 <- types_inferences(XMY_model, data = data.frame(
-  X = c(1,1, 1),
-  M = c(1,1, 1),
-  Y = c(1,1, 1)),
-  stan_model = fit, label = "111, 111, 111")
-xmy_results_table <- rbind(med_1, med_2, med_3, med_4)
-
-write_rds(xmy_results_table, "saved/xmy_results_table.rds")
-}
-
-xmy_results_table <- read_rds("saved/xmy_results_table.rds")
-
-kable(xmy_results_table, digits = 2)
-```
+show table with columns:  
+* 14 columns: 10 nodel types, high abcd 4 
+* no data, 
+* 1 data  point on X=1 Y=1 only
+* 1 data  point on X=1 Y=1 M = 1 
+* 10 data  point on X=1 Y=1 only
+* 10 data  point on X=1 Y=1 M = 1 
 
 ## Considerations 
 
 ### The identification problem
+
+* Do you require identification to make progress
+* What do you learn if things are not identified
 
 ```{r modelm1m2}
 model <- make_model("X1 -> M1 -> Y <- M2 <- X2")
@@ -406,6 +348,14 @@ We can similarly shift from binary to continuous variable values through an expa
 
 ### Measurement error
 
+Model:
+
+$$X \rightarrow Y  \rightarrow Y_{\text{measured}} \leftarrow \text{bad coding}$$ 
+
+* What if we are naive
+* What if we are aware of risks but don;t know how bad bad coding is
+* What if we observed bad coding in a subsample
+
 We have assumed no measurement error; in applications there could be considerable interest in measurement error. On one hand clue information may contain information about possible mismeasurement on $X$ and $Y$; on the other hand there might interest in whether measured clues adequately capture those features of a causal process that is thought to be measureable.  
 
 The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$. 
@@ -420,6 +370,8 @@ Spillovers may also be addressed through an appropriate definition of causal typ
 ### Parameteric models
 
 
+
+MOVE THIS TO PT CHAPTER
 
 ## Rules of thumb for reasoning about learning
 
