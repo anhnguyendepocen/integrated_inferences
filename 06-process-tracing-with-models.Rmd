@@ -551,13 +551,13 @@ make_model("X -> M -> Y") %>%
 
 ```
 
-## Five principles
 
-### Classic qualitative tests are special cases of updating on a model
+
+## Mapping from models to classic qualitative tests 
 
 The approach we have described here updates on the model given data on all variables, and from the model makes inferences to estimands. 
 
-This procedure appears different to the approach described, for example, in  @collier2004sources and in Chapter 5, in which one seeks specific evidence that is directly informative about causal propositions: "clues" that are arise with different probabilities if one proposition or another is true. In fact however the approaches are deeply connected.  This  "probative value of clues" approach can indeed be *justified* by reference to more fully elaborated  models of the world. 
+This procedure appears different from the approach described in the literature on process-tracing tests -- such as @collier2011understanding, @BennettBayes, or @humphreys2015mixing -- in which one seeks specific evidence that is directly informative about causal propositions: "clues" that are arise with different probabilities if one proposition or another is true. In fact however the approaches are deeply connected.  This  "probative value of clues" approach can indeed be *justified* by reference to more fully elaborated  models of the world. 
 
 To see this  we can write down the probability of observing $K=1$ conditional on causal type $X$, using the $\phi$ notation from @humphreys2015mixing and introduced in Chapter 5. Here $\phi_{jx}$ refers to the probability of observing a clue in a case of type $j$ when $X=x$. Starting with our prior distribution over the lower-level causal types (the $\lambda$'s), we can derive, for an $X=1$ case, the probability of seeing the clue if the case is of type $b$ (positive effect) or of type $d$ (no effect, $Y$ always $1$):
 
@@ -628,7 +628,7 @@ text(.1,.25, expression(phi[d]))
 
 ```
 
-
+## Principles of learning
 
 ### A DAG alone does not get you probative value 
 
@@ -638,9 +638,18 @@ It is not. We can learn nothing from about $X$'s effect on $Y$ from $M$. Observi
 
 To see why at an inuitive level, consider that there are two causal types that will satisfy the query, $X=1$ caused $Y=1$. Those are the types $\theta^X_1 \theta^M_{01} \theta^Y_{01}$ and $\theta^X_1 \theta^M_{10} \theta^Y_{10}$: either linked positive effects or linked negative effects could generate an overall positive effect of $X$ on $Y$. Moreover, with flat priors over nodal types, these causal types are equally likely. Now, think about what we would conclude if we collected process data and observed $M=1$ in the $X=Y=1$ case. This observation would rule out one way in which the query could be satisfied: the causal type with linked negative effects. And what if we observed, instead, $M=0$? This would rule out the other way in which the query could be satisfued: linked positive effects. But since each of these causal types started out with equal weights in our priors, there can be no updating from eliminating one or the other.
 
+To put the point even more precisely, learning from observing a node requires informative priors about causal effects involving *that node.* For instance, in an $X \rightarrow M \rightarrow Y$ model, where we plan to observe $M$, it would not be sufficient to have an informative prior about the $X \rightarrow Y$ relationship. Such a prior would be cast at the wrong level. Rather, we need an informative prior about the $X \rightarrow M$ or $M \rightarrow Y$ link in order to learn from $M$. 
 
 
-### Uncertainty does not alter inference for single case causal inference
+### Learning requires uncertainty  
+
+While case-level inference from within-case evidence requires informative priors about nodal types, there is also such a thing as *too much* information -- or, put differently, as insufficient uncertainty about causal relations. Suppose, for instance, that our beliefs are such that $X$ always has a positive effect on $M$ in an $X \rightarrow M \rightarrow Y$ model. Consider, further, that we already know that $X=1$ in a case. In that situation, nothing can be learned by observing $M$ since the prior observation of $X$ already reveals $M$'s value given our prior beliefs.
+
+To take a less extreme example, suppose that our priors put a *very high probability* on $X$'s having a positive effect on $M$ and that, again, we already know that $X=1$ in a case. In that situation, we should *expect* to learn very little from observing $M$ since we believe that we are very likely to see $M=1$, given that we already know $X=1$. It is true that our beliefs will shift *if* we look for $M$ and find the unexpected value of $M=0$. But because that data-realization is highly unlikely, we should expect the learning from observing $M$ to be minimal. 
+
+We address the concept of expected learning more systematically in Chapters \@ref(clue) and \@ref(caseselection), but our general point here is that, we will learn more from process-tracing evidence, to the extent that (a) we know enough about causal relations in a domain to know how to make causal sense of the evidence we find, but (b) we do not know so much that that evidence can be largely predicted from what we have already observed.
+
+### Population-level uncertainty does not alter case-level causal inference
 
 In the procedure described for process tracing in this chapter (and different to what we introduce in Chapter 8) we assume that $\lambda$ is known and we do not place uncertainty around it.
 
