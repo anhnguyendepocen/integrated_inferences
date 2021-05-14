@@ -336,10 +336,27 @@ show table with columns:
 
 ## Considerations 
 
+### The DAG can be enough when $N > 1$
+
+In Chapter \@ref(pt), we discussed the fact that a DAG by itself is insufficient to generate learning about causal effects from data on a single case; we also need prior beliefs about population-level shares of nodal types. When working with multiple cases, however, we *can* learn about causal effects when starting with nothing more than the DAG. In particular, it is sometimes possible to draw causal information from correlations across cases, given only the DAG.
+
+For instance, in an $X \rightarrow M \rightarrow Y$ model, even if we start with flat priors over $M$'s nodal types, observing a correlation (or no correlation) between $X$ and $M$ across multiple cases provides information about $X$'s effect on $M$. Simply, a stronger, positive (negative) $X, M$ correlation implies a stronger positive (negative) effect of $X$ on $M$. In turn, a stronger $X,M$ correlation implies a stronger effect of $X$ on $Y$ since, under this model, that effect has to run through an effect of $X$ on $M$. 
+
+What's more, data from multiple cases can *provide* probative value for within-case inference. Suppose, for the $X \rightarrow M \rightarrow Y$ model, that we start with flat priors over all nodal types. As discussed in Chapter \@ref(pt), observing $M$ in a single case cannot be informative about $X$'s effect on $Y$ in that case. If we have no idea of the direction of the intermediate causal effects, then we have no idea which value of $M$ is more consistent with an $X \rightarrow M$ effect or which an $M \rightarrow Y$ effect. But suppose that we first observe data on $X$ and $M$ for a group of cases and find a strong positive correlation between the two variables. We now update to a belief that any effect of $X$ on $M$ is more likely to be positive than negative. Now, let's say we look at one of our cases, in which $X=1$ and $Y=1$ and want to know if $X$ caused $Y$. Knowing now that any such effect would most likely have operated via a positive $X \rightarrow M$ effect means that observing $M$ will be informative: $M=1$ will be more consistent with an $X \rightarrow Y$ effect than will $M=0$. The same logic, of course, also holds for observing cross-case correlations between $M$ and $Y$. 
+
 ### The identification problem
 
-* Do you require identification to make progress
-* What do you learn if things are not identified
+Identified quantity is that each true theta, with infinite data, has a unique data distribution associated with it. If not identified, multiple different thetas will have different infinite-data distributions associated with them. E.g., COE. If it's the same, you won't know which it is. This is why we'll get ridges in the posteriors. So as you scale up data, you might rule out other things, but those theta's will always scale up together. So you'll never discriminate between those, but you'll learn about those things relative other things.
+
+Use Fig. 6.1 from Causal Models guide.
+
+So that's still learning. We can learn about unidentified quantities.  
+
+But the bad news is that, for a not-identified quantity, your priors will matter: the curvature that gives us a maximum in our posterior will be driven by the posteriors. To distinguish between what part of the posterior is from the data and what's from the data would be to simulate infinite data and see what happens to the 
+
+Can also do sensitivity analyses by changing priors.
+
+
 
 ```{r modelm1m2}
 model <- make_model("X1 -> M1 -> Y <- M2 <- X2")
@@ -349,9 +366,21 @@ model <- make_model("X1 -> M1 -> Y <- M2 <- X2")
 ```
 
 
-### Continuous data
+### Beyond binary data
 
-We can similarly shift from binary to continuous variable values through an expansion of the causal types. Suppose that $Y$ can take on $m$ possible values. With $k$ explanatory variables, each taking on $r$ possible values, we then have $m^{r^k}$ causal types and, correspondingly, very many more elements in $\phi$. Naturally, in such situations, researchers might want to reduce complexity by placing structure onto the possible patterns of causal effects and clue probabilities, such as assuming a monotonic function linking effect sizes and clue probabilities.
+We can similarly shift from binary to non-binary variable values through an expansion of the causal types. Suppose that $Y$ can take on $m$ possible values. With $k$ explanatory variables, each taking on $r$ possible values, we then have $m^{r^k}$ causal types and, correspondingly, very many more elements in $\phi$. Naturally, in such situations, researchers might want to reduce complexity by placing structure onto the possible patterns of causal effects and clue probabilities, such as assuming a monotonic function linking effect sizes and clue probabilities.
+
+We can still think in terms of types
+
+With 3 levels of X and 3 levels of Y, you have 27 possible types. But if you impose linearity, only 5 types. If it's non-negative, there will be a few more.
+
+Warning: gets very complicated
+
+Possible strategy is to impose structure, which other approaches also do. 
+
+Asymptotically approaches linearity
+
+
 
 
 ### Measurement error
@@ -360,8 +389,8 @@ Model:
 
 $$X \rightarrow Y  \rightarrow Y_{\text{measured}} \leftarrow \text{bad coding}$$ 
 
-* What if we are naive
-* What if we are aware of risks but don;t know how bad bad coding is
+* What if we are naive: attenuation bias with binary
+* What if we are aware of risks but don't know how bad bad coding is
 * What if we observed bad coding in a subsample
 
 We have assumed no measurement error; in applications there could be considerable interest in measurement error. On one hand clue information may contain information about possible mismeasurement on $X$ and $Y$; on the other hand there might interest in whether measured clues adequately capture those features of a causal process that is thought to be measureable.  
@@ -377,28 +406,9 @@ Spillovers may also be addressed through an appropriate definition of causal typ
 
 ### Parameteric models
 
+### Prior data/beliefs "channel" the learning from new data 
 
-## Rules of thumb for reasoning about learning
-
-As we did in Chapter \@(pt), we provide here some guidance in how to reason about the learning that arises from mixed data. We focus especially on ways in which learning from multiple cases differs from learning from a single case.
-
-<!-- AJ: We'd discussed this going here, but I think it would be better placed in a substantive chapter. This is where people will be more likely to look for it.  -->
-
-<!-- 1. Learning requires uncertainty. And expected learning goes up as you become more uncertain about what you’ll find.  If your causal model puts a very high probability on X having a positive effect on M, and you already know X’s value, you should expect to learn very little from observing M since you’re very likely to see exactly the M value you expect given X. (Currently in Chap. 12)((And we want to make research design choices based on expected learning, not based on the mere possibility of learning: yes, our beliefs will shift if we look for M and find the unexpected value. But because that data-realization is highly unlikely, we expect the learning from observing M to be minimal.  -->
-
-<!-- 2. Pure within-case (or n=1) learning requires informative priors about the nodes to be observed. For instance, in a chain model, where we want to go and observe M, it’s not enough to have an informative prior about the X->Y relationship. We need an informative prior about the X->M or M->Y link in order to learn from M. For instance, are positive X->M effects more common than negative ones? -->
-
-## The DAG can be enough when $N > 1$
-
-In Chapter \@(pt), we discussed the fact that a DAG by itself is insufficient to generate learning about causal effects from data on a single case; we also need prior beliefs about population-level shares of nodal types. When working with multiple cases, however, we *can* learn about causal effects when starting with nothing more than the DAG. In particular, it is sometimes possible to draw causal information from correlations across cases, given only the DAG. 
-
-For instance, in an $X \rightarrow M \rightarrow Y$ model, even if we have flat priors over $M$'s nodal types, observing a correlation (or no correlation) between $X$ and $M$ across multiple cases provides information about $X$'s effect on $M$. Simply, a stronger, positive (negative) $X, M$ correlation implies a stronger positive (negative) effect of $X$ on $M$. In turn, a stronger $X,M$ correlation implies a stronger effect of $X$ on $Y$ since, under this model, that effect has to run through an effect of $X$ on $M$. 
-
-What's more, data from multiple cases can *provide* probative value for within-case inference. Suppose, for the $X \rightarrow M \rightarrow Y$ model, that we start with flat priors over all nodal types. As discussed in Chapter \@(pt), observing $M$ in a single case cannot be informative about $X$'s effect on $Y$ in that case. If we have no idea of the direction of the intermediate causal effects, then we have no idea which value of $M$ is more consistent with an $X \rightarrow M$ effect or which an $M \rightarrow Y$ effect. But suppose that we first observe data on $X$ and $M$ for a group of cases and find a strong positive correlation between the two variables. We now update to a belief that any effect of $X$ on $M$ is more likely to be positive than negative. Now, let's say we look at one of our cases, in which $X=1$ and $Y=1$ and want to know if $X$ caused $Y$. Knowing now that any such effect would most likely have operated via a positive $X \rightarrow M$ effect means that observing $M$ will be informative: $M=1$ will be more consistent with an $X \rightarrow Y$ effect than will $M=0$. The same logic, of course, also holds for observing cross-case correlations between $M$ and $Y$.  
-
-<!-- 4. If there are different ways a query can be satisfied, evidence against one of those ways is evidence against the query as a whole. Say we have a two-path model — with one direct and one indirect path — and we want to know if X affects Y. We observe a mediator, M, along the indirect path in a set of cases. If the M data pattern is inconsistent with an indirect effect, then this is also evidence against an overall effect. In general, finding evidence against one way the effect can happen reduces our confidence in the effect happening at all.  -->
-
-**Prior data/beliefs "channel" the learning from new data.** When we learn from new data, we always update *conditional* on any prior information. Consider the following example. Suppose that we are working with our familiar $X \rightarrow M \rightarrow Y$ model. We first observe a large amount of $X,Y$ data in which the two variables are strongly and positively correlated, thus indicative of a positive $ATE$ of $X$ on $Y$. Next, we turn to process tracing a small number of cases: suppose we collect data on $M$ in one $X=1, Y=1$ case and one $X=0, Y=0$ case, and we observe $M=1$ in both cases. Well, $M$ is uncorrelated with $X$ across these two cases, constituting evidence against an effect of $X$ on $Y$. Since these are both cases in which a positive effect *could* have been operating, this finding will reduce our posterior on the share of positive effects in the population and, in turn, on the $ATE$. 
+When we learn from new data, we always update *conditional* on any prior information. Consider the following example. Suppose that we are working with our familiar $X \rightarrow M \rightarrow Y$ model. We first observe a large amount of $X,Y$ data in which the two variables are strongly and positively correlated, thus indicative of a positive $ATE$ of $X$ on $Y$. Next, we turn to process tracing a small number of cases: suppose we collect data on $M$ in one $X=1, Y=1$ case and one $X=0, Y=0$ case, and we observe $M=1$ in both cases. Well, $M$ is uncorrelated with $X$ across these two cases, constituting evidence against an effect of $X$ on $Y$. Since these are both cases in which a positive effect *could* have been operating, this finding will reduce our posterior on the share of positive effects in the population and, in turn, on the $ATE$. 
 
 However, the strong prior information on the $ATE$ that we began with still anchors our updating. Our downward updating on the $ATE$ will be modest since our posterior is always a compromise between our (here, strong) priors and new information. More precisely, we will update less on the $ATE$, about which we had strong prior information, than we will update about the share of positive effects, about which our prior data provided weaker information. 
 
@@ -413,6 +423,23 @@ A further implication for process tracing is that there will generally be sharp 
 To be clear, we do not need to collect mediator clues on all *possible* pathways. If we have strong priors that one or more possible pathways are very unlikley, then we might safely be able to avoid collecting observations along those pathways without substantially reducing the prospects for learning. 
 
 Also, the specific point that we are making here applies to using mediator data to answer queries about the effect of $X$ on $Y$. If instead we want to know which *particular pathway* is operating, then the lesson here is quite different, and more encouraging. For one thing, collecting evidence on just one pathway can be highly informative about the operation of that pathway. For another, if we do have strong priors on the $ATE$, then learning about one pathway can *also* be informative about other pathways, just as we saw in our $M$- and $N$-pathway example.
+
+
+## Principles of reasoning about learning
+
+As we did in Chapter \@ref(pt), we provide here some guidance in how to reason about the learning that arises from mixed data. We focus especially on ways in which learning from multiple cases differs from learning from a single case.
+
+<!-- AJ: We'd discussed this going here, but I think it would be better placed in a substantive chapter. This is where people will be more likely to look for it.  -->
+
+<!-- 1. Learning requires uncertainty. And expected learning goes up as you become more uncertain about what you’ll find.  If your causal model puts a very high probability on X having a positive effect on M, and you already know X’s value, you should expect to learn very little from observing M since you’re very likely to see exactly the M value you expect given X. (Currently in Chap. 12)((And we want to make research design choices based on expected learning, not based on the mere possibility of learning: yes, our beliefs will shift if we look for M and find the unexpected value. But because that data-realization is highly unlikely, we expect the learning from observing M to be minimal.  -->
+
+<!-- 2. Pure within-case (or n=1) learning requires informative priors about the nodes to be observed. For instance, in a chain model, where we want to go and observe M, it’s not enough to have an informative prior about the X->Y relationship. We need an informative prior about the X->M or M->Y link in order to learn from M. For instance, are positive X->M effects more common than negative ones? -->
+
+ 
+
+<!-- 4. If there are different ways a query can be satisfied, evidence against one of those ways is evidence against the query as a whole. Say we have a two-path model — with one direct and one indirect path — and we want to know if X affects Y. We observe a mediator, M, along the indirect path in a set of cases. If the M data pattern is inconsistent with an indirect effect, then this is also evidence against an overall effect. In general, finding evidence against one way the effect can happen reduces our confidence in the effect happening at all.  -->
+
+
 
 <!-- Moreover, the degree to which prior data constrains learning depends, of course, on how much prior data we have. In the $X \rightarrow M \rightarrow Y$ model, if we have observed only a small amount of prior $X,Y$ data, then observing $M$ in a handful of cases will lead us to update more strongly on the $ATE$ in the above examples, then observing the M data in the on-the-regression-line cases will have a weaker impact on our beliefs about negative effects, and a bigger impact on our beliefs about ATE. Ditto for the 2-path model example. However, where prior data/beliefs on the ATE are strong, we’ll learn less about the ATE, and more about negative effects (or the direct path).  -->
 
