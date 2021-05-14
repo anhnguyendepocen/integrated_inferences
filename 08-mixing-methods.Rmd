@@ -342,19 +342,62 @@ In Chapter \@ref(pt), we discussed the fact that a DAG by itself is insufficient
 
 For instance, in an $X \rightarrow M \rightarrow Y$ model, even if we start with flat priors over $M$'s nodal types, observing a correlation (or no correlation) between $X$ and $M$ across multiple cases provides information about $X$'s effect on $M$. Simply, a stronger, positive (negative) $X, M$ correlation implies a stronger positive (negative) effect of $X$ on $M$. In turn, a stronger $X,M$ correlation implies a stronger effect of $X$ on $Y$ since, under this model, that effect has to run through an effect of $X$ on $M$. 
 
-What's more, data from multiple cases can *provide* probative value for within-case inference. Suppose, for the $X \rightarrow M \rightarrow Y$ model, that we start with flat priors over all nodal types. As discussed in Chapter \@ref(pt), observing $M$ in a single case cannot be informative about $X$'s effect on $Y$ in that case. If we have no idea of the direction of the intermediate causal effects, then we have no idea which value of $M$ is more consistent with an $X \rightarrow M$ effect or which an $M \rightarrow Y$ effect. But suppose that we first observe data on $X$ and $M$ for a group of cases and find a strong positive correlation between the two variables. We now update to a belief that any effect of $X$ on $M$ is more likely to be positive than negative. Now, let's say we look at one of our cases, in which $X=1$ and $Y=1$ and want to know if $X$ caused $Y$. Knowing now that any such effect would most likely have operated via a positive $X \rightarrow M$ effect means that observing $M$ will be informative: $M=1$ will be more consistent with an $X \rightarrow Y$ effect than will $M=0$. The same logic, of course, also holds for observing cross-case correlations between $M$ and $Y$. 
+What's more, data from multiple cases can *provide* probative value for within-case inference. Suppose, for the $X \rightarrow M \rightarrow Y$ model, that we start with flat priors over all nodal types. As discussed in Chapter \@ref(pt), observing $M$ in a single case cannot be informative about $X$'s effect on $Y$ in that case. If we have no idea of the direction of the intermediate causal effects, then we have no idea which value of $M$ is more consistent with an $X \rightarrow M$ effect or which an $M \rightarrow Y$ effect. But suppose that we first observe data on $X$ and $M$ for a group of cases and find a strong positive correlation between the two variables. We now update to a belief that any effect of $X$ on $M$ is more likely to be positive than negative. Now, let's say we look at one of our cases, in which $X=1$ and $Y=1$ and want to know if $X$ caused $Y$. Knowing now that any such effect would most likely have operated via a positive $X \rightarrow M$ effect means that observing $M$ will be informative: $M=1$ will be more consistent with an $X \rightarrow Y$ effect than will $M=0$. The same logic, of course, also holds for observing cross-case correlations between $M$ and $Y$.
 
-### The identification problem
+Drawing probative value from cross-case data is, of course, dependent on the causal model. For instance, if there is confounding between $M$ and $Y$, we would not derive probative value on $M$ from observing 
 
-Identified quantity is that each true theta, with infinite data, has a unique data distribution associated with it. If not identified, multiple different thetas will have different infinite-data distributions associated with them. E.g., COE. If it's the same, you won't know which it is. This is why we'll get ridges in the posteriors. So as you scale up data, you might rule out other things, but those theta's will always scale up together. So you'll never discriminate between those, but you'll learn about those things relative other things.
+### Learning without identification
 
-Use Fig. 6.1 from Causal Models guide.
+Some causal queries are "identified" while others are not. When a query is identified, each true value for the query is associated with a unique data distribution given infinite data. As we gather more and more data, our posterior on the query should converge on the true value. When a query is not identified, multiple true values of the query will be associated with the same data distribution given infinite data. With a non-identified query, our posterior will never converge on a unique value regardless of how much data we collect; multiple answers will be equally consistent with the data.
 
-So that's still learning. We can learn about unidentified quantities.  
+We can illustrate the difference by comparing an $ATE$ query to a probability of causation query for a simple $X \rightarrow Y$ model. When asking about the $ATE$, we are asking about the average effect of $X$ on $Y$, or the difference between $\lambda^Y_{01}$ (share of units with positive effects) and $\lambda^Y_{10}$ (share with negative effects). When asking about the probability of causation, we are asking, for a case with given values of $X$ and $Y$, about the probability that $X$ caused $Y$ in that case. This query is defined by a different set of parameters. For, say, an $X=1, Y=1$ case and our $X \rightarrow Y$ model, the probability of causation is given by just $\lambda^Y_{01}$. 
 
-But the bad news is that, for a not-identified quantity, your priors will matter: the curvature that gives us a maximum in our posterior will be driven by the posteriors. To distinguish between what part of the posterior is from the data and what's from the data would be to simulate infinite data and see what happens to the 
+Let us assume a "true" set of parameters, unknown to the researcher, such that $\lambda^Y_{01} = 0.6$, $\lambda^Y_{10} = 0.1$ while we set $\lambda^Y_{00} = 0.2$ and $\lambda^Y_{11} = 0.1$. Thus, the true average causal effect is $0.5$. We now use the parameters and the model to simulate a large amount of data ($N=10,000$). We then return to the model, set flat priors over nodal types, and update the model using the simulated data. We graph the posterior on our two queries, the $ATE$ and the probability of positive causation in an $X=1, Y=1$ case, in Figure \@ref(PChist).
 
-Can also do sensitivity analyses by changing priors.
+
+```{r, echo = FALSE} 
+if(do_diagnosis){
+ATE_dist <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "Y[X=1] - Y[X=0]"
+                   )
+PC_dist <- query_distribution(
+                   model = updated, 
+                   using = "posteriors",
+                   query = "Y[X=1] > Y[X=0]",
+                   given = "X==1 & Y==1"
+                   )
+write_rds(ATE_dist, "saved/appendix_ATE_dist.rds")
+write_rds(PC_dist, "saved/appendix_PC_dist.rds")
+}
+ATE_dist <- read_rds("saved/appendix_ATE_dist.rds")
+PC_dist  <- read_rds("saved/appendix_PC_dist.rds")
+```
+
+```{r PChist, echo = FALSE, fig.cap = "ATE is identified, PC is not identified but has informative bounds"}
+par(mfrow = c(1,2))
+hist(ATE_dist, xlim = c(-1,1), main = "Posterior on ATE", xlab = "ATE")  
+hist(PC_dist, xlim = c(0,1), main = "Posterior on PC", xlab = "Probability X=1 caused Y=1")  
+```
+
+The figure illustrates nicely the difference between an identified and non-identified query. While the $ATE$ converges on the right answer, the probability of causation fails to converge even with a massive amount of data. We see instead a range of values for this query on which our updated model places roughly equal posterior probability.
+
+Importantly, however, we see that we *do* learn about the probability of causation. Despite the lack of convergence, our posterior rules out a wide range of values. While our prior on the query was 0.5, we have correctly updated toward a range of values that includes (and happens to be fairly well centered over) the true value ($\approx 0.86$). 
+
+A distinctive feature of updating a causal model is that it allows us to learn about non-identified quantitites in this manner. We will end up with "ridges" in our posterior distributions: ranges or combinations of parameter values that are equally likely given the data. But our posterior weight can nonetheless shift toward the right answer.
+
+At the same time, for non-identified queries, we have to be cautious about the impact of our priors. As $N$ becomes large, the remaining curvature we see in our posteriors may simply be function of those priors. One way to inspect for this is to simulate a very large dataset and see whether the curvature remainsXXXXXXXXXX A second approach would be to do sensitivity analyses by updating the model on the same data with different sets of priors to see how this affects the shape of the posterior.
+
+<!-- Identified quantity is that each true theta, with infinite data, has a unique data distribution associated with it. If not identified, multiple different thetas will have different infinite-data distributions associated with them. E.g., COE. If it's the same, you won't know which it is. This is why we'll get ridges in the posteriors. So as you scale up data, you might rule out other things, but those theta's will always scale up together. So you'll never discriminate between those, but you'll learn about those things relative other things. -->
+
+<!-- Use Fig. 6.1 from Causal Models guide. -->
+
+<!-- So that's still learning. We can learn about unidentified quantities.   -->
+
+<!-- But the bad news is that, for a not-identified quantity, your priors will matter: the curvature that gives us a maximum in our posterior will be driven by the posteriors. To distinguish between what part of the posterior is from the data and what's from the data would be to simulate infinite data and see what happens to the  -->
+
+<!-- Can also do sensitivity analyses by changing priors. -->
 
 
 
@@ -368,7 +411,13 @@ model <- make_model("X1 -> M1 -> Y <- M2 <- X2")
 
 ### Beyond binary data
 
-We can similarly shift from binary to non-binary variable values through an expansion of the causal types. Suppose that $Y$ can take on $m$ possible values. With $k$ explanatory variables, each taking on $r$ possible values, we then have $m^{r^k}$ causal types and, correspondingly, very many more elements in $\phi$. Naturally, in such situations, researchers might want to reduce complexity by placing structure onto the possible patterns of causal effects and clue probabilities, such as assuming a monotonic function linking effect sizes and clue probabilities.
+While the setup used in this book involves only binary nodes, the approach described here readily generalizes to other levels of measurement. A shift to other levels of measurement can be straightforwardly accommodated through an expansion of the nodal-type space.
+
+Suppose that we want to operate with variables with 3 ordinal categories. In an $X \rightarrow Y$ model, 
+
+Suppose that $Y$ can take on $m$ possible values. With $k$ explanatory variables, each taking on $r$ possible values, we then have $m^{r^k}$ nodal types for $Y$. 
+
+Naturally, in such situations, researchers might want to reduce complexity by placing structure onto the possible patterns of causal effects and clue probabilities, such as assuming a monotonic function linking effect sizes and clue probabilities.
 
 We can still think in terms of types
 
