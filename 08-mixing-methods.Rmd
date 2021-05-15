@@ -438,18 +438,34 @@ Of course, standard approaches to empirical modeling typically impose a great de
 
 ### Measurement error
 
-Model:
+One potential application of the approach we have described in this chapter to integrating differing forms of data is to addressing the problem of measurement error. The conceptual move to address measurement error in a causal model setup is quite simple: we incorporate the error-generating process into our model.
 
-$$X \rightarrow Y  \rightarrow Y_{\text{measured}} \leftarrow \text{bad coding}$$ 
+Consider, for instance, a model in which we build in a process generating measurement error on the dependent variable.
 
-* What if we are naive: attenuation bias with binary
-* What if we are aware of risks but don't know how bad bad coding is
-* What if we observed bad coding in a subsample
+$$X \rightarrow Y  \rightarrow Y_\text{measured} \leftarrow \text{source of measurement error}$$ 
 
-We have assumed no measurement error; in applications there could be considerable interest in measurement error. On one hand clue information may contain information about possible mismeasurement on $X$ and $Y$; on the other hand there might interest in whether measured clues adequately capture those features of a causal process that is thought to be measureable.  
+Here $X$ has an effect on the true value of our outcome of interest, $Y$. The true value of $Y$, in turn, has an effect on the value of $Y$ that we measure, but so too does a potential problem with our coding process. Thus, the measured value of $Y$ is a function of both the true value and error.
 
-The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$. 
-Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it.
+To motivate the setup, imagine that we are interested in the effect of a rule restricting long-term care staff to working at a single site ($X$) on novel coronavirus outbreaks in long-term care facilities ($Y$), defined as infections among two or more staff or residents. We do not directly observe infections, however; rather, we observe positive results of PCR tests. We also know that testing is neither comprehensive nor uniform. For some units, regular random testing is carried out on staff and residents while in others only symptomatic individuals are tested. It is the latter arrangement that potentially introduces measurement error.  
+
+If we approach the problem naively, ignoring measurement error and treating $Y_\text{measured}$ as though it were identical to $Y$, we would face attenutation bias in our estimates of the effect of $X$ on $Y$ if some units are engaged in only symptomatic testing and this generates missed outbreaks. A slightly more sophisticated approach would be to acknowledge this attenuation bias, treating our estimate of the $ATE$ as a lower bound. 
+
+Yet we can go further if we work with the above causal model. Without any additional data, we can update on both $\lambda_Y$ and $\lambda_{Y_\text{measured}}$. We could, for instance, impose restrictions that exclude negative effects of $Y$ on  $Y_\text{measured}$.^[We might also set a flat prior on the prevalence of measurement error and exclude positive effects of measurement error on $Y_\text{measured}$.] Then, if we observe (say) a negative correlation between $X$ and $Y_\text{measured}$, we can update on the substantive effect of interest -- $\lambda_Y$ -- in the direction of a larger share of negative effects: it is only *via* negative effects of $X$ on $Y$ that a negative correlation between $X$ and $Y_\text{measured}$ could emerge. At the same time, we learn about the measure as we update on $\lambda_{Y_\text{measured}}$: the negative observed correlation $X$ and $Y_\text{measured}$ is an indicator of the degree to which $Y_\text{measured}$ is picking up true $Y$.
+
+We can do considerably better, however, if we can collect more detailed information on at least some units. One data strategy would be to invest in observing, $Y$, the true outbreak status of each unit for a subset of units on which we already have data on $X$ and $Y_\text{measured}$ --- say, by implementing our own random-testing protocol at a set of facilities. Observing both $X$ and the true $Y$ will allow us to update more directly on $\lambda_Y$, the true effect of $X$ on $Y$. Just as importantly, observing both $Y$ and $Y_\text{measured}$ will allow us to update more directly on measurement quality, $\lambda_{Y_\text{measured}}$. 
+
+A second data strategy (which could be combined with the first) would be to collect data, for some subset of units, on the source of the measurement error. If we collected data on the use of random vs. symptomatic-only testing, we could then update on two further parameters: $\lambda_\text{source of measurement error}$ and on the part of $\lambda_{Y_\text{measured}}$ representing response of $Y_\text{measured}$. In other words, we would learn both about how prevalent the conditions generating measurement error are and about much they throw off our measure. 
+
+
+
+<!-- * What if we are naive: attenuation bias with binary -->
+<!-- * What if we are aware of risks but don't know how bad bad coding is -->
+<!-- * What if we observed bad coding in a subsample -->
+
+<!-- We have assumed no measurement error; in applications there could be considerable interest in measurement error. On one hand clue information may contain information about possible mismeasurement on $X$ and $Y$; on the other hand there might interest in whether measured clues adequately capture those features of a causal process that is thought to be measureable.   -->
+
+<!-- The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$.  -->
+<!-- Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it. -->
 
 ### Spillovers
 
