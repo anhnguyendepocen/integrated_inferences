@@ -471,6 +471,24 @@ A second data strategy (which could be combined with the first) would be to coll
 
 ### Spillovers
 
+A common threat to causal inference is the possibility of spillovers: a given unit's outcome being affected by the treatment status of another (e.g., possibly neighboring) unit. We can readily set up a causal model to allow for estimation of various quantities related to spillovers. 
+
+Consider, for instance, the causal model represented in Figure \@ref(spillover). We consider here a cluster of 3 units across which spillovers might occur. We might imagine, for instance, a cluster of geographically proximate villages separated from other clusters such that spillovers might occur between villages within a cluster, but can be ruled out across clusters. Here $X_i$ and $Y_i$ represent village $i$'s treatment status and outcome, respectively. The pattern of directed edges indicates that each village's outcome might be affected both by its own and by its neighbors' treatment status.
+
+The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES?
+
+```{r spillover, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:spillover} A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes."}
+par(mar=c(1,1,3,1))
+hj_dag(x = c(0, 0, 0, 1, 1, 1),
+       y = c(3, 2, 1, 3, 2, 1),
+       names = c(expression(paste(X[1])), expression(paste(X[2])), expression(paste(X[3])), expression(paste(Y[1])), expression(paste(Y[2])), expression(paste(Y[3]))),
+       arcs = cbind( c(1, 1, 1, 2, 2, 2, 3, 3, 3),
+                     c(4, 5, 6, 4, 5, 6, 4, 5, 6)),
+       title = "A causal model allowing for spillovers",
+       padding = .1, contraction = .15) 
+
+```
+
 Spillovers may also be addressed through an appropriate definition of causal types. For example a unit $i$ that is affected either by receiving treatment or via the treatment of a neighbor, $j$, might have potential outcomes $Y_i(X_i,X_j)=\max(X_i,X_j)$ while another type that is not influenced by neighbor treatment status has  $Y_i(X_i,X_j)=\max(X_i)$. With such a set-up, relevant clue information might discriminate between units affected by spillovers and those unaffected.   
 
 - With current structure, you can estimate various spillover relevant quantities
