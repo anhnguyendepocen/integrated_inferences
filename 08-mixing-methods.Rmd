@@ -489,6 +489,43 @@ hj_dag(x = c(0, 0, 0, 1, 1, 1),
 
 ```
 
+```{r}
+
+model <- make_model("X1 -> Y1 <- X2 -> Y2 <- X1")
+
+plot(model)
+
+data <- fabricatr::fabricate(N = 100, 
+                  X1 = rbinom(N,1,.5), 
+                  X2 = rbinom(N,1,.5), 
+                  Y1 = X1,
+                  Y2 = X1*X2)
+if(do_diagnosis)
+update_model(model, data, keep_transformed = TRUE) %>% 
+  write_rds("saved/spillovers.rds")
+
+read_rds("saved/spillovers.rds")  %>% 
+  query_model(
+    list(
+    only_self_treated = 
+      "(Y1[X1=1, X2=0] - Y1[X1=0, X2=0] +
+        Y2[X1=0, X2=1] - Y2[X1=0, X2=0])/2",
+    only_other_treated = 
+      "(Y1[X1=0, X2=1] - Y1[X1=0, X2=0] +
+        Y2[X1=1, X2=0] - Y2[X1=0, X2=0])/2",
+
+    one_treated = 
+      "((Y1[X1=1, X2=0] + Y1[X1=0, X2=1])/2 - Y1[X1=0, X2=0] +
+        (Y2[X1=1, X2=0] + Y2[X1=0, X2=1])/2 - Y2[X1=0, X2=0])/2",
+    
+    both_treated = 
+      "((Y1[X1=1, X2=1] - Y1[X1=0, X2=0]) +
+        (Y2[X1=1, X2=1] - Y2[X1=0, X2=0]))/2"),
+
+using = "posteriors")
+
+```
+
 Spillovers may also be addressed through an appropriate definition of causal types. For example a unit $i$ that is affected either by receiving treatment or via the treatment of a neighbor, $j$, might have potential outcomes $Y_i(X_i,X_j)=\max(X_i,X_j)$ while another type that is not influenced by neighbor treatment status has  $Y_i(X_i,X_j)=\max(X_i)$. With such a set-up, relevant clue information might discriminate between units affected by spillovers and those unaffected.   
 
 - With current structure, you can estimate various spillover relevant quantities
@@ -497,6 +534,45 @@ Spillovers may also be addressed through an appropriate definition of causal typ
 - Could model an assignment process for spillover experiments: 
 
 ### Clustering and other violations of independence
+
+The structure we introduced assumes that all units are independent but in many applications groups of units react in similar ways to group level features. For instance a national level event affects individual decision making in common ways. In such cases the higher level events may or may not be observed. 
+
+Our standard model is not designed to capture failures of independence between units like this. However it is possible to capture some forms of clustering.^[In this illustration the two units in each pair are treated as separate nodes rather than as repeated instances of realizations of the same node. Implicitly then the effect for one unit type (men, say) can be quite independent of the effect of another type (women, say). Indeed, here they are linked only through the unobserved variable $W$.] 
+
+As an illustration we might imagine our units are in pairs (couples, say) an $W$ is an unobserved  pair level node that shuts off causal effects for both units. We might then define the model as follows:
+
+```{r}
+model <- make_model("X1 -> Y1 <- W -> Y2 <- X2") %>%
+  set_restrictions("(Y1[X1=1, W=0] != Y1[X1=0, W=0])")  %>%
+  set_restrictions("(Y2[X2=1, W=0] != Y2[X2=0, W=0])")  
+```
+
+and define estimands as average effects for both units in a pair. In such cases we would find, for instance, that data on $n$ units is more information when the $n$ units are drawn from many pairs than when they are drawn from few. 
+
+```{r, echo = FALSE}
+data_1 <- data.frame(X1 = 0:1, Y1 = 0:1, X2 = 0:1, Y2 = c(1,1))
+data_2 <- data.frame(
+  X1 = c(0, 1, NA, NA), Y1 = c(0,1, NA, NA),
+  X2 = c(NA, NA, 0, 1), Y2 = c(NA, NA, 1, 1))
+
+if(do_diagnosis)
+update_model(model, data_1 , keep_transformed = TRUE) %>% 
+  write_rds("saved/model_clustered.rds")
+
+if(do_diagnosis)
+update_model(model, data_2, keep_transformed = TRUE) %>%
+  write_rds("saved/model_unclustered.rds")
+
+Q <- "(Y1[X1=1] - Y1[X1=0])/2 + (Y2[X2=1] - Y2[X2=0])/2"
+
+rbind(
+  query_model(read_rds("saved/model_clustered.rds"), Q, using = "posteriors"),
+  query_model(read_rds("saved/model_unclustered.rds"), Q, , using = "posteriors")) %>%
+  mutate(Data = c("2 obs from each of 2 clusters", "1 obs from each of 4 clusters"), Query = "Average effect") %>% 
+  select(Data, mean, sd) %>% 
+  kable(digits = 3, caption = "Data from many pairs is more informative than the same data from fewer pairs.")
+
+```
 
 ### Parameteric models
 
