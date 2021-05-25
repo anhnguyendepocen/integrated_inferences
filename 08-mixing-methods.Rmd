@@ -416,17 +416,10 @@ While the setup used in this book involves only binary nodes, the approach readi
 To do so we need to be able to expand the nodal space to accommodate the richer range of possible relations between nodes. Suppose that we want to operate with variables with 4 ordinal categories. In an $X \rightarrow Y$ model, $Y$'s nodal types have to accommodate 4 possible values that $X$ can take on, and 4 possible values that $Y$ can take on for any value of $X$. This yields $4^4 = 256$  nodal types for $Y$ and 1024 causal types (compared to just 8 in the binary case). Moving beyond binary nodes allows for considerably greater flexibility in response functions. For instance, non monotonic relations can be described with with just three values on $X$ and $Y$.  More complex queries might include: "What is the probability that  $Y$ is linear in $X$?",  or "What is the probability that  $Y$ is concave in $X$?", or "What is the probability that  $Y$ is monotonic in $X$?".
 
 
-The `CausalQueries` package, set up to work with binary nodes, can be used for non binary data also. The trick is to express integers in base 2 and represent the integer as a series of 0s and 1s on multiple nodes. For instance if $X$ and $Y$ each have four values we might code the values of both $X$ and $Y$ in base 2 as elements of $00, 01, 10, 11$ and capture all possible values on a model with $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. Thus the information on $X$ and $Y$ gets fully recorded on 4 nodes rather than 2: non binary data $X=3, Y=2$ gets represented with binary data $X_1=1, X_2=1, Y_1=1, Y_2 = 0$. Note that both $X_1$ and $X_2$ point into each of  $Y_1$ and $Y_2$, resulting in $2\times 2\times 16 \times 16 = 1024$ causal types, as required.
+The `CausalQueries` package, set up to work with binary nodes, can be used for non binary data also. The trick is to express integers in base 2 and represent the integer as a series of 0s and 1s on multiple nodes. For instance if $X$ and $Y$ each have four values we might code the values of both $X$ and $Y$ in base 2 as elements of $00, 01, 10, 11$ and capture all possible values on a model with $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. Thus the information on $X$ and $Y$ gets fully recorded on 4 nodes rather than 2: non binary data $X=3, Y=2$ gets represented with binary data $X_1=1, X_2=1, Y_1=1, Y_2 = 0$. Note that both $X_1$ and $X_2$ point into each of  $Y_1$ and $Y_2$, resulting in $2\times 2\times 16 \times 16 = 1024$ causal types, as required. To allow for hte full range of nodal types we need to allow a joint distribution over $\theta^X_1$ and $\theta^X_2$ and over  $\theta^Y_1$ and $\theta^Y_2$ which results in 3 degres of freedom for $X$ and 255 for $Y$, as required.
 
 
 In the illustration below we imagine a model in which $X$ and $Y$ each take on 4 possible values. We generate data from a non-monotonic process in which $Y(0)=0, Y(1)=1, Y(2)=3, Y(3) = 2$. We then update and report on posteriors on potential outcomes.
-
-```{r}
-model <- make_model("X1 -> Y1 <- X2; X1 -> Y2 <- X2") %>%
-  set_parameters(node = "Y1", label = "0101", parameters = 1) %>%
-  set_parameters(node = "Y2", label = "0110", parameters = 1)
-
-```
 
 We make use of a couple of helper functions to simplify working with conversions from statements on integers to statements on the binary representation of the integers.
 
@@ -448,7 +441,13 @@ Y_x <- function(x){
 Data from this model looks like this:
 
 ```{r}
-data <- make_data(model, 100, using = "parameters") %>%
+data <- 
+  
+  make_model("X1 -> Y1 <- X2; X1 -> Y2 <- X2") %>%
+  set_parameters(node = "Y1", label = "0101", parameters = 1) %>%
+  set_parameters(node = "Y2", label = "0110", parameters = 1) %>%
+  
+  make_data(100, using = "parameters") %>%
   mutate(X = to_int(X1, X2), Y = to_int(Y1, Y2))
 ```
 
@@ -458,28 +457,46 @@ data %>% slice(1,  50, 70, 100) %>% kable(caption = "Data from non binary model 
 
 Updating and querying is done in the usual way:
 
+
 ```{r, eval = FALSE}
-model %>% 
-  update_model(data)%>%
+make_model("X1 -> Y1 <- X2;  X1 -> Y2 <- X2; X1 <-> X2; Y1 <-> Y2") %>%
+  update_model(data) %>%
+  query_model(list(Y_x(0), Y_x(1), Y_x(2), Y_x(3)), using = "posteriors")
+```
+
+
+```{r, echo = FALSE}
+if(do_diagnosis) 
+model_flexible <- make_model("X1 -> Y1 <- X2;  X1 -> Y2 <- X2; X1 <-> X2; Y1 <-> Y2") %>%
+  write_rds(model_flexible, "saved/nonbinary_flexible.rds")
+
+full_model <- read_rds("saved/nonbinary_flexible.rds")
+
+full_model <- full_model %>%
+  set_parameters(node = "Y1", label = "0101", parameters = 1) %>%
+  set_parameters(node = "Y2", label = "0110", parameters = 1)
+
+data <- make_data(full_model, 100, using = "parameters") %>%
+  mutate(X = to_int(X1, X2), Y = to_int(Y1, Y2))
+
+if(do_diagnosis) 
+  update_model(model, data, keep_transformed = TRUE, chains = 4, iter = 4000) %>%
+  write_rds("saved/ordinal.rds")
+
+if(do_diagnosis) 
+query <- 
+  
+  read_rds("saved/ordinal.rds") %>%
+  
   query_model(list(Y_x(0), Y_x(1), Y_x(2), Y_x(3)),
-              using = "posteriors")
-```
-
-
-```{r, echo = FALSE}
-if(do_diagnosis) update_model(model, data) %>% write_rds("saved/ordinal.rds")
-model <- read_rds("saved/ordinal.rds")
-```
-
-
-```{r, echo = FALSE}
-
- query_model(model, 
-             list(Y_x(0), Y_x(1), Y_x(2), Y_x(3)),
              using = "posteriors") %>% 
   mutate(Q = c("Y(0)", "Y(1)", "Y(2)", "Y(3)"),
          'True value' = c(0,1,3,2)) %>%
-  select(Q, Using, 'True value', mean, sd) %>% kable(digits = 2, caption = "Posteriors on potential outcomes for non binary model")
+  write_rds("saved/ordinal_query.rds")
+
+read_rds("saved/ordinal_query.rds")  %>%
+  select(Q, Using, 'True value', mean, sd) %>% 
+  kable(digits = 2, caption = "Posteriors on potential outcomes for non binary model")
 
 ```
 
@@ -594,6 +611,7 @@ read_rds("saved/spillovers.rds")  %>%
     only_self_treated = 
       "(Y1[X1=1, X2=0] - Y1[X1=0, X2=0] +
         Y2[X1=0, X2=1] - Y2[X1=0, X2=0])/2",
+    
     only_other_treated = 
       "(Y1[X1=0, X2=1] - Y1[X1=0, X2=0] +
         Y2[X1=1, X2=0] - Y2[X1=0, X2=0])/2",
