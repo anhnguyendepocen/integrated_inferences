@@ -4,6 +4,7 @@
 ```{r packagesused09, include = FALSE}
 source("_packages_used.R")
 do_diagnosis = FALSE
+# options(mc.cores = parallel::detectCores())
 ```
 
 :::: {.headerbox data-latex=""}
@@ -75,13 +76,23 @@ Table \@ref(tab:data82) gives a snapshot of the data.
 
 
 ```{r ch09getdemdata, eval = FALSE, echo = FALSE}
-data <- CausalQueries::democracy_data 
+# data <- CausalQueries::democracy_data
+
+data <- read.csv("data/pimd2.csv") %>% 
+  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  rename(P = P2, I = I2, M= M2, D = D2)
+
 ```
 
 
 ```{r data82, echo = FALSE, warning = FALSE}
 data <- CausalQueries::democracy_data 
-kable(head(data), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)")
+
+data_2 <- read.csv("data/pimd2.csv") %>% 
+  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  rename(P = P2, I = I2, M= M2, D = D2)
+
+kable(head(data_2), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)")
 
 ```
 
@@ -91,6 +102,7 @@ The raw correlations between variables is shown in Table \@ref(tab:pimdcorr). So
 
 ```{r pimdcorr, echo = FALSE, warning  = FALSE, message = FALSE}
 kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
+kable(cor(data_2[,-1], use = "pairwise.complete.obs"), digits = 3)
 ```
 
 
@@ -115,6 +127,14 @@ if(do_diagnosis){
   }
 
 updated <- read_rds("saved/PIMD_updated.rds")
+
+
+if(do_diagnosis){
+  updated_2 <- update_model(model, data_2)
+  write_rds(updated_2, "saved/PIMD_updated_2.rds")
+  }
+
+updated_2 <- read_rds("saved/PIMD_updated_2.rds")
 
 ```
 
@@ -208,6 +228,33 @@ hist(pimd_queries$PC5,    main = "D=1 caused by I=1 | M = 1, P=0", xlim = c(0,1)
 
 <!-- FLAG: Not sure how much it is worth saying here substantively about the results given how strongly they are driven by the restrictions. -->
 
+```{r}
+
+
+if(do_diagnosis){
+pimd_queries_2 <- 
+  
+  updated_2 %>% 
+  
+  query_model(
+    using = "posteriors",
+    query = "D[I=1] > D[I=0]",
+    given = c(TRUE, 
+              "D==1 & I==1",  
+              "D==1 & I==1 & M==1",
+              "D==1 & I==1 & M==0",
+              "D==1 & I==1 & M==1 & P==1",
+              "D==1 & I==1 & M==1 & P==0")
+)
+
+write_rds(pimd_queries_2, "saved/09_pimdqueries_2.rds")
+}
+
+pimd_queries_2 <- read_rds("saved/09_pimdqueries_2.rds")
+
+pimd_queries_2 %>% select(Given, mean, sd) %>% kable(digits = 2, caption = "Probability that inequality increases chances of democratization given:")
+
+```
 We can see that the share of cases overall in which inequality causes democratization is estimated to be very low, with a good deal of confidence. The proportion is considerably higher for those cases that in fact experienced high inequality and democratization. The proportion of positive causal effects is believed to be even higher for those in which mobilization occurred, especially where an alternative causes---international pressure---was absent, though our uncertainty about this share is also very high. We also see that the absence of mobilization tells us for certain that democratization was not caused by inequality. Interestingly, however, this result derives from the model restrictions, rather than from the data: under the restrictions we imposed, a positive effect of inequality could operate *only* through mobilization.
 
 

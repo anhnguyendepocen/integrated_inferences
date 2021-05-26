@@ -477,6 +477,11 @@ pimd_nonmon <- make_model("I -> M -> D <- P; I -> D")
 
 data <- CausalQueries::democracy_data
 
+data_2 <- read.csv("data/pimd2.csv") %>% 
+  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  rename(P = P2, I = I2, M= M2, D = D2)
+
+
 if(do_diagnosis){
   
 pimd %>%
@@ -494,11 +499,18 @@ pimd_nonmon %>%
 
 }
 
+if(do_diagnosis)
+  pimd_nonmon %>% set_priors(distribution = "jeffreys") %>% 
+   update_model(data_2, chains = 4, iter = 6000, keep_transformed = TRUE) %>%
+   write_rds("saved/ch15_pimd_nonmon_model_2.rds") 
+#unrestricted model saved here
+
 data <- CausalQueries::democracy_data 
 pimd <-   read_rds("saved/ch15_pimd_model.rds") 
 pimd_negmed <-   read_rds("saved/ch15_pimd_negmed_model.rds")
 pimd_nonmon <-   read_rds("saved/ch15_pimd_nonmon_model.rds")
 
+pimd_nonmon_2 <-   read_rds("saved/ch15_pimd_nonmon_model_2.rds")
 
 ```
 
@@ -716,6 +728,16 @@ if(do_diagnosis){
 ateid <- read_rds("saved/ch15_ateID.rds") 
 
 kable(ateid, caption = "Posteriors on the effect of I on D depending on whether the to M relation is assumed to be monotonic (M1) or not (M2)", digits = 2)
+
+
+if(do_diagnosis)
+  q_pimd_2 <- query_model(pimd_nonmon_2, "D[I=1] - D[I=0]", given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1", "I==0 & M==1 & D==1",
+                                                                    "I==0 & M==0 & D==1 & P == 1", "I==0 & M==1 & D==1 & P == 1"),
+                        using = "posteriors")
+if(do_diagnosis)
+ write_rds(q_pimd_2, "saved/ch15_q_pimd_2.rds")
+                        
+read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
 
 ```
 

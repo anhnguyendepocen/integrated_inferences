@@ -2,6 +2,7 @@
 library("pacman")
 
 # devtools::install_github("tidyverse/dplyr")
+# remotes::install_github("macartan/CausalQueries")
 
 pacman::p_load(
   DT,
@@ -9,7 +10,7 @@ pacman::p_load(
   tidyverse,
   bayesplot,
   rstanarm,
-  CausalQueries,
+#  CausalQueries,
   bindrcpp,
   ggplot2,
   StanHeaders,
