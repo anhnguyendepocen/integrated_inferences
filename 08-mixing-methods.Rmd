@@ -20,7 +20,7 @@ We extend the analysis of Chapter \@ref(pt) to cases with population data. In th
 
 The main goal of this chapter is to  generalize the model developed in Chapter \@ref(pt) to research situations in which we have data on multiple cases.  
 
-We start however  with a conceptual point: the structure introduced in Chapter 6 for single case analysis can be used *as is* for multi-case analysis. Thus the  conceptual work for mixed methods inference from models has been done already. Our goal here is more technical---how to exploit assumptions regarding independence across cases to generate simpler models causal processes that affect many units. As we do so we provide microfoundations for the models in Chapter 6 (as with those in @humphreys2015mixing)  with the probative value of clues deriverable from a causal structure and data.
+We start with a conceptual point: the structure introduced in Chapter 6 for single case analysis can be used *as is* for multi-case analysis. Thus the  conceptual work for mixed methods inference from models has been done already. Our goal for the rest of the chapter is more technical---to show how to exploit assumptions regarding independence across cases to generate simpler models of causal processes that affect many units. As we do so, we provide microfoundations for the models in Chapter 6 (as with those in @humphreys2015mixing)  with the probative value of clues deriverable from a causal structure and data rather than provided directly by researchers.
 
 
 ## There's only ever one case
@@ -68,13 +68,13 @@ Taking this step the procedure we now use in the mixed methods works as follows.
 
 1. **A DAG**. As for process tracing, we begin with a graphical causal model specifying possible causal linkages between nodes. Our "chain" model for instance has DAG: $X \rightarrow M \rightarrow Y$.
 
-2. **Nodal types**. Just as in process tracing, the DAG and variable ranges define the set of possible nodal types in the model---the possible ways in which each variable is assigned (if exogenous) or determined by its parents (if endogenous). For the $X \rightarrow M \rightarrow Y$ model there are 2 types for $\theta^X$, 4 for $\theta^M$, and 4 for $\theta^Y$. 
+2. **Nodal types**. Just as in process tracing, the DAG and variable ranges define the set of possible nodal types in the model---the possible ways in which each variable is assigned (if exogenous) or determined by its parents (if endogenous). For the $X \rightarrow M \rightarrow Y$ model there are 2 types for $\theta^X$, 4 for $\theta^M$, and 4 for $\theta^Y$.  
 
-3. **Causal types**. A full set of nodal types gives rise to a full set of causal types, encompassing all possible combinations of nodal types across all nodes in the model. For instance $X \rightarrow M \rightarrow Y$ we might have type $\theta = (\theta^X_1, \theta^M_{01}, \theta^M_{01})$.
+3. **Causal types**. A full set of nodal types gives rise to a full set of causal types, encompassing all possible combinations of nodal types across all nodes in the model. We let $\theta$ denote an arbitrary causal type. For instance $X \rightarrow M \rightarrow Y$ we might have type $\theta = (\theta^X_1, \theta^M_{01}, \theta^M_{01})$.
 
-4. **Parameters.**  The first difference between single- and multiple-case inference lies in our conceptualization of parameters. As before we use $\lambda^V$ to denote the probabilities of $\theta^V$. In process tracing, we  seek to learn about $\theta$ and our priors are given by $\lambda$. When we shift to multicase inference $\lambda$ becomes the parameter that we want to learn about: we seek to learn about the *shares* of different types in  a population. 
+4. **Parameters.**  As before we use $\lambda^V$ to denote the probabilities of $\theta^V$. Recall that in process tracing, we sought to learn about $\theta$ and our priors were given by $\lambda$. When we shift to multicase inference $\lambda$ becomes the parameter that we want to learn about: we seek to learn about the *shares* of different types in  a population; knowledge about $\lambda$ may in turn give rise to beliefs about $\theta$. 
  
-5. **Priors**. In the process tracing case we treat $\lambda$ as given: we do not hope to learn about $\lambda$ and our uncertainty over $\lambda$ plays no role. When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). The parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
+5. **Priors**. In the process tracing case we treated $\lambda$ as given: we did not seek to learn about $\lambda$ and our uncertainty over $\lambda$ played no role. When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). The parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
 
 
 ```{r,  fig.width = 4, fig.width = 8, out.width = "95%", echo = FALSE, fig.cap = "Types, parameters, and priors"}
@@ -90,44 +90,45 @@ dag_3d(add_M = TRUE, func = TRUE)
 
 For a model with no unobserved confounding, setting priors requires  specifying a prior distribution for each set of nodal types. Parameters are provided as vectors of positive numbers with one number for each nodal type. These numbers correspond to the $\alpha$ parameters of a Dirichlet distribution. The relative size of each number governs the the relative probability of each nodal type. The absolute sizes govern the certainty over the types. 
 
-To wit. For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. 
+For a simple $X \rightarrow Y$ model, we have two parameter sets: one for $X$'s types and one for $Y$'s types. 
 
-For $X$'s types, we specify $\alpha^X_0$ and $\alpha^X_1$, corresponding to the nodal types $\theta^X_0$ and $\theta^X_1$, respectively. A distribution of the form ($\alpha^X_0=100, \alpha^X_1=100)$ implies a lot of confidence that a given unit has $X=1$ with probability .5. A distribution of the form ($\alpha^X_0=.1, \alpha^X_1=.1)$ implies that either $X=1$ with a high probability (for all units) or  $X=0$ with a low probability (for all units), but we are not sure which. 
+For $X$'s types, we specify $\alpha^X_0$ and $\alpha^X_1$, corresponding to the nodal types $\theta^X_0$ and $\theta^X_1$, respectively. A distribution of the form ($\alpha^X_0=100, \alpha^X_1=100)$ implies a lot of confidence that a given unit has $X=1$ with probability .5. Or, equivalently, a lot of confidence that $\lambda^X_1$ is around .5. A distribution of the form ($\alpha^X_0=.1, \alpha^X_1=.1)$ implies that either $X=1$ with a high probability (for all units) or  $X=0$ with a low probability (for all units), but we are not sure which. 
 
-For $Y$'s types, we specify $\alpha^Y_{00}$, $\alpha^Y_{10}$, $\alpha^Y_{01}$, and $\alpha^Y_{11}$, corresponding to the nodal types $\theta^Y_{00}$, etc. So, for instance:
+For $Y$'s types, we specify $\alpha^Y_{00}$, $\alpha^Y_{10}$, $\alpha^Y_{01}$, and $\alpha^Y_{11}$, corresponding to the nodal types $\theta^Y_{00}$, $\theta^Y_{01}$, and so on. So, for instance:
 
 * $\alpha^Y_{00}=1$, $\alpha^Y_{10}=1$, $\alpha^Y_{01}=1$, and $\alpha^Y_{11}=1$ yields a uniform distribution in which all share allocations of types in the population are equally likely. 
 * $\alpha^Y_{00}=3$, $\alpha^Y_{10}=3$, $\alpha^Y_{01}=3$, and $\alpha^Y_{11}=3$ puts more weight on share allocations in which the shares are relatively equal. 
 * $\alpha^Y_{00}=5$, $\alpha^Y_{10}=5$, $\alpha^Y_{01}=10$, and $\alpha^Y_{11}=5$ puts greater weight positive causal effects than the other three types.
+
+Notice that we might want to express confidence in our beliefs about one node and a lot of uncertainty about another. But we are not able to express, for this model, confidence about *pairings* of nodes. That is, we cannot express the idea that we are confident that $\theta^Y_{01}$ is likely when $\theta^X_1 = 1$. That kind of statement  requires a model in which there is unobserved confounding between nodal types.  
 ::::
 
 
-
-5. **Unobserved confounding.** When there is unobserved confounding, we need parameter sets that allow for a joint distribution over nodal types. Thus, if we believe the likelihood of $X=1$ is correlated with whether or not $X$ has an effect on $Y$, we have to allow $\theta^X$ and $\theta^Y$ to have a joint distribution. There are diffierent ways to do this in practice but a simple approach is to specify one distribution for $\theta^Y$ when $X=0$ and another when $X=1$.  For each of these parameter sets, we specify two $\alpha$ parameters representing our priors. We can draw $\lambda$ values for these conditional nodal types from the resulting Dirichlet distributions, as above, and can then calculate causal type probabilities in the usual way. Note that if we do this in an $X \rightarrow Y$ model we have one 2 dimensional Dirichlet distribution and two 4 dimensional distriutions  in all, with 1+3+3 degrees of freedom: exactly the number needed to represent a joint distribution over all $\theta^X, \theta^Y$ combinations.
-
-In the figure below we represent this confounding by indicating parameters values $\lambda_{MY}$ that determine the joint distribution over $\theta_M$ and $\theta_Y$.
-
-
-```{r,  fig.width = 4, fig.width = 8, out.width = "95%", echo = FALSE, fig.cap = "Types, parameters, and priors, with confounding"}
-dag_3d(add_M = TRUE, func = FALSE, confounding = TRUE)
-```
 
 
 ### Inference
 
 Inference  then works like this:
 
-1. **Distributions over causal types.** Imagine a draw of one possible value of $\lambda$ from the prior. This $\lambda$ vectorimplies a probability distribution over *causal* types ($\theta$). With the help of a parameter matrix (mapping from parameters to causal types), we can then calculate the  probability that a case is of given causal type.
+1. **Distributions over causal types.** We first need to characterize our beliefs about causal types given any possible parameter vector $\lambda$. Imagine a draw of one possible value of $\lambda$ from the prior. This $\lambda$ vector implies a probability distribution over each nodal type which in turn implies a distribution over  *causal* types ($\theta$). For instance, the probability of type $\theta = (\theta^X_1, \theta^Y_{01}, \theta^M_{01})$ is simply  $p(\theta|\lambda)=\lambda^X_1\lambda^M_{01}\lambda^Y_{01}$.  More generally:
 
-$$\lambda^*_j = \prod_v(\lambda^v_j)$$
+$$p(\theta|\lambda) = \prod_{k,v:\theta^v_k\in\theta}\lambda^v_k$$
 
-2. **Event probabilities**. Each causal type in turn implies a data type. And, assuming independence, the probablity distribution over data types can be represented by a multinomial distribution with  event probabilities determined by $\lambda$.  For instance, an event $X=1, M =1, Y=1$  is consistent with four different causal types in teh $X\ rightarrow\M\rightarrow Y$: $\{(\theta^X_0, \theta^M_{01}, \theta^Y_{01}), (\theta^X_0, \theta^M_{11}, \theta^Y_{01}), (\theta^X_0, \theta^M_{01}, \theta^Y_{11}), (\theta^X_0, \theta^M_{11}, \theta^Y_{11})\}$. The probability of the event is then calculated by summing up the probabilities of each causal type that implies the event: $w_{011}:=\lambda^X_1(\lambda^M_{01} + \lambda^M_{11}))(\lambda^Y_{01} + \lambda^Y_{11}))$. In practice this is made easy by the construction of an ambiguity matrix, just as for process tracing, that tells us which causal types are consistent with a particular data type. 
 
-Letting $A$ denote the ambiguity matrix, event probabilities, given lambda are given by:
 
-$$w(\lambda) = A'\lambda^*$$
+2. **Event probabilities**. Each causal type in turn implies a data type. For instance $\theta = (\theta^X_1, \theta^M_{01}, \theta^Y_{01})$ implies data $X=1, M=1, Y=1$. Let $D(\theta)$ denote the data type implied by causal type $\theta$. We then use $\Theta(d)$ to denote the set of causal types that imply a given data type:
 
-See, for instance, the parameter matrix and the ambiguity matrix in Tables \@ref(tab:parammmatrixmix) and \@ref(tab:ambigmatrixmix). We have indicated a single draw of $\lambda$ values (population type shares) in the parameter matrix, and these have been used to calculate the priors on causal types provided in the ambiguity matrix. Let's now calculate the event probability for each data type. Starting with $X=0, Y=0$, we can read off the ambiguity matrix that the consistent causal types are ($\theta^X_0, \theta^Y_{00}$) and ($\theta^X_0, \theta^Y_{01}$). The event probability, $w_{00}$, is then given by adding together the probabilities of these two causal types, $0.1 + 0.2 = 0.3$. All four event probabilities, for the four data types, are then calculated in the same way:
+$$\Theta(d) : \{\theta| D(\theta) = d \}$$
+
+The probability of a data type $d$, is then simple: 
+
+$$w_d = \sum_{\theta \in \Theta(d)}p(\theta|\lambda)$$
+
+We use $w$ to denote the vector of event probabilities over all data types. 
+
+To illustrate, an event $d = (X=1, M =1, Y=1)$  is consistent with four different causal types in the $X\rightarrow M\rightarrow Y$ model: $\Theta(d) = \{(\theta^X_0, \theta^M_{01}, \theta^Y_{01}), (\theta^X_0, \theta^M_{11}, \theta^Y_{01}), (\theta^X_0, \theta^M_{01}, \theta^Y_{11}), (\theta^X_0, \theta^M_{11}, \theta^Y_{11})\}$. The probability of the event is then calculated by summing up the probabilities of each causal type that implies the event: $w_{111}:=\lambda^X_1(\lambda^M_{01} + \lambda^M_{11}))(\lambda^Y_{01} + \lambda^Y_{11}))$. 
+
+In practice, calculating the full $w$ vector is made easier by the construction of a "parameter matrix" and an "ambiguity matrix", just as for process tracing, that tells us which causal types are consistent with a particular data type.  Tables \@ref(tab:parammmatrixmix) and \@ref(tab:ambigmatrixmix) illustrate. We have indicated a single draw of $\lambda$ values (population type shares) in the parameter matrix, and these have been used to calculate the priors on causal types provided in the ambiguity matrix. Let's now calculate the event probability for each data type. Starting with $X=0, Y=0$, we can read off the ambiguity matrix that the consistent causal types are ($\theta^X_0, \theta^Y_{00}$) and ($\theta^X_0, \theta^Y_{01}$). The event probability, $w_{00}$, is then given by adding together the probabilities of these two causal types, $0.1 + 0.2 = 0.3$. All four event probabilities, for the four data types, are then calculated in the same way:
 
 * $w_{00} = 0.1 + 0.2 = 0.3$
 * $w_{10} = 0.1 + 0.1 = 0.2$
@@ -136,51 +137,91 @@ See, for instance, the parameter matrix and the ambiguity matrix in Tables \@ref
 
 As any case must be of one and only one data type, the full set of event probabilities for a single $\lambda$ draw must naturally sum to $1$.
 
-```{r parammmatrixmix, echo = FALSE}
+```{r parammmatrixmix, echo = FALSE, include = TRUE}
 XY <- make_model("X -> Y") %>% set_parameters(c(.4, .6, .3, .2, .2, .3))
 paramXY <- get_parameter_matrix(XY) 
-paramXY_with_params <-cbind(paramXY, Shares = XY$parameters)
+paramXY_with_params <-cbind(paramXY, '$\\lambda$' = XY$parameters_df$param_value)
 kable(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.")
 ```
 
 
-```{r ambigmatrixmix, echo = FALSE}
+```{r ambigmatrixmix, echo = FALSE, include = TRUE}
 ambiguityXY  <- get_ambiguities_matrix(XY)
-ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = get_type_prob(XY)))
-kable(ambXY_with_priors, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), showing the priors over causal types arising from a single draw of $\\lambda$ from its prior distribution.")
+kable(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.")
 ```
 
 
 
-3. **Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed and the event probabilities for each data type, given a $\lambda$ draw. more formally we write:
+3. **Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). For this we make use of an independence assumption: that each unit is independently drawn from a common distribution. Doing so lets us move from a categorical distribution that gives the probability that a single case has a particular data type to a multinomial distribution that gives the probability of seeing a distribution of outcomes. 
 
-$$D \sim \text{Multinomial}(w(\lambda))$$ 
+With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed, $n$, and the event probabilities for each data type, given a $\lambda$ draw. more formally we write:
 
+$$d \sim \text{Multinomial}(n, w(\lambda))$$ 
 
-4. **Estimation**. We now have all the components for updating on $\lambda$.
-
-WRITE GENERAL APPROACH
-
-WEITE BAYES RULE AND REFER BACK TO CHAPTER
-
-
-### Query
-
-Describe and illustrate
-
-
-Let us assume now that we have a 3-node model, with $X, Y$, and $M$ all binary. Let $n_{XYK}$ denote an 8-element vector recording the number of cases in a sample displaying each possible combination of $X,Y,K$ data, thus: $n_{XYM}=(n_{000},n_{001},n_{100},\dots ,n_{111})$. The elements of $n_{XYK}$ sum to $n$, the total number of cases studied. Likewise, let the event probabilities for data types given $\lambda$ be registered in a vector, $w_{XYK}=(w_{000},w_{001},w_{100},\dots ,w_{111})$. The likelihood of a data pattern, $\mathcal D$ is then:
+Let us assume now that we have a 3-node model, with $X, Y$, and $M$ all binary. Let $n_{XYK}$ denote an 8-element vector recording the number of cases in a sample displaying each possible combination of $X,Y,K$ data, thus: $d=n_{XYM}:=(n_{000},n_{001},n_{100},\dots ,n_{111})$. The elements of $n_{XYK}$ sum to $n$, the total number of cases studied. Likewise, let the event probabilities for data types given $\lambda$ be registered in a vector, $w_{XYK}=(w_{000},w_{001},w_{100},\dots ,w_{111})$. The likelihood of a data pattern, $\mathcal D$ is then:
 
 $$
-\Pr(\mathcal{D}|\lambda) = 
-  \text{Multinom}\left(n_{XYK}|n, w_{XYK}\right)  \\
+p(d|\lambda) = 
+  \text{Multinom}\left(n_{XYK}|\sum n_{XYK}, w_{XYK}(\lambda)\right)  \\
 $$
 In other words, the likelihood of observing a particular data pattern given $\lambda$ is given by the corresponding value of the multinomial distribution given the event probabilities. 
 
 
+4. **Estimation**. We now have all the components for updating on $\lambda$. Applying Bayes rule from Chapter @\ref(bayeschapter) we have:
+
+$$p(\lambda | d) = \frac{p(d | \lambda)p(\lambda)}{\int_{\lambda'}{p(d | \lambda')p(\lambda')}}$$
+In the `CausalQueries` package this updating is implemented in `stan` and the result of the updating is a dataframe that contains collection of draws from the posterior distribution for $\lambda$. Thus in the $X\rightarrow M \rightarrow Y$ model the posterior data frame would have 10 columns and generally thousands of row, with each row representing a draw from $p(\lambda|d)$. The table below illustrates.
+
+```{r posteriortable, echo = FALSE}
+if(do_diagnosis)
+make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/posterior_chain.rds")
+
+read_rds("saved/posterior_chain.rds")$posterior_distribution %>%
+head() %>% kable(digits = 2, caption = "An illustration of a posterior distribution for the Chain model. Each row is a draw from $p(\\lambda|d))$")
+
+```
 
 
+5. **Querying**. 
 
+The simplest queries relate to values of $\lambda$. For instance if we are interested in the probability that $M$ has a positive effect   on $Y$, given an updated chain model, we want to know about the distribution of $\lambda^M_{01}$. This distribution can be read directly from column 9 in Table  \@(tab:posteriortable). More complex queries can all be described as summaries of combinations of these columns. For instance the query "What is the average effect of $M$ on $Y$" is a question about the distribution of    $\lambda^M_{01} -  \lambda^M_{10}$, which is given by the difference between columns 9 and 8 of the table. Still more complex queries may require keeping some nodes constant while varying others, yet all of these can be calculated as summaries of the combinations of columns of the posterior distribution, following the rules described in Chapter \@ref(questions).
+
+```{r, echo = FALSE}
+model <- make_model("X->M->Y")
+
+datas <- list(
+  none = data.frame(X = NA, M = NA, Y = NA),
+  X1Y1 = data.frame(X = 0:1, M = NA, Y = 0:1),
+  X1M1Y1 = data.frame(X = 0:1, M = 0:1, Y = 0:1),
+  X1Y1x10 = data.frame(X = rep(0:1, 5), M = NA, Y = rep(0:1, 5)),
+  X1M1Y1x10 =data.frame(X = rep(0:1, 5), M = rep(0:1, 5), Y = rep(0:1, 5))
+  )
+
+if(do_diagnosis)
+chain_illustration <- 
+  
+  lapply(datas, function(d) 
+    update_model(model, d, keep_transformed = TRUE, iter = 4000) %>%
+         query_model(list(a = "Y[X=1] < Y[X=0]",
+                          b = "Y[X=1] > Y[X=0]",
+                          c = "Y[X=1]==0 & Y[X=0]==0",
+                          d = "Y[X=1]==1 & Y[X=0]==1",
+                          ate_XM = "M[X=1] - M[X=0]",
+                          ate_MY = "Y[M=1] - Y[M=0]",
+                          ate_XY = "Y[X=1] - Y[X=0]",
+                          PC = "Y[X=1] > Y[X=0]",
+                          PC_M0 = "Y[X=1] > Y[X=0]",
+                          PC_M1 = "Y[X=1] > Y[X=0]"),
+                     given = c(rep(TRUE, 7), "X==1 & Y==1", "X==1 & Y==1 & M==0",  "X==1 & Y==1 & M==1"),
+                     using = "posteriors")) %>%
+  write_rds("saved/08_chain_illustration.rds")
+
+read_rds("saved/08_chain_illustration.rds") %>%
+ bind_rows(.id = "Data") %>% select(-Using, - Given, - Case.estimand, - sd) %>%
+  pivot_wider(names_from = Query, values_from = c(mean)) %>%
+  kable(digits = 2, caption = "Inferences on a chain model given different amounts of data on the diagonal.")
+  
+```
 
 
 <!-- |     **Causal types** $\rightarrow$     | $\theta^X_0,\theta^Y_{00}$ | $\theta^X_1,\theta^Y_{00}$ | $\theta^X_0,\theta^Y_{10}$ | $\theta^X_1,\theta^Y_{10}$ | $\theta^X_0,\theta^Y_{01}$ | $\theta^X_1,\theta^Y_{01}$ | $\theta^X_0,\theta^Y_{11}$ | $\theta^X_1,\theta^Y_{11}$ | Parameter values (a draw from the prior) | -->
@@ -196,7 +237,19 @@ In other words, the likelihood of observing a particular data pattern given $\la
 
 ### Wrinkles
 
-### Partial data.
+#### Unobserved confounding.
+
+When there is unobserved confounding, we need parameter sets that allow for a joint distribution over nodal types. Thus, if we believe the likelihood of $X=1$ is correlated with whether or not $X$ has an effect on $Y$, we have to allow $\theta^X$ and $\theta^Y$ to have a joint distribution. There are different ways to do this in practice but a simple approach is to specify one distribution for $\theta^Y$ when $X=0$ and another when $X=1$.  For each of these parameter sets, we specify two $\alpha$ parameters representing our priors. We can draw $\lambda$ values for these conditional nodal types from the resulting Dirichlet distributions, as above, and can then calculate causal type probabilities in the usual way. Note that if we do this in an $X \rightarrow Y$ model we have one 2 dimensional Dirichlet distribution and two 4 dimensional distributions  in all, with 1+3+3 degrees of freedom: exactly the number needed to represent a joint distribution over all $\theta^X, \theta^Y$ combinations.
+
+In the figure below we represent this confounding by indicating parameters values $\lambda_{MY}$ that determine the joint distribution over $\theta_M$ and $\theta_Y$.
+
+
+```{r,  fig.width = 4, fig.width = 8, out.width = "95%", echo = FALSE, fig.cap = "Types, parameters, and priors, with confounding"}
+dag_3d(add_M = TRUE, func = FALSE, confounding = TRUE)
+```
+
+
+#### Partial data.
 For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
 
 What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $K$.
@@ -244,7 +297,7 @@ In the two strategy view we have
 
 which is the same up to a constant.
 
-Say rather than conditioning $X=Y=1$ to examine $M$ one of the two cases were chosen at random to observe $M$ and it just so happend to be be a case with $X=Y=1$:
+Say rather than conditioning $X=Y=1$ to examine $M$ one of the two cases were chosen at random to observe $M$ and it just so happened to be be a case with $X=Y=1$:
 
 | type:    | prob:                                                                         |
 |----------|-------------------------------------------------------------------------------|
@@ -311,47 +364,7 @@ which is the same up to a constant.
 
 <!-- With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model. -->
 
-## Illustrated inferences
 
-
-### Chain model
-
-```{r, echo = FALSE}
-model <- make_model("X->M->Y")
-
-datas <- list(
-  none = data.frame(X = NA, M = NA, Y = NA),
-  X1Y1 = data.frame(X = 0:1, M = NA, Y = 0:1),
-  X1M1Y1 = data.frame(X = 0:1, M = 0:1, Y = 0:1),
-  X1Y1x10 = data.frame(X = rep(0:1, 5), M = NA, Y = rep(0:1, 5)),
-  X1M1Y1x10 =data.frame(X = rep(0:1, 5), M = rep(0:1, 5), Y = rep(0:1, 5))
-  )
-
-if(do_diagnosis)
-chain_illustration <- 
-  
-  lapply(datas, function(d) 
-    update_model(model, d, keep_transformed = TRUE, iter = 4000) %>%
-         query_model(list(a = "Y[X=1] < Y[X=0]",
-                          b = "Y[X=1] > Y[X=0]",
-                          c = "Y[X=1]==0 & Y[X=0]==0",
-                          d = "Y[X=1]==1 & Y[X=0]==1",
-                          ate_XM = "M[X=1] - M[X=0]",
-                          ate_MY = "Y[M=1] - Y[M=0]",
-                          ate_XY = "Y[X=1] - Y[X=0]",
-                          PC = "Y[X=1] > Y[X=0]",
-                          PC_M0 = "Y[X=1] > Y[X=0]",
-                          PC_M1 = "Y[X=1] > Y[X=0]"),
-                     given = c(rep(TRUE, 7), "X==1 & Y==1", "X==1 & Y==1 & M==0",  "X==1 & Y==1 & M==1"),
-                     using = "posteriors")) %>%
-  write_rds("saved/08_chain_illustration.rds")
-
-read_rds("saved/08_chain_illustration.rds") %>%
- bind_rows(.id = "Data") %>% select(-Using, - Given, - Case.estimand, - sd) %>%
-  pivot_wider(names_from = Query, values_from = c(mean)) %>%
-  kable(digits = 2, caption = "Inferences on a chain model given different amounts of data on the diagonal.")
-  
-```
 
 
 ## Considerations 
@@ -360,7 +373,7 @@ read_rds("saved/08_chain_illustration.rds") %>%
 
 In Chapter \@ref(pt), we discussed the fact that a DAG by itself is insufficient to generate learning about causal effects from data on a single case; we also need informative prior beliefs about population-level shares of nodal types. 
 
-When working with multiple cases, however, we *can* learn about causal relations  when starting with nothing more than the DAG and data. In particular we can simultaneously learn about case level queries and justiyfy our inferences from population level data patterns. 
+When working with multiple cases, however, we *can* learn about causal relations  when starting with nothing more than the DAG and data. In particular we can simultaneously learn about case level queries and justify our inferences from population level data patterns. 
 
 For instance, in an $X \rightarrow M \rightarrow Y$ model, even if we start with flat priors over $M$'s nodal types, observing a correlation (or no correlation) between $X$ and $M$ across multiple cases provides information about $X$'s effect on $M$. Simply, a stronger, positive (negative) $X, M$ correlation implies a stronger positive (negative) effect of $X$ on $M$. In turn, a stronger $X,M$ correlation implies a stronger effect of $X$ on $Y$ since, under this model, that effect has to run through an effect of $X$ on $M$. 
 
@@ -408,7 +421,7 @@ The figure illustrates nicely the difference between an identified and non-ident
 
 Importantly, however, we see that we *do* learn about the probability of causation. Despite the lack of convergence, our posterior rules out a wide range of values. While our prior on the query was 0.5, we have correctly updated toward a range of values that includes (and happens to be fairly well centered over) the true value ($\approx 0.86$). 
 
-A distinctive feature of updating a causal model is that it allows us to learn about non-identified quantitites in this manner. We will end up with "ridges" in our posterior distributions: ranges or combinations of parameter values that are equally likely given the data. But our posterior weight can nonetheless shift toward the right answer.
+A distinctive feature of updating a causal model is that it allows us to learn about non-identified quantities in this manner. We will end up with "ridges" in our posterior distributions: ranges or combinations of parameter values that are equally likely given the data. But our posterior weight can nonetheless shift toward the right answer.
 
 At the same time, for non-identified queries, we have to be cautious about the impact of our priors. As $N$ becomes large, the remaining curvature we see in our posteriors may simply be function of those priors. One way to inspect for this is to simulate a very large dataset and see whether the curvature remainsXXXXXXXXXX A second approach would be to do sensitivity analyses by updating the model on the same data with different sets of priors to see how this affects the shape of the posterior.
 
@@ -439,7 +452,7 @@ While the setup used in this book involves only binary nodes, the approach readi
 To do so we need to be able to expand the nodal space to accommodate the richer range of possible relations between nodes. Suppose that we want to operate with variables with 4 ordinal categories. In an $X \rightarrow Y$ model, $Y$'s nodal types have to accommodate 4 possible values that $X$ can take on, and 4 possible values that $Y$ can take on for any value of $X$. This yields $4^4 = 256$  nodal types for $Y$ and 1024 causal types (compared to just 8 in the binary case). Moving beyond binary nodes allows for considerably greater flexibility in response functions. For instance, non monotonic relations can be described with with just three values on $X$ and $Y$.  More complex queries might include: "What is the probability that  $Y$ is linear in $X$?",  or "What is the probability that  $Y$ is concave in $X$?", or "What is the probability that  $Y$ is monotonic in $X$?".
 
 
-The `CausalQueries` package, set up to work with binary nodes, can be used for non binary data also. The trick is to express integers in base 2 and represent the integer as a series of 0s and 1s on multiple nodes. For instance if $X$ and $Y$ each have four values we might code the values of both $X$ and $Y$ in base 2 as elements of $00, 01, 10, 11$ and capture all possible values on a model with $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. Thus the information on $X$ and $Y$ gets fully recorded on 4 nodes rather than 2: non binary data $X=3, Y=2$ gets represented with binary data $X_1=1, X_2=1, Y_1=1, Y_2 = 0$. Note that both $X_1$ and $X_2$ point into each of  $Y_1$ and $Y_2$, resulting in $2\times 2\times 16 \times 16 = 1024$ causal types, as required. To allow for hte full range of nodal types we need to allow a joint distribution over $\theta^X_1$ and $\theta^X_2$ and over  $\theta^Y_1$ and $\theta^Y_2$ which results in 3 degres of freedom for $X$ and 255 for $Y$, as required.
+The `CausalQueries` package, set up to work with binary nodes, can be used for non binary data also. The trick is to express integers in base 2 and represent the integer as a series of 0s and 1s on multiple nodes. For instance if $X$ and $Y$ each have four values we might code the values of both $X$ and $Y$ in base 2 as elements of $00, 01, 10, 11$ and capture all possible values on a model with $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. Thus the information on $X$ and $Y$ gets fully recorded on 4 nodes rather than 2: non binary data $X=3, Y=2$ gets represented with binary data $X_1=1, X_2=1, Y_1=1, Y_2 = 0$. Note that both $X_1$ and $X_2$ point into each of  $Y_1$ and $Y_2$, resulting in $2\times 2\times 16 \times 16 = 1024$ causal types, as required. To allow for the full range of nodal types we need to allow a joint distribution over $\theta^X_1$ and $\theta^X_2$ and over  $\theta^Y_1$ and $\theta^Y_2$ which results in 3 degrees of freedom for $X$ and 255 for $Y$, as required.
 
 
 In the illustration below we imagine a model in which $X$ and $Y$ each take on 4 possible values. We generate data from a non-monotonic process in which $Y(0)=0, Y(1)=1, Y(2)=3, Y(3) = 2$. We then update and report on posteriors on potential outcomes.
@@ -560,7 +573,7 @@ Here $X$ has an effect on the true value of our outcome of interest, $Y$. The tr
 
 To motivate the setup, imagine that we are interested in the effect of a rule restricting long-term care staff to working at a single site ($X$) on novel coronavirus outbreaks in long-term care facilities ($Y$), defined as infections among two or more staff or residents. We do not directly observe infections, however; rather, we observe positive results of PCR tests. We also know that testing is neither comprehensive nor uniform. For some units, regular random testing is carried out on staff and residents while in others only symptomatic individuals are tested. It is the latter arrangement that potentially introduces measurement error.  
 
-If we approach the problem naively, ignoring measurement error and treating $Y_\text{measured}$ as though it were identical to $Y$, we would face attenutation bias in our estimates of the effect of $X$ on $Y$ if some units are engaged in only symptomatic testing and this generates missed outbreaks. A slightly more sophisticated approach would be to acknowledge this attenuation bias, treating our estimate of the $ATE$ as a lower bound. 
+If we approach the problem naively, ignoring measurement error and treating $Y_\text{measured}$ as though it were identical to $Y$, we would face attenuation bias in our estimates of the effect of $X$ on $Y$ if some units are engaged in only symptomatic testing and this generates missed outbreaks. A slightly more sophisticated approach would be to acknowledge this attenuation bias, treating our estimate of the $ATE$ as a lower bound. 
 
 Yet we can go further if we work with the above causal model. Without any additional data, we can update on both $\lambda_Y$ and $\lambda^{Y_\text{measured}}$. We could, for instance, impose restrictions that exclude negative effects of $Y$ on  $Y_\text{measured}$.^[We might also set a flat prior on the prevalence of measurement error and exclude positive effects of measurement error on $Y_\text{measured}$.] Then, if we observe (say) a negative correlation between $X$ and $Y_\text{measured}$, we can update on the substantive effect of interest -- $\lambda^Y$ -- in the direction of a larger share of negative effects: it is only *via* negative effects of $X$ on $Y$ that a negative correlation between $X$ and $Y_\text{measured}$ could emerge. At the same time, we learn about the measure as we update on $\lambda^{Y_\text{measured}}$: the negative observed correlation $X$ and $Y_\text{measured}$ is an indicator of the degree to which $Y_\text{measured}$ is picking up true $Y$.
 
@@ -601,7 +614,7 @@ Obviously, more complex setups are possible. Also, we can model the process in a
 
 <!-- The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES? -->
 
-```{r spillover, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:spillover} A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes."}
+```{r spillover, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "\\label{fig:spillover} A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes.", include = FALSE,  eval = FALSE}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 0, 0, 1, 1, 1),
        y = c(3, 2, 1, 3, 2, 1),
@@ -614,23 +627,9 @@ hj_dag(x = c(0, 0, 0, 1, 1, 1),
 ```
 
 ```{r}
-
 model <- make_model("X1 -> Y1 <- X2 -> Y2 <- X1")
 
-plot(model)
-
-data <- fabricatr::fabricate(N = 100, 
-                  X1 = rbinom(N,1,.5), 
-                  X2 = rbinom(N,1,.5), 
-                  Y1 = X1,
-                  Y2 = X1*X2)
-if(do_diagnosis)
-update_model(model, data, keep_transformed = TRUE) %>% 
-  write_rds("saved/spillovers.rds")
-
-read_rds("saved/spillovers.rds")  %>% 
-  query_model(
-    list(
+spillover_queries <- list(
     only_self_treated = 
       "(Y1[X1=1, X2=0] - Y1[X1=0, X2=0] +
         Y2[X1=0, X2=1] - Y2[X1=0, X2=0])/2",
@@ -645,9 +644,29 @@ read_rds("saved/spillovers.rds")  %>%
     
     both_treated = 
       "((Y1[X1=1, X2=1] - Y1[X1=0, X2=0]) +
-        (Y2[X1=1, X2=1] - Y2[X1=0, X2=0]))/2"),
+        (Y2[X1=1, X2=1] - Y2[X1=0, X2=0]))/2")
+```
 
-using = "posteriors")
+```{r, echo = FALSE}
+
+plot(model)
+
+data <- fabricatr::fabricate(N = 100, 
+                  X1 = rbinom(N,1,.5), 
+                  X2 = rbinom(N,1,.5), 
+                  Y1 = X1,
+                  Y2 = X1*X2)
+if(do_diagnosis)
+update_model(model, data, keep_transformed = TRUE) %>% 
+  write_rds("saved/spillovers.rds")
+
+
+if(do_diagnosis)
+  read_rds("saved/spillovers.rds")  %>% 
+  query_model(spillover_queries, using = "posteriors") %>% 
+  write_rds("saved/spillovers_query.rds")
+
+read_rds("saved/spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% kable(caption = "Spillovers queries", digits = 2)
 
 ```
 
@@ -660,7 +679,7 @@ using = "posteriors")
 
 ### Clustering
 
-We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units. For instance, we might be interested in effects of training on individuals' employment prospects, while recognizing that individuals livinbg in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe. 
+We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units. For instance, we might be interested in effects of training on individuals' employment prospects, while recognizing that individuals living in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe. 
 
 We can capture some forms of clustering by placing the cluster-level factor on the graph.^[In this illustration the two units in each pair are treated as separate nodes rather than as repeated instances of realizations of the same node. Implicitly then the effect for one unit type (men, say) can be quite independent of the effect of another type (women, say). Indeed, here they are linked only through the unobserved variable $W$.] Let us imagine that we are studying the effect of providing public health insurance coverage on health outcomes for individuals in two-adult households that have a single earner. Our units of analysis are individuals, but these units are clustered into pairs within households.
 
@@ -672,7 +691,7 @@ model <- make_model("X1 -> Y1 <- W -> Y2 <- X2") %>%
   set_restrictions("(Y2[X2=1, W=0] != Y2[X2=0, W=0])")  
 ```
 
-Let Unit 1 be the adult in paid employment and Unit 2 the adult not in paid employment, with $X_i$ indicating the provision of public health insurance to Unit $i$ and $W$ representing an unobserved household-level factor that moderates causal effects for both units. We restrict the model such that, more specifically, $W$ shuts off effects of health insurance for both individuals. By representing earners and non-earners separately on the graph, we allow for different effects of health insurance for these two different kinds of individuals. By representing the cluster-level factor, $W$, on the graph, we also allow for *learning* across types of units: seeing effects (or non-effects) for one kind of unit allows us to update on $W$'s value, which in turn provides information abouteffects for the other type of unit.
+Let Unit 1 be the adult in paid employment and Unit 2 the adult not in paid employment, with $X_i$ indicating the provision of public health insurance to Unit $i$ and $W$ representing an unobserved household-level factor that moderates causal effects for both units. We restrict the model such that, more specifically, $W$ shuts off effects of health insurance for both individuals. By representing earners and non-earners separately on the graph, we allow for different effects of health insurance for these two different kinds of individuals. By representing the cluster-level factor, $W$, on the graph, we also allow for *learning* across types of units: seeing effects (or non-effects) for one kind of unit allows us to update on $W$'s value, which in turn provides information about effects for the other type of unit.
 
 One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? In Table XXXX, we show results from two different data-collection strategies. In one instance, we observe both Unit 1 and Unit 2 and in two clusters. In the other instance, we observe only Unit 1 in two clusters and only Unit 2 in two clusters. Both sets of data are drawn from a process in which the true treatment effect is XXXXXX. In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.  and define estimands as average effects for both units in a pair. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR.
 
@@ -716,16 +735,16 @@ A more general way to describe this dynamic is that learning about a kind of cas
 
 A parallel example arises when we want to learn about a model with multiple causal pathways. Consider the model $X \rightarrow M \rightarrow Y \leftarrow N \leftarrow X$, where $X$ can have an effect on $Y$ through either $M$ or $N$. And let us set priors such that we believe the the two paths to be equally likely. Suppose that, as before, we have started with a substantial amount of $X,Y$ data indicative of a large positive $ATE$. Now, we look for data on $M$ in a handful of cases and find an $M$ pattern inconsistent with any kind of effect through $M$. What happens to our beliefs about the $ATE$? In general, finding evidence against one way an effect can happen should reduce our confidence in the effect happening at all. However, if we have started out with a strong prior on the $ATE$ but equal prior weight on the $M$ and $N$ pathways, then what we will see is countervailing updating across the two pathways: while our confidence in the operation of the $M$ pathway will fall substantially, our posterior on effects operating via the $N$ pathway will *rise* --- because of the constraint on the total effect imposed by our strong priors on the $ATE$. And our $ATE$ beliefs will fall only modestly. Evidence against the $M$-pathway effect will function as evidence for the $N$-pathway effects and, to a limited degree, as evidence against a total effect. 
 
-A further implication for process tracing is that there will generally be sharp limits to what we can learn about total effects if we study mediators along only *some* of the theorized pathways if we already have some prior information about total effects. The difficulty is that whatever we learn from the mediators we *do* observe will be offset by countervailing shifts in our beliefs about other pathways, generated by the constraint in our prior knowledge about the total effect. Suppose, for instance, that we start with some belief that economic development makes democracy more likely, and we believe that there may be two mechanisms: one operating through a rising middle class and one operating through a more robust and organized working class. Suppose then that we examine data on the organization of the working class and find that it does not vary with per capita GDP. We will then, of course, reduce our confidence in the working-class pathway. However, we must also *increase* our confidence in the operation of the middle-class pathway --- because (a) we have prior reason to believe that the overall development $\rightarrow$ democracy effect exists and (b) we have not observed a mediator along the middle-class pathway. On balance, then, learning about just the one pathway will not have a large impact on beliefs about the overall effect of GDP on democratization. The larger lesson here is that, if our process tracing strategy involves the examination of mediators to learn about total $X \rightarrow Y$ effects, then how much we stand to learn depends on how comprehensively our examination of mediators covers thes plausible pathways connecting $X$ to $Y$.
+A further implication for process tracing is that there will generally be sharp limits to what we can learn about total effects if we study mediators along only *some* of the theorized pathways if we already have some prior information about total effects. The difficulty is that whatever we learn from the mediators we *do* observe will be offset by countervailing shifts in our beliefs about other pathways, generated by the constraint in our prior knowledge about the total effect. Suppose, for instance, that we start with some belief that economic development makes democracy more likely, and we believe that there may be two mechanisms: one operating through a rising middle class and one operating through a more robust and organized working class. Suppose then that we examine data on the organization of the working class and find that it does not vary with per capita GDP. We will then, of course, reduce our confidence in the working-class pathway. However, we must also *increase* our confidence in the operation of the middle-class pathway --- because (a) we have prior reason to believe that the overall development $\rightarrow$ democracy effect exists and (b) we have not observed a mediator along the middle-class pathway. On balance, then, learning about just the one pathway will not have a large impact on beliefs about the overall effect of GDP on democratization. The larger lesson here is that, if our process tracing strategy involves the examination of mediators to learn about total $X \rightarrow Y$ effects, then how much we stand to learn depends on how comprehensively our examination of mediators covers the plausible pathways connecting $X$ to $Y$.
 
-To be clear, we do not need to collect mediator clues on all *possible* pathways. If we have strong priors that one or more possible pathways are very unlikley, then we might safely be able to avoid collecting observations along those pathways without substantially reducing the prospects for learning. 
+To be clear, we do not need to collect mediator clues on all *possible* pathways. If we have strong priors that one or more possible pathways are very unlikely, then we might safely be able to avoid collecting observations along those pathways without substantially reducing the prospects for learning. 
 
 Also, the specific point that we are making here applies to using mediator data to answer queries about the effect of $X$ on $Y$. If instead we want to know which *particular pathway* is operating, then the lesson here is quite different, and more encouraging. For one thing, collecting evidence on just one pathway can be highly informative about the operation of that pathway. For another, if we do have strong priors on the $ATE$, then learning about one pathway can *also* be informative about other pathways, just as we saw in our $M$- and $N$-pathway example.
 
 
-## Principles of reasoning about learning
+<!-- ## Principles of reasoning about learning -->
 
-As we did in Chapter \@ref(pt), we provide here some guidance in how to reason about the learning that arises from mixed data. We focus especially on ways in which learning from multiple cases differs from learning from a single case.
+<!-- As we did in Chapter \@ref(pt), we provide here some guidance in how to reason about the learning that arises from mixed data. We focus especially on ways in which learning from multiple cases differs from learning from a single case. -->
 
 <!-- AJ: We'd discussed this going here, but I think it would be better placed in a substantive chapter. This is where people will be more likely to look for it.  -->
 
@@ -747,5 +766,5 @@ As we did in Chapter \@ref(pt), we provide here some guidance in how to reason a
 
 ## Conclusion
 
-ADD REFERENCE TO TABLE 1 OF FOR MIXED DATA "Ability and Achievement" Otis Duncan
+<!-- ADD REFERENCE TO TABLE 1 OF FOR MIXED DATA "Ability and Achievement" Otis Duncan -->
 
