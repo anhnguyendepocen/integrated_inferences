@@ -24,7 +24,7 @@ source("_packages_used.R")
 
 ## Process tracing and causal models
 
-This chapter demonstrates how we can use causal models to conduct confirmatory process tracing: that is, to draw causal inferences about a single case from case-level data.  
+This chapter demonstrates how we can use causal models to conduct confirmatory process tracing: that is, to draw causal inferences about a single case from a causal model with data provided at the case-level.  
 
 ### The intuition
 
@@ -188,7 +188,7 @@ These conditional proportions may, of course, be difficult for the researcher to
 
 Importantly, in process tracing, we are focused on drawing case-level inferences and, as such, we treat the population-level parameters as given and fixed. In general, these parameters derive from our beliefs about how the world works, and those beliefs will typically be uncertain.  The key point, however, is that in process tracing, the population parameters serve as an *input* into the analysis, conditioning our inferences from the evidence; but we do not *update* on these population-level beliefs once we see the data from a single case. Importantly, as we show later in the book, we *do* update on population-level inferences in the more general setup that we introduce in Chapter \@ref(mixing) for analyzing mixed data in multiple cases. We also show in Chapter \@ref(evaluation) how we can test the sensitivity of conclusions to the values at which we set population parameters. Interestingly, as we also show, process-tracing inferences, including uncertainty about conclusions, are unaffected by the level of uncertainty we might have about population parameters; we thus do not specify this uncertainty for the purposes of process tracing.
 
-The relationship between causal types, nodal types, and the correlation among nodal types is captured in what we call a *parameter matrix.* We show a parameter matrix for a simple $X \rightarrow Y$ model with no unobserved confounding in Table \@ref(tab:parammatrix). Here each column label (except the last) represents the probability that a case is of a given causal type. Each row label represents a population-level parameter: a belief about the proportions of different nodal types in the population. We indicate a set of possible parameter values in the final column. 
+The relationship between causal types, nodal types, and the correlation among nodal types is captured in what we call a *parameter matrix.* We show a parameter matrix for a simple $X \rightarrow Y$ model with no unobserved confounding in Table \@ref(tab:parammmatrix). Here each column label (except the last) represents the probability that a case is of a given causal type. Each row label represents a population-level parameter: a belief about the proportions of different nodal types in the population. We indicate a set of possible parameter values in the final column. 
 
 |     **Causal types** $\rightarrow$     | $\theta^X_0,\theta^Y_{00}$ | $\theta^X_1,\theta^Y_{00}$ | $\theta^X_0,\theta^Y_{10}$ | $\theta^X_1,\theta^Y_{10}$ | $\theta^X_0,\theta^Y_{01}$ | $\theta^X_1,\theta^Y_{01}$ | $\theta^X_0,\theta^Y_{11}$ | $\theta^X_1,\theta^Y_{11}$ | Parameter values (population proportions) |
 |:--------------------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:--------------------------:|:-----------------------------------------:|
@@ -680,8 +680,7 @@ In the procedure described for process tracing in this chapter (and different to
 
 This might appear somewhat heroic, but in fact for single case inference it is  without loss of generality. The expected inferences we would make for any estimand accounting for priors  is the same as the inferences we if we use the expectation only.  
 
-To see this, let $\pi_j$ denote the probability of observing causal type $j$ and $p(D)$ te probability of observing data realization $D$. Say that $j \in D$ if type $j$ produces data type $D$ and say $j \in E$ if casual type $j$ is an element of the estimand set of interest. For instance in an $X \rightarrow Y$ model, if we observe $X=Y=1$ then $D$ consists of causal types $D={(\theta^X_1, \theta^Y_{01}), (\theta^X_1, \theta^Y_{11})})$ and the estimand set for "$X$ has a positive effect on  $Y$" consists of  $E={(\theta^X_1, \theta^Y_{01}), (\theta^X_0, \theta^Y_{01})})$. 
-
+To see this, let $\pi_j$ denote the probability of observing causal type $j$ and $p(D)$ te probability of observing data realization $D$. Say that $j \in D$ if type $j$ produces data type $D$ and say $j \in E$ if causal type $j$ is an element of the estimand set of interest. 
 The posterior on an estimand $E$ given data $D$ given prior over $\pi$, $p(\pi)$ is:
 
 $$\Pr(E | D) = \int_\pi  \frac{\sum_{j \in E \cap D}\pi_j}{\sum_{j \in D}\pi_j} f(\pi)d\pi$$
@@ -689,6 +688,9 @@ $$\Pr(E | D) = \int_\pi  \frac{\sum_{j \in E \cap D}\pi_j}{\sum_{j \in D}\pi_j} 
 However, since for any $\pi$, $\sum_{j \in D}\pi_j = p(D)$ we have:
 
 $$\Pr(E | D) = \int_\pi  \sum_{j \in E \cap D}\pi_j f(\pi)d\pi/p(D) = \sum_{j \in  E \cap D} \overline{\pi}_j/p(D)$$
+For instance in an $X \rightarrow Y$ model, if we observe $X=Y=1$ then $D$ consists of causal types $D={(\theta^X_1, \theta^Y_{01}), (\theta^X_1, \theta^Y_{11})})$ and the estimand set for "$X$ has a positive effect on  $Y$" consists of  $E={(\theta^X_1, \theta^Y_{01}), (\theta^X_0, \theta^Y_{01})})$. Let $\pi_1$, $\pi_2$ denote the priors on the two elecments of $D$. We then have:
+
+$$\Pr(E | D) =  \frac{\pi_1}{\pi_1 + \pi_2}$$
 
 ### Probative value requires $d-$connection
 
