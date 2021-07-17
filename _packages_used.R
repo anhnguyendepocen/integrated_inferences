@@ -8,21 +8,20 @@ pacman::p_load(
   DT,
   bookdown,
   tidyverse,
-  bayesplot,
-  rstanarm,
-#  CausalQueries,
-  bindrcpp,
+  # bayesplot,
+  # bindrcpp,
   ggplot2,
-  StanHeaders,
-  rstan,
-  rstanarm,
+#  StanHeaders,
+   rstan,
+#  rstanarm,
   knitr,
-  expm,
-  plotrix,
+#  expm,
+#  plotrix,
   reshape2,
   dagitty,
-  stargazer,
-  partitions)
+  stargazer#,
+#  partitions
+)
 
 library(CQtools)
 options(mc.cores = parallel::detectCores())

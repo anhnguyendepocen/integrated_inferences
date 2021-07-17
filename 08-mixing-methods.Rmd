@@ -450,9 +450,7 @@ While the setup used in this book involves only binary nodes, the approach readi
 
 To move to non-binary measurement, we need to be able to expand the nodal-type space to accommodate the richer range of possible relations between nodes that can take on more than two possible values. Suppose, for instance, that we want to operate with variables with 4 ordinal categories. In an $X \rightarrow Y$ model, $Y$'s nodal types have to accommodate 4 possible values that $X$ can take on, and 4 possible values that $Y$ can take on for any value of $X$. This yields $4^4 = 256$  nodal types for $Y$ and 1024 causal types (compared to just 8 in a binary setup). 
 
-The `CausalQueries` package, set up to work with binary nodes, can be used to represent non-binary data as well. The trick, as it were, is to express integers in base-2 and then represent the integer as a series of 0's and 1's on multiple nodes. In base-2 counting, the rightmost digit represents $2^0$ (or 1), the digit to its left represents $2^1$, the digit to left of that represents $2^2$, and so on. All digits are binary, taking on either 0 or 1 values. To represent 4 values, for instance, we need only 2 digits: $00, 01, 10, 11$ represent $0, 1, 2, 3$ in base-10 counting. 
-
-Thus, if we want $X$ and $Y$ to each have 4 values, we represent $X$ via two separate binary nodes, $X_1$ and $X_2$, which serve as placeholders for the two required digits. These two nodes can take on the combinations $0,0; 0,1; 1,0; 1,1$, mapping into $X$'s four values. So, for instance, $X_1 = 0, X_2 = 1$ represents $X=1$ while $X_1 = 1, X_2 = 1$ represents $X=3$. We construct $Y$ in the same way and then represent a simple $X \right arrow Y$ relation as a model with both $X$ nodes pointing into both $Y$ nodes: $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. Then, to allow for the full range of nodal types we need to allow a joint distribution over $\theta^{X_1}$ and $\theta^{X_2}$ and over $\theta^{Y_1}$ and $\theta^{Y_2}$, which results in 3 degrees of freedom for $X$ and 255 for $Y$, as required.
+The `CausalQueries` package, set up to work with binary nodes, can be used to represent non-binary data as well. The trick, as it were, is to express integers in base-2 and then represent the integer as a series of 0's and 1's on multiple nodes. In base-2 counting we would need to represent four integers $00, 01, 10, 11$. These are two digit numbers. If we use one binary node, $X_1$ to represent the first digit, and a second node $X_2$ to represent the second, we have enough information to capture the four values: $X_1 = 0, X_2 = 0$ represents $X=0$, $X_1 = 0, X_2 = 1$ represents $X=1$,   $X_1 = 1, X_2 = 0$ represents $X=2$, and $X_1 = 1, X_2 = 1$ represents $X=3$. We construct $Y$ in the same way and then represent a simple $X \rightarrow Y$ relation as a model with both $X$ nodes pointing into both $Y$ nodes: $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. To allow for the full range of nodal types we need to allow a joint distribution over $\theta^{X_1}$ and $\theta^{X_2}$ and over $\theta^{Y_1}$ and $\theta^{Y_2}$, which results in 3 degrees of freedom for $X$ and 255 for $Y$, as required.
 
 In the illustration below with two 4-level variables, we generate data ($N=100$) from a non-monotonic process with the following potential outcomes: $Y(0)=0, Y(1)=1, Y(2)=3, Y(3) = 2$. We then update and report on posteriors on potential outcomes.
 
@@ -572,15 +570,58 @@ Here $X$ has an effect on the true value of our outcome of interest, $Y$. The tr
 
 To motivate the setup, imagine that we are interested in the effect of a rule restricting long-term care staff to working at a single site ($X$) on novel coronavirus outbreaks in long-term care facilities ($Y$), defined as infections among two or more staff or residents. We do not directly observe infections, however; rather, we observe positive results of PCR tests. We also know that testing is neither comprehensive nor uniform. For some units, regular random testing is carried out on staff and residents while in others only symptomatic individuals are tested. It is the latter arrangement that potentially introduces measurement error.  
 
-If we approach the problem naively, ignoring measurement error and treating $Y_\text{measured}$ as though it were identical to $Y$, we would face attenuation bias in our estimates of the effect of $X$ on $Y$ if some units are engaged in only symptomatic testing and this generates missed outbreaks. A slightly more sophisticated approach would be to acknowledge this attenuation bias, treating our estimate of the $ATE$ as a lower bound. 
+If we approach the problem naively, ignoring measurement error and treating $Y_\text{measured}$ as though it were identical to $Y$, a differences in means approach might produce attenuation bias---insofar as we are averaging between the true relationship and 0.  
 
-Yet we can go further if we work with the above causal model. Without any additional data, we can update on both $\lambda_Y$ and $\lambda^{Y_\text{measured}}$. We could, for instance, impose restrictions that exclude negative effects of $Y$ on  $Y_\text{measured}$.^[We might also set a flat prior on the prevalence of measurement error and exclude positive effects of measurement error on $Y_\text{measured}$.] Then, if we observe (say) a negative correlation between $X$ and $Y_\text{measured}$, we can update on the substantive effect of interest -- $\lambda^Y$ -- in the direction of a larger share of negative effects: it is only *via* negative effects of $X$ on $Y$ that a negative correlation between $X$ and $Y_\text{measured}$ could emerge. At the same time, we learn about the measure as we update on $\lambda^{Y_\text{measured}}$: the negative observed correlation $X$ and $Y_\text{measured}$ is an indicator of the degree to which $Y_\text{measured}$ is picking up true $Y$.
+We can do better with a causal model however. Without any additional data, we can update on both $\lambda_Y$ and $\lambda^{Y_\text{measured}}$ and our posterior uncertainty would reflect uncertainty in measurement. We could go further if, for instance, we could reasonably exclude negative effects of $Y$ on  $Y_\text{measured}$. Then, if we observe (say) a negative correlation between $X$ and $Y_\text{measured}$, we can update on the substantive effect of interest -- $\lambda^Y$ -- in the direction of a larger share of negative effects: it is only *via* negative effects of $X$ on $Y$ that a negative correlation between $X$ and $Y_\text{measured}$ could emerge. At the same time, we learn about the measure as we update on $\lambda^{Y_\text{measured}}$: the negative observed correlation $X$ and $Y_\text{measured}$ is an indicator of the degree to which $Y_\text{measured}$ is picking up true $Y$.
 
-We can do considerably better, however, if we can collect more detailed information on at least some units. One data strategy would be to invest in observing, $Y$, the true outbreak status of each unit for a subset of units on which we already have data on $X$ and $Y_\text{measured}$ --- say, by implementing our own random-testing protocol at a set of facilities. Observing both $X$ and the true $Y$ will allow us to update more directly on $\lambda^Y$, the true effect of $X$ on $Y$. Just as importantly, observing both $Y$ and $Y_\text{measured}$ will allow us to update more directly on measurement quality, $\lambda^{Y_\text{measured}}$. 
+We can do better still if we can collect more detailed information on at least some units. One data strategy would be to invest in observing, $Y$, the true outbreak status of each unit for a subset of units on which we already have data on $X$ and $Y_\text{measured}$ --- say, by implementing our own random-testing protocol at a set of facilities. Observing both $X$ and the true $Y$ will allow us to update more directly on $\lambda^Y$, the true effect of $X$ on $Y$. Just as importantly, observing both $Y$ and $Y_\text{measured}$ will allow us to update more directly on measurement quality, $\lambda^{Y_\text{measured}}$. 
 
 A second data strategy (which could be combined with the first) would be to collect data, for some subset of units, on the source of the measurement error. If we collected data on the use of random vs. symptomatic-only testing, we could then update on two further parameters: $\lambda^\text{source of measurement error}$ and on the part of $\lambda^{Y_\text{measured}}$ representing response of $Y_\text{measured}$. In other words, we would learn both about how prevalent the conditions generating measurement error are and about much they throw off our measure. 
 
+In the illustration below we take a simple model of this form in which there is a true effect of.6, but the "effect" of $Y$ on measured $Y$ is just .7. 
 
+In this case with enough data,  a differences in means estimate of the effect of $X$ on *measured* $Y$ would be around .42---which is the effect of $X$ on $Y_{\text{measured}}$ but not the effect of $X$ on $Y$. As shown in Table \@ref(tab:measurmenterror), inferences from a causal model are a lot better, and would be better still if we had partial data on $Y$.
+
+```{r}
+model <- make_model("X -> Y -> Yobs") %>%
+  set_restrictions(decreasing("Y", "Yobs")) %>%
+  set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1))
+
+```
+
+```{r measurmenterror, echo = FALSE}
+
+model2 <- make_model("X -> Y -> Yobs1; Y -> Yobs2") %>%
+  set_restrictions(decreasing("Y", "Yobs1")) %>%
+  set_restrictions(decreasing("Y", "Yobs2")) %>%
+  set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1, .1, .8, .1))
+
+set.seed(1)
+data <- make_data(model2, n = 2000) %>%
+  mutate(Yobs = Yobs1)
+
+# estimatr::difference_in_means(Yobs ~ X, data = data)
+
+if(do_diagnosis)
+list(
+  no_Y =  update_model(model, data = data %>% select(X, Yobs)) %>%
+    query_model(te("X", "Y"), using = "posteriors"),
+  
+  some_Y =  update_model(model, data %>%
+                           mutate(Y = ifelse(randomizr::complete_ra(2000, prob = .2)==1, Y, NA))) %>%
+    query_model(te("X", "Y"), using = "posteriors"),
+  
+  all_Y =  update_model(model, data) %>%
+    query_model(te("X", "Y"), using = "posteriors")) %>%
+  bind_rows(.id = "Data") %>%
+  write_rds("saved/measurement_error.rds")
+
+Qs <-   read_rds("saved/measurement_error.rds")
+
+Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of units", "Data on true Y")) %>% select(Data, Using, mean, sd) %>% 
+  kable(caption = "Inferences on effects on true Y given measurement error (true ATE = .6)", digits = 2)
+
+```
 
 <!-- * What if we are naive: attenuation bias with binary -->
 <!-- * What if we are aware of risks but don't know how bad bad coding is -->
@@ -590,6 +631,36 @@ A second data strategy (which could be combined with the first) would be to coll
 
 <!-- The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$.  -->
 <!-- Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it. -->
+
+In a similar way we could imagine that we had two or more measures for $Y$, each with their own error. In this case updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The table below uses the same data as before but now augmented with a second noisy measure for $Y$. 
+
+```{r}
+model <- make_model("X -> Y -> Yobs1; Y -> Yobs2") %>%
+  set_restrictions(decreasing("Y", "Yobs1")) %>%
+  set_restrictions(decreasing("Y", "Yobs2")) %>%
+  set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1, .1, .8, .1))
+```
+
+```{r, echo = FALSE}
+set.seed(1)
+data <- make_data(model, n = 2000) 
+
+if(do_diagnosis)
+update_model(model, 
+             data = 
+               data %>% select(X, Yobs1, Yobs2)) %>%
+    query_model(te("X", "Y"), using = "posteriors") %>%
+  write_rds("saved/measurement_error_2.rds")
+
+read_rds("saved/measurement_error_2.rds") %>% mutate(Data = "Two noisy measures") %>% 
+  select(Data, Using, mean, sd)  %>% 
+  kable(caption = "Inferences on effects on true Y given two noisy measures  (true ATE = .6)", digits = 2)
+
+```
+
+We see that in this example two noisy measures do about as well as access to full data on the true $Y$. 
+
+The main point here is that measurement error matters for inference. Confusing measured variables for variables of interest will obviously lead to false conclusions. But if measurement concerns loom large you can respond by making them part of your model and learning about them. We have illustrated for simple cases but more complex structures could be just as well envisioned, if for instance error were related to $X$ or, more perniciously, the effects of $X$ on $Y$.
 
 ### Spillovers
 
