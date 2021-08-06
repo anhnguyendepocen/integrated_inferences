@@ -10,37 +10,39 @@ source("_packages_used.R")
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
-We extend the analysis of Chapter 7 to cases with population data. In these cases we get to learn   about the distribution of causal effects and are able to update the models we use for case level inference.
+We extend the analysis of Chapter \@ref(pt) to cases with population data. In these cases we get to learn about the distribution of causal effects and are able to update the models we use for case-level inference.
 ::::
 <br>
 
 
 <br>
 
-The main goal of this chapter is to  generalize the model developed in Chapter \@ref(pt) to research situations in which we have data on multiple cases.  
+The main goal of this chapter is to generalize the model developed in Chapter \@ref(pt) to research situations in which we have data on multiple cases.  
 
-We start with a conceptual point: the structure introduced in Chapter 6 for single case analysis can be used *as is* for multi-case analysis. Thus the  conceptual work for mixed methods inference from models has been done already. Our goal for the rest of the chapter is more technical---to show how to exploit assumptions regarding independence across cases to generate simpler models of causal processes that affect many units. As we do so, we provide microfoundations for the models in Chapter 6 (as with those in @humphreys2015mixing)  with the probative value of clues deriverable from a causal structure and data rather than provided directly by researchers.
+We start with a conceptual point: the structure introduced in Chapter 6 for single-case analysis can be used *as is* for multi-case analysis. Thus, the conceptual work for mixed methods inference from models has been done already. Our goal for the rest of the chapter is more technical---to show how to exploit assumptions regarding independence across cases to generate simpler models of causal processes that affect many units. As we do so, we provide microfoundations for the models in Chapter ??? (as with those in @humphreys2015mixing)  with the probative value of clues derivable from a causal structure and data rather than provided directly by researchers.
 
 
 ## There's only ever one case
 
-Conceptualized correctly, there is no deep difference between the logic of  inference used in single case and many case studies. The reason is not, as @king1994designing suggest, that all causal inference is fundamentally correlational, even in seemingly single case studies. Nor is the point that single "case studies" can be disaggregated into many cases. The intuition, we think, really runs in the opposite direction: fundamentally, model-based inference always involves comparing *a* pattern of data with the logic of the model. Studies with multiple cases can be conceptualized  as single-case studies: the drawing of inferences from a single *collection* of clues.
+Conceptualized correctly, there is no deep difference between the logic ofinference used in single case and in multi-case studies. Before explaining why, we want to make clear what we are *not* claiming. We are not saying, as @king1994designing's approach implies, that all causal inference follows the fundamentally correlational logic of large-$N$ regression analysis. Nor is our point that any single "case" can be disaggregated into many "cases" to maximize leverage. 
 
-In practice, when we move from a causal model with one observation to a causal model with multiple observations, we can use the  structure we introduced in Chapter 6 but simply replace nodes that have a single value (i.e., scalars) with nodes containing multiple values (i.e., vectors). We then make inferences about the relations between vectors from seeing the values of those vectors, or other vectors that serve as clues.
+Our claim, in fact, runs in the opposite direction: fundamentally, model-based inference always involves comparing *a* pattern of data with the logic of the model. Studies with multiple cases can, in fact, be conceptualized  as single-case studies: we always draw our inferences from a single *collection* of clues, whether those clues have come from one or from many units.
 
-To illustrate, consider the following situation. There are two units studied, drawn from some population, a binary treatment $X$ is assigned independently with probability .5 to each case; an outcome $Y$ along with clue variable $K$ is observable.  We suppose  $X$ can affect $Y$ and in addition there is a background, unobserved, variable $\theta$ (causal type) that takes on values in $\{a,b,c,d\}$, with equal probability and that affects both $K$ and $Y$ (we interpret $\{a,b,c,d\}$ as introduced in section \@ref(counterfactualmodel)). In particular we suppose that in any given case $K=1$ whenever $X$ causes $Y$, and $K=1$ with a 50% probability otherwise. Thus, $K$ is informative about a unit's causal type. 
+In practice, when we move from a causal model with one observation to a causal model with multiple observations, we can use the structure we introduced in Chapter \ref@(pt) but simply replace nodes that have a single value (i.e., scalars) with nodes containing multiple values (i.e., vectors) drawn from multiple cases. We then make inferences about causal relations between nodes from seeing the values of those nodes' (or other nodes') vectors.
 
-Note that we have described the problem at the unit level. However we can redescribe it at the population level thus:
+To illustrate, consider the following situation. We study two units drawn from some population, with a binary treatment $X$ assigned with probability 0.5, independently for each unit, and an outcome $Y$ along with clue variable $K$, all observable.  We suppose that $X$ can affect $Y$. In addition there is a background, unobserved, variable $\theta$ (causal type) that takes on values in $\{a,b,c,d\}$ with equal probability and that affects both $K$ and $Y$. (We interpret $\{a,b,c,d\}$ as introduced in Section \@ref(counterfactualmodel)). In particular we suppose that in any given case $K=1$ with certainty whenever $X$ causes $Y$, and that $K=1$ with a 50% probability otherwise. Thus, $K$ is informative about a unit's causal type. 
+
+Note that we have described the problem at the unit level. However we can redescribe it for the two-case setup thus:
 
 * a treatment vector $X$ can take on one of four values, $(0,0), (0,1), (1,0), (1,1)$ with equal probability (or more strictly: as determined by $\theta$). 
 * $\theta$ is also a vector with two elements that can take on one of 16 values $(a,a), (a,b),\dots (d,d)$ as determined by $\lambda_\theta$
 * $K$ has the same domain as $X$ and $Y$, and element $K[j]=1$ if $\theta[j]=b$.
-* $Y$ is a vector that reflects the elements of $\theta$ and $X$ in the obvious way (e.g $X=(0,0), \theta=(a,b)$ generates outcomes $Y=(1,0)$.
+* $Y$ is a vector that reflects the elements of $\theta$ and $X$ in the obvious way (e.g., $X=(0,0), \theta=(a,b)$ generates outcomes $Y=(1,0)$).
 
-Say we are interested in the Sample Average Treatment Effect. We will  consider three counterfactual possibilities. In one, both units have $X$ forced to 0. In the other two one unit has $X$ set to 0 and the other has $X$ set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary---of the form: is it a $b$ type?--and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, and so on).
+Say we are interested in the Sample Average Treatment Effect. We will consider three counterfactual possibilities. In one, both units have $X$ forced to 0. In the other two, one unit has $X$ set to 0 and the other has $X$ set to 1. Thus we are interested in the average effect of changing one unit to treatment while the other is held in control. Note also that before our estimands were binary---of the form: is it a $b$ type?--and our answer was a probability; now our estimand is categorical and our answer is a distribution (what is the probability the SATE is 0, what is the probability the SATE is .5, and so on).
 
 
-We now have a representation that maps directly onto the case level structures used in Chapters 6 and 7 and can use the tools introduced there to analyze this seemingly multi-case study. 
+We now have a representation that maps directly onto the case-level structures used in Chapters \@ref(pt) and \@ref(ptapp) and can use the tools introduced there to analyze this seemingly multi-case study. 
 
 Our prior on the probability that $\tau=1$ is the prior that $\theta = (b,b)$: just 1 in 16. Say we observe that for both units $X=1, Y=1$. This data pattern is consistent with vectors $(b,b), (d,d), (b, d), (d,b)$ only and so our beliefs that  $\tau=1$ now shifts to 1 in 4 rather than 1 in 16. Say we then observe data pattern $K = (1,1)$, the probability of this pattern if $\tau = 1$ is 1. For the type vectors $(d,d), (b, d), (d,b)$ it is $.25, .5, .5$, respectively. Applying Bayes rule, our updated belief that $\tau = 1$ is $1/(1 + .25 + .5 + .5) = 4/9$. We can similarly figure out the posteriors over all values for $\tau$ given any vector-valued clue and so build up a full posterior distributions.
 Thus if observe data pattern $K = (0,1)$, the probability of this pattern for type vector $(b,b)$ ($\tau = 1$)  is 0. For the type vectors $(d,d), (b, d), (d,b)$ it is $.25, 0, .5$, respectively.  The table below shows the posterior distribution on the average treatment effects given different $K$ patterns observed.  
