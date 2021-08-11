@@ -126,15 +126,19 @@ $$p(\theta|\lambda) = \prod_{k,v:\theta^v_k\in\theta}\lambda^v_k$$
 
 $$\Theta(d) : \{\theta| D(\theta) = d \}$$
 
-The probability of a data type $d$, is then: 
+The probability of a given data type $d$, is then: 
 
 $$w_d = \sum_{\theta \in \Theta(d)}p(\theta|\lambda)$$
 
-We use $w$ to denote the vector of event probabilities over all data types. 
+And we use $\mathbf W$ to denote the vector of event probabilities over all data types. 
 
-To illustrate, an event $d = (X=1, M =1, Y=1)$  is consistent with four different causal types in the $X\rightarrow M\rightarrow Y$ model: $\Theta(d) = \{(\theta^X_0, \theta^M_{01}, \theta^Y_{01}), (\theta^X_0, \theta^M_{11}, \theta^Y_{01}), (\theta^X_0, \theta^M_{01}, \theta^Y_{11}), (\theta^X_0, \theta^M_{11}, \theta^Y_{11})\}$. The probability of the event is then calculated by summing up the probabilities of each causal type that implies the event: $w_{111}:=\lambda^X_1(\lambda^M_{01} + \lambda^M_{11}))(\lambda^Y_{01} + \lambda^Y_{11}))$. 
+To illustrate, a data type $d = (X=1, M =1, Y=1)$  is consistent with four different causal types in the $X\rightarrow M\rightarrow Y$ model: $\Theta(d) = \{(\theta^X_0, \theta^M_{01}, \theta^Y_{01}), (\theta^X_0, \theta^M_{11}, \theta^Y_{01}), (\theta^X_0, \theta^M_{01}, \theta^Y_{11}), (\theta^X_0, \theta^M_{11}, \theta^Y_{11})\}$. The probability of the data type is then calculated by summing up the probabilities of each causal type that implies the event: $w_{111}:=\lambda^X_1(\lambda^M_{01} + \lambda^M_{11}))(\lambda^Y_{01} + \lambda^Y_{11}))$. 
 
-In practice, calculating the full $w$ vector is made easier by the construction of a "parameter matrix" and an "ambiguity matrix", just as for process tracing, that tells us which causal types are consistent with a particular data type.  Tables \@ref(tab:parammmatrixmix) and \@ref(tab:ambigmatrixmix) illustrate. We have indicated a single draw of $\lambda$ values (population type shares) in the parameter matrix, and these have been used to calculate the priors on causal types provided in the ambiguity matrix. Let's now calculate the event probability for each data type. Starting with $X=0, Y=0$, we can read off the ambiguity matrix that the consistent causal types are ($\theta^X_0, \theta^Y_{00}$) and ($\theta^X_0, \theta^Y_{01}$). The event probability, $w_{00}$, is then given by adding together the probabilities of these two causal types, $0.1 + 0.2 = 0.3$. All four event probabilities, for the four data types, are then calculated in the same way:
+In practice, calculating the full $\mathbf W$ vector is made easier by the construction of a "parameter matrix" and an "ambiguity matrix", just as for process tracing, that tells us which causal types are consistent with a particular data type.  Tables \@ref(tab:parammmatrixmix) and \@ref(tab:ambigmatrixmix) illustrate. In the final column of the parameter matrix, we have indicated a single draw of $\lambda$ values (population type shares), and these have been used to calculate the priors on causal types provided in the ambiguity matrix. 
+
+We can now use these two matrices to calculate the event probability for each data type. Starting with $X=0, Y=0$, we can read off the ambiguity matrix that the consistent causal types are ($\theta^X_0, \theta^Y_{00}$) and ($\theta^X_0, \theta^Y_{01}$). The event probability, $w_{00}$, is then given by adding together the probabilities of these two causal types, $0.1 + 0.2 = 0.3$. All four event probabilities, for the four data types, are then calculated in the same way:
+
+<!-- AJ: Maybe I'm missing something, but the math here seems mixed up to me. Isn't the probability of the causal type $\theta^X_0, \theta^Y_{00}$ given by multiplying the lambda values associated with each nodal type? If so, this would be 0.3 x 0.4 = 0.12. And then 0.4 x 0.2 = 0.08 for ($\theta^X_0, \theta^Y_{01}$). Giving 0.2 for w_{00}; w_{10} = 0.18 + 0.12 = 0.3; w_{01} = 0.08 +  0.12 = 0.2; w_{11} = 0.12 + 0.18 = 0.3.  (obviously an arithmetic error below for w_01)-->
 
 * $w_{00} = 0.1 + 0.2 = 0.3$
 * $w_{10} = 0.1 + 0.1 = 0.2$
@@ -155,42 +159,46 @@ kable(paramXY_with_params, caption = "A parameter matrix for a simple $X \\right
 ambiguityXY  <- get_ambiguities_matrix(XY)
 kable(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.")
 ```
+<!-- AJ: We say that we've used the parameter values in the param matrix to calculate the priors on causal types in the ambig matrix, but I'm not seeing any priors in the ambig matrix. -->
 
 
+3. **Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). For this aggregation, we make use of an independence assumption: that each unit is independently drawn from a common distribution. Doing so lets us move from a categorical distribution that gives the probability that a single case has a particular data type to a *multinomial* distribution that gives the probability of seeing an arbitrary data pattern across any number of cases. 
 
-3. **Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). For this we make use of an independence assumption: that each unit is independently drawn from a common distribution. Doing so lets us move from a categorical distribution that gives the probability that a single case has a particular data type to a multinomial distribution that gives the probability of seeing a distribution of outcomes. 
-
-With discrete variables, we can think of a given multiple-case data pattern simply as a set of counts: for, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases ($n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed, $n$, and the event probabilities for each data type, given a $\lambda$ draw. more formally we write:
+Specifically, with discrete variables, we can think of a given multiple-case data pattern simply as a set of counts across categories. For, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases (which we notate as $n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed, $n$, and the event probabilities for each data type, given a $\lambda$ draw. More formally, we write:
 
 $$d \sim \text{Multinomial}(n, w(\lambda))$$ 
 
-Let us assume now that we have a 3-node model, with $X, Y$, and $M$ all binary. Let $n_{XYK}$ denote an 8-element vector recording the number of cases in a sample displaying each possible combination of $X,Y,K$ data, thus: $d=n_{XYM}:=(n_{000},n_{001},n_{100},\dots ,n_{111})$. The elements of $n_{XYK}$ sum to $n$, the total number of cases studied. Likewise, let the event probabilities for data types given $\lambda$ be registered in a vector, $w_{XYK}=(w_{000},w_{001},w_{100},\dots ,w_{111})$. The likelihood of a data pattern, $\mathcal D$ is then:
+Let us assume now that we have a 3-node model, with $X, Y$, and $M$ all binary. Let $\mathbf n_{XYM}$ denote an 8-element vector recording the number of cases in a sample displaying each possible combination of $X,Y,M$ data, thus: $\mathbf D= \mathbf n_{XYM}:=(n_{000},n_{001},n_{100},\dots ,n_{111})$. The elements of $\mathbf n_{XYM}$ sum to $n$, the total number of cases studied. Likewise, let the event probabilities for data types given $\lambda$ be registered in a vector, $\mathbf w_{XYM}=(w_{000},w_{001},w_{100},\dots ,w_{111})$. The likelihood of a data pattern, $\mathbf D$ is then:
+
+<!-- AJ: is my added use of mathbf above to indicate vectors right? If so, it occurs to me that we should be mathbf'ing lambda just about everywhere. And should it be mathbf D in the equation below?-->
 
 $$
 p(d|\lambda) = 
-  \text{Multinom}\left(n_{XYK}|\sum n_{XYK}, w_{XYK}(\lambda)\right)  \\
+  \text{Multinom}\left(n_{XYM}|\sum n_{XYM}, w_{XYM}(\lambda)\right)  \\
 $$
-In other words, the likelihood of observing a particular data pattern given $\lambda$ is given by the corresponding value of the multinomial distribution given the event probabilities. 
+In other words, the likelihood of observing a particular data pattern given $\lambda$ is given by the corresponding value of the multinomial distribution given the data probabilities. 
 
 
-4. **Estimation**. We now have all the components for updating on $\lambda$. Applying Bayes rule from Chapter @\ref(bayeschapter) we have:
+4. **Estimation**. We now have all the components for updating on $\lambda$. Applying Bayes rule (see Chapter @\ref(bayeschapter)), we have:
 
 $$p(\lambda | d) = \frac{p(d | \lambda)p(\lambda)}{\int_{\lambda'}{p(d | \lambda')p(\lambda')}}$$
-In the `CausalQueries` package this updating is implemented in `stan` and the result of the updating is a dataframe that contains collection of draws from the posterior distribution for $\lambda$. Thus in the $X\rightarrow M \rightarrow Y$ model the posterior data frame would have 10 columns and generally thousands of row, with each row representing a draw from $p(\lambda|d)$. The table below illustrates.
+In the `CausalQueries` package this updating is implemented in `stan`, and the result of the updating is a dataframe that contains a collection of draws from the posterior distribution for $\lambda$. Table \@ref(tab:posteriortable) illustrates what such a dataframe might look like for an $X\rightarrow M \rightarrow Y$ model. Each row represents a single draw from $p(\lambda|d)$. The 10 columns represent shares for each of the 10 nodal types in the model, under each $lambda$ draw. 
 
 ```{r posteriortable, echo = FALSE}
 if(do_diagnosis)
 make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/posterior_chain.rds")
 
 read_rds("saved/posterior_chain.rds")$posterior_distribution %>%
-head() %>% kable(digits = 2, caption = "An illustration of a posterior distribution for the Chain model. Each row is a draw from $p(\\lambda|d))$")
+head() %>% kable(digits = 2, caption = "An illustration of a posterior distribution for an X->M->Y model. Each row is a draw from $p(\\lambda|d))$")
 
 ```
 
 
 5. **Querying**. 
 
-The simplest queries relate to values of $\lambda$. For instance if we are interested in the probability that $M$ has a positive effect   on $Y$, given an updated chain model, we want to know about the distribution of $\lambda^M_{01}$. This distribution can be read directly from column 9 in Table  \@(tab:posteriortable). More complex queries can all be described as summaries of combinations of these columns. For instance the query "What is the average effect of $M$ on $Y$" is a question about the distribution of    $\lambda^M_{01} -  \lambda^M_{10}$, which is given by the difference between columns 9 and 8 of the table. Still more complex queries may require keeping some nodes constant while varying others, yet all of these can be calculated as summaries of the combinations of columns of the posterior distribution, following the rules described in Chapter \@ref(questions).
+Once we have generated a posterior distribution for $\lambda$, we can then query that distribution. The simplest queries relate to values of $\lambda$. For instance, if we are interested in the probability that $M$ has a positive effect on $Y$, given an updated $X \rightarrow M \rightarrow Y$ model, we want to know about the distribution of $\lambda^M_{01}$. This distribution can be read directly from column 9 ($Y01$) of Table  \@(tab:posteriortable). More complex queries can all be described as summaries of combinations of these columns. For instance, the query, "What is the average effect of $M$ on $Y$" is a question about the distribution of $\lambda^M_{01} -  \lambda^M_{10}$, which is given by the difference between columns 9 and 8 of the table. Still more complex queries may require keeping some nodes constant while varying others, yet all of these can be calculated as summaries of the combinations of columns of the posterior distribution, following the rules described in Chapter \@ref(questions).
+
+<!-- AJ: This table doesn't seem to have any text to go with it??? Do we need it? -->
 
 ```{r, echo = FALSE}
 model <- make_model("X->M->Y")
@@ -258,14 +266,14 @@ dag_3d(add_M = TRUE, func = FALSE, confounding = TRUE)
 #### Partial data.
 For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
 
-What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $K$.
+What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $M$.
 
 Now, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions: 
 
 
 $$
 \Pr(\mathcal{D}|\theta) = 
-  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYK}|k, w_{XYK}\right)  \\
+  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYM}|k, w_{XYM}\right)  \\
 $$
 
 
