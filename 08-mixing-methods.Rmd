@@ -112,23 +112,21 @@ In a model without unobserved confounding, we set our beliefs about nodal type s
 
 
 
-
-
 ### Inference
 
-Inference  then works like this:
+Inference then works like this:
 
-1. **Distributions over causal types.** We first need to characterize our beliefs about causal types given any possible parameter vector $\lambda$. Imagine a draw of one possible value of $\lambda$ from the prior. This $\lambda$ vector implies a probability distribution over each nodal type which in turn implies a distribution over  *causal* types ($\theta$). For instance, the probability of type $\theta = (\theta^X_1, \theta^Y_{01}, \theta^M_{01})$ is simply  $p(\theta|\lambda)=\lambda^X_1\lambda^M_{01}\lambda^Y_{01}$.  More generally:
+1. **Distributions over causal types.** We first need to characterize our beliefs about causal types given any possible parameter vector $\lambda$. Imagine a draw of one possible value of $\lambda$ from the prior. This $\lambda$ vector implies a set of nodal type shares for all nodes. That set of nodal type shares implies, in turn, a distribution over *causal* types ($\theta$). For instance, the probability of causal type $\theta = (\theta^X_1, \theta^Y_{01}, \theta^M_{01})$ is simply $p(\theta|\lambda)=\lambda^X_1\lambda^M_{01}\lambda^Y_{01}$.  More generally:
 
 $$p(\theta|\lambda) = \prod_{k,v:\theta^v_k\in\theta}\lambda^v_k$$
 
 
 
-2. **Event probabilities**. Each causal type in turn implies a data type. For instance $\theta = (\theta^X_1, \theta^M_{01}, \theta^Y_{01})$ implies data $X=1, M=1, Y=1$. Let $D(\theta)$ denote the data type implied by causal type $\theta$. We then use $\Theta(d)$ to denote the set of causal types that imply a given data type:
+2. **Event probabilities**. Each causal type in turn implies a single data realization, or data type. For instance $\theta = (\theta^X_1, \theta^M_{01}, \theta^Y_{01})$ implies data $X=1, M=1, Y=1$. Let $D(\theta)$ denote the data type implied by causal type $\theta$. A single data type, however, may be implied by multiple causal types. We use $\Theta(d)$ to denote the set of causal types that imply a given data type:
 
 $$\Theta(d) : \{\theta| D(\theta) = d \}$$
 
-The probability of a data type $d$, is then simple: 
+The probability of a data type $d$, is then: 
 
 $$w_d = \sum_{\theta \in \Theta(d)}p(\theta|\lambda)$$
 
