@@ -164,7 +164,7 @@ kable(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y
 
 3. **Likelihood**. Now that we know the probability of observing each data pattern in a *single* case given $\lambda$, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given $\lambda$). For this aggregation, we make use of an independence assumption: that each unit is independently drawn from a common distribution. Doing so lets us move from a categorical distribution that gives the probability that a single case has a particular data type to a *multinomial* distribution that gives the probability of seeing an arbitrary data pattern across any number of cases. 
 
-Specifically, with discrete variables, we can think of a given multiple-case data pattern simply as a set of counts across categories. For, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases (which we notate as $n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed, $n$, and the event probabilities for each data type, given a $\lambda$ draw. More formally, we write:
+Specifically, with discrete variables, we can think of a given multiple-case data pattern simply as a set of counts across categories. For, say, $X, Y$ data, we will observe a certain number of $X=0, Y=0$ cases (which we notate as $n_{00}$), a certain number of $X=1, Y=0$ cases ($n_{10}$), a certain number of $X=0, Y=1$ cases ($n_{01}$), and a certain number of $X=1, Y=1$ cases ($n_{11}$). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed, $n$, and the probability of each data type, given a $\lambda$ draw. More formally, we write:
 
 $$d \sim \text{Multinomial}(n, w(\lambda))$$ 
 
@@ -266,19 +266,22 @@ In the figure below we represent this confounding by indicating parameters value
 dag_3d(add_M = TRUE, func = FALSE, confounding = TRUE)
 ```
 
+<!-- AJ: dag_3d file seems to have disappeared. -->
 
-#### Partial data.
-For a case in which only partial data are observed, we follow the same basic logic as with partial process-tracing data. We retain all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we observe only $Y=1$, we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the event probability by summing causal-type probabilities for all causal types that could have produced these partial data --- i.e., all those with a $1$ in *either* column.
+#### Partial data
 
-What if we have a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data on a set of cases, and that we have additionally collected data on $M$ for a random subset of these. We can think of this as conducting quantitative analysis on a large sample and conducting in-depth process tracing on a subsample. We then can summarize our data in two vectors, the 8-element $n_{XYM}$ vector for the cases with process tracing, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases with no process tracing. Likewise, we now have two sets of event probabilities: one for the cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $M$.
+We do not need data on all nodes in order to implement the procedure. If we have data only one some of the nodes in a model, we follow the same basic logic as with partial process-tracing data. In calculating the probability of a pattern of partial data, we use all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we have an $X \rightarrow Y$ model but observe only $Y=1$, then we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the probability of this data type by summing causal-type probabilities for all causal types that can produce *either* $X=0, Y=1$ *or* $X=1, Y=1$.
 
-Now, assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a product of multinomial distributions: 
+What if our data have been collected via a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data for a set of cases, and have additionally collected data on $M$ for a random subset of these. We can think of this mixed strategy as akin to conducting quantitative analysis on a large sample while conducting in-depth process tracing on part of the large-$N$ sample. We can then summarize our data in two vectors, an 8-element $n_{XYM}$ vector ($(n_{000},n_{001},\dots n_{111}$) for the cases with process-tracing ($M$) observations, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases on which we did not conduct process tracing. Likewise, we now have two sets of data probabilities: an 8-element vector for the set of cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. 
+
+Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $M$. Assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a *product* of multinomial distributions, one representing the complete-data (process-traced) cases and one representing those with only $X,Y$ data: 
 
 
 $$
 \Pr(\mathcal{D}|\theta) = 
   \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYM}|k, w_{XYM}\right)  \\
 $$
+We can construct likelihood functions in a similar fashion for any arbitrary mixture of search strategies.
 
 
 #### Sampling and the likelihood principle
