@@ -607,15 +607,15 @@ We can do better still if we can collect more detailed information on at least s
 
 <!-- A second data strategy (which could be combined with the first) would be to collect data, for some subset of units, on the source of the measurement error. If we collected data on the use of random vs. symptomatic-only testing, we could then update on two further parameters: $\lambda^\text{source of measurement error}$ and on the part of $\lambda^{Y_\text{measured}}$ representing response of $Y_\text{measured}$. In other words, we would learn both about how prevalent the conditions generating measurement error are and about much they throw off our measure.  -->
 
-In the illustration below, we posit a true effect of $X$ on $Y$ of 0.6. We also posit an "effect" of $Y$ on measured $Y$ of just 0.7, allowing for measurement error. 
+In the illustration below, we posit a true average effect of $X$ on $Y$ of 0.6. We also posit an average "effect" of $Y$ on measured $Y$ of just 0.7, allowing for measurement error. 
 
-In this setup, with a large amount of data, we would arrive at a differences-in-means estimate of the effect of $X$ on *measured* $Y$ of about 0.42. Importantly, this would be the effect of $X$ on $Y_{\text{measured}}$ --- not the effect of $X$ on $Y$ --- but if we were not thinking about the possibility of measurement error, we would likely conflate the two. We can improve on this "naive" estimate in a number of ways using a causal model, as shown in Table \@ref(tab:measurmenterror). 
+In this setup, with a large amount of data, we would arrive at a differences-in-means estimate of the effect of $X$ on *measured* $Y$ of about 0.42. Importantly, this would be the effect of $X$ on $Y_{\text{measured}}$ --- not the effect of $X$ on $Y$ --- but if we were not thinking about the possibility of measurement error, we would likely conflate the two, arriving at an estimate far from the true value. 
 
-First, we can do much better simply by undertaking the estimation within a causal model framework, even if we simply make use of the exact same data. We write down the following simple model $X \rightarrow Y \rightarrow Y_\text{measured}$, and we build in a monotonicity restriction that disallows negative effects of $Y$ on $Y_{\text{measured}}$. As we can see from the first row in Table \@ref(tab:measurmenterror), our mean estimate of the $ATE$ moves much closer to the true value of 0.6. 
+We can improve on this "naive" estimate in a number of ways using a causal model, as shown in Table \@ref(tab:measurmenterror). First, we can do much better simply by undertaking the estimation within a causal model framework, even if we simply make use of the exact same data. We write down the following simple model $X \rightarrow Y \rightarrow Y_\text{measured}$, and we build in a monotonicity restriction that disallows negative effects of $Y$ on $Y_{\text{measured}}$. As we can see from the first row in Table \@ref(tab:measurmenterror), our mean estimate of the $ATE$ moves much closer to the true value of 0.6. 
 
-Second, we can add data by gathering error-free measures of $Y$ for just 20\% of our sample. 
+Second, we can add data by gathering measures of "true" $Y$ for 20\% of our sample. As we can see from the second row in the table, this investment in additional data does not change our posterior mean much but yields a dramatic increase in precision. In fact, as we can see by comparison to the third row, partial data on "true" $Y$ yields an estimate that is almost the same and almost as precise as the one we would arrive it with data on "true" $Y$ for *all* cases.
 
-```{r}
+```{r, echo = FALSE}
 model <- make_model("X -> Y -> Yobs") %>%
   set_restrictions(decreasing("Y", "Yobs")) %>%
   set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1))
@@ -665,16 +665,16 @@ Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of uni
 <!-- The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$.  -->
 <!-- Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it. -->
 
-In a similar way we could imagine that we had two or more measures for $Y$, each with their own error. In this case updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The table below uses the same data as before but now augmented with a second noisy measure for $Y$. 
+An alternative strategy might involve gathering multiple measures of $Y$, each with their own independent source of error. Consider the model, $X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}$. Assume again a true $ATE$ of $X$ on $Y$ of 0.6, that $Y$ has an average effect of 0.7 on both $Y_\text{measured[1]$ and $Y_\text{measured[2]$, and no negative effects of true $Y$ on the measures.^[Importantly, this model assumes nodal types for $Y_\text{measured[1]$ and $Y_\text{measured[2]$ are independent of one another (no unobserved confounding), implying independent sources of measurement error in this setup.] In this setup, updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The results in Table \@ref(tab:measurmenterror2) are based the same data as in the previous example but now augmented with the second noisy measure for $Y$. 
 
-```{r}
+```{r, echo = FALSE}
 model <- make_model("X -> Y -> Yobs1; Y -> Yobs2") %>%
   set_restrictions(decreasing("Y", "Yobs1")) %>%
   set_restrictions(decreasing("Y", "Yobs2")) %>%
   set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1, .1, .8, .1))
 ```
 
-```{r, echo = FALSE}
+```{r measurementerror2, echo = FALSE}
 set.seed(1)
 data <- make_data(model, n = 2000) 
 
@@ -691,9 +691,9 @@ read_rds("saved/measurement_error_2.rds") %>% mutate(Data = "Two noisy measures"
 
 ```
 
-We see that in this example two noisy measures do about as well as access to full data on the true $Y$. 
+As we can see, two noisy measures perform about as well as access to full data on the true $Y$ (as in Table \@ref(tab:measurmenterror)). 
 
-The main point here is that measurement error matters for inference. Confusing measured variables for variables of interest will obviously lead to false conclusions. But if measurement concerns loom large, we can respond by making them part of our model and learning about them. We have illustrated for simple setups, but more complex structures could be just as well envisioned, where for instance error might be related to $X$ or, more perniciously, to the effects of $X$ on $Y$.
+The main point here is that measurement error matters for inference and can be taken directly into account within a causal model framework. Confusing measured variables for variables of interest will obviously lead to false conclusions. But if measurement concerns loom large, we can respond by making them part of our model and learning about them. We have illustrated for simple setups, but more complex structures could be just as well envisioned, where for instance error might be related to $X$ or, more perniciously, to the effects of $X$ on $Y$.
 
 ### Spillovers
 
