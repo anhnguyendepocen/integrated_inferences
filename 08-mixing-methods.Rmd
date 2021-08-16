@@ -693,7 +693,7 @@ read_rds("saved/measurement_error_2.rds") %>% mutate(Data = "Two noisy measures"
 
 As we can see, two noisy measures perform about as well as access to full data on the true $Y$ (as in Table \@ref(tab:measurmenterror)). 
 
-The main point here is that measurement error matters for inference and can be taken directly into account within a causal model framework. Confusing measured variables for variables of interest will obviously lead to false conclusions. But if measurement concerns loom large, we can respond by making them part of our model and learning about them. We have illustrated for simple setups, but more complex structures could be just as well envisioned, where for instance error might be related to $X$ or, more perniciously, to the effects of $X$ on $Y$.
+The main point here is that measurement error matters for inference and can be taken directly into account within a causal model framework. Confusing measured variables for variables of interest will obviously lead to false conclusions. But if measurement concerns loom large, we can respond by making them part of our model and learning about them. We have illustrated this point for simple setups, but more complex structures could be just as well envisioned, such as those where error is related to $X$ or, more perniciously, to the effects of $X$ on $Y$.
 
 ### Spillovers
 
@@ -709,11 +709,13 @@ Now we can extract a number of spillover-relevant causal quantities from the upd
 
 A second question we can ask is about the spillover by itself: what is the average treatment effect for a unit of its neighbor being assigned to treatment when the unit itself is not assigned to treatment ("only_other_treated")? We know that the correct answer is $0$ since Unit 1 responds only to its own treatment status, and Unit 2 requires that both units be assigned to treatment to see an effect. Our posterior estimate of this effect is right on target, at 0.
 
-We can then ask about the average effect of *any* one unit being treated, as compared to no units being treated ("one_treated"). This is more complex quantity. We have to think about what happens to Unit 1 when only $X_1$ shifts from control to treatment (with $X_2$ at control) (true effect is $1$$); what happens to Unit 1 when only $X_2$ shifts from control to treatment (with $X_1$ at control) (true effect is $0$); and the same two effects for Unit 2 (both true effects are $0$ -- and then average across both the treatment conditions and units. We get $0.186$, not far from the true value of $0.25$.
+We can then ask about the average effect of *any* one unit being treated, as compared to no units being treated ("one_treated"). This is a more complex quantity. To estimate it, we have to consider what happens to the outcome in Unit 1 when only $X_1$ shifts from control to treatment, with $X_2$ at control (true effect is $1$); what happens to Unit 1 when only $X_2$ shifts from control to treatment, with $X_1$ at control (true effect is $0$); and the same two effects for Unit 2 (both true effects are $0$). We then average across both the treatment conditions and units. We arrive at a posterior mean of $0.186$, not far from the true value of $0.25$.
 
 Finally, we can ask about the average effect of both treatments going from control to treatment ("both_treated"). The true value of this effect is $1$ for both units, and the posterior has shifted quite far in the direction of this value.
 
-Obviously, more complex setups are possible. Also, we can model the process in a way that allows for more learning across units. In the present model, learning about effects for Unit 1 in a cluster tells us nothing about effects for Unit 2 in a cluster as they have completely independent nodal types. We could instead want to treat all units as drawn from the same population with, for instance, a graph with just one $Y$ and two treatment nodes, one for the unit's own treatment status and one for its neighbor's treatment status.
+Obviously, more complex setups are possible. We can also model the process in a way that allows for more learning (pooling) across units. In the present model, learning about effects for Unit 1 in a cluster tells us nothing about effects for Unit 2 in a cluster because they are set up to have completely independent nodal types. We could instead treat all units as drawn from the same population: we could represent this, for instance, in a graph with just one $Y$ and two treatment nodes pointing into it, one for the unit's own treatment status and one for its neighbor's treatment status.
+
+<!-- AJ: Can we substitute some other word for "cluster" above to avoid confusion with the concept of clusters as we discuss them in the next subsection? -->
 
 <!-- The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES? -->
 
@@ -729,7 +731,11 @@ hj_dag(x = c(0, 0, 0, 1, 1, 1),
 
 ```
 
-```{r}
+
+<!-- AJ: Fig above isn't displaying. -->
+
+
+```{r, echo = FALSE}
 model <- make_model("X1 -> Y1 <- X2 -> Y2 <- X1")
 
 spillover_queries <- list(
@@ -782,24 +788,30 @@ read_rds("saved/spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% ka
 
 ### Clustering
 
-We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units. For instance, we might be interested in effects of training on individuals' employment prospects, while recognizing that individuals living in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe. 
+We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units. For instance, we might be interested in the effects of training on individuals' employment prospects, while recognizing that individuals living in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe. 
 
 We can capture some forms of clustering by placing the cluster-level factor on the graph.^[In this illustration the two units in each pair are treated as separate nodes rather than as repeated instances of realizations of the same node. Implicitly then the effect for one unit type (men, say) can be quite independent of the effect of another type (women, say). Indeed, here they are linked only through the unobserved variable $W$.] Let us imagine that we are studying the effect of providing public health insurance coverage on health outcomes for individuals in two-adult households that have a single earner. Our units of analysis are individuals, but these units are clustered into pairs within households.
 
-We might then define the model as follows:
+We can represent this situation via the following structural model:
 
-```{r}
+```{r, echo = FALSE}
 model <- make_model("X1 -> Y1 <- W -> Y2 <- X2") %>%
   set_restrictions("(Y1[X1=1, W=0] != Y1[X1=0, W=0])")  %>%
   set_restrictions("(Y2[X2=1, W=0] != Y2[X2=0, W=0])")  
+
+plot(model)
 ```
 
 Let Unit 1 be the adult in paid employment and Unit 2 the adult not in paid employment, with $X_i$ indicating the provision of public health insurance to Unit $i$ and $W$ representing an unobserved household-level factor that moderates causal effects for both units. We restrict the model such that, more specifically, $W$ shuts off effects of health insurance for both individuals. By representing earners and non-earners separately on the graph, we allow for different effects of health insurance for these two different kinds of individuals. By representing the cluster-level factor, $W$, on the graph, we also allow for *learning* across types of units: seeing effects (or non-effects) for one kind of unit allows us to update on $W$'s value, which in turn provides information about effects for the other type of unit.
 
-One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? In Table XXXX, we show results from two different data-collection strategies. In one instance, we observe both Unit 1 and Unit 2 and in two clusters. In the other instance, we observe only Unit 1 in two clusters and only Unit 2 in two clusters. Both sets of data are drawn from a process in which the true treatment effect is XXXXXX. In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.  and define estimands as average effects for both units in a pair. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR.
+One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? In Table \@ref(tab:cluster), we show results from two different data-collection strategies. In one instance, we observe both Unit 1 and Unit 2 in two clusters. In the other instance, we observe only Unit 1 in two clusters and only Unit 2 in two clusters. Both sets of data are drawn from a process in which the true treatment effect is XXXXXX. In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.
+
+<!-- AJ: Is the true ATE here just from flat priors? So 0? -->
+
+<!-- AJ: Needs a final paragraph speaking to the results. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR. -->
 
 
-```{r, echo = FALSE}
+```{r cluster, echo = FALSE}
 data_1 <- data.frame(X1 = 0:1, Y1 = 0:1, X2 = 0:1, Y2 = c(1,1))
 data_2 <- data.frame(
   X1 = c(0, 1, NA, NA), Y1 = c(0,1, NA, NA),
@@ -825,6 +837,8 @@ rbind(
 ```
 
 ### Parameteric models
+
+<!-- AJ: Needs writing -- or cut?? -->
 
 ### Prior data/beliefs "channel" the learning from new data 
 
