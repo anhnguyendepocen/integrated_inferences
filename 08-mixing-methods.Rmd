@@ -14,6 +14,11 @@ We extend the analysis of Chapter \@ref(pt) to cases with population data. In th
 <br>
 
 
+<!-- to do: likelihood principle -->
+<!-- cluster illustration -->
+<!-- bring impications of  partial data out of wrinkles / section: in the conclusion-->
+<!-- conclusions: mixing and missing data-->
+
 <br>
 
 In this chapter we generalize the model developed in Chapter \@ref(pt) to research situations in which we have data on multiple cases.  
@@ -58,13 +63,13 @@ The conceptual point is that the general logic of inference with multiple units 
 <!-- Two points are worth highlighting however. The first is that rather than updating over the query directly (for instance $\tau = .5$) directly, we update over the underlying parameter vector and map from underlying parameters to the query of interest. The second is that representing node values in vector forms like this allows for  vector-level mappings that imply more complex dependencies between units. For instance we might imagine instead that we observe $K=1$ if and only if $\Theta = (b,b)$, in which case observation of $K$ lets us distinguish between $\tau = 1$ and $\tau = .5$ but not between $\tau = .5$ and $\tau = 0$. -->
 
 
-## From samples to processes 
+## From sample queries to general processes 
 
 While the core conceptual logic is the same for multi-case and single-case inference, we operationalize these problems somewhat differently. 
 
 For the remainder of this chapter, and for the rest of the book, when we focus on muti-case studies, we will set our sights primarily on models that describe general processes. Rather than seeking to understand the average effect in a set of cases, we seek to understand the causal relations that gave rise to the set of cases. From these we sometimes draw inferences to cases but in general our models will involve queries  pitched in general terms.
 
-There are two  reasons for this. The first is that we are interestied in learning across cases: To figure out how what we see in one case provides insight for what is happening in another. We do this by using data on some cases to update our beliefs about a general model that we think is of relevance for other cases. Thus we seek to learn about a general model. The second reason is  more practical. The first is that if we can think of units are draws from a population, and then invoke independence assumptions across types, then we can greatly reduce complexity by analyzing problems at the unit level rather than at the population level. In the 2-case example above, the vector $\Theta^Y$ could take on any of 16 values ($(a,a), (a,b),\dots (d,d)$). At the case level, however, the node $\theta^Y$ can take on only 4 values ($\{a,b,c,d\}$), yet we can learn about each case's $\theta^Y$ value from data drawn from all the cases. Thinking about it this way simplifies the problem by greatly reducing the parameter space, but it is not free. It requires invoking the assumption that (potential) outcomes across units do not depend on each other. If we cannot stand by that assumption, then we will need to build independence failures into our models.
+There are two  reasons for this. The first is that we are interestied in learning across cases: To figure out how what we see in one case provides insight for what is happening in another. We do this by using data on some cases to update our beliefs about a general model that we think is of relevance for other cases. Thus we seek to learn about a general model. The second reason is  more practical. The first is that if we can think of units are draws from a large population, and then invoke independence assumptions across types, then we can greatly reduce complexity by analyzing problems at the unit level rather than at the population level. In the 2-case example above, the vector $\Theta^Y$ could take on any of 16 values ($(a,a), (a,b),\dots (d,d)$). At the case level, however, the node $\theta^Y$ can take on only 4 values ($\{a,b,c,d\}$), yet we can learn about each case's $\theta^Y$ value from data drawn from all the cases. Thinking about it this way simplifies the problem by greatly reducing the parameter space, but it is not free. It requires invoking the assumption that (potential) outcomes across units do not depend on each other. If we cannot stand by that assumption, then we will need to build independence failures into our models.
 
 Taking this step, the procedure we now use in the mixed methods works as follows.
 
@@ -269,21 +274,6 @@ dag_3d(add_M = TRUE, func = FALSE, confounding = TRUE)
 
 <!-- AJ: dag_3d file seems to have disappeared. -->
 
-#### Partial data
-
-We do not need data on all nodes in order to implement the procedure. If we have data only one some of the nodes in a model, we follow the same basic logic as with partial process-tracing data. In calculating the probability of a pattern of partial data, we use all columns (data types) in the ambiguity matrix that are consistent with the partial data. So, for instance, if we have an $X \rightarrow Y$ model but observe only $Y=1$, then we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the probability of this data type by summing causal-type probabilities for all causal types that can produce *either* $X=0, Y=1$ *or* $X=1, Y=1$.
-
-What if our data have been collected via a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data for a set of cases, and have additionally collected data on $M$ for a random subset of these. We can think of this mixed strategy as akin to conducting quantitative analysis on a large sample while conducting in-depth process tracing on part of the large-$N$ sample. We can then summarize our data in two vectors, an 8-element $n_{XYM}$ vector ($(n_{000},n_{001},\dots n_{111}$) for the cases with process-tracing ($M$) observations, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases on which we did not conduct process tracing. Likewise, we now have two sets of data probabilities: an 8-element vector for the set of cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. 
-
-Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $M$. Assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a *product* of multinomial distributions, one representing the complete-data (process-traced) cases and one representing those with only $X,Y$ data: 
-
-
-$$
-\Pr(\mathcal{D}|\theta) = 
-  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYM}|k, w_{XYM}\right)  \\
-$$
-We can construct likelihood functions in a similar fashion for any arbitrary mixture of search strategies.
-
 
 #### Sampling and the likelihood principle
 
@@ -425,8 +415,10 @@ We therefore have two approaches to calculatin these sample quantities: either t
 :::
 **Box: Case inference and population data**
 
-When calculating queries in `CausalQueries` you can specify whether you are interested in "case level" inquiries or population inquiries. A case level inquiry  of the form $\tau^{|X}$ is calculated (`case_level = TRUE`) via $\frac{\int_{\lambda}p(\tau|\lambda)p(\lambda)d\lambda}{\int_{\lambda}p(x|\lambda)p(\lambda)d\lambda}$. In contrast the mean of population query (`case_level = FALSE`) is $\int_{\lambda} \frac{p(\tau|\lambda)}{p(x|\lambda)}p(\lambda)d\lambda$.
+When calculating queries in `CausalQueries` you can specify whether you are interested in "case level" inquiries or population inquiries. A case level inquiry  of the form $\tau^{|X}$ is calculated (`case_level = TRUE`) via $\frac{\int_{\lambda}p(\tau, x|\lambda)p(\lambda)d\lambda}{\int_{\lambda}p(x|\lambda)p(\lambda)d\lambda}$. In contrast the mean of population query (`case_level = FALSE`) is $\int_{\lambda} \frac{p(\tau, x|\lambda)}{p(x|\lambda)}p(\lambda)d\lambda$.
 
+<!-- * DISCUSS SHARE INTERPRETATION -->
+<!-- * HIGHLIGHT FOURTH ROW HAS DOUBLE COUNTING   -->
 The example below shows a case where these differ and illustrates two ways in which inferences on sample queries can be made.
 
 ```{r}
@@ -444,6 +436,24 @@ The example below shows a case where these differ and illustrates two ways in wh
 ```
 ::::
 `
+
+## Mixed methods
+
+We do not need data on all nodes in order to implement the procedure. If we have data only one some of the nodes in a model, we follow the same basic logic as with partial process-tracing data. In calculating the probability of a pattern of partial data, we use all columns (data types) in the ambiguity matrix that are consistent with the partial data. 
+
+So, for instance, if we have an $X \rightarrow Y$ model but observe only $Y=1$, then we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the probability of this data type by summing causal-type probabilities for all causal types that can produce *either* $X=0, Y=1$ *or* $X=1, Y=1$.
+
+What if our data have been collected via a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data for a set of cases, and have additionally collected data on $M$ for a random subset of these. We can think of this mixed strategy as akin to conducting quantitative analysis on a large sample while conducting in-depth process tracing on part of the large-$N$ sample. We can then summarize our data in two vectors, an 8-element $n_{XYM}$ vector ($(n_{000},n_{001},\dots n_{111}$) for the cases with process-tracing ($M$) observations, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases on which we did not conduct process tracing. Likewise, we now have two sets of data probabilities: an 8-element vector for the set of cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. 
+
+Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $M$. Assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a *product* of multinomial distributions, one representing the complete-data (process-traced) cases and one representing those with only $X,Y$ data: 
+
+
+$$\Pr(\mathcal{D}|\theta) = 
+  \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYM}|k, w_{XYM}\right)$$
+
+We can construct likelihood functions in a similar fashion for any arbitrary mixture of search strategies.
+
+<!-- Illustration -->
 
 ## Considerations 
 
