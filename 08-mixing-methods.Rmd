@@ -6,7 +6,6 @@
 source("_packages_used.R")
 ```
 
-<!-- Lots of this likely to change with integration with DAGs. -->
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
@@ -392,8 +391,59 @@ which is the same up to a constant.
 
 <!-- With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model. -->
 
+#### Case inference following population updating
+
+We are often in situations in which we observe patterns in $n$ units and then seek to make an inference about one or more of the  $n$ cases  conditional on *both* the case level data and the broader patterns in the full data. 
+
+Divide cases into set $S^0, S^1$ where $S^0$ is the set for which we wish to make case level inferences and $S^1$ is the collection of other cases for which we have data. 
+
+In such cases should one use the data from $S^0$  when updating on population estimands or rather update using $S^1$ only and use information on $S^1$ for the case level inferences only? 
+
+The surprising answer is that it is possible to do both, though exactly how queries are calculated depends on the method used. 
+
+Let $\Lambda$ denote a collection of possible population parameters with typical element $\lambda^i$. Let $p$ denote a distribution over $\Lambda$ (after updating on data from set $S^1$), with typical element $\lambda^i$. Let $X$ denote possible data for cases in $S^0$ with realization $x$. 
+
+Let $d^i$ denote the probability of observing data $X = x$ for a case (or set of cases) given $\lambda^i$.
+
+Let $\tau^{|x}$ denote a query of interest---where the query is conditional in the sense that it relates to cases with data $x$. Let $q^i_j$ denote the probability that $\tau^{|x} = \tau_j^{|x}$ when $\lambda = \lambda^i$ for a case with data $X=x$.  Note $q^i_j$  can be written $z^i/d^i$ where $z^i_j = \Pr(\tau^{|x} = \tau^{|x}_j, X=x | \lambda^i)$. 
+
+To illustrate say in an $X\rightarrow Y$ model we were interested the effect of $X$ on $Y$ in a case with $X=1, Y=1$. Then $d^i = (\lambda^i)^X_1((\lambda^i)^Y_{01} + (\lambda^i)^Y_{11})$. If $z^i_j =  (\lambda^i)^X_1((\lambda^i)^Y_{01})$ for $\tau^{|x}_j = 1$, and so $q_j = \frac{(\lambda^i)^Y_{01}}{(\lambda^i)^Y_{01} + (\lambda^i)^Y_{11}}$
+The posterior on $\tau^{S^0}$ for the cases in $S^0$ that provide data $x$, is then:
 
 
+$$\Pr(\tau^{|x} = \tau_j^{x}) = \frac{p^iz^i_j}{\sum_k p^kd^k}$$
+
+This can be calculated from the prior $p$ (that is the distribution on $\Theta$ after updating on cases in $S^1$ only).
+
+Note however that the *posterior* distribution on $\lambda^i$ given observation of $x$ in the $S^0$ set is $\frac{p^id^i}{\sum_k p^kd^k}$ and that $p^iz^i_j = p^id^iq^i$. Therefore this quantity can also be interpreted as the posterior mean of $q^i$, after observing both $S^0$ and $S^1$. 
+
+We therefore have two approaches to calculatin these sample quantities: either take the posterior mean (posterior to $S^0$ and $S^1$), over the distrubution of $\lambda$  of the conditional probability of the estimand given the case data in $S^0$, or take the expected probability of $\tau$ given the prior (after observing $S^1$ only) and condition  on the probability of the case level data in $S^0$).
+
+
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+**Box: Case inference and population data**
+
+When calculating queries in `CausalQueries` you can specify whether you are interested in "case level" inquiries or population inquiries. A case level inquiry  of the form $\tau^{|X}$ is calculated (`case_level = TRUE`) via $\frac{\int_{\lambda}p(\tau|\lambda)p(\lambda)d\lambda}{\int_{\lambda}p(x|\lambda)p(\lambda)d\lambda}$. In contrast the mean of population query (`case_level = FALSE`) is $\int_{\lambda} \frac{p(\tau|\lambda)}{p(x|\lambda)}p(\lambda)d\lambda$.
+
+The example below shows a case where these differ and illustrates two ways in which inferences on sample queries can be made.
+
+```{r}
+ make_model("X -> Y <- W") %>%
+    set_restrictions(labels  = list(Y = c("0101", "0111")), keep = TRUE) %>%
+    set_priors(alpha = 100000) %>%
+    set_priors(node = "W", alpha = c(.5, .5)) %>%
+  update_model(data.frame(X=1,Y=1), refresh = 0, chains = 8, iter = 20000) %>%
+  query_model("Y[X=1] > Y[X=0]", 
+             given = "X==1 & Y==1", 
+             case_level = c(FALSE, TRUE),
+             using = c("priors", "posteriors"),
+             expand_grid = TRUE) %>% arrange(Query) %>% 
+  kable(digits = 3, caption = "The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect")
+```
+::::
+`
 
 ## Considerations 
 

@@ -431,7 +431,6 @@ div.csl-indent {
             <section class="normal" id="section-">
 <div id="mixing" class="section level1" number="9">
 <h1><span class="header-section-number">Chapter 9</span> Integrated inferences</h1>
-<!-- Lots of this likely to change with integration with DAGs. -->
 <div class="headerbox">
 <div class="center">
 
@@ -1104,6 +1103,89 @@ I also don't know what it means for something to be "the same up to a constant."
 <!-- \lambda_K^1(\lambda_Y^3+\lambda_Y^4+\lambda_Y^7+\lambda_Y^8)+\lambda_K^2(\lambda_Y^2+\lambda_Y^4+\lambda_Y^6+\lambda_Y^8)+\lambda_K^3(\lambda_Y^3+\lambda_Y^4+\lambda_Y^11+\lambda_Y^{12})+\lambda_K^4(\lambda_Y^2+\lambda_Y^4+\lambda_Y^{10}+\lambda_Y^{12})}$$ -->
 <!-- With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model. -->
 </div>
+<div id="case-inference-following-population-updating" class="section level4" number="9.2.3.4">
+<h4><span class="header-section-number">9.2.3.4</span> Case inference following population updating</h4>
+<p>We are often in situations in which we observe patterns in <span class="math inline">\(n\)</span> units and then seek to make an inference about one or more of the <span class="math inline">\(n\)</span> cases conditional on <em>both</em> the case level data and the broader patterns in the full data.</p>
+<p>Divide cases into set <span class="math inline">\(S^0, S^1\)</span> where <span class="math inline">\(S^0\)</span> is the set for which we wish to make case level inferences and <span class="math inline">\(S^1\)</span> is the collection of other cases for which we have data.</p>
+<p>In such cases should one use the data from <span class="math inline">\(S^0\)</span> when updating on population estimands or rather update using <span class="math inline">\(S^1\)</span> only and use information on <span class="math inline">\(S^1\)</span> for the case level inferences only?</p>
+<p>The surprising answer is that it is possible to do both, though exactly how queries are calculated depends on the method used.</p>
+<p>Let <span class="math inline">\(\Lambda\)</span> denote a collection of possible population parameters with typical element <span class="math inline">\(\lambda^i\)</span>. Let <span class="math inline">\(p\)</span> denote a distribution over <span class="math inline">\(\Lambda\)</span> (after updating on data from set <span class="math inline">\(S^1\)</span>), with typical element <span class="math inline">\(\lambda^i\)</span>. Let <span class="math inline">\(X\)</span> denote possible data for cases in <span class="math inline">\(S^0\)</span> with realization <span class="math inline">\(x\)</span>.</p>
+<p>Let <span class="math inline">\(d^i\)</span> denote the probability of observing data <span class="math inline">\(X = x\)</span> for a case (or set of cases) given <span class="math inline">\(\lambda^i\)</span>.</p>
+<p>Let <span class="math inline">\(\tau^{|x}\)</span> denote a query of interest—where the query is conditional in the sense that it relates to cases with data <span class="math inline">\(x\)</span>. Let <span class="math inline">\(q^i_j\)</span> denote the probability that <span class="math inline">\(\tau^{|x} = \tau_j^{|x}\)</span> when <span class="math inline">\(\lambda = \lambda^i\)</span> for a case with data <span class="math inline">\(X=x\)</span>. Note <span class="math inline">\(q^i_j\)</span> can be written <span class="math inline">\(z^i/d^i\)</span> where <span class="math inline">\(z^i_j = \Pr(\tau^{|x} = \tau^{|x}_j, X=x | \lambda^i)\)</span>.</p>
+<p>To illustrate say in an <span class="math inline">\(X\rightarrow Y\)</span> model we were interested the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in a case with <span class="math inline">\(X=1, Y=1\)</span>. Then <span class="math inline">\(d^i = (\lambda^i)^X_1((\lambda^i)^Y_{01} + (\lambda^i)^Y_{11})\)</span>. If <span class="math inline">\(z^i_j = (\lambda^i)^X_1((\lambda^i)^Y_{01})\)</span> for <span class="math inline">\(\tau^{|x}_j = 1\)</span>, and so <span class="math inline">\(q_j = \frac{(\lambda^i)^Y_{01}}{(\lambda^i)^Y_{01} + (\lambda^i)^Y_{11}}\)</span>
+The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases in <span class="math inline">\(S^0\)</span> that provide data <span class="math inline">\(x\)</span>, is then:</p>
+<p><span class="math display">\[\Pr(\tau^{|x} = \tau_j^{x}) = \frac{p^iz^i_j}{\sum_k p^kd^k}\]</span></p>
+<p>This can be calculated from the prior <span class="math inline">\(p\)</span> (that is the distribution on <span class="math inline">\(\Theta\)</span> after updating on cases in <span class="math inline">\(S^1\)</span> only).</p>
+<p>Note however that the <em>posterior</em> distribution on <span class="math inline">\(\lambda^i\)</span> given observation of <span class="math inline">\(x\)</span> in the <span class="math inline">\(S^0\)</span> set is <span class="math inline">\(\frac{p^id^i}{\sum_k p^kd^k}\)</span> and that <span class="math inline">\(p^iz^i_j = p^id^iq^i\)</span>. Therefore this quantity can also be interpreted as the posterior mean of <span class="math inline">\(q^i\)</span>, after observing both <span class="math inline">\(S^0\)</span> and <span class="math inline">\(S^1\)</span>.</p>
+<p>We therefore have two approaches to calculatin these sample quantities: either take the posterior mean (posterior to <span class="math inline">\(S^0\)</span> and <span class="math inline">\(S^1\)</span>), over the distrubution of <span class="math inline">\(\lambda\)</span> of the conditional probability of the estimand given the case data in <span class="math inline">\(S^0\)</span>, or take the expected probability of <span class="math inline">\(\tau\)</span> given the prior (after observing <span class="math inline">\(S^1\)</span> only) and condition on the probability of the case level data in <span class="math inline">\(S^0\)</span>).</p>
+<div class="headerbox">
+<div class="center">
+
+</div>
+<p><strong>Box: Case inference and population data</strong></p>
+<p>When calculating queries in <code>CausalQueries</code> you can specify whether you are interested in “case level” inquiries or population inquiries. A case level inquiry of the form <span class="math inline">\(\tau^{|X}\)</span> is calculated (<code>case_level = TRUE</code>) via <span class="math inline">\(\frac{\int_{\lambda}p(\tau|\lambda)p(\lambda)d\lambda}{\int_{\lambda}p(x|\lambda)p(\lambda)d\lambda}\)</span>. In contrast the mean of population query (<code>case_level = FALSE</code>) is <span class="math inline">\(\int_{\lambda} \frac{p(\tau|\lambda)}{p(x|\lambda)}p(\lambda)d\lambda\)</span>.</p>
+<p>The example below shows a case where these differ and illustrates two ways in which inferences on sample queries can be made.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="mixing.html#cb1-1" aria-hidden="true" tabindex="-1"></a> <span class="fu">make_model</span>(<span class="st">&quot;X -&gt; Y &lt;- W&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-2"><a href="mixing.html#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_restrictions</span>(<span class="at">labels  =</span> <span class="fu">list</span>(<span class="at">Y =</span> <span class="fu">c</span>(<span class="st">&quot;0101&quot;</span>, <span class="st">&quot;0111&quot;</span>)), <span class="at">keep =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-3"><a href="mixing.html#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_priors</span>(<span class="at">alpha =</span> <span class="dv">100000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="mixing.html#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_priors</span>(<span class="at">node =</span> <span class="st">&quot;W&quot;</span>, <span class="at">alpha =</span> <span class="fu">c</span>(.<span class="dv">5</span>, .<span class="dv">5</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href="mixing.html#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_model</span>(<span class="fu">data.frame</span>(<span class="at">X=</span><span class="dv">1</span>,<span class="at">Y=</span><span class="dv">1</span>), <span class="at">refresh =</span> <span class="dv">0</span>, <span class="at">chains =</span> <span class="dv">8</span>, <span class="at">iter =</span> <span class="dv">20000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-6"><a href="mixing.html#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">query_model</span>(<span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
+<span id="cb1-7"><a href="mixing.html#cb1-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">given =</span> <span class="st">&quot;X==1 &amp; Y==1&quot;</span>, </span>
+<span id="cb1-8"><a href="mixing.html#cb1-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">case_level =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>),</span>
+<span id="cb1-9"><a href="mixing.html#cb1-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">using =</span> <span class="fu">c</span>(<span class="st">&quot;priors&quot;</span>, <span class="st">&quot;posteriors&quot;</span>),</span>
+<span id="cb1-10"><a href="mixing.html#cb1-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">expand_grid =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(Query) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-11"><a href="mixing.html#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">&quot;The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-4">Table 9.5: </span>The same answers are found using the prior distribution and setting <code>case_estimand</code> to <code>TRUE</code>, and using the posterior distribution but setting <code>case.estimand</code> to <code>FALSE</code>. Other answers are incorrect</caption>
+<thead>
+<tr class="header">
+<th align="left">Query</th>
+<th align="left">Given</th>
+<th align="left">Using</th>
+<th align="left">Case.estimand</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; Y==1</td>
+<td align="left">priors</td>
+<td align="left">FALSE</td>
+<td align="right">0.412</td>
+<td align="right">0.347</td>
+</tr>
+<tr class="even">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; Y==1</td>
+<td align="left">posteriors</td>
+<td align="left">FALSE</td>
+<td align="right">0.334</td>
+<td align="right">0.329</td>
+</tr>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; Y==1</td>
+<td align="left">priors</td>
+<td align="left">TRUE</td>
+<td align="right">0.332</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; Y==1</td>
+<td align="left">posteriors</td>
+<td align="left">TRUE</td>
+<td align="right">0.264</td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>`</p>
+</div>
 </div>
 </div>
 <div id="considerations" class="section level2" number="9.3">
@@ -1137,9 +1219,9 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <!-- So that's still learning. We can learn about unidentified quantities.   -->
 <!-- But the bad news is that, for a not-identified quantity, your priors will matter: the curvature that gives us a maximum in our posterior will be driven by the posteriors. To distinguish between what part of the posterior is from the data and what's from the data would be to simulate infinite data and see what happens to the  -->
 <!-- Can also do sensitivity analyses by changing priors. -->
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="mixing.html#cb1-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">make_model</span>(<span class="st">&quot;X1 -&gt; M1 -&gt; Y &lt;- M2 &lt;- X2&quot;</span>)</span>
-<span id="cb1-2"><a href="mixing.html#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="mixing.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># restrict such that *only* M1 OR M2 could cause Y -- can we create a DD test? / achieve identification</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="mixing.html#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">make_model</span>(<span class="st">&quot;X1 -&gt; M1 -&gt; Y &lt;- M2 &lt;- X2&quot;</span>)</span>
+<span id="cb2-2"><a href="mixing.html#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="mixing.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># restrict such that *only* M1 OR M2 could cause Y -- can we create a DD test? / achieve identification</span></span></code></pre></div>
 </div>
 <div id="beyond-binary-data" class="section level3" number="9.3.3">
 <h3><span class="header-section-number">9.3.3</span> Beyond binary data</h3>
@@ -1148,28 +1230,28 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <p>The <code>CausalQueries</code> package, set up to work most naturally with binary nodes, can be used to represent non-binary data as well. The trick, as it were, is to express integers in base-2 and then represent the integer as a series of 0’s and 1’s on multiple nodes. In base-2 counting we would represent four integer values for <span class="math inline">\(X\)</span> (say, 0, 1, 2,3) using <span class="math inline">\(00, 01, 10, 11\)</span>. If we use one binary node, <span class="math inline">\(X_1\)</span> to represent the first digit, and a second node <span class="math inline">\(X_2\)</span> to represent the second, we have enough information to capture the four values of <span class="math inline">\(X\)</span>. The mapping then is: <span class="math inline">\(X_1 = 0, X_2 = 0\)</span> represents <span class="math inline">\(X=0\)</span>; <span class="math inline">\(X_1 = 0, X_2 = 1\)</span> represents <span class="math inline">\(X=1\)</span>; <span class="math inline">\(X_1 = 1, X_2 = 0\)</span> represents <span class="math inline">\(X=2\)</span>; and <span class="math inline">\(X_1 = 1, X_2 = 1\)</span> represents <span class="math inline">\(X=3\)</span>. We construct <span class="math inline">\(Y\)</span> in the same way. We can then represent a simple <span class="math inline">\(X \rightarrow Y\)</span> relation as a model with two <span class="math inline">\(X\)</span> nodes each pointing into two <span class="math inline">\(Y\)</span> nodes: <span class="math inline">\(Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2\)</span>. To allow for the full range of nodal types we need to allow a joint distribution over <span class="math inline">\(\theta^{X_1}\)</span> and <span class="math inline">\(\theta^{X_2}\)</span> and over <span class="math inline">\(\theta^{Y_1}\)</span> and <span class="math inline">\(\theta^{Y_2}\)</span>, which results in 3 degrees of freedom for <span class="math inline">\(X\)</span> and 255 for <span class="math inline">\(Y\)</span>, as required.</p>
 <p>In the illustration below with two 4-level variables, we generate data (<span class="math inline">\(N=100\)</span>) from a non-monotonic process with the following potential outcomes: <span class="math inline">\(Y(0)=0, Y(1)=1, Y(2)=3, Y(3) = 2\)</span>. We then update and report on posteriors on potential outcomes.</p>
 <p>We make use of a couple of helper functions to simplify working with conversions from statements on integers to statements on the binary representation of the integers.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="mixing.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A function to generate an integer from values on 2 binary nodes</span></span>
-<span id="cb2-2"><a href="mixing.html#cb2-2" aria-hidden="true" tabindex="-1"></a>to_int <span class="ot">&lt;-</span> <span class="cf">function</span>(X1, X2) <span class="fu">strtoi</span>(<span class="fu">paste0</span>(X1, X2), <span class="at">base =</span> <span class="dv">2</span>)</span>
-<span id="cb2-3"><a href="mixing.html#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="mixing.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A function to express a query on integer nodes into a query on</span></span>
-<span id="cb2-5"><a href="mixing.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># binary nodes</span></span>
-<span id="cb2-6"><a href="mixing.html#cb2-6" aria-hidden="true" tabindex="-1"></a>Y_x <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb2-7"><a href="mixing.html#cb2-7" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> R.utils<span class="sc">::</span><span class="fu">intToBin</span>(x) </span>
-<span id="cb2-8"><a href="mixing.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">case_when</span>(X <span class="sc">==</span>  <span class="st">&quot;0&quot;</span> <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), X <span class="sc">==</span> <span class="st">&quot;1&quot;</span>  <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
-<span id="cb2-9"><a href="mixing.html#cb2-9" aria-hidden="true" tabindex="-1"></a>                 X <span class="sc">==</span> <span class="st">&quot;10&quot;</span> <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>), X <span class="sc">==</span> <span class="st">&quot;11&quot;</span> <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
-<span id="cb2-10"><a href="mixing.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;to_int(Y1[X1=&quot;</span>, X[<span class="dv">1</span>], </span>
-<span id="cb2-11"><a href="mixing.html#cb2-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;, X2=&quot;</span>, X[<span class="dv">2</span>], <span class="st">&quot;], Y2[X1=&quot;</span>, X[<span class="dv">1</span>], <span class="st">&quot;, X2=&quot;</span>, X[<span class="dv">2</span>], <span class="st">&quot;])&quot;</span>)}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="mixing.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A function to generate an integer from values on 2 binary nodes</span></span>
+<span id="cb3-2"><a href="mixing.html#cb3-2" aria-hidden="true" tabindex="-1"></a>to_int <span class="ot">&lt;-</span> <span class="cf">function</span>(X1, X2) <span class="fu">strtoi</span>(<span class="fu">paste0</span>(X1, X2), <span class="at">base =</span> <span class="dv">2</span>)</span>
+<span id="cb3-3"><a href="mixing.html#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="mixing.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A function to express a query on integer nodes into a query on</span></span>
+<span id="cb3-5"><a href="mixing.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># binary nodes</span></span>
+<span id="cb3-6"><a href="mixing.html#cb3-6" aria-hidden="true" tabindex="-1"></a>Y_x <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb3-7"><a href="mixing.html#cb3-7" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> R.utils<span class="sc">::</span><span class="fu">intToBin</span>(x) </span>
+<span id="cb3-8"><a href="mixing.html#cb3-8" aria-hidden="true" tabindex="-1"></a>  X <span class="ot">&lt;-</span> <span class="fu">case_when</span>(X <span class="sc">==</span>  <span class="st">&quot;0&quot;</span> <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), X <span class="sc">==</span> <span class="st">&quot;1&quot;</span>  <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</span>
+<span id="cb3-9"><a href="mixing.html#cb3-9" aria-hidden="true" tabindex="-1"></a>                 X <span class="sc">==</span> <span class="st">&quot;10&quot;</span> <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>), X <span class="sc">==</span> <span class="st">&quot;11&quot;</span> <span class="sc">~</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb3-10"><a href="mixing.html#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">&quot;to_int(Y1[X1=&quot;</span>, X[<span class="dv">1</span>], </span>
+<span id="cb3-11"><a href="mixing.html#cb3-11" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;, X2=&quot;</span>, X[<span class="dv">2</span>], <span class="st">&quot;], Y2[X1=&quot;</span>, X[<span class="dv">1</span>], <span class="st">&quot;, X2=&quot;</span>, X[<span class="dv">2</span>], <span class="st">&quot;])&quot;</span>)}</span></code></pre></div>
 <p>Data from this model looks like this:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="mixing.html#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> </span>
-<span id="cb3-2"><a href="mixing.html#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-3"><a href="mixing.html#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_model</span>(<span class="st">&quot;X1 -&gt; Y1 &lt;- X2; X1 -&gt; Y2 &lt;- X2&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="mixing.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_parameters</span>(<span class="at">node =</span> <span class="st">&quot;Y1&quot;</span>, <span class="at">label =</span> <span class="st">&quot;0101&quot;</span>, <span class="at">parameters =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-5"><a href="mixing.html#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_parameters</span>(<span class="at">node =</span> <span class="st">&quot;Y2&quot;</span>, <span class="at">label =</span> <span class="st">&quot;0110&quot;</span>, <span class="at">parameters =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-6"><a href="mixing.html#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-7"><a href="mixing.html#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_data</span>(<span class="dv">100</span>, <span class="at">using =</span> <span class="st">&quot;parameters&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-8"><a href="mixing.html#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">X =</span> <span class="fu">to_int</span>(X1, X2), <span class="at">Y =</span> <span class="fu">to_int</span>(Y1, Y2))</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="mixing.html#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> </span>
+<span id="cb4-2"><a href="mixing.html#cb4-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-3"><a href="mixing.html#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_model</span>(<span class="st">&quot;X1 -&gt; Y1 &lt;- X2; X1 -&gt; Y2 &lt;- X2&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="mixing.html#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_parameters</span>(<span class="at">node =</span> <span class="st">&quot;Y1&quot;</span>, <span class="at">label =</span> <span class="st">&quot;0101&quot;</span>, <span class="at">parameters =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="mixing.html#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_parameters</span>(<span class="at">node =</span> <span class="st">&quot;Y2&quot;</span>, <span class="at">label =</span> <span class="st">&quot;0110&quot;</span>, <span class="at">parameters =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="mixing.html#cb4-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-7"><a href="mixing.html#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_data</span>(<span class="dv">100</span>, <span class="at">using =</span> <span class="st">&quot;parameters&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="mixing.html#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">X =</span> <span class="fu">to_int</span>(X1, X2), <span class="at">Y =</span> <span class="fu">to_int</span>(Y1, Y2))</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-7">Table 9.5: </span>Data from non binary model (selection of rows)</caption>
+<caption><span id="tab:unnamed-chunk-8">Table 9.6: </span>Data from non binary model (selection of rows)</caption>
 <thead>
 <tr class="header">
 <th align="right">X1</th>
@@ -1190,12 +1272,12 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
@@ -1216,11 +1298,11 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 </tbody>
 </table>
 <p>Updating and querying is done in the usual way:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="mixing.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make_model</span>(<span class="st">&quot;X1 -&gt; Y1 &lt;- X2;  X1 -&gt; Y2 &lt;- X2; X1 &lt;-&gt; X2; Y1 &lt;-&gt; Y2&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="mixing.html#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_model</span>(data) <span class="sc">%&gt;%</span></span>
-<span id="cb4-3"><a href="mixing.html#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">query_model</span>(<span class="fu">list</span>(<span class="fu">Y_x</span>(<span class="dv">0</span>), <span class="fu">Y_x</span>(<span class="dv">1</span>), <span class="fu">Y_x</span>(<span class="dv">2</span>), <span class="fu">Y_x</span>(<span class="dv">3</span>)), <span class="at">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="mixing.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make_model</span>(<span class="st">&quot;X1 -&gt; Y1 &lt;- X2;  X1 -&gt; Y2 &lt;- X2; X1 &lt;-&gt; X2; Y1 &lt;-&gt; Y2&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="mixing.html#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_model</span>(data) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="mixing.html#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">query_model</span>(<span class="fu">list</span>(<span class="fu">Y_x</span>(<span class="dv">0</span>), <span class="fu">Y_x</span>(<span class="dv">1</span>), <span class="fu">Y_x</span>(<span class="dv">2</span>), <span class="fu">Y_x</span>(<span class="dv">3</span>)), <span class="at">using =</span> <span class="st">&quot;posteriors&quot;</span>)</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-9">Table 9.6: </span>Posteriors on potential outcomes for non binary model</caption>
+<caption><span id="tab:unnamed-chunk-10">Table 9.7: </span>Posteriors on potential outcomes for non binary model</caption>
 <thead>
 <tr class="header">
 <th align="left">Q</th>
@@ -1285,10 +1367,10 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <!-- A second data strategy (which could be combined with the first) would be to collect data, for some subset of units, on the source of the measurement error. If we collected data on the use of random vs. symptomatic-only testing, we could then update on two further parameters: $\lambda^\text{source of measurement error}$ and on the part of $\lambda^{Y_\text{measured}}$ representing response of $Y_\text{measured}$. In other words, we would learn both about how prevalent the conditions generating measurement error are and about much they throw off our measure.  -->
 <p>In the illustration below, we posit a true average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of 0.6. We also posit an average “effect” of <span class="math inline">\(Y\)</span> on measured <span class="math inline">\(Y\)</span> of just 0.7, allowing for measurement error.</p>
 <p>In this setup, with a large amount of data, we would arrive at a differences-in-means estimate of the effect of <span class="math inline">\(X\)</span> on <em>measured</em> <span class="math inline">\(Y\)</span> of about 0.42. Importantly, this would be the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y_{\text{measured}}\)</span> — not the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> — but if we were not thinking about the possibility of measurement error, we would likely conflate the two, arriving at an estimate far from the true value.</p>
-<p>We can improve on this “naive” estimate in a number of ways using a causal model, as shown in Table <a href="mixing.html#tab:measurmenterror">9.7</a>. First, we can do much better simply by undertaking the estimation within a causal model framework, even if we simply make use of the exact same data. We write down the following simple model <span class="math inline">\(X \rightarrow Y \rightarrow Y_\text{measured}\)</span>, and we build in a monotonicity restriction that disallows negative effects of <span class="math inline">\(Y\)</span> on <span class="math inline">\(Y_{\text{measured}}\)</span>. As we can see from the first row in Table <a href="mixing.html#tab:measurmenterror">9.7</a>, our mean estimate of the <span class="math inline">\(ATE\)</span> moves much closer to the true value of 0.6.</p>
+<p>We can improve on this “naive” estimate in a number of ways using a causal model, as shown in Table <a href="mixing.html#tab:measurmenterror">9.8</a>. First, we can do much better simply by undertaking the estimation within a causal model framework, even if we simply make use of the exact same data. We write down the following simple model <span class="math inline">\(X \rightarrow Y \rightarrow Y_\text{measured}\)</span>, and we build in a monotonicity restriction that disallows negative effects of <span class="math inline">\(Y\)</span> on <span class="math inline">\(Y_{\text{measured}}\)</span>. As we can see from the first row in Table <a href="mixing.html#tab:measurmenterror">9.8</a>, our mean estimate of the <span class="math inline">\(ATE\)</span> moves much closer to the true value of 0.6.</p>
 <p>Second, we can add data by gathering measures of “true” <span class="math inline">\(Y\)</span> for 20% of our sample. As we can see from the second row in the table, this investment in additional data does not change our posterior mean much but yields a dramatic increase in precision. In fact, as we can see by comparison to the third row, partial data on “true” <span class="math inline">\(Y\)</span> yields an estimate that is almost the same and almost as precise as the one we would arrive it with data on “true” <span class="math inline">\(Y\)</span> for <em>all</em> cases.</p>
 <table>
-<caption><span id="tab:measurmenterror">Table 9.7: </span>Inferences on effects on true Y given measurement error (true ATE = .6)</caption>
+<caption><span id="tab:measurmenterror">Table 9.8: </span>Inferences on effects on true Y given measurement error (true ATE = .6)</caption>
 <thead>
 <tr class="header">
 <th align="left">Data</th>
@@ -1326,7 +1408,7 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <!-- Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it. -->
 <p>An alternative strategy might involve gathering multiple measures of <span class="math inline">\(Y\)</span>, each with their own independent source of error. Consider the model, <span class="math inline">\(X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}\)</span>. Assume again a true <span class="math inline">\(ATE\)</span> of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of 0.6, that <span class="math inline">\(Y\)</span> has an average effect of 0.7 on both <span class="math inline">\(Y_\text{measured[1]\)</span> and <span class="math inline">\(Y_\text{measured[2]\)</span>, and no negative effects of true <span class="math inline">\(Y\)</span> on the measures.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> In this setup, updating on the true <span class="math inline">\(Y\)</span> can be thought of as a Bayesian version of “triangulation,” or factor analysis. The results in Table <a href="#tab:measurmenterror2"><strong>??</strong></a> are based the same data as in the previous example but now augmented with the second noisy measure for <span class="math inline">\(Y\)</span>.</p>
 <table>
-<caption><span id="tab:measurementerror2">Table 9.8: </span>Inferences on effects on true Y given two noisy measures (true ATE = .6)</caption>
+<caption><span id="tab:measurementerror2">Table 9.9: </span>Inferences on effects on true Y given two noisy measures (true ATE = .6)</caption>
 <thead>
 <tr class="header">
 <th align="left">Data</th>
@@ -1344,7 +1426,7 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 </tr>
 </tbody>
 </table>
-<p>As we can see, two noisy measures perform about as well as access to full data on the true <span class="math inline">\(Y\)</span> (as in Table <a href="mixing.html#tab:measurmenterror">9.7</a>).</p>
+<p>As we can see, two noisy measures perform about as well as access to full data on the true <span class="math inline">\(Y\)</span> (as in Table <a href="mixing.html#tab:measurmenterror">9.8</a>).</p>
 <p>The main point here is that measurement error matters for inference and can be taken directly into account within a causal model framework. Confusing measured variables for variables of interest will obviously lead to false conclusions. But if measurement concerns loom large, we can respond by making them part of our model and learning about them. We have illustrated this point for simple setups, but more complex structures could be just as well envisioned, such as those where error is related to <span class="math inline">\(X\)</span> or, more perniciously, to the effects of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>.</p>
 </div>
 <div id="spillovers" class="section level3" number="9.3.5">
@@ -1361,9 +1443,9 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <!-- AJ: Can we substitute some other word for "cluster" above to avoid confusion with the concept of clusters as we discuss them in the next subsection? -->
 <!-- The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES? -->
 <!-- AJ: Fig above isn't displaying. -->
-<p><img src="ii_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <table>
-<caption><span id="tab:unnamed-chunk-13">Table 9.9: </span>Spillovers queries</caption>
+<caption><span id="tab:unnamed-chunk-14">Table 9.10: </span>Spillovers queries</caption>
 <thead>
 <tr class="header">
 <th align="left">Query</th>
@@ -1410,13 +1492,13 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <p>We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units. For instance, we might be interested in the effects of training on individuals’ employment prospects, while recognizing that individuals living in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe.</p>
 <p>We can capture some forms of clustering by placing the cluster-level factor on the graph.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> Let us imagine that we are studying the effect of providing public health insurance coverage on health outcomes for individuals in two-adult households that have a single earner. Our units of analysis are individuals, but these units are clustered into pairs within households.</p>
 <p>We can represent this situation via the following structural model:</p>
-<p><img src="ii_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="ii_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p>Let Unit 1 be the adult in paid employment and Unit 2 the adult not in paid employment, with <span class="math inline">\(X_i\)</span> indicating the provision of public health insurance to Unit <span class="math inline">\(i\)</span> and <span class="math inline">\(W\)</span> representing an unobserved household-level factor that moderates causal effects for both units. We restrict the model such that, more specifically, <span class="math inline">\(W\)</span> shuts off effects of health insurance for both individuals. By representing earners and non-earners separately on the graph, we allow for different effects of health insurance for these two different kinds of individuals. By representing the cluster-level factor, <span class="math inline">\(W\)</span>, on the graph, we also allow for <em>learning</em> across types of units: seeing effects (or non-effects) for one kind of unit allows us to update on <span class="math inline">\(W\)</span>’s value, which in turn provides information about effects for the other type of unit.</p>
-<p>One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? In Table <a href="mixing.html#tab:cluster">9.10</a>, we show results from two different data-collection strategies. In one instance, we observe both Unit 1 and Unit 2 in two clusters. In the other instance, we observe only Unit 1 in two clusters and only Unit 2 in two clusters. Both sets of data are drawn from a process in which the true treatment effect is XXXXXX. In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.</p>
+<p>One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? In Table <a href="mixing.html#tab:cluster">9.11</a>, we show results from two different data-collection strategies. In one instance, we observe both Unit 1 and Unit 2 in two clusters. In the other instance, we observe only Unit 1 in two clusters and only Unit 2 in two clusters. Both sets of data are drawn from a process in which the true treatment effect is XXXXXX. In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.</p>
 <!-- AJ: Is the true ATE here just from flat priors? So 0? -->
 <!-- AJ: Needs a final paragraph speaking to the results. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR. -->
 <table>
-<caption><span id="tab:cluster">Table 9.10: </span>Data from many pairs is more informative than the same data from fewer pairs.</caption>
+<caption><span id="tab:cluster">Table 9.11: </span>Data from many pairs is more informative than the same data from fewer pairs.</caption>
 <thead>
 <tr class="header">
 <th align="left">Data</th>
