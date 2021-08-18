@@ -448,17 +448,17 @@ div.csl-indent {
 <p>We start with a conceptual point: the structure introduced in Chapter 6 for single-case analysis can be used <em>as is</em> for multi-case analysis. Thus, the conceptual work for mixed methods inference from models has been done already. Our goal for the rest of the chapter is thus more technical than conceptual—to show how to shift focus beyond sample level queries and to exploit assumptions regarding independence across cases to generate simpler models of causal processes that affect many units. As we do so, we provide microfoundations for the models in Chapter <a href="ptapp.html#ptapp">8</a> (as with those in <span class="citation"><a href="#ref-humphreys2015mixing" role="doc-biblioref">Humphreys and Jacobs</a> (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span>) with the probative value of clues derivable from a causal structure and data rather than provided directly by researchers.</p>
 <div id="sample-inference" class="section level2" number="9.1">
 <h2><span class="header-section-number">9.1</span> Sample inference</h2>
-<p>Conceptualized correctly, there is no deep difference between the logic of inference used in single case and in multi-case studies. Not because any single “case” can be disaggregated into many “cases” allowing for the same correlation strategy in large and and small problems <span class="citation">(<a href="#ref-king1994designing" role="doc-biblioref">King, Keohane, and Verba 1994</a>)</span>. Rather, the opposite: fundamentally, model-based inference always involves comparing <em>a</em> pattern of data with the logic of the model. Studies with multiple cases can, in fact, be conceptualized as single-case studies: we always draw our inferences from a single <em>collection</em> of clues, whether those clues have come from one or from many units.</p>
+<p>Conceptualized correctly, there is no deep difference between the logic of inference used in single case and in multi-case studies. Not because any single “case” can be disaggregated into many “cases,” thereby allowing for large <span class="math inline">\(n\)</span> analysis on small problems <span class="citation">(<a href="#ref-king1994designing" role="doc-biblioref">King, Keohane, and Verba 1994</a>)</span>. Rather, the opposite: fundamentally, model-based inference always involves comparing <em>a</em> pattern of data with the logic of the model. Studies with multiple cases can, in fact, be conceptualized as single-case studies: we always draw our inferences from a single <em>collection</em> of clues, whether those clues have come from one or from many units.</p>
 <p>In practice, when we move from a causal model with one observation to a causal model with multiple observations, we can use the structure we introduced in Chapter <a href="pt.html#pt">7</a> but simply replace nodes that have a single value (i.e., scalars) with nodes containing multiple values (i.e., vectors) drawn from multiple cases. We then make inferences about causal relations between nodes from seeing the values of those nodes’ (or other nodes’) vectors.</p>
 <p>To illustrate, consider the following situation. Suppose that our model includes a binary treatment <span class="math inline">\(X\)</span> that is assigned to 1 with probability 0.5; an outcome, <span class="math inline">\(Y\)</span>; and a third “clue” variable, <span class="math inline">\(K\)</span>, all observable. We posit an unobserved variable <span class="math inline">\(\theta^Y\)</span>, representing <span class="math inline">\(Y\)</span>’s nodal type, with <span class="math inline">\(\theta^Y\)</span> taking on values in <span class="math inline">\(\{a,b,c,d\}\)</span> with equal probability. (We interpret the types in <span class="math inline">\(\{a,b,c,d\}\)</span> as defined in Section <a href="models.html#counterfactualmodel">2.1</a>.) In addition to pointing into <span class="math inline">\(Y\)</span>, moreover, <span class="math inline">\(\theta^Y\)</span> affects <span class="math inline">\(K\)</span>. In particular, <span class="math inline">\(K=1\)</span> whenever <span class="math inline">\(X\)</span> has an effect on <span class="math inline">\(Y\)</span>, while <span class="math inline">\(K=1\)</span> with a 50% probability otherwise. In other words, our clue <span class="math inline">\(K\)</span> is informative about <span class="math inline">\(\theta^Y\)</span>, a unit’s nodal type for <span class="math inline">\(Y\)</span>. As familiar from Chapters <a href="pt.html#pt">7</a> and <a href="ptapp.html#ptapp">8</a>, when we observe <span class="math inline">\(K\)</span> in a case we can update on causal effects within the case since that <span class="math inline">\(K\)</span> value will have different likelihoods under different values of <span class="math inline">\(\theta^Y\)</span>.</p>
 <p>So far, we have described the problem at the unit level. Let’s now consider a two-case setup. We do this by exchanging scalar nodes for vectors:</p>
 <ul>
 <li>We have a treatment vector, <span class="math inline">\(\mathbf X\)</span>, that can take on one of four values, <span class="math inline">\((0,0), (0,1), (1,0), (1,1)\)</span> with equal probability.</li>
-<li><span class="math inline">\(\Theta^Y\)</span> is now a vector with two elements that can take on one of 16 values <span class="math inline">\((a,a), (a,b),\dots (d,d)\)</span> as determined by <span class="math inline">\(\lambda_\theta\)</span></li>
-<li><span class="math inline">\(\mathbf Y\)</span> is a vector that reflects the elements of <span class="math inline">\(\Theta^Y\)</span> and <span class="math inline">\(\mathbf X\)</span> in the obvious way (e.g., <span class="math inline">\(\mathbf X=(0,0), \Theta^Y=(a,b)\)</span> generates outcomes <span class="math inline">\(\mathbf Y=(1,0)\)</span>)</li>
+<li><span class="math inline">\(\Theta^Y\)</span> is now a vector with two elements that can take on one of 16 values <span class="math inline">\((a,a), (a,b),\dots (d,d)\)</span> as determined by <span class="math inline">\(\lambda_\theta\)</span>. We might imagine a uniform distribution over these 16 elements.</li>
+<li><span class="math inline">\(\mathbf Y\)</span> is a vector that is generated by <span class="math inline">\(\Theta^Y\)</span> and <span class="math inline">\(\mathbf X\)</span> in the obvious way (e.g., <span class="math inline">\(\mathbf X=(0,0), \Theta^Y=(a,b)\)</span> generates outcomes <span class="math inline">\(\mathbf Y=(1,0)\)</span>)</li>
 <li>The vector <span class="math inline">\(\mathbf K\)</span> has the same domain as <span class="math inline">\(\mathbf X\)</span> and <span class="math inline">\(\mathbf Y\)</span>, and element <span class="math inline">\(\mathbf K[j]=1\)</span> if <span class="math inline">\(\theta^Y[j]=b\)</span>.</li>
 </ul>
-<p>Now, consider a causal estimand. In a single-case setup, we might ask whether <span class="math inline">\(X\)</span> has an effect on <span class="math inline">\(Y\)</span> in the case. For a multi-case setup, we might ask what the Sample Average Treatment Effect, <span class="math inline">\(\tau\)</span>, is. Note a subtle difference in the nature of the answers we seek in these two situations. In the first (single-case) instance, our estimand is binary—of the form: “is the case a <span class="math inline">\(b\)</span> type?”–and our answer is a probability. In the multi-case estimation of the SATE, our estimand is categorical and our answer is a probability distribution: we are asking “what is the probability that <span class="math inline">\(\tau\)</span> is 0?” “what is the probability that <span class="math inline">\(\tau\)</span> is .5?” and so on.</p>
+<p>Now, consider a causal estimand. In a single-case setup, we might ask whether <span class="math inline">\(X\)</span> has an effect on <span class="math inline">\(Y\)</span> in the case. For a multi-case setup, we might ask what the Sample Average Treatment Effect, <span class="math inline">\(\tau\)</span>, is. Note a subtle difference in the nature of the answers we seek in these two situations. In the first (single-case) instance, our estimand is binary—of the form: “is the case a <span class="math inline">\(b\)</span> type?”—and our answer is a probability. In the multi-case estimation of the sample average treatment effect (“SATE”), our estimand is categorical and our answer is a probability distribution: we are asking “what is the probability that <span class="math inline">\(\tau\)</span> is 0?,” “what is the probability that <span class="math inline">\(\tau\)</span> is .5?” and so on.</p>
 <!-- We will consider three counterfactual possibilities. In one, both units have $X$ forced to 0. In the other two, one unit has $X$ set to 0 and the other has $X$ set to 1. Thus, we are interested in the average effect of changing one unit to treatment while the other is held in control. -->
 <p>While the estimand shifts, we can use the tools introduced for single-case process tracing in Chapters <a href="pt.html#pt">7</a> and <a href="ptapp.html#ptapp">8</a> to analyze this (superficially) multi-case study. To begin, our prior on the probability that <span class="math inline">\(\tau=1\)</span> is the prior that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span> in both cases, that is, that <span class="math inline">\(\Theta^Y = (b,b)\)</span>: just 1 in 16.</p>
 <p>Now, suppose that we observe that, for both units, <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span>. This data pattern is consistent only with four possible <span class="math inline">\(\Theta\)</span> vectors: <span class="math inline">\((b,b), (d,d), (b, d), (d,b)\)</span>. Moreoever each of these four is equally likely to produce the data patter we see). So our belief that <span class="math inline">\(\tau=1\)</span> now shifts from 1 in 16 to to 1 in 4. Next, suppose that we further observe the data pattern <span class="math inline">\(\mathbf K = (1,1)\)</span>. The probability of this pattern for <span class="math inline">\(\Theta\)</span> vector <span class="math inline">\((b,b)\)</span> (<span class="math inline">\(\tau = 1\)</span>) is 1. And for the type vectors <span class="math inline">\((d,d), (b, d), (d,b)\)</span>, the probability of this <span class="math inline">\(\mathbf K\)</span> pattern is <span class="math inline">\(.25, .5,\)</span> and <span class="math inline">\(.5\)</span>, respectively. Applying Bayes’ rule, our updated belief that <span class="math inline">\(\tau = 1\)</span> is then <span class="math inline">\(1/(1 + .25 + .5 + .5) = 4/9\)</span>.</p>
@@ -514,9 +514,9 @@ div.csl-indent {
 </div>
 <div id="from-sample-queries-to-general-processes" class="section level2" number="9.2">
 <h2><span class="header-section-number">9.2</span> From sample queries to general processes</h2>
-<p>While the core conceptual logic is the same for multi-case and single-case inference, we operationalize these problems somewhat differently.</p>
+<p>Although the core conceptual logic is the same for multi-case and single-case inference, going forward, we operationalize these problems somewhat differently.</p>
 <p>For the remainder of this chapter, and for the rest of the book, when we focus on muti-case studies, we will set our sights primarily on models that describe general processes. Rather than seeking to understand the average effect in a set of cases, we seek to understand the causal relations that gave rise to the set of cases. From these we sometimes draw inferences to cases but in general our models will involve queries pitched in general terms.</p>
-<p>There are two reasons for this. The first is that we are interestied in learning across cases: To figure out how what we see in one case provides insight for what is happening in another. We do this by using data on some cases to update our beliefs about a general model that we think is of relevance for other cases. Thus we seek to learn about a general model. The second reason is more practical. The first is that if we can think of units are draws from a large population, and then invoke independence assumptions across types, then we can greatly reduce complexity by analyzing problems at the unit level rather than at the population level. In the 2-case example above, the vector <span class="math inline">\(\Theta^Y\)</span> could take on any of 16 values (<span class="math inline">\((a,a), (a,b),\dots (d,d)\)</span>). At the case level, however, the node <span class="math inline">\(\theta^Y\)</span> can take on only 4 values (<span class="math inline">\(\{a,b,c,d\}\)</span>), yet we can learn about each case’s <span class="math inline">\(\theta^Y\)</span> value from data drawn from all the cases. Thinking about it this way simplifies the problem by greatly reducing the parameter space, but it is not free. It requires invoking the assumption that (potential) outcomes across units do not depend on each other. If we cannot stand by that assumption, then we will need to build independence failures into our models.</p>
+<p>There are two reasons for this. The first is that we are interestied in learning across cases: To figure out how what we see in one case provides insight for what is happening in another. We do this by using data on some cases to update our beliefs about a general model that we think is of relevance for other cases. Thus we seek to learn about a general model. The second reason is more practical. The first is that if we can think of units as draws from a large population, and then invoke independence assumptions across types, then we can greatly reduce complexity by analyzing problems at the unit level rather than at the population level. In the 2-case example above, the vector <span class="math inline">\(\Theta^Y\)</span> could take on any of 16 values (<span class="math inline">\((a,a), (a,b),\dots (d,d)\)</span>). At the case level, however, the node <span class="math inline">\(\theta^Y\)</span> can take on only 4 values (<span class="math inline">\(\{a,b,c,d\}\)</span>), yet we can learn about each case’s <span class="math inline">\(\theta^Y\)</span> value from data drawn from all the cases. Thinking about it this way simplifies the problem by greatly reducing the parameter space, but it is not free. It requires invoking the assumption that (potential) outcomes across units do not depend on each other. If we cannot stand by that assumption, then we will need to build independence failures into our models.</p>
 <p>Taking this step, the procedure we now use in the mixed methods works as follows.</p>
 <div id="set-up" class="section level3" number="9.2.1">
 <h3><span class="header-section-number">9.2.1</span> Set up</h3>
@@ -524,7 +524,7 @@ div.csl-indent {
 <li><p><strong>A DAG</strong>. As for process tracing, we begin with a graphical causal model specifying possible causal linkages between nodes. Our “chain” model for instance has DAG: <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>.</p></li>
 <li><p><strong>Nodal types</strong>. Just as in process tracing, the DAG and variable ranges define the set of possible nodal types in the model—the possible ways in which each variable is assigned (if exogenous) or determined by its parents (if endogenous). For the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model there are 2 types for <span class="math inline">\(\theta^X\)</span>, 4 for <span class="math inline">\(\theta^M\)</span>, and 4 for <span class="math inline">\(\theta^Y\)</span>.</p></li>
 <li><p><strong>Causal types</strong>. A full set of nodal types gives rise to a full set of causal types, encompassing all possible combinations of nodal types across all nodes in the model. We let <span class="math inline">\(\theta\)</span> denote an arbitrary causal type. For a <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model, one possible causal type would be <span class="math inline">\(\theta = (\theta^X_1, \theta^M_{01}, \theta^M_{01})\)</span>.</p></li>
-<li><p><strong>Parameters.</strong> As before, we use <span class="math inline">\(\lambda^V\)</span> to denote the probabilities of <span class="math inline">\(\theta^V\)</span> for a given node, <span class="math inline">\(V\)</span>. Recall that in process tracing, we sought to learn about <span class="math inline">\(\theta\)</span> and our priors were given by <span class="math inline">\(\lambda\)</span>. When we shift to multi-case inference, <span class="math inline">\(\lambda\)</span> becomes the parameter that we want to learn about: we seek to learn about the <em>shares</em> of different types in a population. (In turn, knowledge about <span class="math inline">\(\lambda\)</span> may in turn give rise to beliefs about <span class="math inline">\(\theta\)</span> in a given case.)</p></li>
+<li><p><strong>Parameters.</strong> As before, we use <span class="math inline">\(\lambda^V\)</span> to denote the probabilities of <span class="math inline">\(\theta^V\)</span> for a given node, <span class="math inline">\(V\)</span>. Recall that in process tracing, we sought to learn about <span class="math inline">\(\theta\)</span> and our priors were given by <span class="math inline">\(\lambda\)</span>. When we shift to multi-case inference, <span class="math inline">\(\lambda\)</span> becomes the parameter that we want to learn about: we seek to learn about the probability of different types arising in a population (or the <em>shares</em> of types in a large population).</p></li>
 <li><p><strong>Priors</strong>. In the process tracing setup, we treat <span class="math inline">\(\lambda\)</span> as given: we do not seek to learn about <span class="math inline">\(\lambda\)</span>, and uncertainty over <span class="math inline">\(\lambda\)</span> plays no role. When we get to observe data on multiple cases, however, we have the opportunity to learn <em>both</em> about the cases at hand <em>and</em> about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the <span class="math inline">\(\lambda\)</span>’s) to be drawn from a prior <em>distribution</em> — a distribution that expresses our uncertainty and over which we can update once we see the data. While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter <a href="bayeschapter.html#bayeschapter">6</a>. Recall that the parameters of a Dirichlet distribution (the <span class="math inline">\(\alpha\)</span>’s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty.</p></li>
 </ol>
 <div class="figure"><span id="fig:unnamed-chunk-1"></span>
@@ -553,31 +553,90 @@ For a simple <span class="math inline">\(X \rightarrow Y\)</span> model, we have
 </div>
 <div id="inference" class="section level3" number="9.2.2">
 <h3><span class="header-section-number">9.2.2</span> Inference</h3>
-<p>Inference then works like this:</p>
-<ol style="list-style-type: decimal">
-<li><strong>Distributions over causal types.</strong> We first need to characterize our beliefs about causal types given any possible parameter vector <span class="math inline">\(\lambda\)</span>. Imagine a draw of one possible value of <span class="math inline">\(\lambda\)</span> from the prior. This <span class="math inline">\(\lambda\)</span> vector implies a set of nodal type shares for all nodes. That set of nodal type shares implies, in turn, a distribution over <em>causal</em> types (<span class="math inline">\(\theta\)</span>). For instance, the probability of causal type <span class="math inline">\(\theta = (\theta^X_1, \theta^Y_{01}, \theta^M_{01})\)</span> is simply <span class="math inline">\(p(\theta|\lambda)=\lambda^X_1\lambda^M_{01}\lambda^Y_{01}\)</span>. More generally:</li>
-</ol>
+<p>Inference then works by figuring out the probability of the data given different possible parameter vectors, <span class="math inline">\(\lambdas\)</span>, and then applying Bayes’ rule. In practice we proceed as follows.</p>
+<p><strong>Distributions over causal types.</strong> We first need characterize our beliefs about causal types given any possible parameter vector <span class="math inline">\(\lambda\)</span>. Imagine a draw of one possible value of <span class="math inline">\(\lambda\)</span> from the prior. This <span class="math inline">\(\lambda\)</span> vector implies a set of nodal type shares for all nodes. That set of nodal type shares implies, in turn, a distribution over <em>causal</em> types (<span class="math inline">\(\theta\)</span>). For instance, the probability of causal type <span class="math inline">\(\theta = (\theta^X_1, \theta^Y_{01}, \theta^M_{01})\)</span> is simply <span class="math inline">\(p(\theta|\lambda)=\lambda^X_1\lambda^M_{01}\lambda^Y_{01}\)</span>. More generally:</p>
 <p><span class="math display">\[p(\theta|\lambda) = \prod_{k,v:\theta^v_k\in\theta}\lambda^v_k\]</span></p>
-<ol start="2" style="list-style-type: decimal">
-<li><strong>Event probabilities</strong>. Each causal type in turn implies a single data realization, or data type. For instance <span class="math inline">\(\theta = (\theta^X_1, \theta^M_{01}, \theta^Y_{01})\)</span> implies data <span class="math inline">\(X=1, M=1, Y=1\)</span>. Let <span class="math inline">\(D(\theta)\)</span> denote the data type implied by causal type <span class="math inline">\(\theta\)</span>. A single data type, however, may be implied by multiple causal types. We use <span class="math inline">\(\Theta(d)\)</span> to denote the set of causal types that imply a given data type:</li>
-</ol>
+<p><strong>Event probabilities</strong>. Each causal type in turn implies a single data realization, or data type. For instance <span class="math inline">\(\theta = (\theta^X_1, \theta^M_{01}, \theta^Y_{01})\)</span> implies data <span class="math inline">\(X=1, M=1, Y=1\)</span>. Let <span class="math inline">\(D(\theta)\)</span> denote the data type implied by causal type <span class="math inline">\(\theta\)</span>. A single data type, however, may be implied by multiple causal types. We use <span class="math inline">\(\Theta(d)\)</span> to denote the set of causal types that imply a given data type:</p>
 <p><span class="math display">\[\Theta(d) : \{\theta| D(\theta) = d \}\]</span></p>
 <p>The probability of a given data type <span class="math inline">\(d\)</span>, is then:</p>
 <p><span class="math display">\[w_d = \sum_{\theta \in \Theta(d)}p(\theta|\lambda)\]</span></p>
-<p>And we use <span class="math inline">\(\mathbf W\)</span> to denote the vector of event probabilities over all data types.</p>
-<p>To illustrate, a data type <span class="math inline">\(d = (X=1, M =1, Y=1)\)</span> is consistent with four different causal types in the <span class="math inline">\(X\rightarrow M\rightarrow Y\)</span> model: <span class="math inline">\(\Theta(d) = \{(\theta^X_0, \theta^M_{01}, \theta^Y_{01}), (\theta^X_0, \theta^M_{11}, \theta^Y_{01}), (\theta^X_0, \theta^M_{01}, \theta^Y_{11}), (\theta^X_0, \theta^M_{11}, \theta^Y_{11})\}\)</span>. The probability of the data type is then calculated by summing up the probabilities of each causal type that implies the event: <span class="math inline">\(w_{111}:=\lambda^X_1(\lambda^M_{01} + \lambda^M_{11}))(\lambda^Y_{01} + \lambda^Y_{11}))\)</span>.</p>
-<p>In practice, calculating the full <span class="math inline">\(\mathbf W\)</span> vector is made easier by the construction of a “parameter matrix” and an “ambiguity matrix,” just as for process tracing, that tells us which causal types are consistent with a particular data type. Tables <a href="mixing.html#tab:parammmatrixmix">9.1</a> and <a href="mixing.html#tab:ambigmatrixmix">9.2</a> illustrate. In the final column of the parameter matrix, we have indicated a single draw of <span class="math inline">\(\lambda\)</span> values (population type shares), and these have been used to calculate the priors on causal types provided in the ambiguity matrix.</p>
-<p>We can now use these two matrices to calculate the event probability for each data type. Starting with <span class="math inline">\(X=0, Y=0\)</span>, we can read off the ambiguity matrix that the consistent causal types are (<span class="math inline">\(\theta^X_0, \theta^Y_{00}\)</span>) and (<span class="math inline">\(\theta^X_0, \theta^Y_{01}\)</span>). The event probability, <span class="math inline">\(w_{00}\)</span>, is then given by adding together the probabilities of these two causal types, <span class="math inline">\(0.1 + 0.2 = 0.3\)</span>. All four event probabilities, for the four data types, are then calculated in the same way:</p>
-<!-- AJ: Maybe I'm missing something, but the math here seems mixed up to me. Isn't the probability of the causal type $\theta^X_0, \theta^Y_{00}$ given by multiplying the lambda values associated with each nodal type? If so, this would be 0.3 x 0.4 = 0.12. And then 0.4 x 0.2 = 0.08 for ($\theta^X_0, \theta^Y_{01}$). Giving 0.2 for w_{00}; w_{10} = 0.18 + 0.12 = 0.3; w_{01} = 0.08 +  0.12 = 0.2; w_{11} = 0.12 + 0.18 = 0.3.  (obviously an arithmetic error below for w_01)-->
-<ul>
-<li><span class="math inline">\(w_{00} = 0.1 + 0.2 = 0.3\)</span></li>
-<li><span class="math inline">\(w_{10} = 0.1 + 0.1 = 0.2\)</span></li>
-<li><span class="math inline">\(w_{01} = 0.1 + 0.2 = 0.2\)</span></li>
-<li><span class="math inline">\(w_{11} = 0.2 + 0.1 = 0.3\)</span></li>
-</ul>
-<p>As any case must be of one and only one data type, the full set of event probabilities for a single <span class="math inline">\(\lambda\)</span> draw must naturally sum to <span class="math inline">\(1\)</span>.</p>
+<p>And we use <span class="math inline">\(\mathbf w\)</span> to denote the vector of event probabilities over all data types.</p>
+<p>To illustrate, a data type <span class="math inline">\(d = (X=1, M =1, Y=1)\)</span> is consistent with four different causal types in the <span class="math inline">\(X\rightarrow M\rightarrow Y\)</span> model: <span class="math inline">\(\Theta(d) = \{(\theta^X_0, \theta^M_{01}, \theta^Y_{01}), (\theta^X_0, \theta^M_{11}, \theta^Y_{01}), (\theta^X_0, \theta^M_{01}, \theta^Y_{11}), (\theta^X_0, \theta^M_{11}, \theta^Y_{11})\}\)</span>. The probability of the data type is then calculated by summing up the probabilities of each causal type that implies the event: <span class="math inline">\(w_{111}:=\lambda^X_1(\lambda^M_{01} + \lambda^M_{11}))(\lambda^Y_{01} + \lambda^Y_{11})\)</span>.</p>
+<p>In practice, calculating the full <span class="math inline">\(\mathbf w\)</span> vector is made easier by the construction of a “parameter matrix” and an “ambiguity matrix,” just as for process tracing, that tells us which causal types are consistent with a particular data type.</p>
+<p>We use Tables <a href="mixing.html#tab:ambigmatrixmix">9.1</a> and <a href="mixing.html#tab:parammmatrixmix">9.2</a> to illustrate how to calculate the event probability for each data type for a given parameter vector <span class="math inline">\(\lambda\)</span>. Starting with data type <span class="math inline">\(X=0, Y=0\)</span> (first column of the ambiguity matrix), we see that the consistent causal types are (<span class="math inline">\(\theta^X_0, \theta^Y_{00}\)</span>) and (<span class="math inline">\(\theta^X_0, \theta^Y_{01}\)</span>), in rows 1 and 4. We then turn to columns 1 and 4 of the parameter matrix to read off the probability of each of these causal types—in each case given by the probability of the nodal types that it is formed out of. This gives <span class="math inline">\(.4 \times .3\)</span> and <span class="math inline">\(.4\times .2\)</span> giving a total probability of <span class="math inline">\(0.2\)</span> for the <span class="math inline">\(X=0, Y=0\)</span> event. All four event probabilities, for the four data types, are then calculated in the same way.</p>
+<p>In practice we do this all using matrx operations.</p>
 <table>
-<caption><span id="tab:parammmatrixmix">Table 9.1: </span>A parameter matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding), indicating a single draw of <span class="math inline">\(\lambda\)</span> values from the prior distribution.</caption>
+<caption><span id="tab:ambigmatrixmix">Table 9.1: </span>An ambiguity matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding). Rows are causal types, columns are data types.</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">X0Y0</th>
+<th align="right">X1Y0</th>
+<th align="right">X0Y1</th>
+<th align="right">X1Y1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X0Y00</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y00</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">X0Y10</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y10</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">X0Y01</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y01</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">X0Y11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y11</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption><span id="tab:parammmatrixmix">Table 9.2: </span>A parameter matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding), indicating a single draw of <span class="math inline">\(\lambda\)</span> values from the prior distribution.</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -667,80 +726,7 @@ For a simple <span class="math inline">\(X \rightarrow Y\)</span> model, we have
 </tr>
 </tbody>
 </table>
-<table>
-<caption><span id="tab:ambigmatrixmix">Table 9.2: </span>An ambiguity matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding). Rows are causal types, columns are data types.</caption>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">X0Y0</th>
-<th align="right">X1Y0</th>
-<th align="right">X0Y1</th>
-<th align="right">X1Y1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">X0Y00</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">X1Y00</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">X0Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">X1Y10</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">X0Y01</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">X1Y01</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">X0Y11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">X1Y11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-</tr>
-</tbody>
-</table>
-<!-- AJ: We say that we've used the parameter values in the param matrix to calculate the priors on causal types in the ambig matrix, but I'm not seeing any priors in the ambig matrix. -->
-<ol start="3" style="list-style-type: decimal">
-<li><strong>Likelihood</strong>. Now that we know the probability of observing each data pattern in a <em>single</em> case given <span class="math inline">\(\lambda\)</span>, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given <span class="math inline">\(\lambda\)</span>). For this aggregation, we make use of an independence assumption: that each unit is independently drawn from a common distribution. Doing so lets us move from a categorical distribution that gives the probability that a single case has a particular data type to a <em>multinomial</em> distribution that gives the probability of seeing an arbitrary data pattern across any number of cases.</li>
-</ol>
+<p><strong>Likelihood</strong>. Now that we know the probability of observing each data pattern in a <em>single</em> case given <span class="math inline">\(\lambda\)</span>, we can use these event probabilities to aggregate up to the likelihood of observing a data pattern across multiple cases (given <span class="math inline">\(\lambda\)</span>). For this aggregation, we make use of an independence assumption: that each unit is independently drawn from a common distribution. Doing so lets us move from a categorical distribution that gives the probability that a single case has a particular data type to a <em>multinomial</em> distribution that gives the probability of seeing an arbitrary data pattern across any number of cases.</p>
 <p>Specifically, with discrete variables, we can think of a given multiple-case data pattern simply as a set of counts across categories. For, say, <span class="math inline">\(X, Y\)</span> data, we will observe a certain number of <span class="math inline">\(X=0, Y=0\)</span> cases (which we notate as <span class="math inline">\(n_{00}\)</span>), a certain number of <span class="math inline">\(X=1, Y=0\)</span> cases (<span class="math inline">\(n_{10}\)</span>), a certain number of <span class="math inline">\(X=0, Y=1\)</span> cases (<span class="math inline">\(n_{01}\)</span>), and a certain number of <span class="math inline">\(X=1, Y=1\)</span> cases (<span class="math inline">\(n_{11}\)</span>). A data pattern, given a particular set of variables observed (a search strategy), thus has a multinomial distribution. The likelihood of a data pattern under a given search strategy, in turn, takes the form of a multinomial distribution conditional on the number of cases observed, <span class="math inline">\(n\)</span>, and the probability of each data type, given a <span class="math inline">\(\lambda\)</span> draw. More formally, we write:</p>
 <p><span class="math display">\[d \sim \text{Multinomial}(n, w(\lambda))\]</span></p>
 <p>Let us assume now that we have a 3-node model, with <span class="math inline">\(X, Y\)</span>, and <span class="math inline">\(M\)</span> all binary. Let <span class="math inline">\(\mathbf n_{XYM}\)</span> denote an 8-element vector recording the number of cases in a sample displaying each possible combination of <span class="math inline">\(X,Y,M\)</span> data, thus: <span class="math inline">\(\mathbf D= \mathbf n_{XYM}:=(n_{000},n_{001},n_{100},\dots ,n_{111})\)</span>. The elements of <span class="math inline">\(\mathbf n_{XYM}\)</span> sum to <span class="math inline">\(n\)</span>, the total number of cases studied. Likewise, let the event probabilities for data types given <span class="math inline">\(\lambda\)</span> be registered in a vector, <span class="math inline">\(\mathbf w_{XYM}=(w_{000},w_{001},w_{100},\dots ,w_{111})\)</span>. The likelihood of a data pattern, <span class="math inline">\(\mathbf D\)</span> is then:</p>
@@ -756,7 +742,7 @@ In other words, the likelihood of observing a particular data pattern given <spa
 <p><span class="math display">\[p(\lambda | d) = \frac{p(d | \lambda)p(\lambda)}{\int_{\lambda&#39;}{p(d | \lambda&#39;)p(\lambda&#39;)}}\]</span>
 In the <code>CausalQueries</code> package this updating is implemented in <code>stan</code>, and the result of the updating is a dataframe that contains a collection of draws from the posterior distribution for <span class="math inline">\(\lambda\)</span>. Table <a href="mixing.html#tab:posteriortable">9.3</a> illustrates what such a dataframe might look like for an <span class="math inline">\(X\rightarrow M \rightarrow Y\)</span> model. Each row represents a single draw from <span class="math inline">\(p(\lambda|d)\)</span>. The 10 columns represent shares for each of the 10 nodal types in the model, under each <span class="math inline">\(lambda\)</span> draw.</p>
 <table>
-<caption><span id="tab:posteriortable">Table 9.3: </span>An illustration of a posterior distribution for an X-&gt;M-&gt;Y model. Each row is a draw from <span class="math inline">\(p(\lambda|d))\)</span></caption>
+<caption><span id="tab:posteriortable">Table 9.3: </span>An illustration of a posterior distribution for a <span class="math inline">\(X \leftarrow M \leftarrow Y\)</span> model. Each row is a draw from <span class="math inline">\(p(\lambda|d))\)</span></caption>
 <thead>
 <tr class="header">
 <th align="right">X.0</th>
@@ -850,9 +836,9 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <li><strong>Querying</strong>.</li>
 </ol>
 <p>Once we have generated a posterior distribution for <span class="math inline">\(\lambda\)</span>, we can then query that distribution. The simplest queries relate to values of <span class="math inline">\(\lambda\)</span>. For instance, if we are interested in the probability that <span class="math inline">\(M\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, given an updated <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model, we want to know about the distribution of <span class="math inline">\(\lambda^M_{01}\)</span>. This distribution can be read directly from column 9 (<span class="math inline">\(Y01\)</span>) of Table @(tab:posteriortable). More complex queries can all be described as summaries of combinations of these columns. For instance, the query, “What is the average effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>” is a question about the distribution of <span class="math inline">\(\lambda^M_{01} - \lambda^M_{10}\)</span>, which is given by the difference between columns 9 and 8 of the table. Still more complex queries may require keeping some nodes constant while varying others, yet all of these can be calculated as summaries of the combinations of columns of the posterior distribution, following the rules described in Chapter <a href="questions.html#questions">5</a>.</p>
-<!-- AJ: This table doesn't seem to have any text to go with it??? Do we need it? -->
+<p>Table <a href="mixing.html#tab:chainillustration">9.4</a> shows examples of a full mapping from data to posteriors. We begin with a simple chain model of the form <span class="math inline">\(X\rightarrow M \rightarrow Y\)</span> with flat priors over nodal types and report inferences on a set of queries (columns) for difference data types (rows).</p>
 <table>
-<caption><span id="tab:unnamed-chunk-2">Table 9.4: </span>Inferences on a chain model given different amounts of data on the diagonal.</caption>
+<caption><span id="tab:chainillustration">Table 9.4: </span>Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shared of reduced form relations between X and Y, columns 5 - 8 show <span class="math inline">\(\tau_{ij}\)</span>—average effects of <span class="math inline">\(i\)</span> on <span class="math inline">\(j\)</span>; the last column shows the probability of causation.</caption>
 <thead>
 <tr class="header">
 <th align="left">Data</th>
@@ -860,17 +846,15 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <th align="right">b</th>
 <th align="right">c</th>
 <th align="right">d</th>
-<th align="right">ate_XM</th>
-<th align="right">ate_MY</th>
-<th align="right">ate_XY</th>
+<th align="right"><span class="math inline">\(\tau_{XM}\)</span></th>
+<th align="right"><span class="math inline">\(\tau_{MY}\)</span></th>
+<th align="right"><span class="math inline">\(\tau_{XY}\)</span></th>
 <th align="right">PC</th>
-<th align="right">PC_M0</th>
-<th align="right">PC_M1</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">none</td>
+<td align="left">No data</td>
 <td align="right">0.13</td>
 <td align="right">0.13</td>
 <td align="right">0.37</td>
@@ -879,11 +863,9 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <td align="right">-0.01</td>
 <td align="right">0.00</td>
 <td align="right">0.27</td>
-<td align="right">0.25</td>
-<td align="right">0.25</td>
 </tr>
 <tr class="even">
-<td align="left">X1Y1</td>
+<td align="left">2 cases X, Y data only</td>
 <td align="right">0.12</td>
 <td align="right">0.14</td>
 <td align="right">0.37</td>
@@ -892,11 +874,9 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <td align="right">0.00</td>
 <td align="right">0.02</td>
 <td align="right">0.29</td>
-<td align="right">0.26</td>
-<td align="right">0.26</td>
 </tr>
 <tr class="odd">
-<td align="left">X1M1Y1</td>
+<td align="left">2 cases, X, M, Y data</td>
 <td align="right">0.12</td>
 <td align="right">0.16</td>
 <td align="right">0.36</td>
@@ -905,11 +885,9 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <td align="right">0.20</td>
 <td align="right">0.04</td>
 <td align="right">0.32</td>
-<td align="right">0.19</td>
-<td align="right">0.36</td>
 </tr>
 <tr class="even">
-<td align="left">X1Y1x10</td>
+<td align="left">10 cases: X, Y data only</td>
 <td align="right">0.11</td>
 <td align="right">0.27</td>
 <td align="right">0.31</td>
@@ -918,11 +896,9 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <td align="right">0.00</td>
 <td align="right">0.17</td>
 <td align="right">0.45</td>
-<td align="right">0.33</td>
-<td align="right">0.33</td>
 </tr>
 <tr class="odd">
-<td align="left">X1M1Y1x10</td>
+<td align="left">10 cases: X, M, Y data</td>
 <td align="right">0.09</td>
 <td align="right">0.44</td>
 <td align="right">0.23</td>
@@ -931,8 +907,6 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <td align="right">0.59</td>
 <td align="right">0.35</td>
 <td align="right">0.66</td>
-<td align="right">0.15</td>
-<td align="right">0.69</td>
 </tr>
 </tbody>
 </table>
@@ -955,8 +929,8 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 <!-- AJ: Why do we specify only "two" alpha parameters for each parameter set above? Not 4? -->
 <!-- AJ: Check my math on degrees of freedom -->
 <p>In the figure below we represent this confounding by indicating parameters values <span class="math inline">\(\lambda_{MY}\)</span> that determine the joint distribution over <span class="math inline">\(\theta_M\)</span> and <span class="math inline">\(\theta_Y\)</span>.</p>
-<div class="figure"><span id="fig:unnamed-chunk-3"></span>
-<img src="ii_files/figure-html/unnamed-chunk-3-1.png" alt="Types, parameters, and priors, with confounding" width="95%" />
+<div class="figure"><span id="fig:unnamed-chunk-2"></span>
+<img src="ii_files/figure-html/unnamed-chunk-2-1.png" alt="Types, parameters, and priors, with confounding" width="95%" />
 <p class="caption">
 Figure 9.2: Types, parameters, and priors, with confounding
 </p>
@@ -1105,19 +1079,19 @@ I also don't know what it means for something to be "the same up to a constant."
 <p>The surprising answer is that it is possible to do both, though exactly how queries are calculated depends on the method used.</p>
 <p>Let <span class="math inline">\(\Lambda\)</span> denote a collection of possible population parameters with typical element <span class="math inline">\(\lambda^i\)</span>. Let <span class="math inline">\(p\)</span> denote a distribution over <span class="math inline">\(\Lambda\)</span> (after updating on data from set <span class="math inline">\(S^1\)</span>), with typical element <span class="math inline">\(\lambda^i\)</span>. Let <span class="math inline">\(X\)</span> denote possible data for cases in <span class="math inline">\(S^0\)</span> with realization <span class="math inline">\(x\)</span>.</p>
 <p>Let <span class="math inline">\(d^i\)</span> denote the probability of observing data <span class="math inline">\(X = x\)</span> for a case (or set of cases) given <span class="math inline">\(\lambda^i\)</span>.</p>
-<p>Let <span class="math inline">\(\tau^{|x}\)</span> denote a query of interest—where the query is conditional in the sense that it relates to cases with data <span class="math inline">\(x\)</span>. Let <span class="math inline">\(q^i_j\)</span> denote the probability that <span class="math inline">\(\tau^{|x} = \tau_j^{|x}\)</span> when <span class="math inline">\(\lambda = \lambda^i\)</span> for a case with data <span class="math inline">\(X=x\)</span>. Note <span class="math inline">\(q^i_j\)</span> can be written <span class="math inline">\(z^i/d^i\)</span> where <span class="math inline">\(z^i_j = \Pr(\tau^{|x} = \tau^{|x}_j, X=x | \lambda^i)\)</span>.</p>
-<p>To illustrate say in an <span class="math inline">\(X\rightarrow Y\)</span> model we were interested the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in a case with <span class="math inline">\(X=1, Y=1\)</span>. Then <span class="math inline">\(d^i = (\lambda^i)^X_1((\lambda^i)^Y_{01} + (\lambda^i)^Y_{11})\)</span>. If <span class="math inline">\(z^i_j = (\lambda^i)^X_1((\lambda^i)^Y_{01})\)</span> for <span class="math inline">\(\tau^{|x}_j = 1\)</span>, and so <span class="math inline">\(q_j = \frac{(\lambda^i)^Y_{01}}{(\lambda^i)^Y_{01} + (\lambda^i)^Y_{11}}\)</span>
-The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases in <span class="math inline">\(S^0\)</span> that provide data <span class="math inline">\(x\)</span>, is then:</p>
-<p><span class="math display">\[\Pr(\tau^{|x} = \tau_j^{x}) = \frac{p^iz^i_j}{\sum_k p^kd^k}\]</span></p>
+<p>Let <span class="math inline">\(\tau^{|x}\)</span> denote a query of interest—where the query is conditional in the sense that it relates to cases with data <span class="math inline">\(x\)</span>. An example might be: what is the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in a case in which <span class="math inline">\(M=1\)</span> and <span class="math inline">\(Y=1\)</span>. Let <span class="math inline">\(q^i_j\)</span> denote the probability that <span class="math inline">\(\tau^{|x} = \tau_j^{|x}\)</span> when <span class="math inline">\(\lambda = \lambda^i\)</span> for a case with data <span class="math inline">\(X=x\)</span>. Note <span class="math inline">\(q^i_j\)</span> can be written <span class="math inline">\(z^i/d^i\)</span> where <span class="math inline">\(z^i_j = \Pr(\tau^{|x} = \tau^{|x}_j, X=x | \lambda^i)\)</span>.</p>
+<p>To illustrate say in an <span class="math inline">\(X\rightarrow Y\)</span> model we were interested the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in a case with <span class="math inline">\(X=1, Y=1\)</span>. Then <span class="math inline">\(d^i = (\lambda^i)^X_1((\lambda^i)^Y_{01} + (\lambda^i)^Y_{11})\)</span> is the probability of observeing (<span class="math inline">\((X=1, Y=1)\)</span>. Then for query <span class="math inline">\(\tau^{|x}_j = 1\)</span> (did <span class="math inline">\(X\)</span> cause <span class="math inline">\(Y\)</span>) we have <span class="math inline">\(z^i_j = (\lambda^i)^X_1((\lambda^i)^Y_{01})\)</span>, and so the probability of this query for this case given <span class="math inline">\(\lambda^i\)</span> is: <span class="math inline">\(q^i_j = \frac{(\lambda^i)^Y_{01}}{(\lambda^i)^Y_{01} + (\lambda^i)^Y_{11}}\)</span></p>
+<p>The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases in <span class="math inline">\(S^0\)</span> that provide data <span class="math inline">\(x\)</span>, is then:</p>
+<p><span class="math display">\[\Pr(\tau^{|x} = \tau_j^{|x}) = \frac{p^iz^i_j}{\sum_k p^kd^k}\]</span></p>
 <p>This can be calculated from the prior <span class="math inline">\(p\)</span> (that is the distribution on <span class="math inline">\(\Theta\)</span> after updating on cases in <span class="math inline">\(S^1\)</span> only).</p>
-<p>Note however that the <em>posterior</em> distribution on <span class="math inline">\(\lambda^i\)</span> given observation of <span class="math inline">\(x\)</span> in the <span class="math inline">\(S^0\)</span> set is <span class="math inline">\(\frac{p^id^i}{\sum_k p^kd^k}\)</span> and that <span class="math inline">\(p^iz^i_j = p^id^iq^i\)</span>. Therefore this quantity can also be interpreted as the posterior mean of <span class="math inline">\(q^i\)</span>, after observing both <span class="math inline">\(S^0\)</span> and <span class="math inline">\(S^1\)</span>.</p>
+<p>Notice however that (a) the <em>posterior</em> distribution on <span class="math inline">\(\lambda^i\)</span> given observation of <span class="math inline">\(x\)</span> in the <span class="math inline">\(S^0\)</span> set is <span class="math inline">\(\frac{p^id^i}{\sum_k p^kd^k}\)</span> and (b) <span class="math inline">\(p^iz^i_j = p^id^iq^i\)</span>. It follows that this quantity can also be interpreted as the posterior mean of <span class="math inline">\(q^i\)</span>, after observing both <span class="math inline">\(S^0\)</span> and <span class="math inline">\(S^1\)</span>.</p>
 <p>We therefore have two approaches to calculatin these sample quantities: either take the posterior mean (posterior to <span class="math inline">\(S^0\)</span> and <span class="math inline">\(S^1\)</span>), over the distrubution of <span class="math inline">\(\lambda\)</span> of the conditional probability of the estimand given the case data in <span class="math inline">\(S^0\)</span>, or take the expected probability of <span class="math inline">\(\tau\)</span> given the prior (after observing <span class="math inline">\(S^1\)</span> only) and condition on the probability of the case level data in <span class="math inline">\(S^0\)</span>).</p>
 <div class="headerbox">
 <div class="center">
 
 </div>
 <p><strong>Box: Case inference and population data</strong></p>
-<p>When calculating queries in <code>CausalQueries</code> you can specify whether you are interested in “case level” inquiries or population inquiries. A case level inquiry of the form <span class="math inline">\(\tau^{|X}\)</span> is calculated (<code>case_level = TRUE</code>) via <span class="math inline">\(\frac{\int_{\lambda}p(\tau, x|\lambda)p(\lambda)d\lambda}{\int_{\lambda}p(x|\lambda)p(\lambda)d\lambda}\)</span>. In contrast the mean of population query (<code>case_level = FALSE</code>) is <span class="math inline">\(\int_{\lambda} \frac{p(\tau, x|\lambda)}{p(x|\lambda)}p(\lambda)d\lambda\)</span>.</p>
+<p>When calculating queries in <code>CausalQueries</code> you can specify whether you are interested in “case level” inquiries or population inquiries. A case level inquiry of the form <span class="math inline">\(\tau^{|X}\)</span> is calculated (<code>case_level = TRUE</code>) via <span class="math inline">\(\frac{\int_{\lambda}p(\tau, x|\lambda)p(\lambda)d\lambda}{\int_{\lambda}p(x|\lambda)p(\lambda)d\lambda}\)</span>. In contrast, the mean of population query (<code>case_level = FALSE</code>) is <span class="math inline">\(\int_{\lambda} \frac{p(\tau, x|\lambda)}{p(x|\lambda)}p(\lambda)d\lambda\)</span>.</p>
 <!-- * DISCUSS SHARE INTERPRETATION -->
 <!-- * HIGHLIGHT FOURTH ROW HAS DOUBLE COUNTING   -->
 <p>The example below shows a case where these differ and illustrates two ways in which inferences on sample queries can be made.</p>
@@ -1125,13 +1099,14 @@ The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases i
 <span id="cb1-2"><a href="mixing.html#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_restrictions</span>(<span class="at">labels  =</span> <span class="fu">list</span>(<span class="at">Y =</span> <span class="fu">c</span>(<span class="st">&quot;0101&quot;</span>, <span class="st">&quot;0111&quot;</span>)), <span class="at">keep =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-3"><a href="mixing.html#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_priors</span>(<span class="at">alpha =</span> <span class="dv">100000</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-4"><a href="mixing.html#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set_priors</span>(<span class="at">node =</span> <span class="st">&quot;W&quot;</span>, <span class="at">alpha =</span> <span class="fu">c</span>(.<span class="dv">5</span>, .<span class="dv">5</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb1-5"><a href="mixing.html#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_model</span>(<span class="fu">data.frame</span>(<span class="at">X=</span><span class="dv">1</span>,<span class="at">Y=</span><span class="dv">1</span>), <span class="at">refresh =</span> <span class="dv">0</span>, <span class="at">chains =</span> <span class="dv">8</span>, <span class="at">iter =</span> <span class="dv">20000</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-6"><a href="mixing.html#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">query_model</span>(<span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
-<span id="cb1-7"><a href="mixing.html#cb1-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">given =</span> <span class="st">&quot;X==1 &amp; Y==1&quot;</span>, </span>
-<span id="cb1-8"><a href="mixing.html#cb1-8" aria-hidden="true" tabindex="-1"></a>             <span class="at">case_level =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>),</span>
-<span id="cb1-9"><a href="mixing.html#cb1-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">using =</span> <span class="fu">c</span>(<span class="st">&quot;priors&quot;</span>, <span class="st">&quot;posteriors&quot;</span>),</span>
-<span id="cb1-10"><a href="mixing.html#cb1-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">expand_grid =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(Query) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-11"><a href="mixing.html#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">&quot;The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect&quot;</span>)</span></code></pre></div>
+<span id="cb1-5"><a href="mixing.html#cb1-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-6"><a href="mixing.html#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_model</span>(<span class="fu">data.frame</span>(<span class="at">X=</span><span class="dv">1</span>,<span class="at">Y=</span><span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-7"><a href="mixing.html#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="mixing.html#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">query_model</span>(<span class="st">&quot;Y[X=1] &gt; Y[X=0]&quot;</span>, </span>
+<span id="cb1-9"><a href="mixing.html#cb1-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">given =</span> <span class="st">&quot;X==1 &amp; Y==1&quot;</span>, </span>
+<span id="cb1-10"><a href="mixing.html#cb1-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">case_level =</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>),</span>
+<span id="cb1-11"><a href="mixing.html#cb1-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">using =</span> <span class="fu">c</span>(<span class="st">&quot;priors&quot;</span>, <span class="st">&quot;posteriors&quot;</span>),</span>
+<span id="cb1-12"><a href="mixing.html#cb1-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">expand_grid =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:unnamed-chunk-4">Table 9.5: </span>The same answers are found using the prior distribution and setting <code>case_estimand</code> to <code>TRUE</code>, and using the posterior distribution but setting <code>case.estimand</code> to <code>FALSE</code>. Other answers are incorrect</caption>
 <thead>
@@ -1150,23 +1125,23 @@ The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases i
 <td align="left">X==1 &amp; Y==1</td>
 <td align="left">priors</td>
 <td align="left">FALSE</td>
-<td align="right">0.416</td>
-<td align="right">0.348</td>
+<td align="right">0.412</td>
+<td align="right">0.347</td>
 </tr>
 <tr class="even">
 <td align="left">Q 1</td>
 <td align="left">X==1 &amp; Y==1</td>
 <td align="left">posteriors</td>
 <td align="left">FALSE</td>
-<td align="right">0.333</td>
-<td align="right">0.328</td>
+<td align="right">0.335</td>
+<td align="right">0.329</td>
 </tr>
 <tr class="odd">
 <td align="left">Q 1</td>
 <td align="left">X==1 &amp; Y==1</td>
 <td align="left">priors</td>
 <td align="left">TRUE</td>
-<td align="right">0.335</td>
+<td align="right">0.332</td>
 <td align="right"></td>
 </tr>
 <tr class="even">
@@ -1174,7 +1149,7 @@ The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases i
 <td align="left">X==1 &amp; Y==1</td>
 <td align="left">posteriors</td>
 <td align="left">TRUE</td>
-<td align="right">0.263</td>
+<td align="right">0.264</td>
 <td align="right"></td>
 </tr>
 </tbody>
@@ -1186,7 +1161,7 @@ The posterior on <span class="math inline">\(\tau^{S^0}\)</span> for the cases i
 </div>
 <div id="mixed-methods" class="section level2" number="9.3">
 <h2><span class="header-section-number">9.3</span> Mixed methods</h2>
-<p>We do not need data on all nodes in order to implement the procedure. If we have data only one some of the nodes in a model, we follow the same basic logic as with partial process-tracing data. In calculating the probability of a pattern of partial data, we use all columns (data types) in the ambiguity matrix that are consistent with the partial data.</p>
+<p>We do not need data on all nodes in order to implement the procedure. If we have data on only some of the nodes in a model, we follow the same basic logic as with partial process-tracing data. In calculating the probability of a pattern of partial data, we use all columns (data types) in the ambiguity matrix that are consistent with the partial data.</p>
 <p>So, for instance, if we have an <span class="math inline">\(X \rightarrow Y\)</span> model but observe only <span class="math inline">\(Y=1\)</span>, then we would retain both the <span class="math inline">\(X=0, Y=1\)</span> column and the <span class="math inline">\(X=1, Y=1\)</span> column. We then calculate the probability of this data type by summing causal-type probabilities for all causal types that can produce <em>either</em> <span class="math inline">\(X=0, Y=1\)</span> <em>or</em> <span class="math inline">\(X=1, Y=1\)</span>.</p>
 <p>What if our data have been collected via a mixture of search strategies? Suppose, for instance, that we have collected <span class="math inline">\(X,Y\)</span> data for a set of cases, and have additionally collected data on <span class="math inline">\(M\)</span> for a random subset of these. We can think of this mixed strategy as akin to conducting quantitative analysis on a large sample while conducting in-depth process tracing on part of the large-<span class="math inline">\(N\)</span> sample. We can then summarize our data in two vectors, an 8-element <span class="math inline">\(n_{XYM}\)</span> vector (<span class="math inline">\((n_{000},n_{001},\dots n_{111}\)</span>) for the cases with process-tracing (<span class="math inline">\(M\)</span>) observations, and a 4-element vector <span class="math inline">\(n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}\)</span> for the partial data on those cases on which we did not conduct process tracing. Likewise, we now have two sets of data probabilities: an 8-element vector for the set of cases with complete data, <span class="math inline">\(w_{XYM}\)</span>, and a 4-element vector for those with partial data, <span class="math inline">\(w_{XY*}\)</span>.</p>
 <p>Let <span class="math inline">\(n\)</span> denote the total number of cases examined, and <span class="math inline">\(k\)</span> the number for which we have data on <span class="math inline">\(M\)</span>. Assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a <em>product</em> of multinomial distributions, one representing the complete-data (process-traced) cases and one representing those with only <span class="math inline">\(X,Y\)</span> data:</p>
@@ -1279,12 +1254,12 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">1</td>
-<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">3</td>
 </tr>
 <tr class="odd">
 <td align="right">1</td>
