@@ -188,18 +188,22 @@ Return to our running democratization example, but suppose now that we have more
 
 ```{r simpleDAG, echo = FALSE, out.width='60%', fig.width = 7, fig.height = 4,  fig.align="center", out.width='80%', fig.cap = "A simple causal model in which high inequality ($I$) affects the democratization ($D$) via redistributive demands and mass mobilization ($M$), which is also a function of ethnic homogeneity ($E$). The arrows show relations of causal dependence between variables.  The graph does not capture the ranges of the variables and the functional relations between them."}
 par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 2, 1, 3, 3),
-       y = c(2, 2, 2, 0, 2, 3),
+hj_dag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
+       y = c(2, 2, 2, 0, 2, 3, 3, 3, 3, -1),
        names = c(
          "I", 
          "R",
          "M",
          "E", 
          "D", 
-         expression(paste(theta^D)) 
+         expression(paste(theta^D)),
+         expression(paste(theta^M)),
+         expression(paste(theta^R)),
+         expression(paste(theta^I)),
+         expression(paste(theta^E)) 
          ),
-       arcs = cbind( c(1, 2, 4, 3, 6),
-                     c(2, 3, 3, 5, 5)),
+       arcs = cbind( c(1, 2, 4, 3, 6, 7, 8, 9, 10),
+                     c(2, 3, 3, 5, 5, 3, 2, 1, 4)),
        title = "A Model of Inequality's Effect on Democratization",
        padding = .2, contraction = .15) 
 
@@ -210,7 +214,7 @@ In the context of this example, let us now consider the three components of a ca
 ### Components of a Causal Model 
 
 
-#### The variables.
+#### The variables
 
 The first component of a causal model is the set of variables across which the model characterizes causal relations. On the graph in Figure \@ref(fig:simpleDAG), the five included variables are represented by the five lettered nodes. (In addition we mark $\theta^D$ on the graph though, as will be made clear, we will not think of this as a variable.)
 
@@ -222,17 +226,21 @@ Notice that some of these variables have arrows pointing *into* them: $R, M$, an
 
 Other nodes have arrows pointing out of them but no arrows pointing into them: $I$ and $E$.  $I$ and $E$ are "exogenous" nodes; they influence other variables in the model but themselves have no causes specified in the model. 
 
-$\theta^D$ requires a little more explanation since it does not describe a substantive variable. Rather, $\theta^D$, is a placeholder for the case's type for node $D$. $\theta^D$ thus captures *how* and *whether* $D$'s parent produces $D$. (In that sense, we can think of $\theta^D$ as a moderator of $M$'s effect on $D$.) In the present example, we believe democratization to be potentially affected by mobilization, and two of $\theta^D$'s possible values allow for such an effect: $\theta^D_{01}$ and $\theta^D_{10}$. But we also know that democratization is affected by other things, even if we do not know what they are and have not represented them explicitly in the model. The values $\theta^D_{00}$ (no democratization regardless of mobilization) and $\theta^D_{11}$ (always democratization regardless of mobilization) capture all "other" factors---factors other than mobilization---that may affect democratization.^[Readers familiar with the literature on causal models will know that $U$ terms are typically used to capture unspecified exogenous influences. We could have, here, included a term $U_D$ to indicate an "error" term or uncertainty regarding exactly what value $D$ will take given knowledge of $M$. We use the concept of a type and the $\theta$ notation, instead, to highlight the fact that in non-parametric models this "residual" component can be thought of as *the* locus of learning about the questions we are asking.]
+The $\theta$ terms require a little more explanation since they do not describe substantive variables. Rather, consistent with our discussion above, the $\theta$ terms are placeholders for the case's type with respect to each node. $\theta^D$, for instance, captures *how* and *whether* $D$'s parent produces $D$. In that sense, we can think of $\theta^D$ as a moderator of $M$'s effect on $D$, and in that sense it is natural to include $\theta^D$ on the graph as a node pointing into $D$. In the present example, we believe democratization to be potentially affected by mobilization, and two of $\theta^D$'s possible values allow for such an effect: $\theta^D_{01}$ and $\theta^D_{10}$. We also know that democratization is affected by other things, even if we do not know what they are and have not represented them explicitly in the model. The values $\theta^D_{00}$ (no democratization regardless of mobilization) and $\theta^D_{11}$ (always democratization regardless of mobilization) capture all "other" factors---factors other than mobilization---that may affect democratization. 
+
+Similarly, $\theta^M$ represents how $M$ responds to $R$ and $E$, while $\theta^R$ captures how $R$ responds to $I$. The $\theta^I$ and $\theta^E$ terms, pointing into the two exogenous variables, represent all processes outside the model that assign these exogenous variables to their values.^[Readers familiar with the literature on causal models will know that $U$ terms are typically used to capture unspecified exogenous influences on included variables. We could have, here, included a term $U_D$ to indicate an "error" term or uncertainty regarding exactly what value $D$ will take given knowledge of $M$. We use the concept of a type and the $\theta$ notation, instead, to highlight the fact that, in non-parametric models, this "residual" component can be thought of as *the* locus of learning about the questions we are asking.]
 
 <!-- Going forward, we set every variable in our working example to be binary. -->
 
-#### The functions.
+#### The functions
 
 Next, we need to specify our beliefs about the causal relations among the variables in our model. How is the value of one variable affected by, and how does it affect, the values of others? For each endogenous variable---each variable influenced by others in the model---we need to express beliefs about how its value is affected by its parents, its immediate causes.
 
-The graph already represents a critical part of these beliefs: the arrows, or directed edges, tell us *which variables we believe to be direct causal inputs into other variables*. So, for instance, we believe that democratization ($D$) is determined jointly by mobilization ($M$) and some exogenous, unspecified factor (or set of factors), $\theta^D$. We can think of $\theta^D$ as all of the other influences on democratization, besides mobilization, that we either do not know of or have decided not to explicitly include in the model. We believe, likewise, that $M$ is determined by $I$ and an unspecified exogenous factor (or set of factors), $\theta^M$. And we are conceptualizing inequality ($I$) as shaped solely by a factors exogenous to the model, captured by $\theta^I$. (For all intents and purposes, $I$ behaves as an exogenous variable here since its value is determined solely by an exogenous variable.) 
+The graph already represents a critical part of these beliefs: the arrows, or directed edges, tell us *which variables we believe to be direct causal inputs into other variables*. So, for instance, we believe that democratization ($D$) is determined jointly by mobilization ($M$) and some exogenous, unspecified factor (or set of factors), $\theta^D$. As we have said, we can think of $\theta^D$ as all of the other influences on democratization, besides mobilization, that we either do not know of or have decided not to explicitly include in the model. We believe, likewise, that $M$ is determined by $I$ and an unspecified exogenous factor (or set of factors), $\theta^M$. And we are conceptualizing inequality ($I$) and ethnic heterogeneity ($E$) as shaped solely by a factors exogenous to the model, captured by $\theta^I$ and $\theta^E$, respectively.
 
-We emphasize that an arrow indicates a *direct* relationship, given the other nodes in the graph. Looking at the graph one might correctly infer that $R$ could have an effect on $D$ and wonder why there is no arrow from $R$ and $D$ to capture this possibility. The answer is that the graph captures situations in which the effect of $R$ on $D$ works through $M$ and $R$ has no effect on $D$ *given* $M$. If this is correct then there should be no second arrow from $R$ to $D$. However, it means quite strong assumptions have been built into the model. The missing arrow rules out for example the possibility that $R$ moderates the effect of $M$ on $D$. 
+<!-- (For all intents and purposes, $I$ and $E$ behave as  exogenous variable here since its value is determined solely by an exogenous variable.)  -->
+
+We emphasize that an arrow indicates a *direct* relationship, given the other nodes in the graph. Looking at the graph, one might correctly infer that $R$ could have an effect on $D$ and wonder why there is no arrow from $R$ to $D$ to capture this possibility. The answer is that the graph we have drawn captures situations in which the effect of $R$ on $D$ works through $M$ and $R$ has no effect on $D$ *given* $M$. If this is correct then there should be no second arrow from $R$ to $D$. However, it means quite strong assumptions have been built into the model. The missing arrow rules out for example the possibility that $R$ moderates the effect of $M$ on $D$. 
 
 Beyond the beliefs captured by arrows we can express more specific beliefs about causal relations in the form of a causal function.^[The collection of all causal functions in the model can be denoted as $\mathcal{F}$.] Specifying a function means writing down whatever general or theoretical knowledge we have about the direct causal relations between variables. A function specifies how the value that one variable takes on is determined by the values that other variables---its parents---take on. 
 
@@ -240,7 +248,7 @@ Beyond the beliefs captured by arrows we can express more specific beliefs about
 
 We can specify this relationship in a vast variety of ways. It is useful however to distinguish broadly between parametric and non parametric approaches.   
 
-A *parametric* approach specifies a functional form that relates parents to children. For instance we might  model one variable as a linear function of another and  write $R=\beta I$, where $\beta$ is a parameter that we do not know the value of at the outset of a study but which we wish to learn about. If we believe $D$ to be linearly affected by $M$ but also subject to forces that we do not yet understand and have not yet specified in our theory, then we can write: $D=\beta M+\theta^D$, where $\theta^D$ represents a random disturbance. We can be still more agnostic by, for example including parameters that govern how other parameters operate. Consider, for instance the function, $D=\beta M^{\theta^D}$. Here, $D$ and $M$ are linearly related if $\theta^D=1$, but not otherwise. The larger point is that functions can be written to be quite specific or extremely general, depending on the state of prior knowledge about the phenomenon under investigation. The use of a structural model *does not require precise knowledge of specific causal relations*, even of the functional forms through which two variables are related. 
+A *parametric* approach specifies a functional form that relates parents to children. For instance, we might  model one variable as a linear function of another and  write $R=\beta I$, where $\beta$ is a parameter that we do not know the value of at the outset of a study but which we wish to learn about. If we believe $D$ to be linearly affected by $M$ but also subject to forces that we do not yet understand and have not yet specified in our theory, then we can write: $D=\beta M+\theta^D$, where $\theta^D$ represents a random disturbance. We can be still more agnostic by, for example including parameters that govern how other parameters operate. Consider, for instance the function, $D=\beta M^{\theta^D}$. Here, $D$ and $M$ are linearly related if $\theta^D=1$, but not otherwise. The larger point is that functions can be written to be quite specific or extremely general, depending on the state of prior knowledge about the phenomenon under investigation. The use of a structural model *does not require precise knowledge of specific causal relations*, even of the functional forms through which two variables are related. 
 
 
 <!-- ^[Here the difference between $\beta$ and $U_D$ is that $\beta$ is a parameter that we believe takes a constant value for all units, even if its value is unknown, while $U_D$ represents some unknown factor or combination of factors the value of which may vary across units, over a pre-specified range.] -->
@@ -325,7 +333,7 @@ Putting these components together gives what is termed a *structural causal mode
 
 In many research situations, we will have beliefs not just about how the world works under different conditions, but also about what kinds of conditions are more likely than others. We can express these beliefs about context as probability distributions over the models exogenous terms.^[We assume that the exogenous terms, the elements of $\mathcal{U}$, are generated independently of one another. While this is not without loss of generality, it is not as constraining as it might at first appear: any graph in which two exogenous variables are not independent can be replaced by a graph in which these two terms are listed as endogenous (possibly unobserved) nodes, themselves generated by a third variable. Note also that one could envision "incomplete probabilistic causal models" in which researchers claim knowledge regarding distributions over *subsets* of $\mathcal{U}$.] For instance, a structural causal model might support a claim of the form: "$R$ has a positive effect on $M$ if and only if $E=1$ holds." We might, then, add to this a belief that $E=1$ in 25\% of cases in the population of interest. Including this belief about context implies, in turn, that $R$ has a positive effect on $M$ a quarter of the time. As with the functions, we can also (and typically would) build uncertainty into this belief by specifying a *distribution* over possible shares of cases with ethnic homogeneity, with our degree of uncertainty captured by the distribution's variance. 
 
-With our non parametric representation of functional forms, we let $\lambda_j^X$ denote the probability that $\theta^X = \theta^X_j$. For instance in a simple $X \rightarrow Y$ model, $\lambda^Y_{01}$ denotes the probability that $\theta^Y = \theta^Y_{01}$. 
+With our non-parametric representation of functional forms, we let $\lambda_j^X$ denote the probability that $\theta^X = \theta^X_j$. For instance in a simple $X \rightarrow Y$ model, $\lambda^Y_{01}$ denotes the probability that $\theta^Y = \theta^Y_{01}$. 
 <!-- FLAG: FLESH OUT INCLUDING HOW CONFOUNDING IS TREATED -->
 
 <!-- Am trying to render all the indented paragraphs below as a single, multi-paragraph footnote. Have read up and tried all sorts of things, no luck yet. -->
