@@ -500,28 +500,28 @@ Looking back at our democratization DAG in Figure \@ref(fig:simpleDAG), $M$ is a
 Using these basic principles, conditional independencies can be read off any DAG. We do so by checking every path connecting two nodes of interest and ask whether, along those paths, the flow of information is open or blocked, given any other nodes whose values are already observed. Conditional independence is established when *all* paths are blocked given what we already know; otherwise, conditional independence is absent.
 
 
-### A simple running example
+<!-- ### A simple running example -->
 
-We can illustrate these core ideas with a simple example of a model of government corruption and survival, one that we will return to in future chapters.
+<!-- We can illustrate these core ideas with a simple example of a model of government corruption and survival, one that we will return to in future chapters. -->
 
-We begin with two binary features of context. Consider, first, that a country may or may not have a free press ($X$). Second, the country's government may or may not be sensitive to public opinion ($S$).^[Government sensitivity here can be thought of as government sophistication (does it take the actions of others into account when making decisions?) or as a matter of preferences (does it have a dominant strategy to engage in corruption?).] Let us then stipulate what follows from these conditions. The government will engage in corruption ($C=1$) unless it is sensitive to public opinion and there is a free press. Moreover, if and only if there is both government corruption and a free press, the press will report on the corruption ($R=1$). Finally, the government will be removed from office ($Y=1$) if it has acted corruptly and this gets reported in the press; otherwise, the government remains in office.
+<!-- We begin with two binary features of context. Consider, first, that a country may or may not have a free press ($X$). Second, the country's government may or may not be sensitive to public opinion ($S$).^[Government sensitivity here can be thought of as government sophistication (does it take the actions of others into account when making decisions?) or as a matter of preferences (does it have a dominant strategy to engage in corruption?).] Let us then stipulate what follows from these conditions. The government will engage in corruption ($C=1$) unless it is sensitive to public opinion and there is a free press. Moreover, if and only if there is both government corruption and a free press, the press will report on the corruption ($R=1$). Finally, the government will be removed from office ($Y=1$) if it has acted corruptly and this gets reported in the press; otherwise, the government remains in office. -->
 
-As a set of equations, this simple causal model may be written as follows:
+<!-- As a set of equations, this simple causal model may be written as follows: -->
 
-$\begin{array}{ll}
-C = 1-X\times S &  \mbox{Whether the government is corrupt}\\
-R = C\times X &  \mbox{Whether the press reports on corruption}\\
-Y = C\times R & \mbox{Whether the government is removed from office}
-\end{array}$
+<!-- $\begin{array}{ll} -->
+<!-- C = 1-X\times S &  \mbox{Whether the government is corrupt}\\ -->
+<!-- R = C\times X &  \mbox{Whether the press reports on corruption}\\ -->
+<!-- Y = C\times R & \mbox{Whether the government is removed from office} -->
+<!-- \end{array}$ -->
 
-One thing that these equations make clear is that the nodes in our model function in various places as causal-type nodes for one another. For instance, we can see from equation for $C$ that the causal effect of a free press ($X$) on corruption ($C$) depends on whether the government is sensitive to public opinion ($S$): $S$ determines $C$'s response to $X$ (as does $X$ for $S$'s effect on $C$). A similar relationship holds for $C$ and $X$ in their effect on $R$ and for $C$ and $R$ in their effect on $Y$. As we will see below, the model also implies more complex causal-type relationships. We can, further, substitute through the causal processes to write down the functional equation for the outcome in terms of the two initial causal nodes: $Y=(1-S)X$.^[In Boolean notation (but preserving a structural equation interpretation), where $Y$ stands for the occurrence of government removal, $Y= \neg S \land X$; and the function for the outcome "government retained" can be written  $\neg Y = (S\land X) \lor (S\land\neg X) \lor (\neg S \land \neg X)$ or, equivalently, $\neg Y = S + \neg S \neg X$.]
+<!-- One thing that these equations make clear is that the nodes in our model function in various places as causal-type nodes for one another. For instance, we can see from equation for $C$ that the causal effect of a free press ($X$) on corruption ($C$) depends on whether the government is sensitive to public opinion ($S$): $S$ determines $C$'s response to $X$ (as does $X$ for $S$'s effect on $C$). A similar relationship holds for $C$ and $X$ in their effect on $R$ and for $C$ and $R$ in their effect on $Y$. As we will see below, the model also implies more complex causal-type relationships. We can, further, substitute through the causal processes to write down the functional equation for the outcome in terms of the two initial causal nodes: $Y=(1-S)X$.^[In Boolean notation (but preserving a structural equation interpretation), where $Y$ stands for the occurrence of government removal, $Y= \neg S \land X$; and the function for the outcome "government retained" can be written  $\neg Y = (S\land X) \lor (S\land\neg X) \lor (\neg S \land \neg X)$ or, equivalently, $\neg Y = S + \neg S \neg X$.] -->
 
-Let us, further, allow the two primary causal nodes---the existence of a free press and the existence of a sensitive government---to vary probabilistically. In particular, we represent the probability of a free press with the population parameter $\lambda^X_1$ and the probability of a sensitive government with the parameter $\lambda^S_1$. 
+<!-- Let us, further, allow the two primary causal nodes---the existence of a free press and the existence of a sensitive government---to vary probabilistically. In particular, we represent the probability of a free press with the population parameter $\lambda^X_1$ and the probability of a sensitive government with the parameter $\lambda^S_1$.  -->
 
-Note that in this model, only the most "senior" specified nodes, $X$ and $S$, have a stochastic component (i.e., $\lambda^X_1$ and $\lambda^S_1$ lie between 0 and 1). All other endogenous nodes are deterministic functions of other specified nodes (put differently: each node has only a single nodal type).
+<!-- Note that in this model, only the most "senior" specified nodes, $X$ and $S$, have a stochastic component (i.e., $\lambda^X_1$ and $\lambda^S_1$ lie between 0 and 1). All other endogenous nodes are deterministic functions of other specified nodes (put differently: each node has only a single nodal type). -->
 
 
-```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE}
+```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE, eval = FALSE}
 
 
 x = c(0,0, 1, 1, 2)
@@ -556,9 +556,9 @@ hj_dag(x =  x,
 ```
 
 
-The corresponding causal diagram for this model is shown in Figure \@ref(fig:running).
+<!-- The corresponding causal diagram for this model is shown in Figure \@ref(fig:running). -->
 
-In later chapters we will develop this model and use it to illustrate different estimands and different strategies for case level inference.
+<!-- In later chapters we will develop this model and use it to illustrate different estimands and different strategies for case level inference. -->
 
 
 
