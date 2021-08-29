@@ -442,17 +442,17 @@ make_model("I -> D; I <-> D") %>% plot
 
 ### Conditional independence from DAGs
 
-If we encode our prior knowledge using the grammar of a causal graph, we can put that knowledge to work for us in powerful ways. In particular, the rules of DAG-construction allow for an easy reading of the *conditional independencies* implied by our beliefs.
+If we encode our prior knowledge using the grammar of a causal graph, we can put that knowledge to work for us in powerful ways. In particular, the rules of DAG-construction allow for an easy reading of the *conditional independencies* implied by our beliefs. (For another, somewhat more extended treatment of the ideas in this section, see @rohrer2018thinking.)
 
 To begin thinking about conditional independence, it can be helpful to conceptualize dependencies between nodes as generating *flows of information*. Let us first consider a simple relationship of dependence. Returning to Figure \@ref(fig:simpleDAG), the arrow running from $I$ to $R$, implying a direct causal dependency, means that if we expect $I$ and $R$ to be correlated. Put differently, observing the value of one of these nodes also gives us information about the value of the other. If we measured redistributive preferences, the graph implies that we would also be in a better position to infer the level of inequality, and vice versa. Likewise, $I$ and $M$ are also linked in a relationship of dependence: since inequality can affect mobilization (through $R$), knowing the the level of inequality would allow us to improve our estimate of the level of mobilization and vice versa.
 
 In contrast, consider $I$ and $E$, which are in this graph indicated as being *independent* of one another. Learning the level of inequality, according to this graph, would give us no information whatsoever about the degree of ethnic homogeneity, and vice-versa.
 
-Moreover, sometimes what we learn depends on *what we already know.* Suppose that we already knew the level of redistributive preferences. Would we then be in a position to learn about the level of inequality by observing the level of mobilization? According to this graph we would not: since the causal link---and, hence, flow of information between $I$ and $M$---runs through $R$, and we already know $R$, there is nothing left to be learned about $I$ by also observing $M$. Anything we could have learned about inequality by observing mobilization is already captured by the level of redistributive preferences, which we have already seen. In other words, if we were not to include $R$ in the causal model, then $I$ and $M$ would be dependent and informative about each other. When we do include $R$ in the causal graph, $I$ and $M$ are independent of one another, hence uninformative about each other. We can express this idea by saying that $I$ and $M$ are *conditionally independent given $R$*. 
+Moreover, sometimes what we learn depends on *what we already know.* Suppose that we already knew the level of redistributive preferences. Would we then be in a position to learn about the level of inequality by observing the level of mobilization? According to this graph we would not: since the causal link---and, hence, flow of information between $I$ and $M$---runs through $R$, and we already know $R$, there is nothing left to be learned about $I$ by also observing $M$. Anything we could have learned about inequality by observing mobilization is already captured by the level of redistributive preferences, which we have already seen. In other words, if we were not to include $R$ in the causal model, then $I$ and $M$ would be dependent and informative about each other. When we do include $R$ in the causal graph, $I$ and $M$ are independent of one another and, hence, uninformative about each other. We can express this idea by saying that $I$ and $M$ are *conditionally independent given $R$*. 
 
 We say that two nodes, $A$ and $C$, are "conditionally independent" given a set of nodes $\mathcal B$ if, once we have knowledge of the values in $\mathcal B$, knowledge of $A$ provides no information about $C$ and vice-versa. Taking $\mathcal B$ into account thus "breaks" any relationship that might exist unconditionally between $A$ and $C$. 
 
-To take up another example, suppose that war is a cause of both military casualties and price inflation, as depicted in Figure \@ref(fig:warDAG). Casualties and inflation will then be (unconditionally) correlated with one another because of their shared cause. If I learn that there have been military casualties, this information will lead me to think it more likely that there is also war and, in turn, price inflation (and vice versa). However, assuming that war is their only common cause, we would say that military casualties and price inflation are *conditionally independent given war.* If we already know that there is war, then we can learn nothing further about the level of casualties (price inflation) by learning about price inflation (casualties). We can think of war, when observed, as blocking the flow of information between its two consequences; everything we would learn about inflation from casualties is already contained in the observation that there is war. Put differently, if we were just to look at cases where war is present (i.e., if we hold war constant), we should find no correlation between military casualties and price inflation; likewise, for cases in which war is absent.  
+To take up another example, suppose that war is a cause of both military casualties and price inflation, as depicted in Figure \@ref(fig:warDAG). Casualties and inflation will then be (unconditionally) correlated with one another because of their shared cause. If we learn that there have been military casualties, this information will lead us to think it more likely that there is also war and, in turn, price inflation (and vice versa). However, assuming that war is their only common cause, we would say that military casualties and price inflation are *conditionally independent given war.* If we already know that there is war, then we can learn nothing further about the level of casualties (price inflation) by learning about price inflation (casualties). We can think of war, when observed, as blocking the flow of information between its two consequences; everything we would learn about inflation from casualties is already contained in the observation that there is war. Put differently, if we were just to look at cases where war is present (i.e., if we hold war constant), we should find no correlation between military casualties and price inflation; likewise, for cases in which war is absent.  
 
 
 ```{r warDAG, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width = "60%", fig.cap = "This graph represents a simple causal model in which war ($W$) affects both military casualties ($C$) and price inflation ($P$)."}
@@ -473,7 +473,7 @@ hj_dag(x = c(0, 1, 1),
 
 Relations of conditional independence are central to the strategy of statistical control, or covariate adjustment, in correlation-based forms of causal inference, such as regression. In a regression framework, identifying the causal effect of an explanatory node, $X$, on a dependent node, $Y$, requires the assumption that $X$'s value is conditionally independent of $Y$'s potential outcomes (over values of $X$) given the model's covariates. To draw a causal inference from a regression coefficient, in other words, we have to believe that including the covariates in the model "breaks" any biasing correlation between the value of the causal node and its unit-level effect.
 
-As we will explore, however, relations of conditional independence are of more general interest in that they tell us, given a model, *when information about one feature of the world may be informative about another feature of the world, given what we already know*. By identifying the possibilities for learning, relations of conditional independence can thus guide research design.
+As we will explore, however, relations of conditional independence are also of more general interest in that they tell us, given a model, *when information about one feature of the world may be informative about another feature of the world, given what we already know*. By identifying the possibilities for learning, relations of conditional independence can thus guide research design. We discuss these research-design implications in Chapter \@ref(pt), but focus here on showing how relations of conditional independence operate on a DAG.
 
 
 <!-- Some possibilities are excluded by the framework, however: for example, one cannot represent uncertainty regarding whether $A$ causes $B$ or $B$ causes $A$. -->
@@ -492,10 +492,10 @@ As we will explore, however, relations of conditional independence are of more g
 
 <!-- As a very simple example one might imagine that $A$ an $B$ are independently generated binary nodes; $C$ is an indicator for whether $A$ and $B$ have the same value. Then obviously if you know $C$, then knowing $A$ tells you everything about $B$. -->
 
-To see more systematically how a DAG can reveal conditional independencies, it is useful spell out three pairs of features of the flow of information in causal graphs:
+To see more systematically how a DAG can reveal conditional independencies, it is useful spell out three elemental structures according to which which information can flow across a causal graph:
 
 
-```{r pathsexp, echo = FALSE, fig.width = 6, fig.height = 4,  fig.align="center", out.width='70%', fig.cap = "\\label{fig:CI} Three elementary relations of conditional independence."}
+```{r pathsexp, echo = FALSE, fig.width = 6, fig.height = 4,  fig.align="center", out.width='70%', fig.cap = "\\label{fig:CI} Three elemental relations of conditional independence."}
 par(mfrow = c(3,1))
 par(mar=c(1,1,3,1))
 hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
@@ -528,7 +528,7 @@ hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
 
 The last point is somewhat counter-intuitive and warrants further discussion. It is easy enough to see that, for two nodes that are correlated unconditionally, that correlation can be "broken" by controlling for a third node. In the case of collision, two nodes that are *not* correlated when taken by themselves *become* correlated when we condition on (i.e., learn the value of) a third node, the collider. The reason is in fact quite straightforward once one sees it: if an outcome is a joint function of two inputs, then if we know the outcome, information about one of the inputs can provide information about the other input. For example, if I know that you have brown eyes, then learning that your mother has blue eyes makes me more confident that your father has brown eyes. 
 
-Looking back at our democratization DAG in Figure \@ref(fig:simpleDAG), $M$ is a collider for $R$ and $E$, its two inputs. Suppose that we again have the functional equation $M=RE$. Knowing about redistributive preferences alone provides no information whatsoever about ethnic homogeneity since the two are determined independently of one another. On the other hand, imagine that you already know that there was no mobilization. Now, if you observe that there *were* redistributive preferences, you can figure out the level of ethnic homogeneity: it must be 0. (And likewise in going from homogeneity to preferences.)
+Looking back at our democratization DAG in Figure \@ref(fig:simpleDAG), $M$ is a collider for $R$ and $E$, its two inputs. Suppose that we again have the functional equation $M=RE$. Knowing about redistributive preferences alone provides no information whatsoever about ethnic homogeneity since the two are determined independently of one another. On the other hand, imagine that we already know that there was no mobilization. Now, if we observe that there *were* redistributive preferences, we can figure out the level of ethnic homogeneity: it must be 0. (And likewise in going from homogeneity to preferences.)
 
 Using these basic principles, conditional independencies can be read off any DAG. We do so by checking every path connecting two nodes of interest and ask whether, along those paths, the flow of information is open or blocked, given any other nodes whose values are already observed. Conditional independence is established when *all* paths are blocked given what we already know; otherwise, conditional independence is absent.
 
@@ -554,39 +554,39 @@ Using these basic principles, conditional independencies can be read off any DAG
 <!-- Note that in this model, only the most "senior" specified nodes, $X$ and $S$, have a stochastic component (i.e., $\lambda^X_1$ and $\lambda^S_1$ lie between 0 and 1). All other endogenous nodes are deterministic functions of other specified nodes (put differently: each node has only a single nodal type). -->
 
 
-```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE, eval = FALSE}
+<!-- ```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE, eval = FALSE} -->
 
 
-x = c(0,0, 1, 1, 2)
-y = c(2,0, 2, 0, 1)
+<!-- x = c(0,0, 1, 1, 2) -->
+<!-- y = c(2,0, 2, 0, 1) -->
 
-names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
+<!-- names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced") -->
 
-hj_dag(x =  x,
-       y = y,
-       names = c(names),
-       arcs = cbind( c(1,2,2, 3, 4, 3),
-                     c(3,3,4, 5, 5, 4)),
-       title = "Free Press and Government Survival",
-       add_functions = 0,
-       contraction = .15,
-       add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
-       padding = .2)
+<!-- hj_dag(x =  x, -->
+<!--        y = y, -->
+<!--        names = c(names), -->
+<!--        arcs = cbind( c(1,2,2, 3, 4, 3), -->
+<!--                      c(3,3,4, 5, 5, 4)), -->
+<!--        title = "Free Press and Government Survival", -->
+<!--        add_functions = 0, -->
+<!--        contraction = .15, -->
+<!--        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS", -->
+<!--        padding = .2) -->
 
-# hj_dag(x =  c(x, 0, 0),
-#        y = c(y, 0.25, 1.75),
-#        names = c(names),
-#        arcs = cbind( c(1,2,2, 3, 4, 3),
-#                      c(3,3,4, 5, 5, 4)),
-#        title = "Free Press and Government Survival",
-#        add_functions = 0,
-#        contraction = .15,
-#        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
-#        padding = .2)
+<!-- # hj_dag(x =  c(x, 0, 0), -->
+<!-- #        y = c(y, 0.25, 1.75), -->
+<!-- #        names = c(names), -->
+<!-- #        arcs = cbind( c(1,2,2, 3, 4, 3), -->
+<!-- #                      c(3,3,4, 5, 5, 4)), -->
+<!-- #        title = "Free Press and Government Survival", -->
+<!-- #        add_functions = 0, -->
+<!-- #        contraction = .15, -->
+<!-- #        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS", -->
+<!-- #        padding = .2) -->
 
-# text(c(0,0), c(.25, 1.75), c(expression(paste(theta^X[1])), expression(paste(theta^S[1]))))
+<!-- # text(c(0,0), c(.25, 1.75), c(expression(paste(theta^X[1])), expression(paste(theta^S[1])))) -->
 
-```
+<!-- ``` -->
 
 
 <!-- The corresponding causal diagram for this model is shown in Figure \@ref(fig:running). -->
