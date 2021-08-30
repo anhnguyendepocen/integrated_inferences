@@ -11,34 +11,41 @@ knitr::opts_chunk$set(echo = TRUE)
 source("_packages_used.R")
 ```
 
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+We represent three arguments as causal models with associated graphs.
+::::
+
+
 # Illustrating Causal Models {#illustratemodels}
 
-In this short chapter, we provide more of a sense of how one might encode prior knowledge in a causal model by asking how we might construct models in light of extant scholarly works. We undertake this exercise by drawing on three well-known works in comparative politics and international relations: Paul Pierson's seminal book on welfare-state retrenchment (@pierson1994dismantling); Elizabeth Saunders' research on leaders' choice of military intervention strategies (@saunders2011leaders); and Przeworski and Limongi's work on democratic survival (@przeworski1997modernization), an instructive counterpoint to Boix's (@boix2003democracy) argument about a related dependent variable. For each, we represent in the form of a causal model the causal knowledge that we might plausibly think we take away from the work in question. 
+In this short chapter, we provide more of a sense of how one might encode prior knowledge in a causal model by asking how we might construct models in light of extant scholarly works. We undertake this exercise by drawing on three well-known works in comparative politics and international relations: Paul Pierson's seminal book on welfare-state retrenchment [@pierson1994dismantling]; Elizabeth Saunders' research on leaders' choice of military intervention strategies [@saunders2011leaders]; and Przeworski and Limongi's work on democratic survival [@przeworski1997modernization], an instructive counterpoint to Boix's [@boix2003democracy] argument about a related dependent variable. For each, we represent the causal knowledge that we might plausibly think we take away from the work in question in the form of a causal model. 
 
-Readers might represent these knowledge bases differently; our present aim is merely to illustrate how causal models are constructed, rather than to defend a particular representation (much less the works in question) as accurate.
+Readers might represent these knowledge bases differently;  our aim here is only to illustrate how causal models are constructed, rather than to defend a particular representation (much less the works in question) as accurate.
 
 For each exercise below, we focus on a specific argument in the literature in order to fix in place a relatively clear set of background causal beliefs and simplify the exposition. We emphasize, however, that *in general* a causal model should be thought of as a representation of our state of knowledge or beliefs about causal relations within a domain, rather than as a representation of a specific argument. Suppose, for instance, that we are interested in testing a specific argument in which $X$ affects $Y$ through the mediator $M$. In constructing a causal model to guide our empirical analysis, we cannot simply draw that argument in DAG form ($X \rightarrow M \rightarrow Y$) and leave it at that. In line with the principles relating to conditional independence outlined in chapter \@ref(models), we must consult our beliefs about this causal domain in a broader sense. For instance, given what we know about the domain from prior observations or studies, is it plausible that $X$ could affect $Y$ through a pathway that does not go through $M$? If we believe it is possible, then we must also draw a direct $X \rightarrow Y$ arrow, or our causal model will steer us wrong --- even if our primary aim is to examine the pathway through $M$.^[Otherwise, our DAG will contain a relation of conditional independence ($X$ being conditionally independent of $Y$ given $M$) that we do not believe holds.] Thus, while we draw on specific works in the illustrations in this chapter, we urge readers to remember that in practice one would want to characterize a broader prior knowledge base in relation to a causal domain in generating a causal model.
 
 ## Welfare state reform: Pierson (1994)
 
-The argument in Pierson's 1994 book  *Dismantling the Welfare State?* challenged prior notions of post-1980 welfare-state retrenchment in OECD countries as a process driven primarily by socioeconomic pressures (slowed growth, rising unemployment, rising deficits, aging populations) and the rise of market-conservative ideologies (embodied, e.g., the ascendance of Thatcher and Reagan). Pierson argues that socioeconomic and ideological forces put retrenchment on the policy agenda, but do not ensure its enactment because retrenchment is a politically perilous process of imposing losses on large segments of the electorate. Governments will only impose such losses if they can do so in ways that allow them avoid blame for doing so---by, for instance, making the losses hard to perceive or responsibility for them difficult to trace. These blame-avoidance opportunities are themselves conditioned by the particular social-program structures that governments inherit. 
+The argument in Pierson's 1994 book  *Dismantling the Welfare State?* challenged prior notions of post-1980 welfare-state retrenchment in OECD countries as a process driven primarily by socioeconomic pressures (slowed growth, rising unemployment, rising deficits, aging populations) and the rise of market-conservative ideologies (embodied for instance by the ascendance of Thatcher and Reagan). Pierson argues that socioeconomic and ideological forces put retrenchment on the policy agenda, but do not ensure its enactment because retrenchment is a politically perilous process of imposing losses on large segments of the electorate. Governments will only impose such losses if they can do so in ways that allow them avoid blame for doing so---by, for instance, making the losses hard to perceive or the responsibility for them difficult to trace. These blame-avoidance opportunities are themselves conditioned by the particular social-program structures that governments inherit. 
 
  <!-- $C$=conservative government; $S$=socioeconomic pressures; $P$=program structure; $A$=retrenchment being on the agenda; $B$=blame-avoidance opportunities; $R$=retrenchment; $\theta^R$=random influences on retrenchment -->
 
-```{r pierson, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGPierson} A graphical representation of Pierson (1994).", warning = FALSE, message = FALSE}
+```{r pierson, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "A graphical representation of Pierson (1994).", warning = FALSE, message = FALSE}
 
 par(mfrow = c(1,1))
 par(mar=c(1,1,3,1))
 hj_dag(x = c(1,2,3,1,1,2,3),
        y = c(1,1,2,3,2,2,3),
        names = c(
-         expression(paste("P: Program\nstructure")),
-         expression(paste("B: Blame-avoidance\nopportunity")),  
-         expression(paste("R: Retrenchment")),
-         expression(paste("C: Conservative\ngovt")),
-         expression(paste("S: Socioeconomic\npressures")),
-         expression(paste("A: On Agenda")),
-         expression(paste(U[R]: "Random influence\n on retrenchment"))),
+         expression(paste("P:\nProgram\nstructure")),
+         expression(paste("B:\nBlame-avoidance\nopportunity")),  
+         expression(paste("R:\nRetrenchment")),
+         expression(paste("C:\nConservative\ngovt")),
+         expression(paste("S:\nSocioeconomic\npressures")),
+         expression(paste("A:\nOn Agenda")),
+         expression(paste(theta^R: "\nRandom influence\n on retrenchment"))),
        arcs = cbind( c(1,2, 4,5,6,7),
                      c(2,3, 6,6,3,3)),
        title = "Government Rentenchment (Pierson, 1994)",
@@ -50,7 +57,7 @@ hj_dag(x = c(1,2,3,1,1,2,3),
 
 ```
 
-While the argument has many more specific features (e.g., different program-structural factors that matter, various potential strategies of blame-avoidance), its essential components can be captured with a relatively simple causal model. We propose such a model in graphical form in Figure \ref{DAGPierson}. Here, the outcome of retrenchment ($R$) hinges on whether retrenchment makes it onto the agenda ($A$) and on whether blame-avoidance strategies are available to governments ($B$), and on some unspecified random input ($\theta^R$). Retrenchment emerges on the policy agenda as a consequence of both socioeconomic developments ($S$) and the ascendance of ideologically conservative political actors ($C$). Inherited program structures ($P$), meanwhile, determine the availability of blame-avoidance strategies.
+While the argument has many more specific features (e.g., different program-structural factors that matter, various potential strategies of blame-avoidance), its essential components can be captured with a relatively simple causal model. We propose such a model in graphical form in Figure \@ref(fig:pierson). Here, the outcome of retrenchment ($R$) hinges on whether retrenchment makes it onto the agenda ($A$) and on whether blame-avoidance strategies are available to governments ($B$), and on some unspecified random input ($\theta^R$). Retrenchment emerges on the policy agenda as a consequence of both socioeconomic developments ($S$) and the ascendance of ideologically conservative political actors ($C$). Inherited program structures ($P$), meanwhile, determine the availability of blame-avoidance strategies.
 
 A few features of this graph warrant attention. As we have discussed, it is the omitted arrows in any causal graph that imply the strongest statements. The graph in Panel (a) implies that $C$, $S$, $P$, and $\theta^R$---which are neither connected along a directed path nor downstream from a common cause---are independent of one another. This implies, for instance, that whether conservatives govern is independent of whether program structures will allow for blame-free retrenchment. Thus, as Pierson argues, a Reagan or Thatcher can come to power but nonetheless run up against an opportunity structure that would makes retrenchment politically perilous. 
 
@@ -60,13 +67,19 @@ Where two variables *are* connected by an arrow, moreover, this does not imply t
 
 The graph also reflects a choice about where to begin. We could, of course, construct a causal account of how conservatives come to power, how socioeconomic pressures arose, or why programs were originally designed as they were. Yet it is perfectly permissible for us to bracket these antecedents and start the model with $C$, $S$, and $P$, as long as we do not believe that these variables have any antecedents in common. If they do have common causes, then this correlation should be captured in the DAG.^[In DAG syntax, this correlation can be captured by placing the common cause(s) explicitly on the graph or by drawing a dashed line between the correlated nodes, leaving the source of the correlation unspecified.]
 
-The DAG itself tells us about the possible direct causal dependencies but is silent on the ranges of and functional relations among the variables. How might we express these? With three endogenous variables, we need three functions indicating how their values are determined. Moreover, every variable pointing directly into another variable must be part of that second variable's function. Let us assume all variables are binary, with each condition either absent or present. We can capture quite a lot of Pierson's theoretical logic with the following quite simple functional equations:
+The DAG itself tells us about the possible direct causal dependencies but is silent on the ranges of and functional relations among the variables. How might we express these? With three endogenous variables, we need three functions indicating how their values are determined. Moreover, every variable pointing directly into another variable must be part of that second variable's function. 
 
-* $A=CS$, implying that retrenchment makes it on the agenda if and only if both conservatives are in power and socioeconomic pressures are high.
+Let us assume all variables are binary, with each condition either absent or present. 
+
+We might then take a parameteric approach and imagine specific functions connecting parents to children, with perhaps some errir. For instance we can capture quite a lot of Pierson's theoretical logic with the following quite simple functional equations:
+
+* $A=CS$, implying that retrenchment makes it on the agenda if and only if  conservatives are in power *and* socioeconomic pressures are high. We might further imagine an error whereby $CS$ is observed with probability $p$ and $1-CS$ with probabilty $1-p$. 
 * $B=P$, implying that blame-avoidance opportunities arise when and only when program structures take a particular form
-* $R=ABU_R$. 
+* $R=AB\theta^R$. 
 
 This last functional equation requires a little bit of explanation. Here we are saying that retrenchment will only occur if retrenchment is on the agenda and blame-avoidance opportunities are present (as the expression zeroes out if either of these are 0). Yet even if both are present, the effect on retrenchment also hinges on the value of $\theta^R$. $\theta^R$ thus behaves as a causal-type variable with respect to the effect of an $AB$ combination on $R$ and allows for two possible types. When $\theta^R=1$, the $AB$ combination has a positive causal effect on retrenchment. When $\theta^R=0$, $AB$ has no causal effect: retrenchment will not occur regardless of the presence of $AB$. A helpful way to conceptualize what $\theta^R$ is doing is that is capturing a collection of features of a case's context that might render the case susceptible or not susceptible to an $AB$ causal effect. For instance, Pierson's analysis suggests that a polity's institutional structure might widely diffuse veto power such that stakeholders can block reform even when retrenchment is on the agenda and could be pursued without electoral losses. We could think of such a case as having a $\theta^R$ value of 0, implying that $AB$ has no causal effect. A $\theta^R=1$ case, with a positive effect, would be one in which the government has the institutional capacity to enact reforms that it has the political will to pursue.
+
+A non-parameteric approach could also be used. In this case we would define a distribution over $\theta^A$---which could take one of 16 values; over $\theta^B$ which  could take one of 4 values; and $\theta^R$---which could also take one of 16 values. Then choices on the probability distributions fully reflect the ways these variables relate to each other. Notice also that the "parametric" version can be treated as an instance of the non-parametric approach with probability 0 placed on many possible causal types.
 
 ## Military Interventions: Saunders (2011) 
 

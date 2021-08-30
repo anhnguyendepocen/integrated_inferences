@@ -198,6 +198,7 @@ hj_dag <- function(x,
                    padding = .5,
                    length = 0.2,
                    cex = 1,
+                   adj = .5,
                    box = TRUE) {
   if(add_points)  plot(x, y, pch=ifelse(solids == 1, 19, 1), cex = 2, axes = FALSE, xlab = "", ylab = "",
                        xlim = c(min(x)-padding, max(x)+padding),
@@ -212,7 +213,7 @@ hj_dag <- function(x,
          y[arcs[,1]]*(1-contraction) + y[arcs[,2]]*contraction,
          x[arcs[,2]]*(1-contraction) + x[arcs[,1]]*contraction,
          y[arcs[,2]]*(1-contraction) + y[arcs[,1]]*contraction, length = length)
-  text(x, y + text_shift, names, cex = cex)
+  text(x, y + text_shift, names, cex = cex, adj = adj)
   if(!is.null(add_functions_text)) text(((min(x)+max(x))/2), min(y)-1, add_functions_text)
   if(box) box()
 }
