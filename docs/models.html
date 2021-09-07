@@ -187,6 +187,8 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
 <li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilisitic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilisitic relations</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
 <li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
@@ -205,7 +207,7 @@ div.csl-indent {
 <li class="chapter" data-level="4" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>4</b> Theories as causal models</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="theory.html"><a href="theory.html#theory-as-a-lower-level-model"><i class="fa fa-check"></i><b>4.1</b> Theory as a “lower-level” model</a></li>
-<li class="chapter" data-level="4.2" data-path="theory.html"><a href="theory.html#illustration-of-unpacking-causal-types"><i class="fa fa-check"></i><b>4.2</b> Illustration of unpacking causal types</a>
+<li class="chapter" data-level="4.2" data-path="theory.html"><a href="theory.html#illustration-of-unpacking-nodal-types"><i class="fa fa-check"></i><b>4.2</b> Illustration of unpacking nodal types</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="theory.html"><a href="theory.html#type-disaggregation-in-a-mediation-model"><i class="fa fa-check"></i><b>4.2.1</b> Type disaggregation in a mediation model</a></li>
 <li class="chapter" data-level="4.2.2" data-path="theory.html"><a href="theory.html#type-disaggregation-in-a-moderation-model"><i class="fa fa-check"></i><b>4.2.2</b> Type disaggregation in a moderation model</a></li>
@@ -213,7 +215,6 @@ div.csl-indent {
 <li class="chapter" data-level="4.3" data-path="theory.html"><a href="theory.html#rules-for-moving-between-higher--and-lower-level-models"><i class="fa fa-check"></i><b>4.3</b> Rules for moving between higher- and lower-level models</a>
 <ul>
 <li class="chapter" data-level="4.3.1" data-path="theory.html"><a href="theory.html#moving-down-levels"><i class="fa fa-check"></i><b>4.3.1</b> Moving down levels</a></li>
-<li class="chapter" data-level="4.3.2" data-path="theory.html"><a href="theory.html#moving-up-levels"><i class="fa fa-check"></i><b>4.3.2</b> Moving up levels</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>4.4</b> Conclusion</a>
 <ul>
@@ -947,6 +948,90 @@ Figure 2.4:  Three elemental relations of conditional independence.
 <p>Looking back at our democratization DAG in Figure <a href="models.html#fig:simpleDAG">2.1</a>, <span class="math inline">\(M\)</span> is a collider for <span class="math inline">\(R\)</span> and <span class="math inline">\(E\)</span>, its two inputs. Suppose that we again have the functional equation <span class="math inline">\(M=RE\)</span>. Knowing about redistributive preferences alone provides no information whatsoever about ethnic homogeneity since the two are determined independently of one another. On the other hand, imagine that we already know that there was no mobilization. Now, if we observe that there <em>were</em> redistributive preferences, we can figure out the level of ethnic homogeneity: it must be 0. (And likewise in going from homogeneity to preferences.)</p>
 <p>Using these basic principles, conditional independencies can be read off of any DAG. We do so by checking every path connecting two nodes of interest and ask whether, along those paths, the flow of information is open or blocked, given any other nodes whose values are already observed. Conditional independence is established when <em>all</em> paths are blocked given what we already know; otherwise, conditional independence is absent.</p>
 </div>
+<div id="simplifying-models" class="section level3" number="2.3.3">
+<h3><span class="header-section-number">2.3.3</span> Simplifying models</h3>
+<p>It is very easy to write down a model that is too complex to use effectively. In such cases we often seek simpler models that are consistent with models we have in mind but contain fewer nodes or more limited variation. In general this is possible but caution has to be taken to ensure that simplified models are indeed consistent with the original model.</p>
+<p>Fortunately the mapping between graphs and relations of conditional independence give guidance for determining when and how it is possible to simplify models. We focus discussion on simplifications that involve node elimination and conditioning on nodes.</p>
+<p><strong>Eliminating nodes</strong></p>
+<p>If we want to eliminate a node the key rule is that the noew model (and graph) must take into account:</p>
+<ol style="list-style-type: lower-alpha">
+<li>all <em>dependencies</em> among remaining nodes and</li>
+<li>all <em>variation</em> generated by the eliminated node.</li>
+</ol>
+<p>We can work out what this means, separately, for eliminating <em>endogenous</em> nodes and for eliminating <em>exogenous</em> nodes.</p>
+<p><em>Eliminating endogenous nodes</em></p>
+<p>Eliminating an endogenous node means removing a node with parents (direct causes) represented on the graph. If the node also has one or more children, then the node captures a dependency: it links its parents to its children. When we eliminate this node, preserving these dependencies requires that all of the eliminated node’s parents adopt—become parents of—all of the eliminated node’s children. Thus, for instance if we had a model in which <span class="math inline">\(A \rightarrow M \leftarrow B\)</span> and <span class="math inline">\(M \rightarrow Y\)</span>, if we were to eliminate <span class="math inline">\(M\)</span>, <span class="math inline">\(M\)</span>’s parents (<span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>) would need to adopt <span class="math inline">\(M\)</span>’s child, <span class="math inline">\(Y\)</span>.</p>
+<!-- As for $\theta^M$, it too must now point directly into $Y$---though we can use a bit of shorthand to make this happen. Recall that $\theta^M$ represents the part of $M$ that is randomly determined. Rather than drawing two separate disturbance ($\theta$) terms pointing into $Y$, however, we more simply represent the combined disturbance term as $\theta^Y_{\text{higher}}$, with the ''higher'' signaling the aggregation of roots. (This is, of course, simply reversing the disaggregation that we undertook earlier to move from the higher- to the lower-level model.) -->
+<p>More intuitively, when we simplify away a mediator, we need to make sure that we preserve the causal relationships being mediated—both those among substantive variables and any random shocks at the mediating causal steps.<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></p>
+<p><em>Eliminating exogenous nodes</em></p>
+<p>What about eliminating exogenous nodes—nodes with no parents? For the most part, exogenous nodes cannot be eliminated, but must either be replaced by or incorporated into <span class="math inline">\(U\)</span> (or <span class="math inline">\(\theta\)</span>) terms. The reason is that we need preserve any dependencies or variation generated by the exogenous node. Figure <a href="models.html#fig:elimrules">2.5</a> walks through four different situations in which we might want to simplify away the exogenous node, <span class="math inline">\(X\)</span>. (Here we use the more generic <span class="math inline">\(U\)</span> notation, though the same principles apply if these are type-receptacles(<span class="math inline">\(\theta\)</span>.)</p>
+<div class="figure" style="text-align: center"><span id="fig:elimrules"></span>
+<img src="ii_files/figure-html/elimrules-1.png" alt="Here we represent the basic principles for eliminating exogenous nodes." width=".5\textwidth" />
+<p class="caption">
+Figure 2.5: Here we represent the basic principles for eliminating exogenous nodes.
+</p>
+</div>
+<ul>
+<li><em>Multiple children.</em> In (a1), we start with a model in which <span class="math inline">\(X\)</span> has two children, thus generating a dependency between <span class="math inline">\(W\)</span> and <span class="math inline">\(Y\)</span>. If we eliminate <span class="math inline">\(X\)</span>, we must preserve this dependency. We can do so, as pictured in (a2), by replacing <span class="math inline">\(X\)</span> with a <span class="math inline">\(\theta\)</span> term that points into both <span class="math inline">\(W\)</span> and <span class="math inline">\(Y\)</span>. By convention, we could, alternatively, convey the same information with a dashed, undirected line between <span class="math inline">\(W\)</span> and <span class="math inline">\(Y\)</span>. Though we are no longer specifying what it is that connects <span class="math inline">\(W\)</span> and <span class="math inline">\(Y\)</span>, the correlation itself is retained.</li>
+<li><em>Substantive spouse.</em> In (b1), <span class="math inline">\(X\)</span> has a spouse that is substantively specified, <span class="math inline">\(W\)</span>. If we eliminate <span class="math inline">\(X\)</span>, we have to preserve the fact that <span class="math inline">\(Y\)</span> is not fully determined by <span class="math inline">\(W\)</span>; <em>something</em> else also generates variation in <span class="math inline">\(Y\)</span>. We thus need to replace <span class="math inline">\(X\)</span> with a <span class="math inline">\(\theta\)</span> term, <span class="math inline">\(\theta^Y\)</span>, to capture the variation in <span class="math inline">\(Y\)</span> that is not accounted for by <span class="math inline">\(W\)</span>.</li>
+<li><em><span class="math inline">\(\theta\)</span>-term spouse.</em> In (c1), <span class="math inline">\(X\)</span> has a spouse that is <em>not</em> substantively specified, <span class="math inline">\(U^{Y}\)</span>. Eliminating <span class="math inline">\(X\)</span> requires, again, capturing the variance that it generates as a random input. As we already have a <span class="math inline">\(\theta\)</span> term pointing only into <span class="math inline">\(Y\)</span>, we can substitute in <span class="math inline">\(\theta^{Y}_\text{mod}\)</span>, which represents both <span class="math inline">\(U^{Y}\)</span> and the variance generated by <span class="math inline">\(X\)</span>.<a href="#fn18" class="footnote-ref" id="fnref18"><sup>18</sup></a></li>
+<li><em>One child, no spouse.</em> In (d1), <span class="math inline">\(X\)</span> has only one child and no spouse. Here we can safely eliminate <span class="math inline">\(X\)</span> with no loss of information. It is always understood that every exogenous node has some cause, and there is no loss of information in simply eliminating a node’s causes if those causes are exogenous and do not affect other endogenous nodes in the model. In (d2) we are simply not specifying <span class="math inline">\(Y\)</span>’s cause, but we have not lost any dependencies or sources of variance that had been expressed in (d1).</li>
+</ul>
+<p>One interesting effect of eliminating a substantive exogenous node can be to render seemingly deterministic relations effectively probabilistic. In moving from (b1) to (b2), we have taken a component of <span class="math inline">\(Y\)</span> that was determined by <span class="math inline">\(X\)</span> and converting it into a random disturbance. Just as we can explain a more probabilistic claim with a less probabilistic theory, we can derive claims from simplified models with greater probabilism from theories with greater determinism.</p>
+<div class="figure" style="text-align: center"><span id="fig:lowercomplexdem"></span>
+<img src="ii_files/figure-html/lowercomplexdem-1.png" alt="A model  from which multiple simpler models can be derived." width=".5\textwidth" />
+<p class="caption">
+Figure 2.6: A model from which multiple simpler models can be derived.
+</p>
+</div>
+<!-- ```{r lowercomplexdem, echo = FALSE, fig.width = 10, fig.height = 6,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A lower-level model  from which multiple higher level models can be derived."} -->
+<!-- par(mfrow = c(1,1)) -->
+<!-- par(mar=c(1,1,3,1)) -->
+<!-- hj_dag(x = c(1,1,2,2,3), -->
+<!--        y = c(2,1,2,1,1.5), -->
+<!--        names = c( -->
+<!--          expression(paste("I: Inequality")), -->
+<!--          expression(paste("E: Ethnic\nhomogeneity")), -->
+<!--          expression(paste("M: Mobilization")), -->
+<!--          expression(paste("R: Redistributive\npreferences")), -->
+<!--          expression(paste("D: Democratization")) -->
+<!--          ),   -->
+<!--        arcs = cbind( c(1, 3, 2, 2, 3, 4), -->
+<!--                      c(3, 4, 4, 3, 5, 5)), -->
+<!--        add_functions = 0,  -->
+<!--        contraction = .16,  -->
+<!--        padding = .2 -->
+<!-- ) -->
+<!-- ``` -->
+<div class="figure"><span id="fig:runningsubs"></span>
+<img src="ii_files/figure-html/runningsubs-1.png" alt="Simplifications of the model of Figure X. Nodes that are eliminated are marked in grey; circles denote exogenous nodes that are replaced in subgraphs by unidentified variables. (A circled node pointing into two other nodes could equivalently be indicated as an undirected edge connecting the two.) Note that $C$, $R$, and $Y$ are deterministic functions of $S$ and $X$ in this example." width="1152" />
+<p class="caption">
+Figure 2.7: Simplifications of the model of Figure X. Nodes that are eliminated are marked in grey; circles denote exogenous nodes that are replaced in subgraphs by unidentified variables. (A circled node pointing into two other nodes could equivalently be indicated as an undirected edge connecting the two.) Note that <span class="math inline">\(C\)</span>, <span class="math inline">\(R\)</span>, and <span class="math inline">\(Y\)</span> are deterministic functions of <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span> in this example.
+</p>
+</div>
+<p>We can apply these principles to a model of any complexity. We illustrate a wider range of simplifications by starting with Figure <a href="models.html#fig:lowercomplexdem">2.6</a>. In Figure <a href="models.html#fig:runningsubs">2.7</a>, we show all permissible reductions of the more elaborate model. We can think of these reductions as the full set of simpler claims (involving at least two nodes) that can be derived from the original model. In each subgraph,</p>
+<ul>
+<li>we mark eliminated nodes in grey;</li>
+<li>those nodes that are circled must be replaced with <span class="math inline">\(U\)</span> terms; and</li>
+<li>arrows represent the causal dependencies that must be preserved.</li>
+</ul>
+<p>Note, for instance, that neither <span class="math inline">\(S\)</span> (because it has a spouse) nor <span class="math inline">\(X\)</span> (because it has multiple children) can be simply eliminated; each must be replaced with a <span class="math inline">\(U\)</span> term. Also, the simplified graph with nodes missing can contain arrows that do not appear at all in the graph: eliminating <span class="math inline">\(C\)</span>, for instance, forces an arrow running from <span class="math inline">\(X\)</span> to <span class="math inline">\(R\)</span> (though that is there already) and another running from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span>, as <span class="math inline">\(X\)</span> must adopt <span class="math inline">\(M\)</span>’s children. The simplest elimination is of <span class="math inline">\(Y\)</span> itself since it does not encode any dependencies between other variables.
+<!-- ^[Put differently, and in language that we introduce below, colliding arrowheads do not represent a path in DAG analysis.]  --></p>
+<div id="conditioning-on-nodes" class="section level4" number="2.3.3.1">
+<h4><span class="header-section-number">2.3.3.1</span> Conditioning on nodes</h4>
+<p>Another way to simpify a model is to condition on the value of a node node. When we condition on a node, we are restricting the model in scope to situations in which that node’s value is held constant. Doing so allows us to eliminate the node as well as all arrows pointing into it or out of it. Consider three different situations in which we might condition on a node:</p>
+<ul>
+<li><em>Exogenous, with multiple children.</em> In simplifying (a1) in Figure <a href="models.html#fig:elimrules">2.5</a>, we need to be sure we retain any dependence that <span class="math inline">\(X\)</span> generates between <span class="math inline">\(W\)</span> and <span class="math inline">\(Y\)</span>. However, recalling the rules of conditional independence on a graph (see Chapter ), we know that <span class="math inline">\(W\)</span> and <span class="math inline">\(Y\)</span> are <em>independent</em> conditional on <span class="math inline">\(X\)</span>. Put differently, if we restrict the analysis to contexts in which <span class="math inline">\(X\)</span> takes on a constant value, the model implies that <span class="math inline">\(Y\)</span> and <span class="math inline">\(W\)</span> will be uncorrelated across cases. As fixing <span class="math inline">\(X\)</span>’s value breaks the dependence between <span class="math inline">\(Y\)</span> and <span class="math inline">\(W\)</span>, we can drop <span class="math inline">\(X\)</span> (and the arrows pointing out of it) without having to represent that dependence.</li>
+<li><em>Exogenous, with spouse.</em> In simplifying (b1) or (c1) in Figure <a href="models.html#fig:elimrules">2.5</a>, we need to account for the variation generated by <span class="math inline">\(X\)</span>. If we fix <span class="math inline">\(X\)</span>’s value, however, then we eliminate this variation by assumption and do not need to continue to represent it (or the arrow pointing out of it) on the graph.</li>
+<li><em>Endogenous.</em> When we condition on an endogenous node, we can eliminate the node as well the arrows pointing into and out of it. We, again, leverage relations of conditional independence here. If we start with graph <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model we condition on the mediator, <span class="math inline">\(M\)</span>, we sever the link between <span class="math inline">\(Y\)</span> and <span class="math inline">\(X\)</span>, rendering them conditionally independent of one another. We can thus remove <span class="math inline">\(M\)</span>, the arrow from <span class="math inline">\(X\)</span> to <span class="math inline">\(M\)</span>, and the arrow from <span class="math inline">\(M\)</span> to <span class="math inline">\(Y\)</span>. In the new model, with <span class="math inline">\(M\)</span> fixed, <span class="math inline">\(Y\)</span> will be entirely determined by the random disturbance <span class="math inline">\(\theta^{Y}\)</span>.</li>
+</ul>
+</div>
+</div>
+<div id="retaining-probabilisitic-relations" class="section level3" number="2.3.4">
+<h3><span class="header-section-number">2.3.4</span> Retaining probabilisitic relations</h3>
+<p>We have highlighted the graphical implications of node elimination or node conditioning but importantly the distribution over <span class="math inline">\(\theta\)</span> also needs to be preserved faithfully in a mode to a simpler model.</p>
+<p>In sum, we can work with models that are simpler than our causal beliefs: we may believe a model to be true, but we can derive from it a sparer set of claims. There may be intervening causal steps or features of context that we believe matter, but that are not of interest for a particular line of inquiry. While these can be removed, we nonetheless have to make sure that their <em>implications</em> for the relations remaining in the model are not lost. Understanding the rules of reduction allow us to undertake an important task: checking which simpler claims are and are not consistent with our full belief set.</p>
+</div>
 </div>
 <div id="conc2" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Conclusion</h2>
@@ -1110,7 +1195,7 @@ Figure 2.4:  Three elemental relations of conditional independence.
 <div class="figure" style="text-align: center"><span id="fig:exercise"></span>
 <img src="ii_files/figure-html/exercise-1.png" alt="\label{fig:CItest} An exercise: $A$ and $D$ are conditionally independent, given which other node(s)?" width="80%" />
 <p class="caption">
-Figure 2.5:  An exercise: <span class="math inline">\(A\)</span> and <span class="math inline">\(D\)</span> are conditionally independent, given which other node(s)?
+Figure 2.8:  An exercise: <span class="math inline">\(A\)</span> and <span class="math inline">\(D\)</span> are conditionally independent, given which other node(s)?
 </p>
 </div>
 <p>Are A and D independent:</p>
@@ -1155,6 +1240,9 @@ Hernán, Miguel A, and James M Robins. 2006. <span>“Instruments for Causal Inf
 <div id="ref-hume2000enquiry" class="csl-entry">
 Hume, David, and Tom L Beauchamp. 2000. <em>An Enquiry Concerning Human Understanding: A Critical Edition</em>. Vol. 3. Oxford University Press.
 </div>
+<div id="ref-koller2009probabilistic" class="csl-entry">
+Koller, Daphne, and Nir Friedman. 2009. <em>Probabilistic Graphical Models: Principles and Techniques</em>. MIT press.
+</div>
 <div id="ref-laplace1901philosophical" class="csl-entry">
 Laplace, Pierre-Simon. 1901. <em>A Philosophical Essay on Probabilities</em>. Translated by F.W. Truscott and F.L. Emory. Vol. 166. New York: Cosimo.
 </div>
@@ -1193,6 +1281,8 @@ Splawa-Neyman, Jerzy, DM Dabrowska, TP Speed, and others. 1990. <span>“On the 
 <li id="fn14"><p>By “direct” we mean that the <span class="math inline">\(A\)</span> is a parent of <span class="math inline">\(B\)</span>: i.e., the effect of <span class="math inline">\(A\)</span> on <span class="math inline">\(B\)</span> is not fully mediated by one or more other nodes in the model.<a href="models.html#fnref14" class="footnote-back">↩︎</a></p></li>
 <li id="fn15"><p>Readers may recognize this statement as the logic of adjusting for a confound that is a cause of both an explanatory node and a dependent node in order to achieve conditional independence.<a href="models.html#fnref15" class="footnote-back">↩︎</a></p></li>
 <li id="fn16"><p>In the familial language of causal models, a collider is a child of two or more parents.<a href="models.html#fnref16" class="footnote-back">↩︎</a></p></li>
+<li id="fn17"><p>Eliminating endogenous nodes may also operate via “encapsulated conditional probability distributions” <span class="citation">(<a href="#ref-koller2009probabilistic" role="doc-biblioref">Koller and Friedman 2009</a>)</span> wherein a system of nodes, <span class="math inline">\(\{Z_i\}\)</span> is represented by a single node, <span class="math inline">\(Z\)</span>, that takes the parents of <span class="math inline">\(\{Z_i\}\)</span> not in <span class="math inline">\(\{Z_i\}\)</span> as parents to <span class="math inline">\(Z\)</span> and issues the children of <span class="math inline">\((Z_i)\)</span> that are not in <span class="math inline">\((Z_i)\)</span> as children. However, this is not a fundamental alteration of the graph.<a href="models.html#fnref17" class="footnote-back">↩︎</a></p></li>
+<li id="fn18"><p>This aggregation cannot occur if <span class="math inline">\(\theta^{Y}\)</span> also has another child, <span class="math inline">\(W\)</span>, that is not a child of <span class="math inline">\(X\)</span> since then we would be representing <span class="math inline">\(Y\)</span>’s and <span class="math inline">\(W\)</span>’s random components as identical, which they are not in the original graph.<a href="models.html#fnref18" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>
