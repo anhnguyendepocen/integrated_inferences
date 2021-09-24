@@ -474,9 +474,12 @@ We start with a higher-level model, in panel (a), in which inequality affects de
 Put differently, if two variables are independent--- or conditionally independent given a third variable---in one model, then this same relation of independence (or conditional independence) must be captured in any theory of that model. A theory can *add* conditional independencies not present in the higher-level model. For instance, a mediation theory, $X \rightarrow M \rightarrow Y$, implies a conditional independence that is not present in the higher-level, $X \rightarrow Y$ model that it supports: in the lower-level model only, $X$ is conditionally independent of $Y$ given $M$. But we may not theorize *away*s (conditional) independencies insisted on by our higher-level claim.
 
 
-TEXT
+<!-- AJ: Have deleted the words "TEXT" and the paragraph that follows -- the runningsubs figure doesn't seem to be here anymore.  -->
 
-We can also read Figure \@ref(fig:runningsubs) as telling us the set of claims for which the lower-level graph in Figure \ref{fig:running} can serve as a theory. As we can see, the range of claims that a moderately complex model can theorize is vast. For each simpler claim, moreover, there may be other possible lower-level graphs---theories besides ---consistent with it.
+
+<!-- TEXT -->
+
+<!-- We can also read Figure \@ref(fig:runningsubs) as telling us the set of claims for which the lower-level graph in Figure \ref{fig:running} can serve as a theory. As we can see, the range of claims that a moderately complex model can theorize is vast. For each simpler claim, moreover, there may be other possible lower-level graphs---theories besides ---consistent with it. -->
 
 
 
@@ -594,7 +597,7 @@ Functional (but not probabilistic)  causal models allow for the representation o
 <!-- We use two approaches in our applications to engage with this problem. First we generally allow for *unobserved confounding* in models.  Second we will allow for the estimation of lower level models with unobserved nodes. -->
 
 
-### Quantifying the gains of a theory
+### Quantifying the gains from a theory
 
 We have alluded to the fact that we may want to theorize our models --- develop more elaborate, lower-level models to support them --- because we can get potentially reap greater inferential leverage from the more elaborate theory. But how much more? For instance, what are the gains from a theory that introduces a node $K$ relative to one that does not include $K$? What is the value-added of the more elaborate theory?
 
@@ -602,17 +605,18 @@ One approach to assessing the contribution of a theory is to calculate the mean 
 
 $$\text{Gains from theory} = 1- \frac{E_{K|\mathcal W}(Var(Q|K,\mathcal W))}{Var(Q|\mathcal W)}$$
 
-<!-- AJ: Have tried to explain what Q and W are, and walk through the intuition behind this formulaiton. Make sure this is right. Also should the E not be in the denominator too? -->
+<!-- AJ: Have tried to explain what Q and W are, and walk through the intuition behind this formulation. Make sure this is right. Also should the E not be in the denominator too? -->
 
-We can think of the Bayes risk is akin to an $R^2$ measure in a regression framework (see also @gelman2006bayesian). It is the residual of the 
+We can think of the Bayes risk as the inverse of an $R^2$ measure in a regression framework (see also @gelman2006bayesian): it is the variance in our query given what we have observed. Here we are definining the gains from theory as the degree to which we have reduced that variance by observing $K$ and $\mathcal W$, relative to just observing $\mathcal W$.
 
-Another approach is to ask: how much better are my guesses now compared to what I would have guessed before, given what I know now. 
+Another approach is to ask: how much better are our guesses having observed $K$ compared to what we would have guessed before, *given* what we know having observed $K$? 
+
+<!-- AJ: Needs a sentence here introducing the terminology. Is this our term, expected wisdom? -->
 
 Expected wisdom.
 
 $$Wisdom  = \int(q_0 - q)^2 - (q_k - q)^2 p(q | k)dq$$
-This captures how much better off we are with the guess we have made given current data ($q_k$) compared to the guess we woudl have made without it ($q_0$), knowing what we know now ($p(q|k)$. An advantage of this conceptualization is that you can record gains in learning even if posterior variance is larger than prior variance.  Even still the implications for strategy are the same since wisdom is maximized by a strategy that reduces expected squared error. 
-
+This captures how much better off we are with the guess we have made given current data ($q_k$) compared to the guess we would have made without it ($q_0$), knowing what we know having observe $K$ ($p(q|k)$. A modest advantage of this conceptualization is that we can still record gains in learning even if the learning operates such that the posterior variance is larger than the prior variance.  Even so, the implications for strategy are the same since wisdom is maximized by a strategy that reduces expected squared error. 
 
 Other possible measures of gains from theory might include the simple correlation between $K$ and $Q$, or entropy-based measures (see @zhang2003properties for many more possibilities). 
 
@@ -678,6 +682,15 @@ text(.8, c(.15, .25, .3, .62, .41), c("I(K,Q)/H(Q)","(Reduced posterior variance
 
 
 ```
+
+## Theoretical development
+
+The understanding of theory as a justifying, elaborated causal model has important implications for how we think about the relationship between theory and evidence and about theoretical development. In a common hypothetico-deductive framework, we formulate a theory, derive its empirical predictions, and then test the theory by examining whether those predictions are borne out by the data. If the evidence does not line up with the predictions, the theory is falsified. We might then respond by amending the theory, but the amended theory must then be tested against new data.
+
+As we will see in chapters to come, when we confront a causal model with data, we do not seek to confirm or falsify the model, but to update beliefs over its parameters. In particular, we will update beliefs about the (possibly joint) distribution of nodal types in the population of interest. 
+
+To illustrate the difference, consider @saunders2011leaders' argument about transformative foreign military intervention, discussed in Chapter \@ref(illustratemodels). As we noted, Saunders' argument---the particular causal effects operating across the causal linkages---represents one of roughly 4 million possible combinations of nodal types that could operate within the causal structure that the argument (on our reading, at least) assumes. For instance, her argument implies that the nodal type $\theta^B$ takes on a value such that the conditions $F=1, P=1,$ and $T=1$ generate $B=1$, and we get $B=0$ otherwise; that $\theta^I$ takes on the one value under which $B=1, F=1$ and $B=0, F=0$ produce $I=1$, for either value of $A$; and $A$ has a positive effect on $I$ whenever $B \neq F$; and so on, for all endogenous nodes.  
+
 
 ## Conclusion
 
