@@ -921,9 +921,10 @@ In this chapter, we have shown how we can inscribe causal beliefs, rooted in the
 
 ### Steps for constructing causal models
 
-***
-
-Box: **Steps for constructing causal models**
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""  #markov}
+:::
+**Steps for constructing causal models**
 
 1. Identify a set of variables in a domain of interest. These become the nodes of the model.
 
@@ -947,8 +948,7 @@ Box: **Steps for constructing causal models**
 
   * How common or likely to do we think different values of the exogenous nodes are?
   * Are they independently distributed? If in step 2 you drew an undirected edge between nodes then you believe that the connected nodes are not independently distributed.
-
-***
+::::
 
 
 ### Model construction in code
@@ -1064,6 +1064,29 @@ These steps are enough to fully describe a binary causal model. Later in this bo
 <!-- So far, although not completely general, the focus on causal DAGs is consistent with most approaches used in qualitative work on process tracing, in qualitative case analysis, and in econometric approaches. Some of these approaches commonly assume simple functional forms but these impositions are not implied by the general approach. For example econometric models often impose linear assumptions---for example in work on linear structural equations. Qualitative case analysis often assume all units are binary and that outcomes are deterministic. Under some representations the latter assumption implies conditional independencies that cannot be read from the graph, and thus violate stability conditions commonly assumed of the probability distributions that graphs are meant to represent (though it is still always that case that one can tell from the graph whenever two sets of nodes are not conditionally independent given some other set). In our running example described below we give an example of such deterministic relations. -->
 
 
+### Rules for moving between levels
+
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""  #markov}
+:::
+**Rules for moving between levels**
+
+*Moving down levels*: 
+
+All (conditional) independencies represented in a higher-level model must be preserved in the lower-level model. 
+
+When we disaggregate or add nodes to a model, new conditional independencies can be generated. But any variables that are independent or conditionally independent (given a third variable) in the higher-level model must also be independent or conditionally independent in the lower-level model.
+
+*Moving up levels*: 
+
+We can move up levels by eliminating an exogenous node, eliminating an endogenous node, or conditioning on a node. When we eliminate a node from a model, we must preserve any variation and dependencies that it generates: 
+
+1. When eliminating an endogenous node, that node’s parents adopt (become direct causes of) that node’s children. 
+2. When eliminating an exogenous node, we must usually replace it with a $\theta$ term. If the node has more than one child, it must be replaced with a $\theta$ term pointing into both children (or an undirected edge connecting them) to preserve the dependency between its children. If the node has a spouse, the eliminated node’s variation must also be preserved using a $\theta$ term. Where the spouse is (already) a $\theta$ term with no other children, $\theta$ terms can be combined.  
+3. Since conditioning on a node “blocks” the path through which it connects its children, we can simply eliminate the node and the arrows between it and its children.
+4. An exogenous node with no spouse and only one child can be simply eliminated.
+::::
+
 
 ### Test yourself! Can you read conditional independence from a graph?
 
@@ -1098,27 +1121,3 @@ Yes. Conditioning on $C$, in fact, has no effect on the situation. Doing so cuts
 Yes. Now we are doing two, countervailing things at once. While conditioning on $B$ opens the path connecting $A$ and $D$, conditioning on $C$ closes it again, leaving $A$ and $D$ conditionally independent.
 
 Analyzing a causal graph for relations of independence represents one payoff to formally encoding our beliefs about the world in a causal model. We are, in essence, drawing out implications of those beliefs: given what we believe about a set of direct causal relations (the arrows on the graph), what must this logically imply about other dependencies and independencies on the graph, conditional on having observed some particular set of nodes? We show in a later chapter how these implications can be deployed to guide research design, by indicating which parts of a causal system are potentially informative about other parts that may be of interest.
-
-
-
-
-***
-
-**BOX 2**
-
-**Rules for moving between levels**
-
-*Moving down levels*: 
-
-All (conditional) independencies represented in a higher-level model must be preserved in the lower-level model. 
-
-When we disaggregate or add nodes to a model, new conditional independencies can be generated. But any variables that are independent or conditionally independent (given a third variable) in the higher-level model must also be independent or conditionally independent in the lower-level model.
-
-*Moving up levels*: We can move up levels by eliminating an exogenous node, eliminating an endogenous node, or conditioning on a node. When we eliminate a node from a model, we must preserve any variation and dependencies that it generates: 
-
-1. When eliminating an endogenous node, that node’s parents adopt (become direct causes of) that node’s children. 
-2. When eliminating an exogenous node, we must usually replace it with a $\theta$ term. If the node has more than one child, it must be replaced with a $\theta$ term pointing into both children (or an undirected edge connecting them) to preserve the dependency between its children. If the node has a spouse, the eliminated node’s variation must also be preserved using a $\theta$ term. Where the spouse is (already) a $\theta$ term with no other children, $\theta$ terms can be combined.  
-3. Since conditioning on a node “blocks” the path through which it connects its children, we can simply eliminate the node and the arrows between it and its children.
-4. An exogenous node with no spouse and only one child can be simply eliminated.
-
-***
