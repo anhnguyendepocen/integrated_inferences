@@ -834,8 +834,6 @@ var_names <- c("K", "X", "Y", "Q")
 
 check.A <- function(A, iterations = 4){
   x <- 1
-  if( sum(sapply(1:iterations, function(j) sum(diag((A %^% j))))) > 0) x<- 0 # Cycles
-  if( sum(sapply(1:iterations, function(j) (A %^% j)[2,3])) == 0) x<- -1 # "No path from X to Y (2 to 3)"
   if( sum(sapply(1:iterations, function(j) sum(diag((A*j))))) > 0) x<- 0 # Cycles
   if( sum(sapply(1:iterations, function(j) (A*j)[2,3])) == 0) x<- -1 # "No path from X to Y (2 to 3)"
   if(min(rowSums(A) + colSums(A))==0) x<- -2 # "Unconnected element"
