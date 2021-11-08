@@ -1,40 +1,51 @@
+# Packages call up
 
-library("pacman")
+  # Manually install packages from github:
 
 # devtools::install_github("tidyverse/dplyr")
 # remotes::install_github("macartan/CausalQueries")
 
+  # Install and load packages from CRAN:
+
+library("pacman")
 pacman::p_load(
   DT,
   bookdown,
-  CausalQueries,
+  # CausalQueries,
   tidyverse,
   # bayesplot,
   # bindrcpp,
   ggplot2,
   estimatr,
-#  StanHeaders,
-   rstan,
-#  rstanarm,
+# StanHeaders,
+  rstan,
+# rstanarm,
   knitr,
-#  expm,
-#  plotrix,
+# expm,
+# plotrix,
   reshape2,
   dagitty,
-  stargazer#,
+  stargazer,
 #  partitions
 )
 
+ # Programming and default package options: 
+
 #library(CQtools)
+
 options(mc.cores = parallel::detectCores())
+
 options(knitr.kable.NA = '')
 
 do_diagnosis = FALSE
 
-flag <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
-
 options(mc.cores = parallel::detectCores())
+
 rstan_options(auto_write = TRUE)
+
+  # Formatting:
+
+flag <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
 
 format_with_col = function(x, color = "blue"){
   if(knitr::is_latex_output())
@@ -45,7 +56,7 @@ format_with_col = function(x, color = "blue"){
     x
 }
 
-
+  # Game
 
 #' Game Tree
 #'
@@ -184,7 +195,7 @@ gt_tree = function(
 }
 
 
-# Draw DAG
+  # Draw DAG
 
 hj_dag <- function(x,
                    y,
@@ -220,8 +231,6 @@ hj_dag <- function(x,
   if(box) box()
 }
 
-
-
 perm_bb <- function(v) {
   sapply(1:length(v), function(x) {
     rep( rep(1:v[x], each=prod(v[x:length(v)]) / v[x]),
@@ -230,7 +239,7 @@ perm_bb <- function(v) {
 }
 
 
-## Find replace
+  # Find replace
 
 file_find_replace <- function(filepath, pattern, replacement) {
   file_contents <- readLines(filepath)
