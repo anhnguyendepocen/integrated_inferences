@@ -7,10 +7,12 @@ library("pacman")
 pacman::p_load(
   DT,
   bookdown,
+  CausalQueries,
   tidyverse,
   # bayesplot,
   # bindrcpp,
   ggplot2,
+  estimatr,
 #  StanHeaders,
    rstan,
 #  rstanarm,
@@ -23,7 +25,7 @@ pacman::p_load(
 #  partitions
 )
 
-library(CQtools)
+#library(CQtools)
 options(mc.cores = parallel::detectCores())
 options(knitr.kable.NA = '')
 
