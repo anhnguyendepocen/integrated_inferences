@@ -1,10 +1,28 @@
-# Packages call up
+# Packages
 
-  # Manually install packages from github:
 
+#####
+  # Install some packages directly from github:
+
+# install.packages("devtools")
+# library(devtools)
 # devtools::install_github("tidyverse/dplyr")
+
+# install.packages("remotes")
+# library(remotes)
 # remotes::install_github("macartan/CausalQueries")
 
+  # (1) if CausalQueries gives error "Could not find tools necessary to compile a package.", please run:
+    # devtools::has_devel()
+  # (2) if you do not receive the "Your system is ready to build packages!" message, you have to install developer tools for R.
+    # On a Mac: 
+      ## Open Terminal, type "xcode-select --install"
+      ## If you are asked to update, go to the App Store and download: https://apps.apple.com/us/app/xcode/id497799835?mt=12
+      ## Quit and restart R, and run:
+      ## devtools::has_devel()
+      ## You should now be able to install from GitHub.
+
+#####
   # Install and load packages from CRAN:
 
 library("pacman")
@@ -29,6 +47,8 @@ pacman::p_load(
 #  partitions
 )
 
+
+#####
  # Programming and default package options: 
 
 #library(CQtools)
@@ -43,7 +63,8 @@ options(mc.cores = parallel::detectCores())
 
 rstan_options(auto_write = TRUE)
 
-  # Formatting:
+#####
+  # Formatting and LaTeX:
 
 flag <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
 
@@ -56,6 +77,7 @@ format_with_col = function(x, color = "blue"){
     x
 }
 
+##### 
   # Game
 
 #' Game Tree
@@ -194,7 +216,8 @@ gt_tree = function(
   text(1, N+.5, title,  cex=titlesize, pos = 4, col = titlecol )
 }
 
-
+                       
+#####
   # Draw DAG
 
 hj_dag <- function(x,
@@ -238,7 +261,8 @@ perm_bb <- function(v) {
   } ) - 1
 }
 
-
+                       
+#####
   # Find replace
 
 file_find_replace <- function(filepath, pattern, replacement) {
