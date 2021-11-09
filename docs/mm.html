@@ -4,22 +4,22 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 11 Mixing models | Integrated Inferences</title>
-  <meta name="description" content="Model based strategies for integrating qualitative and quantitative inferences." />
-  <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
+  <title>Chapter 11 Mixing models | Illustrating causal models</title>
+  <meta name="description" content="Bayesian causal models for integrated inferences." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 11 Mixing models | Integrated Inferences" />
+  <meta property="og:title" content="Chapter 11 Mixing models | Illustrating causal models" />
   <meta property="og:type" content="book" />
-  
-  <meta property="og:image" content="dnieperriver.png" />
-  <meta property="og:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
-  <meta name="github-repo" content="rstudio/ii" />
+  <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
+  <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+  <meta property="og:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="github-repo" content="macartan/integrated_inferences" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 11 Mixing models | Integrated Inferences" />
+  <meta name="twitter:title" content="Chapter 11 Mixing models | Illustrating causal models" />
   
-  <meta name="twitter:description" content="Model based strategies for integrating qualitative and quantitative inferences." />
-  <meta name="twitter:image" content="dnieperriver.png" />
+  <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
 
 <meta name="author" content="Macartan Humphreys and Alan Jacobs" />
 
@@ -31,8 +31,10 @@
   
   
 <link rel="prev" href="mixingapp.html"/>
-<link rel="next" href="elements-of-design.html"/>
-<script src="libs/jquery/jquery.min.js"></script>
+<link rel="next" href="elements.html"/>
+<script src="libs/header-attrs/header-attrs.js"></script>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
@@ -48,31 +50,31 @@
 
 
 
-
-<script src="libs/accessible-code-block/empty-anchor.js"></script>
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
 <script src="libs/htmlwidgets/htmlwidgets.js"></script>
 <link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
 <script src="libs/datatables-binding/datatables.js"></script>
 <link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
 <script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
-<link href="libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
 <script src="libs/crosstalk/js/crosstalk.min.js"></script>
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -92,7 +94,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -125,6 +127,29 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
 <link rel="stylesheet" href="headers/style.css" type="text/css" />
 </head>
 
@@ -142,8 +167,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
-<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
-<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a><ul>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a>
+<ul>
 <li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
 <li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
 <li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
@@ -152,147 +179,195 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
 </ul></li>
 <li class="part"><span><b>I Foundations</b></span></li>
-<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a><ul>
-<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#the-counterfactual-model"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a><ul>
-<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#generalizing-to-outcomes-with-many-causes"><i class="fa fa-check"></i><b>2.1.1</b> Generalizing to outcomes with many causes</a></li>
-<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#deterministic-relations"><i class="fa fa-check"></i><b>2.1.2</b> Deterministic relations</a></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#counterfactualmodel"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#potential-outcomes"><i class="fa fa-check"></i><b>2.1.1</b> Potential outcomes</a></li>
+<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#generalization"><i class="fa fa-check"></i><b>2.1.2</b> Generalization</a></li>
+<li class="chapter" data-level="2.1.3" data-path="models.html"><a href="models.html#summaries-of-potential-outcomes"><i class="fa fa-check"></i><b>2.1.3</b> Summaries of potential outcomes</a></li>
 </ul></li>
-<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a><ul>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
-<li class="chapter" data-level="2.2.2" data-path="models.html"><a href="models.html#rules-for-graphing-causal-models"><i class="fa fa-check"></i><b>2.2.2</b> Rules for graphing causal models</a></li>
-<li class="chapter" data-level="2.2.3" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.2.3</b> Conditional independence from DAGs</a></li>
-<li class="chapter" data-level="2.2.4" data-path="models.html"><a href="models.html#a-simple-running-example"><i class="fa fa-check"></i><b>2.2.4</b> A simple running example</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.3</b> Chapter Appendix</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.3.1</b> Steps for constructing causal models</a></li>
-<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.3.2</b> Model construction in code</a></li>
-<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#test-yourself-can-you-read-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.3.3</b> Test yourself! Can you read conditional independence from a graph?</a></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#graphing-models-and-using-graphs"><i class="fa fa-check"></i><b>2.3</b> Graphing models and using graphs</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilistic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilistic relations</a></li>
 </ul></li>
-</ul></li>
-<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a><ul>
-<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform-pierson-1994"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform: Pierson (1994)</a></li>
-<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions-saunders-2011"><i class="fa fa-check"></i><b>3.2</b> Military Interventions: Saunders (2011)</a></li>
-<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization-przeworski-and-limongi-1997"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization: Przeworski and Limongi (1997)</a></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>4</b> Theories as causal models</a><ul>
-<li class="chapter" data-level="4.1" data-path="theory.html"><a href="theory.html#theory-as-a-lower-level-model"><i class="fa fa-check"></i><b>4.1</b> Theory as a “lower-level” model</a></li>
-<li class="chapter" data-level="4.2" data-path="theory.html"><a href="theory.html#illustration-of-unpacking-causal-types"><i class="fa fa-check"></i><b>4.2</b> Illustration of unpacking causal types</a><ul>
-<li class="chapter" data-level="4.2.1" data-path="theory.html"><a href="theory.html#type-disaggregation-in-a-mediation-model"><i class="fa fa-check"></i><b>4.2.1</b> Type disaggregation in a mediation model</a></li>
-<li class="chapter" data-level="4.2.2" data-path="theory.html"><a href="theory.html#type-disaggregation-in-a-moderation-model"><i class="fa fa-check"></i><b>4.2.2</b> Type disaggregation in a moderation model</a></li>
-</ul></li>
-<li class="chapter" data-level="4.3" data-path="theory.html"><a href="theory.html#rules-for-moving-between-higher--and-lower-level-models"><i class="fa fa-check"></i><b>4.3</b> Rules for moving between higher- and lower-level models</a><ul>
-<li class="chapter" data-level="4.3.1" data-path="theory.html"><a href="theory.html#moving-down-levels"><i class="fa fa-check"></i><b>4.3.1</b> Moving down levels</a></li>
-<li class="chapter" data-level="4.3.2" data-path="theory.html"><a href="theory.html#moving-up-levels"><i class="fa fa-check"></i><b>4.3.2</b> Moving up levels</a></li>
-</ul></li>
-<li class="chapter" data-level="4.4" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>4.4</b> Conclusion</a><ul>
-<li class="chapter" data-level="4.4.1" data-path="theory.html"><a href="theory.html#quantifying-the-gains-of-a-theory"><i class="fa fa-check"></i><b>4.4.1</b> Quantifying the gains of a theory</a></li>
-</ul></li>
-<li class="chapter" data-level="4.5" data-path="theory.html"><a href="theory.html#chapter-appendices"><i class="fa fa-check"></i><b>4.5</b> Chapter Appendices</a><ul>
-<li class="chapter" data-level="4.5.1" data-path="theory.html"><a href="theory.html#summary-boxes"><i class="fa fa-check"></i><b>4.5.1</b> Summary Boxes</a></li>
-<li class="chapter" data-level="4.5.2" data-path="theory.html"><a href="theory.html#illustration-of-a-mapping-from-a-game-to-a-dag"><i class="fa fa-check"></i><b>4.5.2</b> Illustration of a Mapping from a Game to a DAG</a></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
+<li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.5.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.5.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.5.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.5.3" data-path="models.html"><a href="models.html#rules-for-moving-between-levels"><i class="fa fa-check"></i><b>2.5.3</b> Rules for moving between levels</a></li>
+<li class="chapter" data-level="2.5.4" data-path="models.html"><a href="models.html#test-yourself-can-you-read-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.5.4</b> Test yourself! Can you read conditional independence from a graph?</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>5</b> Causal Queries</a><ul>
-<li class="chapter" data-level="5.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>5.1</b> Case-level causal effects</a></li>
-<li class="chapter" data-level="5.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>5.2</b> Case-level causal attribution</a></li>
-<li class="chapter" data-level="5.3" data-path="questions.html"><a href="questions.html#case-level-explanation"><i class="fa fa-check"></i><b>5.3</b> Case-level explanation</a></li>
-<li class="chapter" data-level="5.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>5.4</b> Average causal effects</a></li>
-<li class="chapter" data-level="5.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>5.5</b> Causal Paths</a></li>
+<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform</a></li>
+<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions"><i class="fa fa-check"></i><b>3.2</b> Military Interventions</a></li>
+<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>6</b> Bayesian Answers</a><ul>
-<li class="chapter" data-level="6.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>6.1</b> Bayes Basics</a><ul>
-<li class="chapter" data-level="6.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>6.1.1</b> Simple instances</a></li>
-<li class="chapter" data-level="6.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>6.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
-<li class="chapter" data-level="6.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>6.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
-<li class="chapter" data-level="6.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>6.1.4</b> Moments</a></li>
-<li class="chapter" data-level="6.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>6.1.5</b> Bayes estimation in practice</a></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Queries</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#actual-causes"><i class="fa fa-check"></i><b>4.3</b> Actual causes</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>6.2</b> Bayes applied</a><ul>
-<li class="chapter" data-level="6.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>6.2.1</b> Simple Bayesian Process Tracing</a></li>
-<li class="chapter" data-level="6.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>6.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="bayeschapter.html"><a href="bayeschapter.html#three-principles-of-bayesian-updating"><i class="fa fa-check"></i><b>6.3</b> Three principles of Bayesian updating</a><ul>
-<li class="chapter" data-level="6.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>6.3.1</b> Priors matter</a></li>
-<li class="chapter" data-level="6.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>6.3.2</b> Simultaneous, joint updating</a></li>
-<li class="chapter" data-level="6.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>6.3.3</b> Posteriors are independent of the ordering of data</a></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#three-principles-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Three principles of Bayesian updating</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>6</b> Theories as causal models</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="theory.html"><a href="theory.html#models-as-theories-of"><i class="fa fa-check"></i><b>6.1</b> Models as <em>theories of</em></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="theory.html"><a href="theory.html#implications-of-structural-causal-models"><i class="fa fa-check"></i><b>6.1.1</b> Implications of structural causal models</a></li>
+<li class="chapter" data-level="6.1.2" data-path="theory.html"><a href="theory.html#implications-of-probabilistic-causal-models"><i class="fa fa-check"></i><b>6.1.2</b> Implications of probabilistic causal models</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="theory.html"><a href="theory.html#uses"><i class="fa fa-check"></i><b>6.2</b> Uses</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="theory.html"><a href="theory.html#justification"><i class="fa fa-check"></i><b>6.2.1</b> Justification</a></li>
+<li class="chapter" data-level="6.2.2" data-path="theory.html"><a href="theory.html#explanation"><i class="fa fa-check"></i><b>6.2.2</b> Explanation</a></li>
+<li class="chapter" data-level="6.2.3" data-path="theory.html"><a href="theory.html#integration-of-theory-and-empirics"><i class="fa fa-check"></i><b>6.2.3</b> Integration of theory and empirics</a></li>
+<li class="chapter" data-level="6.2.4" data-path="theory.html"><a href="theory.html#utility"><i class="fa fa-check"></i><b>6.2.4</b> Utility</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="theory.html"><a href="theory.html#the-rules"><i class="fa fa-check"></i><b>6.3</b> The rules</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="theory.html"><a href="theory.html#mappings-are-not-1-to-1"><i class="fa fa-check"></i><b>6.3.1</b> Mappings are not 1 to 1</a></li>
+<li class="chapter" data-level="6.3.2" data-path="theory.html"><a href="theory.html#consistency"><i class="fa fa-check"></i><b>6.3.2</b> Consistency</a></li>
+<li class="chapter" data-level="6.3.3" data-path="theory.html"><a href="theory.html#implied-consistency-of-priors"><i class="fa fa-check"></i><b>6.3.3</b> Implied consistency of priors</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>6.4</b> Conclusion</a></li>
+<li class="chapter" data-level="6.5" data-path="theory.html"><a href="theory.html#chapter-appendices"><i class="fa fa-check"></i><b>6.5</b> Chapter Appendices</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="theory.html"><a href="theory.html#summary-boxes"><i class="fa fa-check"></i><b>6.5.1</b> Summary Boxes</a></li>
+<li class="chapter" data-level="6.5.2" data-path="theory.html"><a href="theory.html#connections-to-other-writing-on-theory"><i class="fa fa-check"></i><b>6.5.2</b> Connections to other writing on theory</a></li>
+<li class="chapter" data-level="6.5.3" data-path="theory.html"><a href="theory.html#illustration-of-a-mapping-from-a-game-to-a-dag"><i class="fa fa-check"></i><b>6.5.3</b> Illustration of a Mapping from a Game to a DAG</a></li>
 </ul></li>
 </ul></li>
 <li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
-<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a><ul>
-<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a><ul>
+<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a>
+<ul>
 <li class="chapter" data-level="7.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>7.1.1</b> The intuition</a></li>
 <li class="chapter" data-level="7.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>7.1.2</b> A formalization of the general approach</a></li>
 <li class="chapter" data-level="7.1.3" data-path="pt.html"><a href="pt.html#illustration-with-code"><i class="fa fa-check"></i><b>7.1.3</b> Illustration with code</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#five-principles"><i class="fa fa-check"></i><b>7.2</b> Five principles</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="pt.html"><a href="pt.html#classic-qualitative-tests-are-special-cases-of-updating-on-a-model"><i class="fa fa-check"></i><b>7.2.1</b> Classic qualitative tests are special cases of updating on a model</a></li>
-<li class="chapter" data-level="7.2.2" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-get-you-probative-value"><i class="fa fa-check"></i><b>7.2.2</b> A DAG alone does not get you probative value</a></li>
-<li class="chapter" data-level="7.2.3" data-path="pt.html"><a href="pt.html#uncertainty-does-not-alter-inference-for-single-case-causal-inference"><i class="fa fa-check"></i><b>7.2.3</b> Uncertainty does not alter inference for single case causal inference</a></li>
-<li class="chapter" data-level="7.2.4" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>7.2.4</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
-<li class="chapter" data-level="7.2.5" data-path="pt.html"><a href="pt.html#probative-value"><i class="fa fa-check"></i><b>7.2.5</b> Probative value</a></li>
+<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.3</b> Principles of learning</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-get-us-probative-value"><i class="fa fa-check"></i><b>7.3.1</b> A DAG alone does not get us probative value</a></li>
+<li class="chapter" data-level="7.3.2" data-path="pt.html"><a href="pt.html#learning-requires-uncertainty"><i class="fa fa-check"></i><b>7.3.2</b> Learning requires uncertainty</a></li>
+<li class="chapter" data-level="7.3.3" data-path="pt.html"><a href="pt.html#multiple-ways-for-queries-to-be-satisfied"><i class="fa fa-check"></i><b>7.3.3</b> Multiple ways for queries to be satisfied</a></li>
+<li class="chapter" data-level="7.3.4" data-path="pt.html"><a href="pt.html#beware-of-highly-unlikely-queries"><i class="fa fa-check"></i><b>7.3.4</b> Beware of highly unlikely queries</a></li>
+<li class="chapter" data-level="7.3.5" data-path="pt.html"><a href="pt.html#population-level-uncertainty-does-not-alter-case-level-causal-inference"><i class="fa fa-check"></i><b>7.3.5</b> Population-level uncertainty does not alter case-level causal inference</a></li>
+<li class="chapter" data-level="7.3.6" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>7.3.6</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+<li class="chapter" data-level="7.3.7" data-path="pt.html"><a href="pt.html#probative-value"><i class="fa fa-check"></i><b>7.3.7</b> Probative value</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Application: Process Tracing with a Causal Model</a><ul>
+<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Application: Process Tracing with a Causal Model</a>
+<ul>
 <li class="chapter" data-level="8.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>8.1</b> Inequality and Democratization: The Debate</a></li>
-<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a><ul>
+<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a>
+<ul>
 <li class="chapter" data-level="8.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>8.2.1</b> Forming Priors</a></li>
 </ul></li>
 <li class="chapter" data-level="8.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>8.3</b> Results</a></li>
-<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#pathways"><i class="fa fa-check"></i><b>8.4</b> Pathways</a><ul>
+<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#pathways"><i class="fa fa-check"></i><b>8.4</b> Pathways</a>
+<ul>
 <li class="chapter" data-level="8.4.1" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>8.4.1</b> Cases with incomplete data</a></li>
 <li class="chapter" data-level="8.4.2" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>8.4.2</b> Inferences for cases with observed democratization</a></li>
 </ul></li>
 <li class="chapter" data-level="8.5" data-path="ptapp.html"><a href="ptapp.html#model-definition-and-inference-in-code"><i class="fa fa-check"></i><b>8.5</b> Model definition and inference in code</a></li>
 <li class="chapter" data-level="8.6" data-path="ptapp.html"><a href="ptapp.html#concluding-thoughts"><i class="fa fa-check"></i><b>8.6</b> Concluding thoughts</a></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a><ul>
-<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#theres-only-ever-one-case"><i class="fa fa-check"></i><b>9.1</b> There’s only ever one case</a></li>
-<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#general-procedure"><i class="fa fa-check"></i><b>9.2</b> General procedure</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#estimation"><i class="fa fa-check"></i><b>9.2.1</b> Estimation</a></li>
+<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#from-sample-queries-to-general-processes"><i class="fa fa-check"></i><b>9.2</b> From sample queries to general processes</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
+<li class="chapter" data-level="9.2.3" data-path="mixing.html"><a href="mixing.html#wrinkles"><i class="fa fa-check"></i><b>9.2.3</b> Wrinkles</a></li>
 </ul></li>
-<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#illustration"><i class="fa fa-check"></i><b>9.3</b> Illustration</a></li>
-<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#illustrated-inferences"><i class="fa fa-check"></i><b>9.4</b> Illustrated inferences</a><ul>
-<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#xy-model"><i class="fa fa-check"></i><b>9.4.1</b> XY model</a></li>
+<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#mixed-methods"><i class="fa fa-check"></i><b>9.3</b> Mixed methods</a></li>
+<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.4</b> Considerations</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#probative-value-can-be-derived-from-a-causal-structure-plus-data"><i class="fa fa-check"></i><b>9.4.1</b> Probative value can be derived from a causal structure plus data</a></li>
+<li class="chapter" data-level="9.4.2" data-path="mixing.html"><a href="mixing.html#learning-without-identification"><i class="fa fa-check"></i><b>9.4.2</b> Learning without identification</a></li>
+<li class="chapter" data-level="9.4.3" data-path="mixing.html"><a href="mixing.html#beyond-binary-data"><i class="fa fa-check"></i><b>9.4.3</b> Beyond binary data</a></li>
+<li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
+<li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
+<li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
+<li class="chapter" data-level="9.4.7" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>9.4.7</b> Parameteric models</a></li>
+<li class="chapter" data-level="9.4.8" data-path="mixing.html"><a href="mixing.html#prior-databeliefs-channel-the-learning-from-new-data"><i class="fa fa-check"></i><b>9.4.8</b> Prior data/beliefs “channel” the learning from new data</a></li>
 </ul></li>
-<li class="chapter" data-level="9.5" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.5</b> Considerations</a><ul>
-<li class="chapter" data-level="9.5.1" data-path="mixing.html"><a href="mixing.html#the-identification-problem"><i class="fa fa-check"></i><b>9.5.1</b> The identification problem</a></li>
-<li class="chapter" data-level="9.5.2" data-path="mixing.html"><a href="mixing.html#continuous-data"><i class="fa fa-check"></i><b>9.5.2</b> Continuous data</a></li>
-<li class="chapter" data-level="9.5.3" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.5.3</b> Measurement error</a></li>
-<li class="chapter" data-level="9.5.4" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.5.4</b> Spillovers</a></li>
-<li class="chapter" data-level="9.5.5" data-path="mixing.html"><a href="mixing.html#clustering-and-other-violations-of-independence"><i class="fa fa-check"></i><b>9.5.5</b> Clustering and other violations of independence</a></li>
-<li class="chapter" data-level="9.5.6" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>9.5.6</b> Parameteric models</a></li>
+<li class="chapter" data-level="9.5" data-path="mixing.html"><a href="mixing.html#conclusion-1"><i class="fa fa-check"></i><b>9.5</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="9.6" data-path="mixing.html"><a href="mixing.html#conclusion-1"><i class="fa fa-check"></i><b>9.6</b> Conclusion</a></li>
-</ul></li>
-<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Mixed-Method Application: Inequality and Democracy Revisited</a><ul>
+<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Mixed-Method Application: Inequality and Democracy Revisited</a>
+<ul>
 <li class="chapter" data-level="10.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>10.1</b> A trained model</a></li>
 <li class="chapter" data-level="10.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>10.2</b> Data</a></li>
-<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference"><i class="fa fa-check"></i><b>10.3</b> Inference</a><ul>
+<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference-1"><i class="fa fa-check"></i><b>10.3</b> Inference</a>
+<ul>
 <li class="chapter" data-level="10.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democracy"><i class="fa fa-check"></i><b>10.3.1</b> Did inequality <em>cause</em> democracy?</a></li>
 <li class="chapter" data-level="10.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>10.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
 </ul></li>
 <li class="chapter" data-level="10.4" data-path="mixingapp.html"><a href="mixingapp.html#exercises"><i class="fa fa-check"></i><b>10.4</b> Exercises</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a><ul>
+<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a>
+<ul>
 <li class="chapter" data-level="11.1" data-path="mm.html"><a href="mm.html#a-jigsaw-puzzle-integrating-across-a-model"><i class="fa fa-check"></i><b>11.1</b> A jigsaw puzzle: Integrating across a model</a></li>
 <li class="chapter" data-level="11.2" data-path="mm.html"><a href="mm.html#combining-observational-and-experimental-data"><i class="fa fa-check"></i><b>11.2</b> Combining observational and experimental data</a></li>
 <li class="chapter" data-level="11.3" data-path="mm.html"><a href="mm.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>11.3</b> Transportation of findings across contexts</a></li>
 <li class="chapter" data-level="11.4" data-path="mm.html"><a href="mm.html#multilevel-models-meta-analysis"><i class="fa fa-check"></i><b>11.4</b> Multilevel models, meta-analysis</a></li>
 </ul></li>
 <li class="part"><span><b>III Design Choices</b></span></li>
-<li class="chapter" data-level="12" data-path="elements-of-design.html"><a href="elements-of-design.html"><i class="fa fa-check"></i><b>12</b> Elements of Design</a><ul>
-<li class="chapter" data-level="12.1" data-path="elements-of-design.html"><a href="elements-of-design.html#model-inquiry-data-strategy-answer-strategy"><i class="fa fa-check"></i><b>12.1</b> Model, inquiry, data strategy, answer strategy</a><ul>
-<li class="chapter" data-level="12.1.1" data-path="elements-of-design.html"><a href="elements-of-design.html#defining-a-model"><i class="fa fa-check"></i><b>12.1.1</b> Defining a model</a></li>
+<li class="chapter" data-level="12" data-path="elements.html"><a href="elements.html"><i class="fa fa-check"></i><b>12</b> Elements of Design</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="elements.html"><a href="elements.html#model-inquiry-data-strategy-answer-strategy"><i class="fa fa-check"></i><b>12.1</b> Model, inquiry, data strategy, answer strategy</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="elements.html"><a href="elements.html#defining-a-model"><i class="fa fa-check"></i><b>12.1.1</b> Defining a model</a></li>
 </ul></li>
-<li class="chapter" data-level="12.2" data-path="elements-of-design.html"><a href="elements-of-design.html#evaluating-a-design"><i class="fa fa-check"></i><b>12.2</b> Evaluating a design</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="elements-of-design.html"><a href="elements-of-design.html#expected-error-and-expected-posterior-variance"><i class="fa fa-check"></i><b>12.2.1</b> Expected error and expected posterior variance</a></li>
-<li class="chapter" data-level="12.2.2" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-1"><i class="fa fa-check"></i><b>12.2.2</b> Illustration</a></li>
+<li class="chapter" data-level="12.2" data-path="elements.html"><a href="elements.html#evaluating-a-design"><i class="fa fa-check"></i><b>12.2</b> Evaluating a design</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="elements.html"><a href="elements.html#expected-error-and-expected-posterior-variance"><i class="fa fa-check"></i><b>12.2.1</b> Expected error and expected posterior variance</a></li>
+<li class="chapter" data-level="12.2.2" data-path="elements.html"><a href="elements.html#illustration"><i class="fa fa-check"></i><b>12.2.2</b> Illustration</a></li>
 </ul></li>
-<li class="chapter" data-level="12.3" data-path="elements-of-design.html"><a href="elements-of-design.html#illustration-of-design-decaration-in-code"><i class="fa fa-check"></i><b>12.3</b> Illustration of Design Decaration in code</a></li>
+<li class="chapter" data-level="12.3" data-path="elements.html"><a href="elements.html#illustration-of-design-decaration-in-code"><i class="fa fa-check"></i><b>12.3</b> Illustration of Design Decaration in code</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>13</b> Clue Selection as a Decision Problem</a><ul>
+<li class="chapter" data-level="13" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>13</b> Clue Selection as a Decision Problem</a>
+<ul>
 <li class="chapter" data-level="13.1" data-path="clue.html"><a href="clue.html#core-logic"><i class="fa fa-check"></i><b>13.1</b> Core logic</a></li>
-<li class="chapter" data-level="13.2" data-path="clue.html"><a href="clue.html#a-strategic-approach"><i class="fa fa-check"></i><b>13.2</b> A strategic approach</a><ul>
+<li class="chapter" data-level="13.2" data-path="clue.html"><a href="clue.html#a-strategic-approach"><i class="fa fa-check"></i><b>13.2</b> A strategic approach</a>
+<ul>
 <li class="chapter" data-level="13.2.1" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>13.2.1</b> Clue selection with a simple example</a></li>
 <li class="chapter" data-level="13.2.2" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>13.2.2</b> Dependence on prior beliefs</a></li>
 <li class="chapter" data-level="13.2.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>13.2.3</b> Clue selection for the democratization model</a></li>
@@ -300,58 +375,63 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="13.3" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>13.3</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="13.4" data-path="clue.html"><a href="clue.html#conclusion-2"><i class="fa fa-check"></i><b>13.4</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>14</b> Mixed methods data strategies</a><ul>
-<li class="chapter" data-level="14.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>14.1</b> Case selection strategies</a><ul>
+<li class="chapter" data-level="14" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>14</b> Mixed methods data strategies</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>14.1</b> Case selection strategies</a>
+<ul>
 <li class="chapter" data-level="14.1.1" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>14.1.1</b> No general rules</a></li>
 <li class="chapter" data-level="14.1.2" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through"><i class="fa fa-check"></i><b>14.1.2</b> Specific case walk through</a></li>
-<li class="chapter" data-level="14.1.3" data-path="caseselection.html"><a href="caseselection.html#case-selection-lessons-from-simulations"><i class="fa fa-check"></i><b>14.1.3</b> Case selection: Lessons from simulations</a></li>
+<li class="chapter" data-level="14.1.3" data-path="caseselection.html"><a href="caseselection.html#case-selection-from-causal-models-a-simulation-based-approach"><i class="fa fa-check"></i><b>14.1.3</b> Case selection from causal models: a simulation-based approach</a></li>
 </ul></li>
-<li class="chapter" data-level="14.2" data-path="caseselection.html"><a href="caseselection.html#wide-or-deep"><i class="fa fa-check"></i><b>14.2</b> Wide or Deep</a><ul>
-<li class="chapter" data-level="14.2.1" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through-1"><i class="fa fa-check"></i><b>14.2.1</b> Specific case walk through</a></li>
+<li class="chapter" data-level="14.2" data-path="caseselection.html"><a href="caseselection.html#wide-or-deep"><i class="fa fa-check"></i><b>14.2</b> Wide or Deep</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="caseselection.html"><a href="caseselection.html#walk-through-of-a-simple-comparison"><i class="fa fa-check"></i><b>14.2.1</b> Walk-through of a simple comparison</a></li>
 <li class="chapter" data-level="14.2.2" data-path="caseselection.html"><a href="caseselection.html#results-from-simulations"><i class="fa fa-check"></i><b>14.2.2</b> Results from simulations</a></li>
 </ul></li>
 <li class="chapter" data-level="14.3" data-path="caseselection.html"><a href="caseselection.html#principles"><i class="fa fa-check"></i><b>14.3</b> Principles</a></li>
 </ul></li>
 <li class="part"><span><b>IV Models in Question</b></span></li>
-<li class="chapter" data-level="15" data-path="justifying-models.html"><a href="justifying-models.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a><ul>
-<li class="chapter" data-level="15.1" data-path="justifying-models.html"><a href="justifying-models.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1</b> Nothing from nothing</a></li>
-<li class="chapter" data-level="15.2" data-path="justifying-models.html"><a href="justifying-models.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.2</b> Justifying the classic process tracing tests</a></li>
-<li class="chapter" data-level="15.3" data-path="justifying-models.html"><a href="justifying-models.html#justification-from-experimental-designs"><i class="fa fa-check"></i><b>15.3</b> Justification from experimental designs</a><ul>
-<li class="chapter" data-level="15.3.1" data-path="justifying-models.html"><a href="justifying-models.html#mediator"><i class="fa fa-check"></i><b>15.3.1</b> Mediator</a></li>
-<li class="chapter" data-level="15.3.2" data-path="justifying-models.html"><a href="justifying-models.html#moderator"><i class="fa fa-check"></i><b>15.3.2</b> Moderator</a></li>
+<li class="chapter" data-level="15" data-path="justifying.html"><a href="justifying.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="justifying.html"><a href="justifying.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1</b> Nothing from nothing</a></li>
+<li class="chapter" data-level="15.2" data-path="justifying.html"><a href="justifying.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.2</b> Justifying the classic process tracing tests</a></li>
+<li class="chapter" data-level="15.3" data-path="justifying.html"><a href="justifying.html#justification-from-experimental-designs"><i class="fa fa-check"></i><b>15.3</b> Justification from experimental designs</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="justifying.html"><a href="justifying.html#mediator"><i class="fa fa-check"></i><b>15.3.1</b> Mediator</a></li>
+<li class="chapter" data-level="15.3.2" data-path="justifying.html"><a href="justifying.html#moderator"><i class="fa fa-check"></i><b>15.3.2</b> Moderator</a></li>
 </ul></li>
-<li class="chapter" data-level="15.4" data-path="justifying-models.html"><a href="justifying-models.html#causal-discovery"><i class="fa fa-check"></i><b>15.4</b> Causal discovery</a></li>
-<li class="chapter" data-level="15.5" data-path="justifying-models.html"><a href="justifying-models.html#exercise"><i class="fa fa-check"></i><b>15.5</b> Exercise</a></li>
+<li class="chapter" data-level="15.4" data-path="justifying.html"><a href="justifying.html#causal-discovery"><i class="fa fa-check"></i><b>15.4</b> Causal discovery</a></li>
+<li class="chapter" data-level="15.5" data-path="justifying.html"><a href="justifying.html#exercise"><i class="fa fa-check"></i><b>15.5</b> Exercise</a></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a><ul>
-<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#five-strategies"><i class="fa fa-check"></i><b>16.1</b> Five Strategies</a><ul>
+<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#five-strategies"><i class="fa fa-check"></i><b>16.1</b> Five Strategies</a>
+<ul>
 <li class="chapter" data-level="16.1.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independence"><i class="fa fa-check"></i><b>16.1.1</b> Check conditional independence</a></li>
 <li class="chapter" data-level="16.1.2" data-path="evaluation.html"><a href="evaluation.html#computational-clues"><i class="fa fa-check"></i><b>16.1.2</b> Computational clues</a></li>
 <li class="chapter" data-level="16.1.3" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value-are-the-data-unexpected-given-your-model"><i class="fa fa-check"></i><b>16.1.3</b> Bayesian <span class="math inline">\(p\)</span> value: Are the data unexpected given your model?</a></li>
 <li class="chapter" data-level="16.1.4" data-path="evaluation.html"><a href="evaluation.html#leave-one-out-loo-cross-validation"><i class="fa fa-check"></i><b>16.1.4</b> Leave-one-out (LOO) cross-validation</a></li>
 <li class="chapter" data-level="16.1.5" data-path="evaluation.html"><a href="evaluation.html#sensitivity"><i class="fa fa-check"></i><b>16.1.5</b> Sensitivity</a></li>
 </ul></li>
-<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a><ul>
+<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a>
+<ul>
 <li class="chapter" data-level="16.2.1" data-path="evaluation.html"><a href="evaluation.html#check-assumptions-of-conditional-independence"><i class="fa fa-check"></i><b>16.2.1</b> Check assumptions of conditional independence</a></li>
 <li class="chapter" data-level="16.2.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value"><i class="fa fa-check"></i><b>16.2.2</b> Bayesian <span class="math inline">\(p\)</span>-value</a></li>
 <li class="chapter" data-level="16.2.3" data-path="evaluation.html"><a href="evaluation.html#loo-validation"><i class="fa fa-check"></i><b>16.2.3</b> LOO validation</a></li>
 <li class="chapter" data-level="16.2.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity-to-priors"><i class="fa fa-check"></i><b>16.2.4</b> Sensitivity to priors</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="17" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>17</b> Final Words</a><ul>
-<li class="chapter" data-level="17.1" data-path="final-words.html"><a href="final-words.html#gains"><i class="fa fa-check"></i><b>17.1</b> Gains</a></li>
-<li class="chapter" data-level="17.2" data-path="final-words.html"><a href="final-words.html#lessons-learned-along-the-way"><i class="fa fa-check"></i><b>17.2</b> Lessons learned along the way</a></li>
-<li class="chapter" data-level="17.3" data-path="final-words.html"><a href="final-words.html#thinking-about-learning"><i class="fa fa-check"></i><b>17.3</b> Thinking about learning</a></li>
-<li class="chapter" data-level="17.4" data-path="final-words.html"><a href="final-words.html#worries-about-what-you-have-to-put-in"><i class="fa fa-check"></i><b>17.4</b> Worries about what you have to put in</a></li>
-<li class="chapter" data-level="17.5" data-path="final-words.html"><a href="final-words.html#limits-on-what-you-can-get-out"><i class="fa fa-check"></i><b>17.5</b> Limits on what you can get out</a></li>
-<li class="chapter" data-level="17.6" data-path="final-words.html"><a href="final-words.html#know-what-you-impose-when-you-impose-structure"><i class="fa fa-check"></i><b>17.6</b> Know what you impose when you impose structure</a></li>
-<li class="chapter" data-level="17.7" data-path="final-words.html"><a href="final-words.html#looking-ahead"><i class="fa fa-check"></i><b>17.7</b> Looking ahead</a></li>
+<li class="chapter" data-level="17" data-path="theory.html"><a href="theory.html#conclusion"><i class="fa fa-check"></i><b>17</b> Final Words</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>17.1</b> The benefits</a></li>
+<li class="chapter" data-level="17.2" data-path="conclusion.html"><a href="conclusion.html#the-worries"><i class="fa fa-check"></i><b>17.2</b> The worries</a></li>
+<li class="chapter" data-level="17.3" data-path="conclusion.html"><a href="conclusion.html#the-future"><i class="fa fa-check"></i><b>17.3</b> The future</a></li>
 </ul></li>
 <li class="part"><span><b>V Appendices</b></span></li>
 <li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
-<li><a href="https://github.com/macartan/gbiqq/" target="blank">Uses gbiqq</a></li>
+<li><a href="https://github.com/macartan/CausalQueries/" target="blank">Uses CausalQueries</a></li>
 
 </ul>
 
@@ -362,7 +442,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Integrated Inferences</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Illustrating causal models</a>
           </h1>
         </div>
 
@@ -370,7 +450,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="mm" class="section level1">
+<div id="mm" class="section level1" number="11">
 <h1><span class="header-section-number">Chapter 11</span> Mixing models</h1>
 <div class="headerbox">
 <div class="center">
@@ -389,7 +469,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <p>Before delving into the details of these strategies, we make one key qualification explicit: each of these approaches requires us to believe that setting-, or study-, specific causal model can be nested within a lower level, “encompassing,” model that operates across the multiple settings that we are learning from and want to draw inferences about. Encompassing models, of course, can specifically take heterogeneity across settings into account, for instance by including in the model moderators that condition the effects of interest. But we have to believe that we have indeed captured in the model any ways in which relationships vary across the set of contexts across which we are integrating evidence or transporting inferences.</p>
 <p>Put differently, and perhaps more positively, we see social scientists commonly seeking to transport knowledge or combine information informally across studies and settings. Often such efforts are motivated, sometimes implicitly, by an interest in or reliance on general theoretical propositions. The approaches that we describe below force the researcher to be <em>explicit</em> about the underlying causal beliefs that warrant that integration while also ensuring that the integration proceeds in a way that is logically consistent with stated beliefs.</p>
-<div id="a-jigsaw-puzzle-integrating-across-a-model" class="section level2">
+<div id="a-jigsaw-puzzle-integrating-across-a-model" class="section level2" number="11.1">
 <h2><span class="header-section-number">11.1</span> A jigsaw puzzle: Integrating across a model</h2>
 <p>Generating knowledge about a causal domain often involves cumulating learning across studies that each focus in on some specific part of the domain. For instance, scholars interested in the political economy and democratization might undertake studies focused on the relationship between inequality and mass protests; studies on the role of mass mobilization in generating regime change; pathways other than mass mobilization through which inequality might affect democratization; studies of the role of international sanctions on the likelihood that autocracies will democratize; and studies of the effects of democratization on other things, such as growth or the distribution of resources.</p>
 <p>We can think of these studies as each analyzing data on a particular part of a broader, more encompassing causal model. In an informal way, <em>if</em> findings “hold together” in a reasonably intuitive way, we might be able to piece together an impression of the overall relations among variables in this domain. Yet an informal approach becomes more difficult for complex models or data patterns and, more importantly, will leave opportunities for learning unexaploited.</p>
@@ -496,10 +576,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We devote Chapter 15 to a discussion of how we justify a model. However, we note already that in this example we have an instance in which a researcher (examining a case in study 3) might wish to draw inferences using <span class="math inline">\(K\)</span>, but she does not have anything in study 1 that justifies using <span class="math inline">\(K\)</span> for inference. However with access to studies 2 and 3, and conditional on the overall model, she has a justification for process tracing strategy. The general principle is that weaker commitments to lower level theories —here the causal structure—can justify more fully inferences from more fully specified higher-level theories.</p>
 <!-- AJ: Also finding the last sentence above confusing. -->
 </div>
-<div id="combining-observational-and-experimental-data" class="section level2">
+<div id="combining-observational-and-experimental-data" class="section level2" number="11.2">
 <h2><span class="header-section-number">11.2</span> Combining observational and experimental data</h2>
 <p>Experimental studies are often understood as the “gold standard” for causal inference. This is, in particular, because of the ability of a randomized trial (given certain assumptions, such as “no spillovers”) to eliminate sources of confounding. By design, an experiment removes from the situation processes that, in nature, would generate a correlation between selection into treatment and potential outcomes. An experiment thereby allows for an unbiased estimate of the average causal effect of the treatment on the outcome.</p>
-<p>At the same time, an interesting weakness of experimental studies is that, by dealing so effectively with selection into treatment, they limit our ability to learn about selection and its implications in the real world. Often, however, we want to know what causal effects would be specifically for units that <em>would</em> in fact take up a treatment in a real-world, non-experimental settings. This kind of problem is studied for example by <span class="citation">Knox et al. (<a href="#ref-knox2019design" role="doc-biblioref">2019</a>)</span>.</p>
+<p>At the same time, an interesting weakness of experimental studies is that, by dealing so effectively with selection into treatment, they limit our ability to learn about selection and its implications in the real world. Often, however, we want to know what causal effects would be specifically for units that <em>would</em> in fact take up a treatment in a real-world, non-experimental settings. This kind of problem is studied for example by <span class="citation"><a href="#ref-knox2019design" role="doc-biblioref">Knox et al.</a> (<a href="#ref-knox2019design" role="doc-biblioref">2019</a>)</span>.</p>
 <p>Consider, for instance, a policy that would make schooling subsidies available to parents, with the aim of improving educational outcomes for children. How would we know if the policy was effective? A source of confounding in an observational setting might be that those parents who apply for and take up the subsidy might also be those who are investing more in their children’s education in other ways as compared to those parents who do not apply for the subsidy. To eliminate this problem, we might design an experiment in which parents are randomly assigned to receive (or not receive) the subsidy and compare outcomes between children in the treatment and control groups. With a no-spillovers assumption, we can extract the <span class="math inline">\(ATE\)</span> of the receipt of subsidies.</p>
 <p>What this experiment cannot tell us, however, is how much the policy will boost educational outcomes outside the experiment. That is because the causal quantity of interest, for answering that question, is <em>not</em> the <span class="math inline">\(ATE\)</span>: it is the average treatment effect for the <em>treated</em> (<span class="math inline">\(ATT\)</span>), given real-world selection effects. That is, the policymaker wants to know what the effect of the subsidy will be for the children of parents who <em>select into</em> treatment. One could imagine the real-world <span class="math inline">\(ATT\)</span> being higher than the <span class="math inline">\(ATE\)</span> if, for instance, those parents who are informed and interested enough to take up the subsidy also put the subsidy to more effective use. One could also imagine the <span class="math inline">\(ATT\)</span> being lower than the <span class="math inline">\(ATE\)</span> is, for instance, there are diminishing marginal returns to educational investments and the self-selecting parents are already investing quite a lot.</p>
 <p>Even outside a policy context, we may be interested in the effect of a causal condition <em>where</em> that causal condition emerges. To return to our inequality and democracy example, we may want to know what would have happened to autocracies with low inequality <em>if</em> they had had high inequality – the standard average-treatment effect question. But we might also be interested in knowing how much of a difference high inequality makes <em>in the kinds of cases</em> where high inequality tends to be occur – where the effect could be very different.</p>
@@ -508,7 +588,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>At the substantive core of this model is the <span class="math inline">\(X \rightarrow Y\)</span> relationship. However, we give <span class="math inline">\(X\)</span> a parent that is fully exogenous, <span class="math inline">\(Z\)</span>, to capture a random-assignment process. We give <span class="math inline">\(X\)</span> a second parent, <span class="math inline">\(O\)</span>, that is confounded with <span class="math inline">\(Y\)</span>: <span class="math inline">\(O\)</span> here represents the observational scenario. Finally, we include a “switch” variable, <span class="math inline">\(R\)</span>, that determines whether <span class="math inline">\(X\)</span> is randomly assigned or not. So when <span class="math inline">\(R=1\)</span>, <span class="math inline">\(X\)</span> is determined solely by <span class="math inline">\(Z\)</span>, with <span class="math inline">\(X=Z\)</span>. When <span class="math inline">\(R=0\)</span>, we are in an observational setting, and <span class="math inline">\(X\)</span> is determined solely by the confounded <span class="math inline">\(O\)</span>, with <span class="math inline">\(X=O\)</span>.</p>
 <p>A few notes on the parameter space. Parameters allow for complete confounding between <span class="math inline">\(O\)</span> and <span class="math inline">\(Y\)</span>, but <span class="math inline">\(Z\)</span> and <span class="math inline">\(Y\)</span> are unconfounded. <span class="math inline">\(X\)</span> has only one causal type since its job is to operate as a conveyor belt, simply inheriting the value of <span class="math inline">\(Z\)</span> or <span class="math inline">\(O\)</span>, depending on <span class="math inline">\(R\)</span>.</p>
 <p>Note also that this model assumes the exclusion restriction that entering the experimental sample (<span class="math inline">\(R\)</span>) is not related to <span class="math inline">\(Y\)</span> other than through assignment of <span class="math inline">\(X\)</span>.</p>
-<div class="figure"><span id="fig:appcombexpob"></span>
+<div class="figure"><span style="display:block;" id="fig:appcombexpob"></span>
 <img src="ii_files/figure-html/appcombexpob-1.png" alt="A model that nests an observational and an experimental study. The treatment $X$ either takes on the observational value $O$, or the assigned values $Z$, depending on whether or not the case has been randomized, $R$." width="672" />
 <p class="caption">
 Figure 11.1: A model that nests an observational and an experimental study. The treatment <span class="math inline">\(X\)</span> either takes on the observational value <span class="math inline">\(O\)</span>, or the assigned values <span class="math inline">\(Z\)</span>, depending on whether or not the case has been randomized, <span class="math inline">\(R\)</span>.
@@ -593,13 +673,13 @@ Figure 11.1: A model that nests an observational and an experimental study. The 
 <tbody>
 <tr class="odd">
 <td align="left">X</td>
-<td align="right">0.804</td>
-<td align="right">0.028</td>
-<td align="right">28.85</td>
+<td align="right">0.812</td>
+<td align="right">0.03</td>
+<td align="right">27.54</td>
 <td align="right">0</td>
-<td align="right">0.749</td>
-<td align="right">0.859</td>
-<td align="right">203</td>
+<td align="right">0.754</td>
+<td align="right">0.871</td>
+<td align="right">175</td>
 </tr>
 </tbody>
 </table>
@@ -611,7 +691,6 @@ Figure 11.1: A model that nests an observational and an experimental study. The 
 <th align="left">Query</th>
 <th align="left">Given</th>
 <th align="left">Using</th>
-<th align="left">Case.estimand</th>
 <th align="right">mean</th>
 <th align="right">sd</th>
 </tr>
@@ -621,7 +700,6 @@ Figure 11.1: A model that nests an observational and an experimental study. The 
 <td align="left">ATE</td>
 <td align="left">-</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">0.203</td>
 <td align="right">0.031</td>
 </tr>
@@ -629,7 +707,6 @@ Figure 11.1: A model that nests an observational and an experimental study. The 
 <td align="left">ATE</td>
 <td align="left">R==0</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">0.203</td>
 <td align="right">0.031</td>
 </tr>
@@ -637,7 +714,6 @@ Figure 11.1: A model that nests an observational and an experimental study. The 
 <td align="left">ATE</td>
 <td align="left">R==1</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">0.203</td>
 <td align="right">0.031</td>
 </tr>
@@ -654,7 +730,6 @@ Comparing the two sets of results, we find there that we do indeed get a tighten
 <th align="left">Query</th>
 <th align="left">Given</th>
 <th align="left">Using</th>
-<th align="left">Case.estimand</th>
 <th align="right">mean</th>
 <th align="right">sd</th>
 </tr>
@@ -664,7 +739,6 @@ Comparing the two sets of results, we find there that we do indeed get a tighten
 <td align="left">ATE</td>
 <td align="left">R==1 &amp; X==0</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">0.203</td>
 <td align="right">0.031</td>
 </tr>
@@ -672,7 +746,6 @@ Comparing the two sets of results, we find there that we do indeed get a tighten
 <td align="left">ATE</td>
 <td align="left">R==1 &amp; X==1</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">0.203</td>
 <td align="right">0.031</td>
 </tr>
@@ -680,7 +753,6 @@ Comparing the two sets of results, we find there that we do indeed get a tighten
 <td align="left">ATE</td>
 <td align="left">R==0 &amp; X==0</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">-0.183</td>
 <td align="right">0.027</td>
 </tr>
@@ -688,7 +760,6 @@ Comparing the two sets of results, we find there that we do indeed get a tighten
 <td align="left">ATE</td>
 <td align="left">R==0 &amp; X==1</td>
 <td align="left">posteriors</td>
-<td align="left">FALSE</td>
 <td align="right">0.593</td>
 <td align="right">0.048</td>
 </tr>
@@ -697,17 +768,17 @@ Comparing the two sets of results, we find there that we do indeed get a tighten
 <p>We can learn nothing about the observational <span class="math inline">\(ATT\)</span> or <span class="math inline">\(ATC\)</span> from the experimental data alone, where there <span class="math inline">\(ATT\)</span> and <span class="math inline">\(ATC\)</span> are the same quantity. And in the observational data alone, we are hobbled by confounding of unknown direction and size. What the mixed model and data, in effect, are able to do is (a) learn about the <span class="math inline">\(ATE\)</span> experimental data, (b) use inferences on the <span class="math inline">\(ATE\)</span> to separate true effects from confounding in the observational data and thus learn about the direction and size of the confounding in those data, and (c) estimate the treatment effect for the <span class="math inline">\(X=0\)</span> group and for the <span class="math inline">\(X=1\)</span> group, respectively, in the observational data <em>using</em> knowledge about confounding in these data. By mixing the experimental and observational data, we can learn about how the treatment has affected those units that, in the “real” world of the observational setting, selected into treatment <em>and</em> about how the treatment <em>would</em> affect those that selected into control.</p>
 <p>The numbers in our toy example, while purely notional, can help us see why the observational <span class="math inline">\(ATT\)</span> and <span class="math inline">\(ATC\)</span> might be of great interest to decision makers where strong causal heterogeneity is a possibility. Based on the experimental data alone, we might conclude that the policy that makes <span class="math inline">\(X=1\)</span> available is a good bet, given its positive <span class="math inline">\(ATE\)</span> (assuming, of course, that <span class="math inline">\(Y=1\)</span> is a valued outcome). And, of course, the observational data alone would not allow us to confidently conclude otherwise. What the integrated analysis reveals, however, is that <span class="math inline">\(X\)</span> in fact has a <em>negative</em> mean effect on those who would be most likely to take up the treatment. The strong positive effect for the control strongly shapes the experimental results but will go unrealized in the real world.
 In a similar vein, these estimates can aid causal explanation. Seeing the positive <span class="math inline">\(ATE\)</span> might lead us to infer that most of the <span class="math inline">\(X=1, Y=1\)</span> cases we observe in the world are ones in which <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span>. The observational <span class="math inline">\(ATT\)</span> estimates point in a very different direction, however, indicating that these are cases in which <span class="math inline">\(X\)</span> is least likely to have a positive effect and, thus, where <span class="math inline">\(Y=1\)</span> was most likely generated by some other cause.</p>
-<p>We note that the results here relate to the LATE theorem <span class="citation">(Angrist and Imbens <a href="#ref-angrist1995identification" role="doc-biblioref">1995</a>)</span>. Imagine using data only on (a) the experimental group in control and (b) the observational group, some of whom are in treatment. We can conceptualize our design as one in which the observational group are “encouraged” to take up treatment, allowing us to estimate the effect for the “compliers” in the observational setting: those that self-select into treatment. Conversely, we could use data only on (a) the experimental group in treatment and (b) the observational group, some of whom are in control. This is a design in which the observational group are “encouraged” to take the control condition, allowing us to estimate the effect for the “compliers” in this group (those that self select into control).</p>
+<p>We note that the results here relate to the LATE theorem <span class="citation">(<a href="#ref-angrist1995identification" role="doc-biblioref">Angrist and Imbens 1995</a>)</span>. Imagine using data only on (a) the experimental group in control and (b) the observational group, some of whom are in treatment. We can conceptualize our design as one in which the observational group are “encouraged” to take up treatment, allowing us to estimate the effect for the “compliers” in the observational setting: those that self-select into treatment. Conversely, we could use data only on (a) the experimental group in treatment and (b) the observational group, some of whom are in control. This is a design in which the observational group are “encouraged” to take the control condition, allowing us to estimate the effect for the “compliers” in this group (those that self select into control).</p>
 <!-- AJ: Can't we instead frame the second estimate as the estimate for the never takers? -->
 </div>
-<div id="transportation-of-findings-across-contexts" class="section level2">
+<div id="transportation-of-findings-across-contexts" class="section level2" number="11.3">
 <h2><span class="header-section-number">11.3</span> Transportation of findings across contexts</h2>
 <p>In some circumstances, we study the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in one context (a country, region, or time period, for instance) and then want to make inferences about these effects in another context (say, another country, region, or time period). We may face the challenge that effects are heterogeneous, and that conditions that vary across contexts may be related to treatment assignment, to outcomes, and to selection into the sample. For example, we might study the relationship between inequality and democratization in low-income countries and then want to know how those effects travel to middle-income settings. However, the level of income may have implications jointly for the level of inequality and for how likely inequality is to generate regime change, meaning that causal effects uncovered in the first context cannot be assumed to operate in the second context.</p>
-<p>This is the problem studied by <span class="citation">Pearl and Bareinboim (<a href="#ref-pearl2014external" role="doc-biblioref">2014</a>)</span>. In particular, <span class="citation">Pearl and Bareinboim (<a href="#ref-pearl2014external" role="doc-biblioref">2014</a>)</span> show for which nodes data are needed in order to “licence” external claims, given a model.</p>
+<p>This is the problem studied by <span class="citation"><a href="#ref-pearl2014external" role="doc-biblioref">Pearl and Bareinboim</a> (<a href="#ref-pearl2014external" role="doc-biblioref">2014</a>)</span>. In particular, <span class="citation"><a href="#ref-pearl2014external" role="doc-biblioref">Pearl and Bareinboim</a> (<a href="#ref-pearl2014external" role="doc-biblioref">2014</a>)</span> show for which nodes data are needed in order to “licence” external claims, given a model.</p>
 <p>We illustrate with a simple model in which an observable confounder has a different distribution across contexts. In the model drawn in Figure <a href="#extval"><strong>??</strong></a>, <span class="math inline">\(Context\)</span> determines the distribution of the confounder, <span class="math inline">\(W\)</span>. We set a restriction such that the value of <span class="math inline">\(W\)</span> in Context 1 is never less than the value of <span class="math inline">\(W\)</span> in Context 0; our priors are otherwise flat over the remaining nodal types in the model.</p>
 <!-- AJ: Macartan, can you interpret the parameter values for the sentence above? Not sure I know how to read the complements and decreasing statements correctly. -->
 <!-- AJ: Note I've changed Case to Context everwhere, which I think is better ,more general. -->
-<div class="figure"><span id="fig:extval"></span>
+<div class="figure"><span style="display:block;" id="fig:extval"></span>
 <img src="ii_files/figure-html/extval-1.png" alt="Extrapolation when confounders have different distributions across cases." width="672" />
 <p class="caption">
 Figure 11.2: Extrapolation when confounders have different distributions across cases.
@@ -1018,12 +1089,12 @@ Figure 11.2: Extrapolation when confounders have different distributions across 
 </table>
 <!-- FLAG: ADD  A SITUATION WITH AN ARROW FROM Case to Y and WHO THAT WE DO NOT HAVE IDENTIFICATION -->
 </div>
-<div id="multilevel-models-meta-analysis" class="section level2">
+<div id="multilevel-models-meta-analysis" class="section level2" number="11.4">
 <h2><span class="header-section-number">11.4</span> Multilevel models, meta-analysis</h2>
 <!-- AJ: Need a better section heading. If we have a good name for this approach, we can also use this when we make comparisons across approaches in next section. -->
 <!-- AJ: Transition here needs some work, I think.  -->
 <p>A key idea in Bayesian meta-analysis is that when you analyze multiple studies together you learn not only about common processes that give rise to the different results seen in different sites, but you also learn more about each study from seeing the other studies.</p>
-<p>A classic setup is provided in <span class="citation">Gelman et al. (<a href="#ref-gelman2013bayesian" role="doc-biblioref">2013</a>)</span>, in which we have access to estimates of effects and uncertainty in eight sites (schools), <span class="math inline">\((b_j, se_j)_{j \in \{1,2,\dots,8\}}\)</span>. To integrate learning across these studies we employ a “hierarchical model”
+<p>A classic setup is provided in <span class="citation"><a href="#ref-gelman2013bayesian" role="doc-biblioref">Gelman et al.</a> (<a href="#ref-gelman2013bayesian" role="doc-biblioref">2013</a>)</span>, in which we have access to estimates of effects and uncertainty in eight sites (schools), <span class="math inline">\((b_j, se_j)_{j \in \{1,2,\dots,8\}}\)</span>. To integrate learning across these studies we employ a “hierarchical model”
 that treats each <span class="math inline">\(b_j\)</span> as a draw from distribution <span class="math inline">\(N(\beta_j, se_j)\)</span> (and, in turn treats each <span class="math inline">\(\beta_j\)</span> is a draw from distribution <span class="math inline">\(N(\beta, \sigma)\)</span>). In that setup we want to learn about the superpopulation parameters <span class="math inline">\(\beta, \sigma\)</span>, but we also get to learn more about the study level effects <span class="math inline">\((\beta_j)_{j \in \{1,2,\dots,8\}}\)</span> by studying them jointly.</p>
 <!-- AJ: Not clear to me that Gelman here is the right way to set up the analysis in this subsection. Doesn't Gelman's setup work more like our setup in the next section, with settings treated as being drawn stochastically from a common distribution at the superpop level? -->
 <!-- We define a model in which $X$ points into $Y$, and in which $Setting$ is a third node that also points into $Y$. Thus $Setting$ can potentially moderate the effect of $X$ on $Y$. We observe an experiment that takes place in $Setting$ 0 and also in $Setting$ 1. Note that, in this setup, any differences in the distribution of effects of $X$ on $Y$ between the two settings can *only* arise because of $Setting$. That is, we are here assuming the same causal effects across settings conditional on $Setting$ itself. -->
@@ -1121,7 +1192,7 @@ that treats each <span class="math inline">\(b_j\)</span> as a draw from distrib
 <!-- AJ: OK, revised text accordingly. -->
 <p>We assign a particular true set of superpopulation parameter values that, for the analytic exercise, is treated as unknown and that we would like to recover. In this true world, the probability of assignment to <span class="math inline">\(X=1\)</span> is .4, and the average treatment effect is .1. Using these true parameter values, we simulate <span class="math inline">\(X, Y\)</span> data for <span class="math inline">\(n=8\)</span> countries.</p>
 <!-- AJ: I think you'll need to do some elaboration for this step, Macartan. -->
-<div class="figure"><span id="fig:plotalphas"></span>
+<div class="figure"><span style="display:block;" id="fig:plotalphas"></span>
 <img src="ii_files/figure-html/plotalphas-1.png" alt="Joint distributions over alpha parameters." width="672" />
 <p class="caption">
 Figure 11.3: Joint distributions over alpha parameters.
@@ -1131,7 +1202,7 @@ Figure 11.3: Joint distributions over alpha parameters.
 <p>As we can see, each distribution falls roughly along a diagonal. Probability mass located further up the diagonal represents worlds in which the superpopulation Dirichlet distribution of type shares is relatively low in variance. Thus, the more that our posterior beliefs are concentrated toward a graph’s northeast corner, the lower the heterogeneity we have inferred there to be in the relevant type shares across countries. Meanwhile, the dispersion of probability mass <em>away</em> from the diagonal represents greater posterior <em>uncertainty</em> about the heterogeneity across countries, arising from greater variance about the posterior distribution of the alphas.</p>
 <p>We can think of a concentration parameter here that is operationalized as the sum of the <span class="math inline">\(\alpha^j\)</span> terms for a node, <span class="math inline">\(j\)</span>, with a higher value representing lower overall heterogeneity.</p>
 <!-- This would be 4 for a flat distribution ($(1,1,1,1)$ and should be a lot higher with this example.  -->
-<div class="figure"><span id="fig:metaplot"></span>
+<div class="figure"><span style="display:block;" id="fig:metaplot"></span>
 <img src="ii_files/figure-html/metaplot-1.png" alt="Updating on study level parameters from integrated analyses. " width="672" />
 <p class="caption">
 Figure 11.4: Updating on study level parameters from integrated analyses.
@@ -1145,18 +1216,18 @@ Figure 11.4: Updating on study level parameters from integrated analyses.
 
 
 <h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-angrist1995identification">
-<p>Angrist, Joshua D, and Guido W Imbens. 1995. “Identification and Estimation of Local Average Treatment Effects.” National Bureau of Economic Research.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-angrist1995identification" class="csl-entry">
+Angrist, Joshua D, and Guido W Imbens. 1995. <span>“Identification and Estimation of Local Average Treatment Effects.”</span> National Bureau of Economic Research.
 </div>
-<div id="ref-gelman2013bayesian">
-<p>Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Donald B Rubin. 2013. <em>Bayesian Data Analysis</em>. Boca Raton, FL: CRC Press.</p>
+<div id="ref-gelman2013bayesian" class="csl-entry">
+Gelman, Andrew, John B Carlin, Hal S Stern, David B Dunson, Aki Vehtari, and Donald B Rubin. 2013. <em>Bayesian Data Analysis</em>. Boca Raton, FL: CRC Press.
 </div>
-<div id="ref-knox2019design">
-<p>Knox, Dean, Teppei Yamamoto, Matthew A Baum, and Adam J Berinsky. 2019. “Design, Identification, and Sensitivity Analysis for Patient Preference Trials.” <em>Journal of the American Statistical Association</em>, 1–27.</p>
+<div id="ref-knox2019design" class="csl-entry">
+Knox, Dean, Teppei Yamamoto, Matthew A Baum, and Adam J Berinsky. 2019. <span>“Design, Identification, and Sensitivity Analysis for Patient Preference Trials.”</span> <em>Journal of the American Statistical Association</em>, 1–27.
 </div>
-<div id="ref-pearl2014external">
-<p>Pearl, Judea, and Elias Bareinboim. 2014. “External Validity: From Do-Calculus to Transportability Across Populations.” <em>Statistical Science</em> 29 (4): 579–95.</p>
+<div id="ref-pearl2014external" class="csl-entry">
+Pearl, Judea, and Elias Bareinboim. 2014. <span>“External Validity: From Do-Calculus to Transportability Across Populations.”</span> <em>Statistical Science</em> 29 (4): 579–95.
 </div>
 </div>
             </section>
@@ -1165,11 +1236,10 @@ Figure 11.4: Updating on study level parameters from integrated analyses.
         </div>
       </div>
 <a href="mixingapp.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="elements-of-design.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="elements.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook/js/app.min.js"></script>
-<script src="libs/gitbook/js/lunr.js"></script>
 <script src="libs/gitbook/js/clipboard.min.js"></script>
 <script src="libs/gitbook/js/plugin-search.js"></script>
 <script src="libs/gitbook/js/plugin-sharing.js"></script>
@@ -1181,13 +1251,14 @@ Figure 11.4: Updating on study level parameters from integrated analyses.
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
 "sharing": {
-"github": false,
+"github": true,
 "facebook": false,
 "twitter": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": false,
 "google": false,
 "instapper": false
@@ -1210,6 +1281,10 @@ gitbook.start({
 "text": null
 },
 "download": ["ii.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "section"
 },

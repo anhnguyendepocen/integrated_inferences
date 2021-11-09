@@ -2,11 +2,15 @@
 
 
 #####
-  # Install some packages directly from github:
+  # Install some packages directly from source:
 
 # install.packages("devtools")
 # library(devtools)
 # devtools::install_github("tidyverse/dplyr")
+
+# if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+# BiocManager::install("Rgraphviz")
+# BiocManager::install("RBGL")
 
 # install.packages("remotes")
 # library(remotes)
@@ -17,14 +21,19 @@
   # (2) if you do not receive the "Your system is ready to build packages!" message, you have to make sure you have the necessary developer tools for RStan.
     # https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
 
+
 #####
-  # Install and load packages from CRAN:
+  # Load packages, and install from CRAN when not already installed:
 
 library("pacman")
 pacman::p_load(
   DT,
   bookdown,
   # CausalQueries,
+  Rgraphviz,
+  RBGL,
+  DeclareDesign,
+  igraph,
   tidyverse,
   # bayesplot,
   # bindrcpp,
@@ -44,9 +53,9 @@ pacman::p_load(
 
 
 #####
- # Programming and default package options: 
+ # Programming and default package options:
 
-#library(CQtools)
+library(CQtools)
 
 options(mc.cores = parallel::detectCores())
 
@@ -72,7 +81,7 @@ format_with_col = function(x, color = "blue"){
     x
 }
 
-##### 
+#####
   # Game
 
 #' Game Tree
@@ -211,7 +220,7 @@ gt_tree = function(
   text(1, N+.5, title,  cex=titlesize, pos = 4, col = titlecol )
 }
 
-                       
+
 #####
   # Draw DAG
 
@@ -256,7 +265,7 @@ perm_bb <- function(v) {
   } ) - 1
 }
 
-                       
+
 #####
   # Find replace
 
