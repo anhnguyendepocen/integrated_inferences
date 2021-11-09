@@ -33,7 +33,7 @@ library("pacman")
 pacman::p_load(
   DT,
   bookdown,
-  # CausalQueries,,
+  # CausalQueries,
   DeclareDesign,
   igraph,
   # bayesplot,
