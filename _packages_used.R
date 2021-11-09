@@ -14,13 +14,8 @@
 
   # (1) if CausalQueries gives error "Could not find tools necessary to compile a package.", please run:
     # devtools::has_devel()
-  # (2) if you do not receive the "Your system is ready to build packages!" message, you have to install developer tools for R.
-    # On a Mac: 
-      ## Open Terminal, type "xcode-select --install"
-      ## If you are asked to update, go to the App Store and download: https://apps.apple.com/us/app/xcode/id497799835?mt=12
-      ## Quit and restart R, and run:
-      ## devtools::has_devel()
-      ## You should now be able to install from GitHub.
+  # (2) if you do not receive the "Your system is ready to build packages!" message, you have to make sure you have the necessary developer tools for RStan.
+    # https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
 
 #####
   # Install and load packages from CRAN:
