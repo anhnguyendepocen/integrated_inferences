@@ -1,38 +1,77 @@
+# Packages
+
+
+#####
+  # Install some packages directly from source:
+
+# install.packages("devtools")
+# library(devtools)
+# devtools::install_github("tidyverse/dplyr")
+library(tidyverse)
+
+# if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+# BiocManager::install("Rgraphviz")
+# BiocManager::install("RBGL")
+library(Rgraphviz)
+library(RBGL)
+
+# install.packages("remotes")
+# library(remotes)
+# remotes::install_github("macartan/CausalQueries")
+library(CausalQueries)
+
+  # (1) if CausalQueries gives error "Could not find tools necessary to compile a package.", please run:
+    # devtools::has_devel()
+  # (2) if you do not receive the "Your system is ready to build packages!" message, you have to make sure you have the necessary developer tools for RStan.
+    # https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started
+
+
+#####
+  # Load packages, and install from CRAN when not already installed:
 
 library("pacman")
-
-# devtools::install_github("tidyverse/dplyr")
-# remotes::install_github("macartan/CausalQueries")
-
 pacman::p_load(
   DT,
   bookdown,
-  tidyverse,
+  # CausalQueries,
+  DeclareDesign,
+  igraph,
   # bayesplot,
   # bindrcpp,
   ggplot2,
-#  StanHeaders,
-   rstan,
-#  rstanarm,
+  estimatr,
+# StanHeaders,
+  rstan,
+# rstanarm,
   knitr,
-#  expm,
-#  plotrix,
+# expm,
+# plotrix,
   reshape2,
   dagitty,
-  stargazer#,
+  stargazer,
 #  partitions
 )
 
+
+#####
+ # Programming and default package options:
+
 library(CQtools)
+
 options(mc.cores = parallel::detectCores())
+
 options(knitr.kable.NA = '')
 
 do_diagnosis = FALSE
 
-flag <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
-
 options(mc.cores = parallel::detectCores())
+
 rstan_options(auto_write = TRUE)
+
+#####
+  # Formatting and LaTeX:
+
+flag <- function(x= "Flag!", color = "orange") sprintf("<span style='color: %s;'>%s</span>", color, x)
 
 format_with_col = function(x, color = "blue"){
   if(knitr::is_latex_output())
@@ -43,7 +82,8 @@ format_with_col = function(x, color = "blue"){
     x
 }
 
-
+#####
+  # Game
 
 #' Game Tree
 #'
@@ -182,7 +222,8 @@ gt_tree = function(
 }
 
 
-# Draw DAG
+#####
+  # Draw DAG
 
 hj_dag <- function(x,
                    y,
@@ -218,8 +259,6 @@ hj_dag <- function(x,
   if(box) box()
 }
 
-
-
 perm_bb <- function(v) {
   sapply(1:length(v), function(x) {
     rep( rep(1:v[x], each=prod(v[x:length(v)]) / v[x]),
@@ -228,7 +267,8 @@ perm_bb <- function(v) {
 }
 
 
-## Find replace
+#####
+  # Find replace
 
 file_find_replace <- function(filepath, pattern, replacement) {
   file_contents <- readLines(filepath)
