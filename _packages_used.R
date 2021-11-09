@@ -7,14 +7,18 @@
 # install.packages("devtools")
 # library(devtools)
 # devtools::install_github("tidyverse/dplyr")
+library(tidyverse)
 
 # if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 # BiocManager::install("Rgraphviz")
 # BiocManager::install("RBGL")
+library(Rgraphviz)
+library(RBGL)
 
 # install.packages("remotes")
 # library(remotes)
 # remotes::install_github("macartan/CausalQueries")
+library(CausalQueries)
 
   # (1) if CausalQueries gives error "Could not find tools necessary to compile a package.", please run:
     # devtools::has_devel()
@@ -29,12 +33,9 @@ library("pacman")
 pacman::p_load(
   DT,
   bookdown,
-  # CausalQueries,
-  Rgraphviz,
-  RBGL,
+  # CausalQueries,,
   DeclareDesign,
   igraph,
-  tidyverse,
   # bayesplot,
   # bindrcpp,
   ggplot2,
