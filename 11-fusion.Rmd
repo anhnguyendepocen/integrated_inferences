@@ -115,7 +115,7 @@ A simple analysis of the graph tells us that $K$ cannot help us learn about $Y$'
 
 In the first pair of rows, we  show the results of analyses in which we have simulated data from the whole model, then updated using the Study 1 observations. We give here the posterior mean on the probability of causation for an $X=Y=1$ case, conditional on each possible value that $K$ might take on. As we can see, our beliefs about the estimand remain unaffected by $K$'s value, meaning that it contains no information about $X$'s effect in the case.
 
-<!-- AJ: When we say data on K is not available in S1, do we mean we haven't used K to *update* the model? But we are then simulating what would we would infer if we *did* collect $K$ for a case in S1? This is my read of the code. Or have I misread? Are we imagining a situation in which we simply don't have K at all, so by definition can't learn from K? I've written the text below on the first assumption, so will need changing if that's wrong. -->
+<!-- FLAG: AJ: When we say data on K is not available in S1, do we mean we haven't used K to *update* the model? But we are then simulating what would we would infer if we *did* collect $K$ for a case in S1? This is my read of the code. Or have I misread? Are we imagining a situation in which we simply don't have K at all, so by definition can't learn from K? I've written the text below on the first assumption, so will need changing if that's wrong. -->
 
 We see that the same thing is true for each of the other studies. In study 2, we have not used $K$ to update the model, and so have not learned anything form the data about $K$'s relationship to the other variables. Thus, we have no foundation on which to ground probative value fo $K$. In study 3, we understand the $Z,K$ relationship well, but know nothing quantitatively about how $Z$ and $X$ relate to $Y$. Thus, we have learned nothing from Study 3 about what observing $K$ might tell us about the effect of $X$ on $Y$.
  
@@ -146,9 +146,9 @@ kable(frank[[4]][1:4,-c(1,3)], caption = "Clue is informative after combining st
 
 <!-- In sum, the collection of studies collectively provides a justification for learning from $K$ when assessing a case level effect of $X$ on $Z$ in study 1.  -->
 
-<!-- AJ: Is something wrong with the study numberings in this next paragraph? -->
+<!-- FLAG: AJ: Is something wrong with the study numberings in this next paragraph? -->
 
-<!-- I find the reference to justifying a model confusing here. It's not going to be self-evident to readers how that's what we've just done. It seems like we've *started* with a model and used it. But I'm not 100% clear on what you want to say here. Can you clarify? -->
+<!-- FLAG: I find the reference to justifying a model confusing here. It's not going to be self-evident to readers how that's what we've just done. It seems like we've *started* with a model and used it. But I'm not 100% clear on what you want to say here. Can you clarify? -->
 
 We devote Chapter 15 to a discussion of how we justify a model. However, we note already that in this example we have an instance in which a researcher (examining a case in study 3) might wish to draw inferences using $K$, but she does not have anything in study 1 that justifies using $K$ for inference. However with access to studies 2 and 3, and conditional on the overall model, she has a justification for process tracing strategy. The general principle is that weaker commitments to lower level theories ---here the causal structure---can justify more fully inferences from more fully specified higher-level theories.  
 
@@ -245,7 +245,7 @@ x <- estimatr::difference_in_means(Y~X, data = filter(data, R==0))
 kable(summary(x)[[1]], digits = 3, caption = "Inferences on the ATE from differences in means")
 ```
 
-In contrast, when we use CausalQueries to update on the full causal model and use both the experimental and observational data, we get the much more accurate results shown in Table \@ref(tab:fusionCQ). Moving down the rows, we show here the estimate of the unconditional $ATE$, the estimate for the observational context ($R=0$), and the estimate for the experimental context ($R=1$). Unsurprisingly, the estimates are identical across all three settings since, in the model, $R$ is $d$-separated from $Y$ by $X$, which is observed. And, as we see, the posterior means are very close to the right answer of $0.2$.
+In contrast, when we use `CausalQueries` to update on the full causal model and use both the experimental and observational data, we get the much more accurate results shown in Table \@ref(tab:fusionCQ). Moving down the rows, we show here the estimate of the unconditional $ATE$, the estimate for the observational context ($R=0$), and the estimate for the experimental context ($R=1$). Unsurprisingly, the estimates are identical across all three settings since, in the model, $R$ is $d$-separated from $Y$ by $X$, which is observed. And, as we see, the posterior means are very close to the right answer of $0.2$.
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){

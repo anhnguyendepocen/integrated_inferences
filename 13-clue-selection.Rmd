@@ -99,7 +99,7 @@ Application of the function `conditional_inferences`  produces a matrix with the
 
 In the sixth column, we see the inference we would make from each data-realization, the posterior probability that $X$ has a positive effect on $Y$, given that $Y=0$. The final column indicates the probability of each data-realization, given the chosen strategy (*not* conditioning on the prior observation, $Y-0$). 
 
-FLAG: Let's add posterior variance to Table \@ref(tab:showstrats5xx)
+<!-- FLAG: AJ: Let's add posterior variance to Table \@ref(tab:showstrats5xx) -->
 
 
 ```{r showstrats5xx, echo = FALSE, warning = FALSE}
@@ -164,7 +164,7 @@ As the foregoing discussion already suggests, optimal clue strategies can depend
 
 **Relaxing restrictions.** In the analysis above, we allowed for just two (of 16 possible) nodal types at both $C$ and $R$, effectively expressing strong beliefs about how $C$'s and $R$'s values are determined. But what if we are less certain than this? 
 
-Suppose that we are not sure that corruption can be prevented only throught a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
+Suppose that we are not sure that corruption can be prevented only through a combination of a free press and government sensitivity. We think it possible that government sensitivity itself might be sufficient: that $S$ might have a negative effect on $C$ regardless of $X$'s value. (Perhaps, for instance, there are means other than via a free press through which the public might learn of government corruption.) We allow for this causal possibility by expanding the set of kept nodal types for $C$ to include $\theta^C_{1010}$ in defining the model. 
 
 ```{r model, warning = FALSE}
 model <- 
@@ -492,7 +492,7 @@ We display the inferences we *would* draw from different clue strategies and dat
 Working backwards, we can readily identify the reason for this in Table \@ref(possible_outcomespimd_conf). We see here that observing $P=1$ moves our beliefs very little off of our prior of $0.091$ because, given the confounding, we already strongly expect to see $P=1$ in a case that democratized; actually observing $P=1$ contains only a small amount of new information. Our beliefs over the query change a great deal if we observe $P=0$---since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, $P$'s value is far more consequential than $M$'s. However, we can also see from the last column of the table that the most impactful realization of $P$'s value is also extremely unlikely under the model (given $I=D=1$). Thus, $P$ *can* be highly informative under this model, but it is very unlikely to be.
 
 
-We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the *pathway* through which an effect occurs. We need to adjust the model to allow allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of $I$ on $M$ and instead use `set_priors` to state a belief that such a negative effect is less likely than $M$'s other nodal types. 
+We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the *pathway* through which an effect occurs. We need to adjust the model to allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of $I$ on $M$ and instead use `set_priors` to state a belief that such a negative effect is less likely than $M$'s other nodal types. 
 
 
 ```{r model3, echo = FALSE, message = FALSE}
@@ -539,7 +539,7 @@ x_strategy <- c("None", "P", "M", "P and M")
 kable(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
 ```
 
-Now, let's see how things look when we are interested not in $I$'s causal effect on $D$ but in whether it had an effect via particular pathway. Specifically, given $I=0$ and $D=1$, did $I$ have a negative effect on $D$ that was mediated by $M$? Following our discussion of mediation in Chapter \@ref(questions), we define the query as asking whether the following are true:
+Now, let's see how things look when we are interested not in $I$'s causal effect on $D$, but in whether it had an effect via particular pathway. Specifically, given $I=0$ and $D=1$, did $I$ have a negative effect on $D$ that was mediated by $M$? Following our discussion of mediation in Chapter \@ref(questions), we define the query as asking whether the following are true:
 
 1 Does $I$ have a negative effect on $M$? (in code, $M[I=1] < M[I=0]$)
 2 Does the change in $M$ resulting from a change from $I=1$ to $I=0$ cause a change in $D$ from $0$ to $1$? ($(D[M=M[I=0]] > D[M=M[I=1]])$)
@@ -828,7 +828,7 @@ with(results_pimd_tradeoff_confound, {
 
 Explicit statement of a causal model---including prior beliefs over roots---allows one to assess what will be inferred from all possible observations. This opens the way for simple strategies for assessing what data is most valuable, and in what order it should be gathered. 
 
-We are conscious that here we are pushing the basic logic to the limits. In practice researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts; the claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data is most useful to gather. 
+We are conscious that here we are pushing the basic logic to the limits. In practice, researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover, the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts. The claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data it will be most useful to gather. 
 
 
 
