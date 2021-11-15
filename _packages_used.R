@@ -48,7 +48,7 @@ pacman::p_load(
 # plotrix,
   reshape2,
   dagitty,
-  stargazer,
+  stargazer#,
 #  partitions
 )
 
