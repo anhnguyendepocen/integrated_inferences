@@ -22,13 +22,9 @@ In Chapter \@ref(ptapp) we engaged in case-level inference about the effects of 
 
 Whereas in Chapter \@ref(ptapp) we took the model as given and sought to draw inferences individual cases given data on those cases, the model now becomes an object that we both learn from and learn about. In essence we use the data on many cases to update our beliefs about the general model and then use this "trained" model to make inferences about cases. 
 
-Along with this change in goals come some changes in the structure of the model:
-
-* Instead of positing a belief about the causal type of a given case, $\theta$, we now need to posit a belief over the *distribution* of nodal types---that is, over $\lambda$. For instance, whereas in the simple process-tracing model we *specified* that inequality has a positive effect on mobilization for some share of units, we now specify a distribution over the proportion of units for which inequality could have a positive effect, ranging anywhere from 0 to 1. And we do the same for all other nodal types, with the proportions across types constrained to add up to 1 --- and, of course, for all nodes. Because we set a prior *distribution* over nodal types (rather than fixed proportions), we can now update on these population-level distributions as the model confronts data. 
+Instead of positing a belief over the nodal types for a given case, $\theta$, we now need to posit a belief over the *distribution* of nodal types---that is, over $\lambda$. For instance, whereas in the simple process-tracing model we *specified* the shares of nodal types for $M$, we now specify a *distribution* over the nodal type shares, using a Dirichlet distribution to ensure that the shares across types are always constrained to add up to 1. We do the same, of course, for all nodes. Because we set a prior distribution over nodal types (rather than fixed proportions), we can now update on these population-level distributions as the model confronts data. 
 
 The same applies to beliefs about confounding. Recall that we allow for unobserved confounding by allowing $\lambda$ to include beliefs about the *joint* distributions of nodal types, and we set priors on these joint distributions as well. In the application below, we focus on potential confounding in the relationship between inequality and mobilization: the possibility that inequality may be more or less likely in places where inequality would induce mobilization. Here we do not express informed prior beliefs about the direction or magnitude of such confounding; we set up the parameter matrix to allow for the possibility of confounding and set a flat prior over its direction and magnitude. We can, in turn, learn about confounding from the data.
-
-
 
 We begin with the same basic model as we used in Chapter \@ref(ptapp), with inequality ($I$) potentially affecting democratization ($D$) both through a direct pathway and through an indirect pathway mediated by mobilization ($M$). International pressure ($P$) is also a "parent" of democratization. 
 
@@ -61,7 +57,7 @@ plot(model)
 
 ## Data
 
-As in Chapter \@ref(ptapp), we will confront the model with data drawn from coding narratives in the Supplementary Material for @haggard2012inequality. However, rather than implementing the analysis case-by-case, we now derive leverage from the joint distribution of the data available across all cases. 
+As in Chapter \@ref(ptapp), we will confront the model with data drawn from our coding of the case narratives in the Supplementary Material for @haggard2012inequality. However, rather than implementing the analysis case-by-case, we now derive leverage from the joint distribution of the data available across all cases. 
 
 Table \@ref(tab:data82) gives a snapshot of the data.
 
@@ -124,7 +120,7 @@ model <-
   
 ```
 
-We can then figure out the set of parameters needed to characterize all possible causal relations between these nodes that are consistent with the model. These parameters are used to specify a likelihood function, which, combined with priors on parameters and the data lets us update on the dsitribution of causal relations. In `CausalQueries` all this is done using `update_model()`.
+We can then figure out the set of parameters needed to characterize all possible causal relations between these nodes that are consistent with the model. These parameters are used to specify a likelihood function, which, combined with priors on parameters and the data lets us update on the distribution of causal relations. In `CausalQueries` all this is done using `update_model()`.
 
 ```{r, eval = FALSE}
 
@@ -151,11 +147,11 @@ One set of questions we can ask of the updated model is about the probability th
 
 2. **For all cases displaying a given causal state and outcome**. Looking specifically at those cases that in fact had high inequality and democratized, for what proportion was the high inequality a cause of democratization?
 
-3. **For cases displaying a given causal state and outcome, and with additional clues present or absent.** What if we have also collected clues on mediating or moderating nodes? For instance, for what proportion of high-inequality, democratizing cases *with* mobilization did inequality cause the outcome? For what proportion *without* mobilization? Likewise for the presence or absence of international pressure?
+3. **For cases displaying a given causal state and outcome, and with additional clues present or absent.** What if we have also collected clues on mediating or moderating nodes? For instance, for what proportion of high-inequality, democratizing cases *with* mobilization did inequality cause the outcome? For what proportion *without* mobilization? Likewise for the presence or absence of international pressure? Importantly, comparing a given estimate with and without a given clue amounts to an assessment of the clue's probative value. 
 
 We ask `CausalQueries` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the causal types that correspond to the effect of interest and then take the conditional probability of these. We present the code and results of these operations below and in Figure \@ref(fig:mixedhist).
 
-In figure @\ref(fig:pimdqueries) we graph the priors for each of these queries next to the posteriors.
+In figure @\ref(fig:pimdqueries), we graph the priors for each of these queries next to the posteriors.
 
 ```{r pimdqueries, include = FALSE, echo = FALSE}
 
