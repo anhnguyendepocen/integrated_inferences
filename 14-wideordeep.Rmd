@@ -511,100 +511,21 @@ For each strategy we figure out (a) all the possible data realizations, (b) what
 
 
 
-```{r caseselectionest, fig.height = 5, fig.width = 10, fig.cap = "Inferences given observations", echo = FALSE} 
+```{r caseselectionest, fig.height = 7, fig.width = 10, fig.cap = "Inferences given observations", warning = FALSE, echo = FALSE} 
 
-all_results <- read_rds("saved/case_selection_16_10000.rds")  
-
-all_results <-   
-all_results %>%
-  mutate(mean = ifelse(Query == "PC_01", -mean, mean)) %>%
-  mutate(
-    model = factor(model, c("chain_model", "moderator_model","base_model", "half_chain",    "restricted_model"), c("Chain: X->M->Y", "Moderator: X->Y<-M","Two path: X->Y; X->M->Y", "Two path: Weak direct",    "Two path: Monotonic")), 
-    Query =
-      factor(Query,
-             c("ATE", "PC_01", "PC_11", "ATE_MY", "ATE_XM", "DIR_M0", "DIR_M1", "IND_X0", "IND_X1", "M1"),
-             c("ATE", "PC 01", "PC 11", "ATE (MY)", "ATE (XM)", "DIR | M=0", "DIR | M=1", "IND | X=0", "IND | X=1", "Pr(M=1)")
-         ),
-    strategy = factor(strategy, 
-                      c("prior", "off_10", "on_11", "off_01_10", "XY_11_11",  "on_00_11", "onX1_10_11", "onY1_01_11"),
-                      c("prior", "1 off (10)", "1 on (11)", "2 off (01,10)", "2 pos (11, 11)",  "2 on (00, 11)", "fix X (10, 11)", "fix Y (01, 11)"))) 
-
-
-all_results %>%
-  filter( Query %in% c("ATE", "PC 01", "PC 11")) %>%
-ggplot(aes(strategy, mean)) + 
-  geom_point(aes(colour = prob),size = 2) +
-  geom_point(shape = 1,size = 2,colour = "black") +
-  facet_grid(Query ~ model, scales = "free_y") + 
-  xlab("Strategy")  +
-    ylab("Inferences") + theme_bw()  + 
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  scale_colour_gradient(low = "white", high = "black")
-
+read_rds("saved/Case_selection_1.rds")
 ```
 
 
-```{r caseselectionvar, fig.height = 5, fig.width = 10, fig.cap = "Reduction in variance on ATE and PC given strategies", echo = FALSE} 
+```{r caseselectionvar, fig.height = 7, fig.width = 10, fig.cap = "Reduction in variance on ATE and PC given strategies", echo = FALSE, warning = FALSE} 
 
-weighted.var <- function(x, w = rep(1, length(x))) {
-  # No degrees of freedom adjustment as we are dealing with population
-    if(length(x)==1) return(0)
-    if(all(is.na(x))) return(NA)
-    w <- w/sum(w)
-    sum(w*(x - sum(w*x))^2)
-}
-
-expected_var <- 
-
-all_results %>% 
-  select(-data, -Using, - Given, -Case.estimand) %>% group_by(Query, model, strategy) %>% 
-  summarize(check_prob = sum(prob), n = n(), 
-            #weighted_var = Hmisc::wtd.var(mean, prob),
-            weighted_var = weighted.var(mean, prob),
-            expected_posterior_var = weighted.mean(sd^2, prob),
-            expected_posterior_mean = weighted.mean(mean, prob), .groups = 'drop')  %>%
-  group_by(model, Query) %>% mutate(prior_var = expected_posterior_var[1]) %>% ungroup %>%
-  mutate(expected_learning = 100*(1-expected_posterior_var/prior_var),
-         expected_learning_2 = 100*(weighted_var/prior_var))
-
-
-
-expected_var %>% 
-  filter( Query %in% c("ATE", "PC 01", "PC 11")) %>%
-  ggplot(aes(strategy, expected_learning_2)) + 
-  geom_point() +
-#  facet_grid(Query ~ model, scales = "free_y") + 
-   facet_grid(Query ~ model, scales = "free_y") + 
- xlab("Strategy")  +
-    ylab("Reduction in variance")  +
-    theme_bw() +
-#  geom_hline(yintercept = 0, color = "red") + 
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + coord_trans(y="sqrt")
+read_rds("saved/Case_selection_2.rds")
 
 ```
 
 
 
-In Figure \@ref(fig:caseselectionvar2) we show the reduction in variance for other estimands, notably the effects of $X$ on $M$, the effects of $M$ on $Y$ as well as the direct and indirect effects for our two-path models. We display these to help with interpretation of the main results but they also usefully demonstrate the applicability of the procedure to different types of queries we might be concerned with.
-
-```{r caseselectionvar2, fig.height = 10, fig.width = 10, fig.cap = "Reduction in variance, other estimands", echo = FALSE, warning = FALSE} 
-
-
-expected_var %>% 
-  filter( !(Query %in% c("ATE", "PC 01", "PC 11")))  %>%
-  ggplot(aes(strategy, expected_learning_2)) + 
-  geom_point() +
-#  facet_grid(Query ~ model, scales = "free_y") + 
-   facet_grid(Query ~ model, scales = "free_y") + 
- xlab("Strategy")  +
-    ylab("Reduction in variance")  +
-    theme_bw() +
-#  geom_hline(yintercept = 0, color = "red") + 
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + coord_trans(y="sqrt")
-
-```
-
-
+We see also the reduction in variance for other estimands, notably the effects of $X$ on $M$, the effects of $M$ on $Y$ as well as the direct and indirect effects for our two-path models. We display these to help with interpretation of the main results but they also usefully demonstrate the applicability of the procedure to different types of queries we might be concerned with.
 
 #### From the $X,Y$ data only (Chain model)
 
@@ -867,19 +788,13 @@ Starting with the chain model ($X \rightarrow Y$), we see that there are gains t
 
 We can also how the tradeoff varies by estimand. For the $ATE$, the gains to going deep in an additional 50 cases look roughly equivalent to those of expanding the dataset by 100 cases. However, for the probability of positive causation, the scales tip quite dramatically in favor of depth: The gains to depth in 50 cases are more than double the gains of broadening by as many as 300 cases. 
 
-```{r morn3, fig.width = 10, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
-short <- results %>% group_by(Model, design, Given) %>% 
-  dplyr::summarize(mean_post_var = mean(sd^2), se_of_post_var = (var(sd^2)/n())^.5, deep = mean(deep_n), wide = mean(wide_n))  %>%
-  mutate(Estimand = ifelse(Given == "-", "Effect of X on Y", "X=1 caused Y=1")) %>%
-  mutate(Wide = factor(wide))
+```{r morn3, fig.width = 10, fig.height = 7, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
 
-short %>%  # filter(Model %in% c("Chain", "Confounded")) %>%
-  ggplot(aes(deep, mean_post_var, color = Wide)) +
-  geom_line() + 
-  facet_grid(Estimand ~ Model, scales = "free_y") +
-  ylab("Expected posterior variance")+ scale_x_continuous(breaks = c(0, 50, 100)) +
-  ylim(c(0, NA))
+read_rds("saved/wide_deep_fig_book.rds")
+
 ```
+
+
  
 In the chain model we see similar posterior variance from the following three strategies: 
 
