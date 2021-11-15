@@ -466,47 +466,54 @@ Here we describe the dimensions along which we vary the features of the simulati
 
 *Models*
 
-We illustrate the approach using a set of relatively simply models with core structural features that we believe will be fairly common in applied settings. These are:
+We illustrate the approach using a set of relatively simply models with core structural features that we believe will be fairly common in applied settings. The four structures that we examine are:
 
 * Chain model: an $X \rightarrow M \rightarrow Y$ model, where $M$ is a mediator
+* Confounded model: a model with $X \rightarrow Y$ and with $M$ as a confounder, pointing into both $X$ and $Y$
 * Moderator model: an $X \rightarrow Y \leftarrow M$, where $M$ is a moderator
 * Two-path model: a model in which $X \rightarrow M \rightarrow Y \leftarrow X$, meaning that $X$ can affect $Y$ both through a direct path and indirectly via $M$
-* Two-path model with monotonicity restrictions: a two-path model in which negative effects at each node are ruled out
-* Two-path model with weak direct effect: a two-path model where our priors place a low probability on the operation of the direct pathway
-* Confound model: a model where $M$ is a confound for the $X \rightarrow Y$ relationship ($X \leftarrow M \rightarrow Y \leftarrow X$)
+
+For each of these causal structures, we consider both an unconstrained version (all nodal types permitted) and a monotonic version in which we use restrictions to exclude negative effects throughout the model.
+
 
 *Queries*
 
-The primary queries we are interested in are:
+We also examine a range of queries under each model:
 
 * $ATE$: what is the average effect of $X$ on $Y$ for the population?
-* Probability of positive causation: what is the probability that $Y=1$ is due to $X=1$ for a randomly drawn case among those with $X=1, Y=1$
-* Probability of negative causation: what is the probability that $Y=1$ is due to $X=0$ for a randomly drawn case among those with $X=0, Y=1$
-* Pathway: defined only for the two-path models, we examine the causal effect along the indirect pathway, through $M$. We calculate two indirect effects, one conditional on $X=0$ and one conditional on $X=1$. Each of these effects is defined as the effect on $Y$ of the change in $M$ that *would* result from a change in $X$ (from 0 to 1 or from 1 to 0, respectively), but with $X$ held constant (at 0 or 1, respectively).
+* Probability of positive causation: what is the probability that $Y=1$ because $X=1$ for a case randomly drawn from the population of $X=1, Y=1$ cases
+* Probability of negative causation: what is the probability that $Y=1$ is due to $X=0$ for a case randomly drawn from the population of $X=0, Y=1$ cases
+* Probability of an indirect effect: defined only for the two-path models, we estimate the probability that the effect of $X$ on $Y$ operates through the indirect path. More precisely, we ask, for an $X=1, Y=1$ case in which $X=1$ caused $Y=1$, what the probability is that that effect would have occurred if $M$ were held fixed at the value it takes on when $X=1$.^[In code, this somewhat complicated query is expressed as `"Y[X=0, M=M[X=1]]==Y[X=1, M=M[X=1]]"`, `given "(X == 1 & Y == 1) & (Y[X=1]>Y[X=0])"`.]
+
+<!-- $X$'s effect on $M$  causal effect along the indirect pathway, through $M$. We calculate two indirect effects, one conditional on $X=0$ and one conditional on $X=1$. Each of these effects is defined as the effect on $Y$ of the change in $M$ that *would* result from a change in $X$ (from 0 to 1 or from 1 to 0, respectively), but with $X$ held constant (at 0 or 1, respectively). -->
 
 *Strategies*
 
-* Prior: beliefs are based on the $X,Y$ data only
-* $N=1$, $X=1, Y=0$: a strategy in which data on $M$ is sought in one case in the $X=1, Y=0$ cell
-* $N=1$, $X=1, Y=1$: a strategy in which data on $M$ is sought in one case in the $X=1, Y=1$ cell
-* $N=2$, off-the-regression-line: with data sought in one $X=0, Y=1$ case and one $X=1, Y=0$ case
-* $N=2$, on-the-regression-line: with data sought in one $X=1, Y=1$ case and one $X=0, Y=0$ case
-* $N=2$, $X=1, Y=1$: with data on $M$ sought for two cases in the $X=1, Y=1$ cell
-* $N=2$, $X$-fixed: a strategy in which we look at two cases in which treatment was given with $X$ fixed at 1, one with $Y=0$ and one with $Y=1$
-* $N=2$, $Y$-fixed: a strategy in which we look at two cases in which a positive outcome was observed, with $Y$ fixed at 1, one with $X=0$ and one with $X=1$
+Finally, for each model-query combination, we assess the contributions of 7 strategies for selecting cases for process tracing, with inferences from the $X,Y$ data alone serving as our baseline. In the figures below, the strategies run along the $X-$axis of each graph and can be interpreted as follows:
+
+* **Prior**: beliefs are based on $X,Y$ data only. 
+* **1 off**: data on $M$ is sought in one case in the $X=1, Y=0$ cell
+* **1 on**: data on $M$ is sought in one case in the $X=1, Y=1$ cell
+* **2 off**: data on $M$ is sought in one $X=0, Y=1$ case and one $X=1, Y=0$ case
+* **2 pos**: data on $M$ is sought for two cases in the $X=1, Y=1$ cell 
+* **2 on**: data on $M$ is sought in one $X=1, Y=1$ case and one $X=0, Y=0$ case
+* **fix $X$**: a strategy in which we seek $M$ in two cases in which a causal condition was present, with $X$ fixed at 1, one with $Y=0$ and one with $Y=1$
+* **fix $Y$**: a strategy in which we seek $M$ in two cases in which a positive outcome was observed, with $Y$ fixed at 1, one with $X=0$ and one with $X=1$
 
 These are all "pure" strategies in the sense that the number of units for which data on $M$ is sought in each cell is fixed. One could also imagine random strategies in which a researcher chooses at random in which cells to look. For example, if we choose one point at random, we are randomly choosing between a case on the regression line and a case off the line. The performance of a random strategy will be a weighted average of the pure strategies over which the random strategy is randomizing.
 
-For all analyses, we imagine that we have previously observed a positive $X,Y$ correlation in 6 cases: with 4 cases on the regression line, 2 cases off. 
+For all simulations, we assume prior $X,Y$ data of $N=6$, with a weak positive relationship (2 $X=1, Y=1$ cases, 2 $X=0, Y=0$ cases, and 1 case in each off-diagonal cell). And it is *from* these original 6 cases that we are selecting our cases for process tracing.
 
 
 #### Results
 
-The main results are shown in Figure \@ref(fig:caseselectionest) and Figure \@ref(fig:caseselectionvar). In these graphs, we examine the informativeness of different process-tracing case-selection strategies by looking at the inferences we would draw for a set of queries depending on what we observe when we delve into the cases.
+The main results are shown in Figure \@ref(fig:caseselectionest) and Figure \@ref(fig:caseselectionvar). For each model-strategy-query combination, we figure out (a) all of the possible data realizations, (b) what inferences would be made on the query from each data realization, (c) how likely each data-realization is to arise given the strategy, the model, and the prior data, and (d) the resulting expected reduction in variance from each strategy. Result (d) is our measure of expected learning. 
 
-For each strategy we figure out (a) all the possible data realizations, (b) what inferences would be made from each data realization, (c) how likely each data-realization is to arise given the strategy, the model, and the prior data, and (d) the resulting expected reduction in variance from each strategy. Result (d) is our measure of expected learning. Figure \@ref(fig:caseselectionest)  shows (a)-(c), with shading used to show (c).  Figure \@ref(fig:caseselectionvar) shows (d). These figures  are close connected of course, with a higher dispersion of estimates in Figure \@ref(fig:caseselectionest) implying a greater reduction in variance in Figure \@ref(fig:caseselectionvar).
+The two figures take two different approaches to representing the value of alternative strategies.  In Figure \@ref(fig:caseselectionest), we examine the informativeness of strategies by showing how much our inferences depend on what we observe within the cases. Generally, a larger spread across points (for a given model-query-strategy combination) represents a greater opportunity for learning from the data. However, as expected learning is also a function of how likely each data realization is, we represent the probability of each potential inference via shading of the points. In Figure \@ref(fig:caseselectionvar) we directly plot expected learning, operationalized as the expected reduction in posterior variance. 
 
+In the remainder of this section, we walk through the results and suggest, often tentatively, interpretations of some of the more striking patterns. We caution that reasoning one's way through expected learning for different model-query-strategy combinations is tricky --- hence, our recommendation that researchers simulate their way to research-design guidance, rather than relying on intuition. 
 
+<!-- These figuresare close connected of course, with a higher dispersion of estimates in Figure \@ref(fig:caseselectionest) implying a greater reduction in variance in Figure \@ref(fig:caseselectionvar). -->
 
 
 
@@ -525,38 +532,48 @@ read_rds("saved/Case_selection_2.rds")
 
 
 
-We see also the reduction in variance for other estimands, notably the effects of $X$ on $M$, the effects of $M$ on $Y$ as well as the direct and indirect effects for our two-path models. We display these to help with interpretation of the main results but they also usefully demonstrate the applicability of the procedure to different types of queries we might be concerned with.
+<!-- We see also the reduction in variance for other estimands, notably the effects of $X$ on $M$, the effects of $M$ on $Y$ as well as the direct and indirect effects for our two-path models. We display these to help with interpretation of the main results but they also usefully demonstrate the applicability of the procedure to different types of queries we might be concerned with. -->
 
-#### From the $X,Y$ data only (Chain model)
+<!-- #### Priors: From the $X,Y$ data only -->
 
 
-<!-- we see our pure prior on each query before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0.  -->
+<!-- <!-- we see our pure prior on each query before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0.  --> -->
 
-<!-- Moving across the row, we see our prior beliefs for cases with more specific features. For cases with $X=1, Y=1$, our priors imply a positive effect 25\% of the time.^[This belief arises from a straightforward calculation involving the different combinations of nodal types that could generate $X=1, Y=1$ and their prior probabilities.] As we have flat priors over $M$'s type and its effects on $Y$, conditioning $M$'s value leaves this belief unaffected. By a parallel logic, the model and flat priors imply the belief that 0.25 of all $X=0, Y=1$ cases to involve a negative effect of $X$ on $Y$. -->
+<!-- <!-- moving across the row, we see our prior beliefs for cases with more specific features. For cases with $X=1, Y=1$, our priors imply a positive effect 25\% of the time.^[This belief arises from a straightforward calculation involving the different combinations of nodal types that could generate $X=1, Y=1$ and their prior probabilities.] As we have flat priors over $M$'s type and its effects on $Y$, conditioning $M$'s value leaves this belief unaffected. By a parallel logic, the model and flat priors imply the belief that 0.25 of all $X=0, Y=1$ cases to involve a negative effect of $X$ on $Y$. --> -->
 
-We turn first to the chain model. Before examining inferences from data, it is worth noting what a chain model with flat priors implies about the queries of interest. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the average effect of $X$ on $Y$, given nothing but the model, is 0. Moreover, for an $X=1, Y=1$ case, the probability of a (positive) causal effect is also 0.25, as it is for a negative effect in an $X=0, Y=1$ case.
+<!-- We turn first to the chain model. Before examining inferences from data, it is worth noting what a chain model with flat priors implies about the queries of interest. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the average effect of $X$ on $Y$, given nothing but the model, is 0. Moreover, for an $X=1, Y=1$ case, the probability of a (positive) causal effect is also 0.25, as it is for a negative effect in an $X=0, Y=1$ case. -->
 
-Now, we introduce data. In the "prior" column of each graph in Figure \@ref(fig:caseselectionest), we see our inferences from the initial set of 6 $X,Y$ observations -- that is, *prior* to process tracing. In this model, as there is no confounding, a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a positive treatment effect as well as a greater than 0.25 chance of causation for an $X=1, Y=1$ case since the $X,Y$ pattern suggests that there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1. 
+<!-- Now, we introduce data. In the "prior" column of each graph in Figure \@ref(fig:caseselectionest), we see our inferences from the initial set of 6 $X,Y$ observations -- that is, *prior* to process tracing. In this model, as there is no confounding, a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a positive average treatment effect as well as a greater than 0.25 chance of causation for an $X=1, Y=1$ case since the $X,Y$ pattern suggests that there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1.  -->
 
-Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X \rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.]
+<!-- Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X \rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.] -->
 
 <!-- (Again, conditioning on $M$'s value has no effect since we still have no information to shift us off our flat priors relating to $M$'s causes or effects.) -->
 
-#### $N=1$ strategies (Chain model)
+#### $N=1$ strategies, unconstrained models
 
-Now, what can we learn by selecting a single case for process tracing, that is, the observation of the additional clue, $M$, in one of the 6 cases on which we already have $X,Y$ data? In in Figure \@ref(fig:caseselectionest), we can see along the two $N=1$ verticals for each query how our beliefs shift for each query depending on what value of $M$ we observe for two case-selection strategies: selecting a case *on* the regression line (an $X=Y=1$ case) or selecting a case *off* the regression line (an $X=1, Y=0$ case). 
-
-The lesson here is a simple one: under this model, an $N=1$ strategy delivers no learning about the $ATE$ or probability of causation, *regardless* of which type of case we choose. We see essentially only 1 point plotted for $N=1$ for all queries because the inference is the same regardless of strategy and realized value of $M$. In Figure \@ref(fig:caseselectionvar), we see, unsurprisingly, that we expect 0 reduction in expected posterior variance from these strategies. These strategies cannot make us any less uncertain about our estimates because the observations we glean cannot affect our beliefs.
+Suppose that we can only conduct process tracing (observe $M$) for a single case drawn from our sample of 6 $X,Y$ cases. Should we choose a case from on or off the regression line implied by the $X,Y$ pattern?  In Figure \@ref(fig:caseselectionest), we can see that for all unconstrained models, our inferences are completely unaffected by the observation of $M$ in a single case, regardless of which case-selection strategy we choose and regardless of the query of interest. We see only 1 point plotted for the two $N=1$ strategies for all unconstrained models and all queries because the inference is the same regardless of the realized value of $M$. In Figure \@ref(fig:caseselectionvar), we see, in the same vein, that we expect 0 reduction in expected posterior variance from these $N=1$ strategies: they cannot make us any less uncertain about our estimates because the observations we glean cannot affect our beliefs.
 
 To see why, let's first consider the on-the-line strategy. Not having observed $M$ previously, we still have flat priors over the nodal types governing $X$'s effect on $M$ and $M$'s effect on $Y$. That is to say, we still have no idea whether $X$'s positive effect on $Y$ (where present) more commonly operates through a chain of positive effects or a chain of negative effects. Thus, the observation of, say, $M=1$ in an $X=1, Y=1$ case is equally consistent with a positive $X \rightarrow Y$ (to the extent that effect operates via linked positive effects) and with no $X \rightarrow Y$ effect (to the extent positive effects operate through linked negative effects). Observing $M=1$ in an $X=1, Y=1$ case therefore tells us nothing about the causal effect in that case and, thus, nothing about the average effect either. 
 
-Similarly, we have no idea whether $X$'s negative effect on $Y$ (where present) operates through a positive-negative chain or a negative-positive chain, making $M=1$ or $M=0$ in an $X=1, Y=0$ case both equally consistent with a negative or null $X \rightarrow Y$ effect, yielding no information about causation in the case. By a similar logic, observing $M=1$ in the $X=1, Y=1$ case is uninformative about negative effects in an $X=0, Y=1$ case, and observing $M=1$ in an $X=1, Y=0$ case tells us nothing about positive effects in an $X=1, Y=1$ case.
+Similarly, we have no idea whether $X$'s negative effect on $Y$ (where present) operates through a positive-negative chain or a negative-positive chain, making $M=1$ or $M=0$ in an $X=1, Y=0$ case both equally consistent with a negative or null $X \rightarrow Y$ effect, yielding no information about causation in the case. By a similar logic, observing $M=1$ in the $X=1, Y=1$ case is uninformative about negative effects in an $X=0, Y=1$ case, and observing $M=1$ in an $X=1, Y=0$ case tells us nothing about positive effects in an $X=1, Y=1$ case. 
+
+The same logic applies to drawing inferences from $M$ as a moderator or to learning from $M$ about indirect effects. In the absence of prior information about effects, one case is not enough.
 
 
+#### $N=1$ strategies, monotonic models
 
-#### $N=2$ Strategies (Chain model)
+The situations changes, however, when we operate with models with montonicity restrictions. Now we can see that our inferences on the queries do generally depend on $M$'s realization in a single case and that we expect learning. For many model-query combinations, the two $N=1$ strategies perform comparably, but there are situations in which we see substantial differences. 
 
-Next, we consider the process tracing of *two* of our cases. Now, because we are observing $M$ in two cases, we can learn from the variation in $M$ across these cases---or, more specifically, from its covariation with $X$ and with $Y$. In other words, there is a critical difference between process tracing one case and process tracing two cases. When we only process trace one case in a setup like this one, we do not learn about causal effects in the cases we process-trace because we have no information about intermediate causal effects (e.g., whether they are more likely positive or negative). In contrast, if we observe $M$ in two or more cases, we *do* learn about causal effects for those cases because of the leverage provided by observing covariation between the process-tracing clue and other variables.
+Most notably, in a chain model with negative effects ruled out by assumption, we learn almost nothing from choosing an off-the-line case: this is because we already know from the model itself that there can be no $X \right arrow Y$ effect in such a case since such an effect would require a negative effect at one stage. The only learning that can occur in such a case is about the prevalence of positive effects (relative to null effects) at individual stages ($X \rightarrow M$ and $M \rightarrow Y$), which in turn has implications for the prevalance of positive effects (relative to null effects) of $X$ on $Y$. Likely for similar reasons, in the monotonic two-path model, an on-the-line case is much more informative than an off-the-line case about the $ATE$ and about the probability that the effect runs via the indirect path. 
+
+Interestingly, however, the on-the-line strategy is not uniformly superior for an $N=1$ process-tracing design. We appear to learn significantly more from an off-the-line case than an on-the-line case when estimating the share of positive effects in the population of $X=1, Y=1$ cases and operating with a monotonic confounded or two-path model. At first, these results seem surprising: why would we not want to choose an $X=1, Y=1$ case for learning about the population of $X=1, Y=1$ cases? One possible reason is that, in the on-the-line case, one data realization is much more likely then the other, while we are more uncertain about what we will find in the off-the-line case. For instance, in the confounding model with montonicity, in an $X=1, Y=1$ case we would learn about the prevalence of confounding from seeing $M=0$ (where confounding cannot be operating since negative effects are excluded) as opposed to $M=1$; but we do not expect to see $M=0$ when both of its children ($X$ and $Y$) take a value of 1 while negative effects are excluded. In an $X=1, Y=0$ case, however, $M=0$ and $M=1$ are about equally likely to be observed, and we can learn about confounding from each realization. We can see these differences in relative data probabilities from the shadings in the graphs, where we have more even shading for the possible inferences from the one-off strategy than for the one-one strategy. 
+
+The general point here is that we expect to learn more from seeking a clue the more uncertain we are about what we will find, and some case-selection strategies will give us better opportunities to resolve uncertainty than do others. 
+
+
+#### $N=2$ strategies, unconstrained models
+
+Next, we consider the process tracing of *two* of our cases 6 cases. Now, because we are observing $M$ in two cases, we can learn from the variation in $M$ across these cases---or, more specifically, from its covariation with $X$ and with $Y$. This should matter especially for unconstrained models, where we start out with no information about intermediate causal effects (e.g., whether they are more often positive or more often negative). Thus, when we only process trace one case, we cannot learn about causal effects in the cases we process-trace since we don't know how to interpret the clue. In contrast, if we observe $M$ in two or more cases, we *do* learn about causal effects for those cases because of the leverage provided by observing covariation between the process-tracing clue and other variables.
 
 <!-- Thus, while we have pointed out that observing $M$ within a case can lend $M$ probative value for *other* cases in which we might choose to observe $M$, $M$ has no probative value *for* that one case.  -->
 
@@ -649,9 +666,9 @@ As we see in Figure \@ref(fig:caseselectionvar), the priors do not make a large 
 
 <!-- FLAG: Cannot yet see why we learn more from the restricted 2-path model than from the flat 2-path. Yes, we can learn from n=1 about the indirect path. But in both cases, we can still have compensating updating on the direct path for anything we learn about the indirect path. In fact, the prior probability of positive effects on each path is very similar across the two models. Ignoring interactions, for indirect path, b share is like 1/8 in flat model, and 1/9 in restricted, vs. 1/4 for direct path. Is it just that the learning about the indirect path is stronger with restricted priors because M starts out as informative about the indirect path? So the learning about the indirect path more easily swamps the prior? -->
 
-FLAG: Incorporate as needed above and below any implications of Jeffreys priors.
+<!-- FLAG: Incorporate as needed above and below any implications of Jeffreys priors. -->
 
-FLAG: Let's move the 2-pos strategy to the right of the 2 on strategy in the graphs. 
+<!-- FLAG: Let's move the 2-pos strategy to the right of the 2 on strategy in the graphs.  -->
 
 
 
