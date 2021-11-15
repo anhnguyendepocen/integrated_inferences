@@ -38,7 +38,7 @@ As we can see, the weaker (i.e., more permissive) model performs OK: the true ef
 
 But will we notice?
 
-In the remainder of this section, we explore a range of diagnostics that researchers can undertake to evaluate the usefulness of their models or to compare models with one another: checking assumptions of conditional independence built into a model; attending to computational clues; checking the model's fit; using "leave-one-out" cross-validation; and assessing model sensitivity.
+In the remainder of this section, we explore a range of diagnostics that researchers can undertake to evaluate the usefulness of their models or to compare models with one another: checking assumptions of conditional independence built into a model; checking the model's fit; using "leave-one-out" cross-validation; and assessing model sensitivity.
 
 ```{r modelsch15, echo = FALSE}
 n = 200
@@ -153,11 +153,11 @@ Identifying the full set of conditional independence assumptions in  a causal mo
  
 
 
-### Computational clues
+<!-- ### Computational clues -->
 
-Second, we may be lucky and run into computation issues. In this example there is a good chance that when you fit the stronger  model, `stan` will throw an error: 
+<!-- Second, we may be lucky and run into computation issues. In this example there is a good chance that when you fit the stronger  model, `stan` will throw an error:  -->
 
-> `Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.`
+<!-- > `Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.` -->
 
 
 <!-- AJ: Needs elaboration: why is this error a function of problems with the model? -->
@@ -167,7 +167,7 @@ Second, we may be lucky and run into computation issues. In this example there i
 <!-- AJ: Looked a little more - still nothing! Whence did you get a sense there might be something to this? -->
 
 
-### Bayesian $p$ value: Are the data unexpected given your model?
+### Bayesian $p-$value: Are the data unexpected given your model?
 
 A third approach asks whether features of the data you observe are in some sense unusual given your model, or more unusual given your model than another model. For instance, if one model assumed no adverse effects of $X$ on $Y$ and no confounding, then a strong negative correlation between $X$ and $Y$ would be unusual, even for the model updated with this data; and this negative correlation would *more* unusual for this model than for a model that allowed for adverse effects.
 
@@ -177,7 +177,7 @@ In fact, this approach is quite classical: we are looking to see whether we shou
 
 An approach for doing this using simulated data from the posterior predictive distribution is described in @gabry2019visualization.^[Tools in the `bayesplot` package can be used to show how typical the data we observe is for different models] 
 
-We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome $Y$ to see how the actual distribution in the data compares to the predicteddistribution from the updated model. Second, we look at the actual correlation between $X$ and $Y$ and see how this compares to the predicted distribution. In both cases we calculate a two sided $p$-value by assessing and doubling the share of the mass of the predictive posterior distribution that lies on the more extreme side of the observed data. If the observed data were at the mean of the predicive distribution, then we would have a $p$-value of 1. If it were at the 95th percentile we would have a $p$-value of 0.10. (We note that in this straightforward calculation we assess the probability of the data given the same model that generated the data; approaches could also be used that seek out of sample estimates of teh probability of observing the observed data.)
+We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome $Y$ to see how the actual distribution in the data compares to the predicteddistribution from the updated model. Second, we look at the actual correlation between $X$ and $Y$ and see how this compares to the predicted distribution. In both cases we calculate a two sided $p$-value by assessing and doubling the share of the mass of the predictive posterior distribution that lies on the more extreme side of the observed data. If the observed data were at the mean of the predicive distribution, then we would have a $p$-value of 1. If it were at the 95th percentile we would have a $p$-value of 0.10. (We note that in this straightforward calculation we assess the probability of the data given the same model that generated the data; approaches could also be used that seek out-of-sample estimates of the  probability of observing the observed data.)
 
 <!-- AJ: Last sentence confuses me. Aren't we using data only from unrestricted_model? -->
 
@@ -455,7 +455,7 @@ We also note that in cases in which you cannot quantify uncertainty about parame
 
 ## Evaluating the Democracy-Inequality model
 
-** GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA ** 
+** FLAG: GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA ** 
 
 
 ```{r pimdmodelsch15, echo = FALSE}
@@ -518,9 +518,18 @@ pimd_nonmon_2 <-   read_rds("saved/ch15_pimd_nonmon_model_2.rds")
 
 Our model presupposes that $P$ and $I$ are independent and that $P$ and $M$ are independent. Note that the model is consistent with the possibility that, conditional on $D$, there is a correlation betwen $M$ and $P$ or between $I$ and $P$, as $D$ acts as a collider for these pairs of nodes. 
 
-We check these assumptions through a set of simple regression models, displayed in \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in these two rows that the data pattern is consistent with our assumptions of unconditional independence for these two pairs of variables.
+To test these assumptions, we in fact need to depart from @haggard2012distributive's dataset because these authors only examined cases in which $D=1$, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on $D$ or conditional on $D=0$. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000^[The data that we use to measure mobilization, from @clark2016mobilization, covers only the 1990s.]:
 
-In
+* **Inequality**: We measure inequality, $I$, using the Gini estimates from the University of Texas Inequality Project (@galbraith2019inequality). As we want to measure inequality at the beginning of the period, we take the Gini measure for each country that is closest in time to the year 1989. We then dichotomize the variable using the median value for the period as a cutoff. 
+
+* **Mobilization**: We measure $M$ using the Mass Mobilization Protest Data from @clark2016mobilization. To capture the kinds of mobilization on which redistributive theories of democratization focus, we restrict our focus to protests in the demand categories "land farm issue," "labor wage dispute," "price increases, tax policy," and "political behavior, process." We also include only those gatherings with a size of at least 1000 protesters. We code a country case as $M=1$ if and only if, during the 1990s, it experienced at least one protest that meets both the demand-type and size criteria.
+
+* **Pressure**: We draw on the GIGA Sanctions Dataset to measure international pressure, $P$. Specifically, we code a country case as $P=1$ if and only if the country was the target of democratization-focused sanctions during the 1990-2000 period. 
+
+* **Democratization**: We use dichotomous democracy measures from @cheibub2010revisited, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
+
+
+We check the models' assumptions in relation to conditional independencies through a set of simple regression models, displayed in \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in these two rows that the data pattern is consistent with our assumptions of unconditional independence for these two pairs of variables.
 
 <!-- MH: Realize we actually have a big iussue here: we only have M,P data in cases with D = 1 so we are in fact condtiioining on D and so we do *not* expect independence  -->
 
@@ -533,8 +542,11 @@ independencies <- function(model){
 # independencies(pimd)
 
 
-dd <- CausalQueries::democracy_data 
+# dd <- CausalQueries::democracy_data 
 
+dd <- read.csv("data/pimd2.csv") %>% 
+  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  rename(P = P2, I = I2, M= M2, D = D2)
 
 rbind(
   lm_robust(P~I, data = dd) %>% tidy %>% filter(term == "I"), 
