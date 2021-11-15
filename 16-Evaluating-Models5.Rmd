@@ -475,11 +475,15 @@ pimd_negmed <- make_model("I -> M -> D <- P; I -> D") %>%
 
 pimd_nonmon <- make_model("I -> M -> D <- P; I -> D")
 
-data <- CausalQueries::democracy_data
+#data <- CausalQueries::democracy_data
 
-data_2 <- read.csv("data/pimd2.csv") %>% 
+#data_2 <- read.csv("data/pimd2.csv") %>% 
+ # mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  #rename(P = P2, I = I2, M= M2, D = D2)
+
+data <- read.csv("data/pimd2.csv") %>% 
   mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
-  rename(P = P2, I = I2, M= M2, D = D2)
+  rename(P = P2, I = I2, M= M2, D = D2) 
 
 
 if(do_diagnosis){
@@ -505,7 +509,7 @@ if(do_diagnosis)
    write_rds("saved/ch15_pimd_nonmon_model_2.rds") 
 #unrestricted model saved here
 
-data <- CausalQueries::democracy_data 
+
 pimd <-   read_rds("saved/ch15_pimd_model.rds") 
 pimd_negmed <-   read_rds("saved/ch15_pimd_negmed_model.rds")
 pimd_nonmon <-   read_rds("saved/ch15_pimd_nonmon_model.rds")
@@ -544,17 +548,13 @@ independencies <- function(model){
 
 # dd <- CausalQueries::democracy_data 
 
-dd <- read.csv("data/pimd2.csv") %>% 
-  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
-  rename(P = P2, I = I2, M= M2, D = D2)
-
 rbind(
-  lm_robust(P~I, data = dd) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~M, data = dd) %>% tidy %>% filter(term == "M"), 
-  lm_robust(P~I, data = filter(dd, M==0)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~I, data = filter(dd, M==1)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~M, data = filter(dd, I==0)) %>% tidy %>% filter(term == "M"), 
-  lm_robust(P~M, data = filter(dd, I==1)) %>% tidy %>% filter(term == "M")) %>%   mutate(Given = c("-", "-", "M = 0", "M = 1", "I = 0", "I = 1")) %>%
+  lm_robust(P~I, data = data) %>% tidy %>% filter(term == "I"), 
+  lm_robust(P~M, data = data) %>% tidy %>% filter(term == "M"), 
+  lm_robust(P~I, data = filter(data, M==0)) %>% tidy %>% filter(term == "I"), 
+  lm_robust(P~I, data = filter(data, M==1)) %>% tidy %>% filter(term == "I"), 
+  lm_robust(P~M, data = filter(data, I==0)) %>% tidy %>% filter(term == "M"), 
+  lm_robust(P~M, data = filter(data, I==1)) %>% tidy %>% filter(term == "M")) %>%   mutate(Given = c("-", "-", "M = 0", "M = 1", "I = 0", "I = 1")) %>%
   select(Given, estimate, std.error, p.value) %>% 
   mutate(Correlation = c("P,I", "P,M", "P,I", "P,I","P,M", "P,M")) %>%
   select(Correlation, everything()) %>%
