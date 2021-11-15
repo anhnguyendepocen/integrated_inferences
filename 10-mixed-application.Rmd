@@ -3,7 +3,7 @@
 
 ```{r packagesused09, include = FALSE}
 source("_packages_used.R")
-# do_diagnosis = FALSE
+do_diagnosis = FALSE
 # options(mc.cores = parallel::detectCores())
 ```
 
@@ -29,9 +29,6 @@ Along with this change in goals come some changes in the structure of the model:
 The same applies to beliefs about confounding. Recall that we allow for unobserved confounding by allowing $\lambda$ to include beliefs about the *joint* distributions of nodal types, and we set priors on these joint distributions as well. In the application below, we focus on potential confounding in the relationship between inequality and mobilization: the possibility that inequality may be more or less likely in places where inequality would induce mobilization. Here we do not express informed prior beliefs about the direction or magnitude of such confounding; we set up the parameter matrix to allow for the possibility of confounding and set a flat prior over its direction and magnitude. We can, in turn, learn about confounding from the data.
 
 
-***
-
-**Model definition in code**
 
 We begin with the same basic model as we used in Chapter \@ref(ptapp), with inequality ($I$) potentially affecting democratization ($D$) both through a direct pathway and through an indirect pathway mediated by mobilization ($M$). International pressure ($P$) is also a "parent" of democratization. 
 
@@ -39,24 +36,19 @@ Further, we impose the same set of qualitative restrictions, ruling out a negati
 
 Finally, we allow for confounding. The theoretical intuition we want to instantiate in the model is that the level of inequality could be endogenous to inequality's effect on mobilization. In particular, in places where mobilization would pose a mobilizational threat, governments may work harder to reduce inequality. To allow for this possibility, we need to create distinct elements of $\lambda$ representing the conditional distribution of $I$'s nodal types given $M$'s: one parameter for $\theta^I$'s distribution when $M$'s nodal type is $\theta^M_{01}$, and another parameter for $\theta^I$'s distribution when $M$'s nodal type is something else. 
 
-We use `CausalQueries` to define the model, with these restrictions and this confounding possibility, as follows.
 
-<!-- I have changed the confound to create a distinct conditional distribution when I will have a positive effect on M (was for 11 types)_. Seems like we'd expect governments to work harder to reduce inequality in places where it would pose a mobilizational threat than in other places. -->
 
-```{r model47, message = FALSE}
-model <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+
+```{r model47, message = FALSE, echo = FALSE}
+model <- make_model("I -> M -> D <- P; I -> D; I <-> M") %>% #Specify the DAG
 
          # Monotonicity restrictions
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% 
-  
-          # Allow I to have a distinct conditional distribution when I causes M
-          set_confound(list(I = "(M[I=1]  > M[I=0])"))   
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))
   
 ```
 
-***
 
 This model, with confounding, is represented graphically as in Figure \@ref(fig:pimdgraph). The possibility of confounding is represented with the bidirected edge, connecting $I$ and $M$. 
 
@@ -74,24 +66,15 @@ As in Chapter \@ref(ptapp), we will confront the model with data drawn from codi
 Table \@ref(tab:data82) gives a snapshot of the data.
 
 
-```{r ch09getdemdata, eval = FALSE, echo = FALSE}
-# data <- CausalQueries::democracy_data
-
-data <- read.csv("data/pimd2.csv") %>% 
-  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
-  rename(P = P2, I = I2, M= M2, D = D2)
-
-```
-
 
 ```{r data82, echo = FALSE, warning = FALSE}
 data <- CausalQueries::democracy_data 
 
-data_2 <- read.csv("data/pimd2.csv") %>% 
-  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
-  rename(P = P2, I = I2, M= M2, D = D2)
+#data <- read.csv("data/pimd2.csv") %>% 
+#  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+#  rename(P = P2, I = I2, M= M2, D = D2)
 
-kable(head(data_2), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)")
+kable(head(data), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)")
 
 ```
 
@@ -101,47 +84,66 @@ The raw correlations between variables is shown in Table \@ref(tab:pimdcorr). So
 
 ```{r pimdcorr, echo = FALSE, warning  = FALSE, message = FALSE}
 kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
-kable(cor(data_2[,-1], use = "pairwise.complete.obs"), digits = 3)
+kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3)
 ```
 
 
 
 ## Inference
 
-With data and model in hand, we can now update our model to get posteriors on the distribution of all admissible causal types. In practice this is done by constructing a `stan` model that maps from a set of parameters to a distribution on causal types, which in turn provide a likelihood function for observable data. (Using the `CausalQueries` package the posterior is calculated by `update_model(model, data)`.)
+With data and model in hand, we can now update our model to get posteriors on the distribution $\lambda$ from which we can generate beliefs over all  causal relations. 
+<!-- FLAG: Need to talk a bit through what's happening here.  -->
 
+```{r ch9updatePIMD, include = FALSE}
+if(do_diagnosis){
+  model <- update_model(model, data)
+  write_rds(model, "saved/PIMD_updated_2.rds")
+  }
+
+model <- read_rds("saved/PIMD_updated_2.rds")
+
+```
+
+
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+
+The code below shows how to defeine the Democratization model in `CausalQueries`.
+
+The first line provides the DAG and indicated confounding between I and M. The second line imposes monotonicity restrictions. 
+
+```{r modelblock, message = FALSE, echo = TRUE, eval = FALSE}
+model <- 
+  
+  make_model("I -> M -> D <- P; I -> D; I <-> M") %>% 
+  
+  set_restrictions(c( 
+           "(M[I=1] < M[I=0])", 
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))
+  
+```
+
+We can then figure out the set of parameters needed to characterize all possible causal relations between these nodes that are consistent with the model. These parameters are used to specify a likelihood function, which, combined with priors on parameters and the data lets us update on the dsitribution of causal relations. In `CausalQueries` all this is done using `update_model()`.
+
+```{r, eval = FALSE}
+
+model <- update_model(model, data)
+```
 
 ```{r dimparammatrix, include = FALSE}
 param_mat <- get_parameter_matrix(model)
 dim(param_mat)
 ```
 
-<!-- FLAG: Need to talk a bit through what's happening here.  -->
+::::
+<br>
 
-```{r ch9updatePIMD, include = FALSE}
-
-if(do_diagnosis){
-  updated <- update_model(model, data)
-  write_rds(updated, "saved/PIMD_updated.rds")
-  }
-
-updated <- read_rds("saved/PIMD_updated.rds")
-
-
-if(do_diagnosis){
-  updated_2 <- update_model(model, data_2)
-  write_rds(updated_2, "saved/PIMD_updated_2.rds")
-  }
-
-updated_2 <- read_rds("saved/PIMD_updated_2.rds")
-
-```
-
-
+What do we find?
 
 ### Did inequality *cause* democracy?
 
-We have used the data to update on $\lambda$: our beliefs about the distributions of nodal types, including about their joint distributions (i.e., confounding). We can now ask `CausalQueries` to use the updated parameters to calculate any estimand of interest. 
+We have used the data to update on $\lambda$: our beliefs about the distributions of nodal types, including about their joint distributions (i.e., confounding). 
 
 One set of questions we can ask of the updated model is about the probability that high inequality causes democratization. We can pose this question at different levels of conditioning. For instance, we can ask:
 
@@ -153,22 +155,22 @@ One set of questions we can ask of the updated model is about the probability th
 
 We ask `CausalQueries` now to query $\lambda$'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the causal types that correspond to the effect of interest and then take the conditional probability of these. We present the code and results of these operations below and in Figure \@ref(fig:mixedhist).
 
-`r flag()` Let's graph the priors for each of these queries next to the posteriors.
+In figure @\ref(fig:pimdqueries) we graph the priors for each of these queries next to the posteriors.
 
-```{r pimdqueries, include = FALSE}
+```{r pimdqueries, include = FALSE, echo = FALSE}
 
 if(do_diagnosis){
 pimd_queries <- list(
   #For what proportion of cases does inequality have a positive effect on democratization?
   prob_b = query_distribution(
-    model = updated,
+    model = model,
     using = "posteriors",
     query = "D[I=1] > D[I=0]"
   ),
   
   #For what proportion of I=D=1 cases did inequality cause democratization?
   PC =  query_distribution(
-    model = updated,
+    model = model,
     using = "posteriors",
     query = "D[I=1] > D[I=0]",
     given = "D==1 & I==1"
@@ -176,7 +178,7 @@ pimd_queries <- list(
   
   #For what proportion  of I=M=D=1 cases did inequality cause democratization?
   PC2 = query_distribution(
-    model = updated,
+    model = model,
     using = "posteriors",
     query = "D[I=1] > D[I=0]",
     given = "D==1 & I==1 & M==1"
@@ -184,14 +186,14 @@ pimd_queries <- list(
   
   #And what about for the I=D=1 cases where there was no mobilization?
   PC3 = query_distribution(
-    model = updated,
+    model = model,
     using = "posteriors",
     query = "D[I=1] > D[I=0]",
     given = "D==1 & I==1 & M==0"
   ),
   
   PC4 = query_distribution(
-    model = updated,
+    model = model,
     using = "posteriors",
     query = "D[I=1] > D[I=0]",
     given = "D==1 & I==1 & M==1 & P==1"
@@ -199,41 +201,42 @@ pimd_queries <- list(
   
   # And what about for the I=D=1 cases where there was no mobilization?
   PC5 = query_distribution(
-    model = updated,
+    model = model,
     using = "posteriors",
     query = "D[I=1] > D[I=0]",
     given = "D==1 & I==1 & M==1 & P==0"
   )
 )
 
-write_rds(pimd_queries, "saved/09_qimdqueries.rds")
+write_rds(pimd_queries, "saved/09_qimdqueries_2.rds")
 }
 
-pimd_queries <- read_rds("saved/09_qimdqueries.rds")
+
+pimd_queries <- read_rds("saved/09_qimdqueries_2.rds")
 
 ```
 
 
 ```{r mixedhist, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization"}
-par(mfrow = c(3,2))
-hist(pimd_queries$prob_b, main = "I=1 causes D=1", xlim = c(0,1))
-hist(pimd_queries$PC,     main = "D=1 caused by I=1", xlim = c(0,1))
-hist(pimd_queries$PC2,    main = "D=1 caused by I=1 | M = 1", xlim = c(0,1))
-hist(pimd_queries$PC3,    main = "D=1 caused by I=1 | M = 0", xlim = c(0,1))
-hist(pimd_queries$PC4,    main = "D=1 caused by I=1 | M = 1, P=1", xlim = c(0,1))
-hist(pimd_queries$PC5,    main = "D=1 caused by I=1 | M = 1, P=0", xlim = c(0,1))
 
+x <- lapply(pimd_queries, function(a) data.frame(p = as.vector(a))) %>%
+  bind_rows(.id = "Q") %>%
+  mutate(Q = factor(Q, c("prob_b", "PC", "PC2", "PC3", "PC4", "PC5"),
+                    c("I=1 causes D=1", "D=1 caused by I=1", "D=1 caused by I=1 | M = 1", "D=1 caused by I=1 | M = 0", "D=1 caused by I=1 | M = 1, P=1",  "D=1 caused by I=1 | M = 1, P=0")))
+
+x %>% ggplot(aes(p)) + geom_histogram() + facet_wrap(~Q, scales = "free_y") + theme_bw()  + xlim(-.1,1) + xlab("probability")
+         
 ```
 
 <!-- FLAG: Not sure how much it is worth saying here substantively about the results given how strongly they are driven by the restrictions. -->
 
-```{r}
+```{r, echo = FALSE}
 
 
 if(do_diagnosis){
 pimd_queries_2 <- 
   
-  updated_2 %>% 
+  model %>% 
   
   query_model(
     using = "posteriors",
@@ -261,43 +264,43 @@ We can see that the share of cases overall in which inequality causes democratiz
 
 We can undertake the same exercise for a negative causal effect, generating estimates a comparable set of estimands, as shown in Figure \@ref(fig:mixedhist2).
 
-```{r pimdnegqueries, include = FALSE}
+```{r pimdnegqueries, include = FALSE, warning = FALSE}
 
 if(do_diagnosis){
   
 pimdneg_queries <- list(
 
   prob_a = query_distribution(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]"),
 
 PCneg =  query_distribution(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    given = "D==0 & I==1"),
 
 PC2neg = query_distribution(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    given = "D==0 & I==1 & M==1"),
 
 PC3neg = query_distribution(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    given = "D==0 & I==1 & M==0"),
 
 PC4neg = query_distribution(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    given = "D==0 & I==1 & M==1 & P==1"),
 
 PC5neg = query_distribution(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    query = "D[I=0] > D[I=1]",
                    given = "D==0 & I==1 & M==0 & P==0"))
@@ -305,20 +308,21 @@ PC5neg = query_distribution(
 write_rds(pimdneg_queries, "saved/09_pimdnegqueries.rds")
 }
 
-pimdneg_queries <- read_rds("saved/09_pimdnegqueries.rds")
-
 ```
 
-```{r, mixedhist2, echo = FALSE,  fig.cap = "Posteriors on Causes of Non-democratization"}
+```{r mixedhist2, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization"}
 
-par(mfrow = c(3,2))
-hist(pimdneg_queries$prob_a, main = "I=1 causes D=0", xlim = c(0,1))
-hist(pimdneg_queries$PCneg,     main = "D=0 caused by I=1", xlim = c(0,1))
-hist(pimdneg_queries$PC2neg,    main = "D=0 caused by I=1 | M = 1", xlim = c(0,1))
-hist(pimdneg_queries$PC3neg,    main = "D=0 caused by I=1 | M = 0", xlim = c(0,1))
-hist(pimdneg_queries$PC4neg,    main = "D=0 caused by I=1 | M = 1, P=1", xlim = c(0,1))
-hist(pimdneg_queries$PC5neg,    main = "D=0 caused by I=1 | M = 1, P=0", xlim = c(0,1))
-
+read_rds("saved/09_pimdnegqueries.rds") %>%
+  
+  lapply(function(a) data.frame(p = as.vector(a))) %>%
+  bind_rows(.id = "Q") %>%
+  mutate(Q = factor(Q, 
+                    c("prob_a", "PCneg", "PC2neg", "PC3neg", "PC4neg", "PC5neg"),
+                    c("I=1 causes D=0", "D=0 caused by I=1", "D=0 caused by I=1 | M = 1", "D=0 caused by I=1 | M = 0", "D=0 caused by I=1 | M = 1, P=1",  "D=0 caused by I=1 | M = 1, P=0"))) %>% 
+  ggplot(aes(p)) + 
+  geom_histogram() + facet_wrap(~Q, scales = "free_y") + theme_bw()  + xlim(-.1,1) + xlab("probability")
+         
+```
 ```
 
 We see that inequality appears, overall, more commonly to prevent democratization than to cause it. We are, moreover, most confident that inequality played a preventative role in those cases in which there was mobilization and international pressure---both of which *could* have generated democratization---but still no democratization occurred. 
@@ -329,35 +333,37 @@ Importantly, in the mixed-data setting, we can think of our estimands in both po
 ```{r ppcomparison, include = FALSE}
 # Estimands can be calculated for both the prior and posterior distributions.
 
-updated <- set_prior_distribution(updated)
+model <- set_prior_distribution(model)
 
 givens11 <- list(TRUE, "D==1 & I==1", "D==1 & I==1 & M ==1", "D==1 & I==1 & M==0")
 givens01 <- list(TRUE, "D==0 & I==1", "D==0 & I==1 & M ==1", "D==0 & I==1 & M==0")
 
 if(do_diagnosis){
-  
+
+model_prior <- update_model(model)  
+
 ch09_queryresults <- list(
   
 result_priors = query_model(
-                   model = updated, 
-                   using = "priors",
+                   model = model_prior, 
+                   using = "posteriors",
                    queries =  list("D[I=1] > D[I=0]"),
                    given = givens11),
 
 result_posteriors = query_model(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    queries =  list("D[I=1] > D[I=0]"),
                    given = givens11),
 
 prevent_priors = query_model(
-                   model = updated, 
-                   using = "priors",
+                   model = model_prior, 
+                   using = "posteriors",
                    queries =  list("D[I=0] > D[I=1]"),
                    given = givens01),
 
 prevent_posteriors = query_model(
-                   model = updated, 
+                   model = model, 
                    using = "posteriors",
                    queries =  list("D[I=0] > D[I=1]"),
                    given = givens01))
@@ -367,31 +373,37 @@ write_rds(ch09_queryresults, "saved/ch09_queryresultsqueries.rds")
 
 ch09_queryresults_queries <- read_rds("saved/ch09_queryresultsqueries.rds")
 
+pp_comparison <- ch09_queryresults_queries  %>% bind_rows(.id = "case") %>%
+  mutate(using = ifelse(grepl("priors", case), "Priors", "Posteriors"),
+         query = ifelse(grepl("result", case), "Caused", "Prevented"))
 ```
 
+```{r dcaused, echo = FALSE, fig.cap = "Posteriors on the probability that inequality caused democratization (probability that I has a positive effect on D given observed case level data). The error bars show plus or minus one standard deviation of the posterior variance. "}
 
-```{r IcausesDem, echo = FALSE, include = FALSE}
-#Inequality causes democratization:
-kable(ch09_queryresults_queries$result_priors, caption = "Prior", digits = 3)
-kable(ch09_queryresults_queries$result_posteriors, caption = "Posterior", digits = 3)
+pp_comparison %>% filter(query == "Caused") %>% 
+  ggplot(aes(mean, Given, color = using)) + 
+  geom_point(position=position_dodge(.5)) + 
+  theme_bw() +
+  geom_errorbarh(aes(xmin=mean - sd, xmax=mean + sd), 
+                size=.2, height = .1,
+                position=position_dodge(.5))
+
 ```
 
+```{r dprevented, echo = FALSE, fig.cap = "Posteriors on the probability that inequality prevented democratization (probability that I has a negative effect on D given observed case level data. The error bars show plus or minus one standard deviation of the posterior variance. )"}
+pp_comparison %>% filter(query == "Prevented") %>% 
+  ggplot(aes(mean, Given, color = using)) + 
+  geom_point(position=position_dodge(.5)) + 
+  theme_bw() +
+  geom_errorbarh(aes(xmin=mean - sd, xmax=mean + sd), 
+                size=.2, height = .1,
+                position=position_dodge(.5))
 
 
-```{r IpreventsDem, echo  = FALSE, include = FALSE}
-# Inequality prevents democratization:
 
-kable(ch09_queryresults_queries$prevent_priors, caption = "Prior", digits = 3)
-kable(ch09_queryresults_queries$prevent_posteriors, caption = "Posterior", digits = 3)
+
+
 ```
+The error bars show plus or minus one standard deviation of the posterior variance. We see that uncertainty is large and that the updating on probative value is small relative to mean inferneces.
 
-
-<!-- ## Exercises -->
-
-<!-- Consider  -->
-<!-- 1. Other links in the causal network: What is the proportion of cases in which $M$ has a positive effect on $D$? The proportion in which $P$ has a positive effect on $D$? -->
-
-<!-- 2. Confounding: What is the difference in probability of $I=1$ for cases in which $M$ has a positive effect on $D$ vs. cases in which it does not? -->
-
-<!-- 3. Can you adjust the model to  allow for negative effects of $I$ on $M$. In this case is there evidence of indirect effects of inequality running through reduced mobilization (consistent with Ansell and Samuels)? -->
 
