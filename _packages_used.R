@@ -68,6 +68,32 @@ options(mc.cores = parallel::detectCores())
 
 rstan_options(auto_write = TRUE)
 
+
+#######
+
+## Functions to extract key inferences given different data strategies
+
+possible_inferences <- function(m, p, results){
+  c(m, p,
+    dplyr::filter(results, is.na(M) & is.na(P))$posterior,
+    dplyr::filter(results, M == m   & is.na(P))$posterior,
+    dplyr::filter(results, is.na(M) & P == p)$posterior,
+    dplyr::filter(results, M == m   & P == p)$posterior)}
+
+cases_table <- function(results, case_names, digits = 3){
+  out <- rbind(
+    possible_inferences(0,0,results),
+    possible_inferences(0,1,results),
+    possible_inferences(1,0,results),
+    possible_inferences(1,1,results))
+  out <- round(out, digits)
+
+  x <- data.frame(cbind(case_names, out))
+
+  colnames(x) <- c("Case", "M: Mobilization?", "P: Pressure?", "No clues", "M only", "P only", "M and P")
+  x
+}
+
 #####
   # Formatting and LaTeX:
 

@@ -10,7 +10,7 @@ source("_packages_used.R")
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
-We apply the causal-model-based approach to process tracing to a major substantive issue in comparative politics: the relationship between inequality and democratization. We illustrate how one can convert theories in this domain into relatively simple causal models. Drawing on data from @haggard2012inequality, we use qualitative restrictions on causal types together with flat priors to draw inferences about the probabilty with which inequality facilitated or hindered democratization.
+We apply the causal-model-based approach to process tracing to a major substantive issue in comparative politics: the relationship between inequality and democratization. We illustrate how one can convert theories in this domain into relatively simple causal models. Drawing on data from @haggard2012inequality, we use qualitative restrictions on causal types together with flat priors to draw inferences about the probability with which inequality facilitated or hindered democratization.
 ::::
 <br>
 
@@ -247,107 +247,22 @@ model <- make_model("I -> M -> D <- P; I -> D") %>%
 ```{r cinfer253, include = FALSE}
 I1D1 <- conditional_inferences(model, 
                             query = "D[I=1] > D[I=0]", 
-                            parameters = model$lambda, 
+                            parameters = NULL, 
                             given = "D==1 & I==1")
 
 I0D1 <- conditional_inferences(model, 
-                            model$lambda, 
+                            parameters = NULL, 
                             query = "D[I=1] < D[I=0]", 
                             given = "D==0 & I==0")
 
 ```
 
-```{r pinferences, echo = FALSE}
 
-## Functions to extract key inferences given different data strategies
-
-possible_inferences <- function(m, p, results){
-  c(m, p,
-    dplyr::filter(results, is.na(M) & is.na(P))$posterior,
-    dplyr::filter(results, M == m   & is.na(P))$posterior,
-    dplyr::filter(results, is.na(M) & P == p)$posterior,
-    dplyr::filter(results, M == m   & P == p)$posterior)}
-
-cases_table <- function(results, case_names, digits = 3){
-  out <- rbind(
-                      possible_inferences(0,0,results),
-                      possible_inferences(0,1,results),
-                      possible_inferences(1,0,results),
-                      possible_inferences(1,1,results))
-  out <- round(out, digits)
-  
-  x <- data.frame(cbind(case_names, out))
-  
-  colnames(x) <- c("Case", "M: Mobilization?", "P: Pressure?", "No clues", "M only", "P only", "M and P")
-  x
-  }
-```
-
-
-
-FLAG: ADD ESTIMAND: DOES INEQUALITY REDUCE THE EFFECT OF MOBILIZATION.
-
-FLAG: ADD analysis with unobserved confounding.
-
-
-
-
-### Cases with incomplete data
-
-We consider first  causal relations for cases that did not democratize. These cases are not included in @haggard2012inequality.
-
-The results for cases that did not democratize (at the time in question) are presented in tables \@ref(tab:Tapp1) and Table \@ref(tab:Tapp2). Each table shows, for one kind of case, our posterior beliefs on the causal responsibility of $I$ for the outcome for different search strategies.
-
-
-#### $I=0, D=0$: Non democracy with low inequality
-
-To begin with $I=0, D=0$ cases, did the lack of inequality cause the lack of democratization (as, for instance, at the lefthand end of the Acemoglu and Robinson inverted $U$-curve)? 
-
-
-```{r Tapp1, echo = FALSE,  cache = FALSE, message = FALSE, warning = FALSE} 
-
-
-# Did I=0 cause D = 0
-I0D0 <- conditional_inferences(model, 
-                            model$lambda, 
-                            query = "D[I=1] > D[I=0]", 
-                            given = "D==0 & I==0")
-
-kable(dplyr::select(I0D0, P,M, posterior),digits = 3, caption = "No inequality and No democratization: Was no inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
-```
-
-
-We start out, based on the $I$ and $D$ values and our model, believing that there is a `r I0D0[1,5]` chance that low inequality prevented democratization. We then see that our beliefs shift most dramatically if we go looking for mobilization and find that it was present. The reason is that any positive effect of $I$ on $D$ has to run through the pathway mediated by $M$ because we have excluded a positive direct effect of $I$ on $D$ in our priors. Moreover, since we do not allow $I$ to have a negative effect on $M$, observing $M=1$ when $I=0$ must mean that $I$ has no effect on $M$ on this case, and thus $I$ cannot have a positive effect on $D$ (regardless also of what we find if we look for $P$). If we do *not* observe mobilization when we look for it, we now think it is somewhat more likely that $I=0$ caused $D=0$ since it is still possible that high inequality *could* cause mobilization. 
-
-We also see that observing whether there is international pressure has a substantial effect on our beliefs. When we observe $M=1$ (or don't look for $M$ at all), the presence of international pressure increases the likelihood that low inequality prevented democratization. Intuitively, this is because international pressure, on average across types, has a positive effect on democratization; so pressure's presence creates a greater opportunity for low inequality to counteract international pressure's effect and prevent democratization from occurring that otherwise would have (if there had been high inequality and the resulting mobilization).
-
-
-#### $I=1, D=0$: Non democracy with high inequality
-
-In cases with high inequality and no democratization, the question is whether high inequality prevented democratization via a negative effect, as theorized by Boix. That negative effect has to have operated via inequality's direct effect on democratization since our monotonicity restrictions allow only positive effects via mobilization. Here, the consequence of observing $P$ is similar to what we see in the $I=0, D=0$ case: seeing international pressure greatly increases our confidence that high inequality prevented democratization, while seeing no international pressure moderately reduces that confidence. There is, returning to the same intuition, more opportunity for high inequality to exert a negative effect on democratization when international pressures are present, pushing toward democratization. 
-
-
-
-```{r Tapp2, echo = FALSE}
-
-I1D0 <- conditional_inferences(model, 
-                            model$lambda, 
-                            query = "D[I=1] < D[I=0]", 
-                            given = "D==0 & I==1")
-
-kable(dplyr::select(I1D0, P,M, posterior), digits = 3, caption = "Inequality and No democratization: Was inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
-```
-
-Here, however, looking for $M$ has more modest effect than it does in an $I=0, D=0$ case. This is because we learn less about the indirect pathway from $I$ to $D$ by observing $M$: as we have said, we already know from seeing high inequality and no democratization (and under our monotonicity assumptions) that any effect could not have run through the presence or absence of mobilization. 
-
-However, $M$ provides some information because it, like $P$, acts as *moderator* for $I$'s direct effect on $D$ (since $M$ is also pointing into $D$). As we know, learning about moderators tells us something about (a) the rules governing a case's response to its context (i.e., its response type) and (b) the context it is in. Thus, in the first instance, observing $M$ together with $I$ and $D$ helps us eliminate types inconsistent with these three data points. For instance, if we see $M=0$, then we eliminate any type in which $D$ is 0, regardless of $P$'s value, when $M=0$ and $I=1$. Second, we learn from observing $M$ about the value of $M$ under which $D$ will be responding to $I$. Now, because $M$ is itself potentially affected by $I$, the learning here is somewhat complicated. What we learn most directly from observing $M$ is *the effect of $I$ on $M$* in this case. If we observe $M=1$, then we know that $I$ has no effect on $M$ in this case; whereas if we observe $M=0$, $I$ might or might not have a positive effect on $M$. Learning about this $I \rightarrow M$ effect then allows us to form a belief about how likely $M$ would be to be 0 or 1 if $I$ changed from $0$ to $1$; that is, it allows us to learn about the context under which $D$ would be responding to this change in $I$ (would mobilization be occurring or not)? This belief, in turn, allows us to form a belief about how $D$ will respond to $I$ given our posterior beliefs across the possible types that the case is. 
-
-The net effect, assuming that we have not observed $P$, is a small upward effect in our confidence that inequality mattered if we see no mobilization, and a small downward effect if we see mobilization. Interestingly, if we *do* observe $P$, the effect of observing $M$ reverses: observing mobilization increases our confidence in inequality's effect, while observing no mobilization reduces it. 
 
 
 ### Inferences for cases with observed democratization
 
-We now turm to  cases in which democratization has occurred---the category of cases that Haggard and Kaufman examine.
+We first turn to  cases in which democratization has occurred---the category of cases that Haggard and Kaufman examine.
 
 For these cases we  use data from @haggard2012inequality to show the inferences we would draw using this procedure and the actual observations made for a set of 8 cases. 
 
@@ -368,7 +283,7 @@ We are looking here for a negative effect of $I$ on $D$, which in our model can 
 ```{r HK8cases1, echo = FALSE}
 I0D1_Cases <- cases_table(
   conditional_inferences(
-    model, model$lambda,  query = "D[I=1] < D[I=0]",   given = "D==1 & I==0"), 
+    model,   parameters = NULL,  query = "D[I=1] < D[I=0]",   given = "D==1 & I==0"), 
   case_names  = c("Mexico (2000)", "Taiwan (1996)", 
                   "Albania (1991)", "Nicaragua (1984)"))
 
@@ -393,7 +308,7 @@ As in an $I=0, D=0$ case, $M$ can now be highly informative since this positive 
 
 I1D1_Cases <- cases_table(
   conditional_inferences(
-    model, model$lambda,  query = "D[I=1] > D[I=0]",   given = "D==1 & I==1"), 
+    model, parameters = NULL,  query = "D[I=1] > D[I=0]",   given = "D==1 & I==1"), 
   case_names  = c("Mongolia (1990)", "Paraguay (1989)", "Sierra Leone (1996)", "Malawi (1994)"))
 
 kable(I1D1_Cases, caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use priors assuming only monotonic effects.")
@@ -402,11 +317,67 @@ kable(I1D1_Cases, caption = "Four cases with high inequality and  democratizatio
 
 If we do see mobilization, on the other hand---as in Sierra Leone and Malawi---we are slightly more confident that high inequality was the cause of democratization (`r round(I1D1[3,1], 3)`). Moreover, if we first see $M=1$, then observing international pressure can add much more information; and it substantially differentiates our conclusions about the causes of Sierra Leone's and Malawi's transitions. Just as in an *$I=0, D=1* case, it is the absence of international pressure that leaves the most "space" for inequality to have generated the democratization outcome. When we see the absence of pressure in Sierra Leone, our confidence that high inequality was a cause of the transition increases to `r round(I1D1[3,2],3)`; seeing pressure present in Malawi reduces our confidence in inequality's effect to `r round(I1D1[3,3],3)`.
 
-## Model definition and inference in code
 
-How is this model defined and used in practice?
+### Cases with incomplete data
 
-Using the `gbiqq` package we can set this model up, along with restrictions, in a few lines a follows.
+We next first  causal relations for cases that did not democratize. These cases are not included in @haggard2012inequality but our model nevertheless characterizes our beliefs for these cases also.
+
+The results for cases that did not democratize (at the time in question) are presented in tables \@ref(tab:Tapp1) and Table \@ref(tab:Tapp2). Each table shows, for one kind of case, our posterior beliefs on the causal responsibility of $I$ for the outcome for different search strategies.
+
+
+#### $I=0, D=0$: Non democracy with low inequality
+
+To begin with $I=0, D=0$ cases, did the lack of inequality cause the lack of democratization (as, for instance, at the lefthand end of the Acemoglu and Robinson inverted $U$-curve)? 
+
+
+```{r Tapp1, echo = FALSE,  cache = FALSE, message = FALSE, warning = FALSE} 
+
+
+# Did I=0 cause D = 0
+I0D0 <- conditional_inferences(model, 
+                            parameters = NULL, 
+                            query = "D[I=1] > D[I=0]", 
+                            given = "D==0 & I==0")
+
+kable(dplyr::select(I0D0, P,M, posterior),digits = 3, caption = "No inequality and No democratization: Was no inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
+```
+
+
+We start out, based on the $I$ and $D$ values and our model, believing that there is a `r I0D0[1,5]` chance that low inequality prevented democratization. We then see that our beliefs shift most dramatically if we go looking for mobilization and find that it was present. The reason is that any positive effect of $I$ on $D$ has to run through the pathway mediated by $M$ because we have excluded a positive direct effect of $I$ on $D$ in our priors. Moreover, since we do not allow $I$ to have a negative effect on $M$, observing $M=1$ when $I=0$ must mean that $I$ has no effect on $M$ on this case, and thus $I$ cannot have a positive effect on $D$ (regardless also of what we find if we look for $P$). If we do *not* observe mobilization when we look for it, we now think it is somewhat more likely that $I=0$ caused $D=0$ since it is still possible that high inequality *could* cause mobilization. 
+
+We also see that observing whether there is international pressure has a substantial effect on our beliefs. When we observe $M=1$ (or don't look for $M$ at all), the presence of international pressure increases the likelihood that low inequality prevented democratization. Intuitively, this is because international pressure, on average across types, has a positive effect on democratization; so pressure's presence creates a greater opportunity for low inequality to counteract international pressure's effect and prevent democratization from occurring that otherwise would have (if there had been high inequality and the resulting mobilization).
+
+
+#### $I=1, D=0$: Non democracy with high inequality
+
+In cases with high inequality and no democratization, the question is whether high inequality prevented democratization via a negative effect, as theorized by Boix. That negative effect has to have operated via inequality's direct effect on democratization since our monotonicity restrictions allow only positive effects via mobilization. Here, the consequence of observing $P$ is similar to what we see in the $I=0, D=0$ case: seeing international pressure greatly increases our confidence that high inequality prevented democratization, while seeing no international pressure moderately reduces that confidence. There is, returning to the same intuition, more opportunity for high inequality to exert a negative effect on democratization when international pressures are present, pushing toward democratization. 
+
+
+
+```{r Tapp2, echo = FALSE}
+
+I1D0 <- conditional_inferences(model, 
+                            parameters = NULL, 
+                            query = "D[I=1] < D[I=0]", 
+                            given = "D==0 & I==1")
+
+kable(dplyr::select(I1D0, P,M, posterior), digits = 3, caption = "Inequality and No democratization: Was inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
+```
+
+Here, however, looking for $M$ has more modest effect than it does in an $I=0, D=0$ case. This is because we learn less about the indirect pathway from $I$ to $D$ by observing $M$: as we have said, we already know from seeing high inequality and no democratization (and under our monotonicity assumptions) that any effect could not have run through the presence or absence of mobilization. 
+
+However, $M$ provides some information because it, like $P$, acts as *moderator* for $I$'s direct effect on $D$ (since $M$ is also pointing into $D$). As we know, learning about moderators tells us something about (a) the rules governing a case's response to its context (i.e., its response type) and (b) the context it is in. Thus, in the first instance, observing $M$ together with $I$ and $D$ helps us eliminate types inconsistent with these three data points. For instance, if we see $M=0$, then we eliminate any type in which $D$ is 0, regardless of $P$'s value, when $M=0$ and $I=1$. Second, we learn from observing $M$ about the value of $M$ under which $D$ will be responding to $I$. Now, because $M$ is itself potentially affected by $I$, the learning here is somewhat complicated. What we learn most directly from observing $M$ is *the effect of $I$ on $M$* in this case. If we observe $M=1$, then we know that $I$ has no effect on $M$ in this case; whereas if we observe $M=0$, $I$ might or might not have a positive effect on $M$. Learning about this $I \rightarrow M$ effect then allows us to form a belief about how likely $M$ would be to be 0 or 1 if $I$ changed from $0$ to $1$; that is, it allows us to learn about the context under which $D$ would be responding to this change in $I$ (would mobilization be occurring or not)? This belief, in turn, allows us to form a belief about how $D$ will respond to $I$ given our posterior beliefs across the possible types that the case is. 
+
+The net effect, assuming that we have not observed $P$, is a small upward effect in our confidence that inequality mattered if we see no mobilization, and a small downward effect if we see mobilization. Interestingly, if we *do* observe $P$, the effect of observing $M$ reverses: observing mobilization increases our confidence in inequality's effect, while observing no mobilization reduces it. 
+
+
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+
+Process tracing model in practice
+
+Using the `CausalQueries` package we can set this model up, along with restrictions, as follows.
 
 ```{r restrictedmodelch7, eval = FALSE}
 model <- 
@@ -415,13 +386,18 @@ model <-
   set_restrictions("(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])")
 ```
 
-We can then calculate conditional inferences as follows:
+We can query a single quantity as follows:
 
-```{r cinfer428, eval = FALSE}
-conditional_inferences(model, 
-                       query = "D[I=0]==0",
-                       given = "D==1 & I==1")
+```{r, eval = FALSE}
+query_model(
+  model, 
+  query = "D[I=0]==0",
+  given = "D==1 & I==1",
+  using = "parameters")
 ```
+
+::::
+<br>
 
 
 ## Concluding thoughts
