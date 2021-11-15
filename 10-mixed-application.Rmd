@@ -250,15 +250,18 @@ write_rds(pimd_queries_2, "saved/09_pimdqueries_2.rds")
 
 pimd_queries_2 <- read_rds("saved/09_pimdqueries_2.rds")
 
-pimd_queries_2 %>% select(Given, mean, sd) %>% kable(digits = 2, caption = "Probability that inequality increases chances of democratization given:")
+# pimd_queries_2 %>% select(Given, mean, sd) %>% kable(digits = 2, caption = "Probability that inequality increases chances of democratization given:")
 
 ```
-We can see that the share of cases overall in which inequality causes democratization is estimated to be very low, with a good deal of confidence. The proportion is considerably higher for those cases that in fact experienced high inequality and democratization. The proportion of positive causal effects is believed to be even higher for those in which mobilization occurred, especially where an alternative causes---international pressure---was absent, though our uncertainty about this share is also very high. We also see that the absence of mobilization tells us for certain that democratization was not caused by inequality. Interestingly, however, this result derives from the model restrictions, rather than from the data: under the restrictions we imposed, a positive effect of inequality could operate *only* through mobilization.
+
+We can see that the share of cases overall in which inequality causes democratization is estimated to be very low, with a good deal of confidence. The proportion is considerably higher for those cases that in fact experienced high inequality and democratization. The proportion of positive causal effects is believed to be even higher for those in which mobilization occurred. Moreover, the proportion of $I=1, D=1$ cases with a positive effect of inequality on democratization is even higher when an alternative cause---international pressure---is absent, though our uncertainty about this share is also very high. 
+
+We also see that the absence of mobilization tells us for certain that democratization was not caused by inequality. Interestingly, however, this result derives purely from the model restrictions, rather than from the data: under the restrictions we imposed, a positive effect of inequality can operate *only* through mobilization.
 
 
 ### Did inequality *prevent* democracy?
 
-We can undertake the same exercise for a negative causal effect, generating estimates a comparable set of estimands, as shown in Figure \@ref(fig:mixedhist2).
+We can undertake the same exercise for a negative causal effect, generating estimates for a comparable set of estimands, as shown in Figure \@ref(fig:mixedhist2). Here we are asking for what proportion of cases overall inequality has a negative effect on democratization; for what proportion of $I=1, D=0$ cases inequality prevented democratization; and this latter query conditional on different clue realizations. 
 
 ```{r pimdnegqueries, include = FALSE, warning = FALSE}
 
@@ -319,12 +322,23 @@ read_rds("saved/09_pimdnegqueries.rds") %>%
   geom_histogram() + facet_wrap(~Q, scales = "free_y") + theme_bw()  + xlim(-.1,1) + xlab("probability")
          
 ```
-```
 
-We see that inequality appears, overall, more commonly to prevent democratization than to cause it. We are, moreover, most confident that inequality played a preventative role in those cases in which there was mobilization and international pressure---both of which *could* have generated democratization---but still no democratization occurred. 
 
-Importantly, in the mixed-data setting, we can think of our estimands in both population-level and case-level terms. We have initialy posed these question as population-level queries. The results in Figures \@ref(fig:mixedhist) and \@ref(fig:mixedhist2) can be understood as our estimates of the *share* of cases in the population, with a given set of characteristics, for which a particular causal effect holds. Yet these distributions, by the very same token, represent our beliefs about the probability that $I$ had a positive causal effect in an individual case. Thus, for instance, from Figure \@ref(fig:mixedhist) we can see  the posterior on the proportion of $I=D=M=1$ cases in the population for which $I=1$ caused $D=1$. But this also tells us, for an individual case randomly selected from the population of $I=D=M=1$ cases, the probability that high inequality caused democratization in the case. The key difference from the pure process-tracing setup is that here our case-level inferences are informed by *data* from the population, rather than population-level beliefs serving only as priors.
+We see that inequality appears, overall, more commonly to prevent democratization than to cause it. We are, moreover, most confident that inequality played a preventive role in those cases in which there was mobilization and international pressure---both of which *could* have generated democratization---but still no democratization occurred. 
 
+
+### Contribution to case-level inference
+
+There are two ways of thinking about the learning we derive from the above estimates. On the one hand, we can think of our estimands in population-level terms. The results in Figures \@ref(fig:mixedhist) and \@ref(fig:mixedhist2) can be understood as our estimates of the *share* of cases in the population, with a given set of characteristics, for which a particular causal effect holds. 
+
+Yet these distributions, by the very same token, represent our beliefs about the probability that $I$ had a positive or negative (depending on the query we are talking about) causal effect in an individual case for which we have seen a given data pattern. Thus, for instance, from Figure \@ref(fig:mixedhist) we can see  our posterior belief about the proportion of $I=D=M=1$ cases in the population for which $I=1$ caused $D=1$. But this also tells us, for an individual case randomly selected from the population of $I=D=M=1$ cases, the probability that high inequality caused democratization in the case. To put the point differently, suppose we want to know whether $I=1$ was a cause of $D=1$ in a randomly selected case, so we do process tracing and observe $M=1$: this same estimate answers the case-level query, telling us the probability that $I=1$ caused $D=1$ in the case at hand. 
+
+The key difference between case-level inference from mixed data and the pure process-tracing setup from Chapter \@ref(ptapp) is that now our case-level inferences are informed by *data* from the population, rather than merely by a set of prior beliefs about the population. Consider, for instance, the difference in posteriors on the probability of a negative effect for the query for $I=1, D=0$ given $M=0$ (mean of about 0.31) as compared to the query for $I=1, D=0$ given $M=1$ (about 0.42). That difference in what we believe depending on $M$'s value represents the probative value of the $M$ clue given the model as *updated* from the data. Of course, we have also made assumptions in building the model, including motonicity restrictions, and we speak to their role below. But the general point is that, in mixed-data inference, we can learn empirically about the probative value of any given node, rather than drawing probative value purely from theory.
+
+
+### How much do we get from the model vs. the data?
+
+We might wonder, at the same time, how much we are in fact learning from the data, as compared to what we built into the model at the outset, including through the monotonicity restrictions that we imposed. To examine this, in Figures \@ref(fig:dcaused) and \@ref(fig:dprevented), we plot the mean (and one-standard-deviation error bars) of our prior and our posterior on the same set of queries. We see that there is almost no shift in beliefs for the positive-effect queries, with a somewhat greater shift in means for the negative-effect queries. However, our uncertainty remains high even in for negative effects, though has shrunk some. By comparing the estimates given $M=1$ to those given $M=0$, we can also see that, in this example, we do not happen to learn anything from the data about $M$'s probative value: the change in beliefs between observing $M=1$ and observing $M=0$ remains about the same in our posteriors as it was in our priors. 
 
 ```{r ppcomparison, include = FALSE}
 # Estimands can be calculated for both the prior and posterior distributions.
@@ -374,7 +388,7 @@ pp_comparison <- ch09_queryresults_queries  %>% bind_rows(.id = "case") %>%
          query = ifelse(grepl("result", case), "Caused", "Prevented"))
 ```
 
-```{r dcaused, echo = FALSE, fig.cap = "Posteriors on the probability that inequality caused democratization (probability that I has a positive effect on D given observed case level data). The error bars show plus or minus one standard deviation of the posterior variance. "}
+```{r dcaused, echo = FALSE, fig.cap = "Priors and posteriors on the probability that inequality caused democratization (probability that I has a positive effect on D) given different kinds of observed case-level data. The error bars show plus or minus one standard deviation of the posterior variance. "}
 
 pp_comparison %>% filter(query == "Caused") %>% 
   ggplot(aes(mean, Given, color = using)) + 
@@ -386,7 +400,7 @@ pp_comparison %>% filter(query == "Caused") %>%
 
 ```
 
-```{r dprevented, echo = FALSE, fig.cap = "Posteriors on the probability that inequality prevented democratization (probability that I has a negative effect on D given observed case level data. The error bars show plus or minus one standard deviation of the posterior variance. )"}
+```{r dprevented, echo = FALSE, fig.cap = "Priors and posteriors on the probability that inequality prevented democratization (probability that I has a negative effect on D) given different kinds of observed case-level data. The error bars show plus or minus one standard deviation of the respective distribution's variance."}
 pp_comparison %>% filter(query == "Prevented") %>% 
   ggplot(aes(mean, Given, color = using)) + 
   geom_point(position=position_dodge(.5)) + 
@@ -400,6 +414,6 @@ pp_comparison %>% filter(query == "Prevented") %>%
 
 
 ```
-The error bars show plus or minus one standard deviation of the posterior variance. We see that uncertainty is large and that the updating on probative value is small relative to mean inferneces.
+
 
 
