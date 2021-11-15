@@ -793,15 +793,6 @@ Finally, what if we observe $X$ first and are considering whether to seek inform
 ```{r kinformative, echo = FALSE, include = FALSE, errors = FALSE}
 # Graphing all dags in some class, X,Y,K,Q
 
-
-
-# Append to list
-lappend <- function(L, obj) {
-  L[[length(L)+1]] <- obj
-  return(L)
-  }
-
-
 translate_matrix <- function(A, var_names = c("K", "X", "Y", "Q")){
  paste(var_names[which(A==1, arr.ind = TRUE)[,1]], "causes", var_names[which(A==1, arr.ind = TRUE)[,2]])
   }
@@ -840,12 +831,18 @@ kinformative <- function(A){
 # Q ??10
 var_names <- c("K", "X", "Y", "Q")
 
+raise <- function(X, k){
+  out <- X
+  if(k ==1) return(X)
+  for(j in 2:k) out <- out %*% X
+  out}
+  
 check.A <- function(A, iterations = 4){
   x <- 1
-  if( sum(sapply(1:iterations, function(j) sum(diag((A*j))))) > 0) x<- 0 # Cycles
-  if( sum(sapply(1:iterations, function(j) (A*j)[2,3])) == 0) x<- -1 # "No path from X to Y (2 to 3)"
+  if( any(sapply(1:iterations, function(j) sum(diag(raise(A,j))) > 0))) x <- 0 # Not acyclic
+  if( sum(sapply(1:iterations, function(j) raise(A,j)[2,3])) == 0) x <- -1 # "No path from X to Y (2 to 3)"
   if(min(rowSums(A) + colSums(A))==0) x<- -2 # "Unconnected element"
-  if(sum(A[,4])>0) x<- -3 # "No causes of Q allowed in graph"
+  if(sum(A[,4])>0) x <- -3 # "No causes of Q allowed in graph"
   x}
 
 .A <-  matrix(c( 0,NA,NA,NA, 
@@ -856,13 +853,14 @@ rownames(.A) <- var_names; colnames(.A) <- var_names
 
 possibilities <- perm_bb(rep(2,9))
 
-new_A <- function(j) {A <- .A; A[c(2:4, 5, 8:10, 13:14)] <- possibilities[j,]; A}
+new_A <- function(j) {
+  A <- .A
+  A[c(2:4, 5, 8:10, 13:14)] <- possibilities[j,]
+  A}
 
-accept <- list()
-for(i in 1:nrow(possibilities)) {
-  A <- new_A(i)
-  if(check.A(A)==1) accept <- lappend(accept, A)
-}
+As <- lapply(1:nrow(possibilities), new_A)
+
+accept <- As[(lapply(As, check.A) %>% unlist)==1]
 
 ```
 
