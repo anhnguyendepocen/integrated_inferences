@@ -700,12 +700,16 @@ $$\Pr(E | D) =  \frac{\pi_1}{\pi_1 + \pi_2}$$
 
 <!-- Rules for inferring information about one variable from another are th stuff of graphoids  [@pearl1985graphoids] see also [@geiger1987non] and [@pearl1987logic]...  -->
 
-As we have argued, causal estimands can be expressed as collections of causal types (combinations of nodal types) in a causal model. Case-level causal effects and causal paths can be defined in terms of response-type nodes; average effects and notable causes in terms of population-level parameter nodes (e.g., $\pi$ or $\lambda$ terms); and questions about actual causes in terms of exogenous conditions that yield particular endogenous values (conditioning on which makes some variable a counterfactual cause). 
+As we have argued, causal queries can be expressed as collections of combinations of nodal types (i.e., as collections of causal types) in a causal model. A nodal type is itself represented as an unobservable node in a model --- as a $\theta^j$ pointing into node $j$. Thus, causal inference in this framework is *the use of observable nodes on a causal graph to assess the value of one or more unobserved nodes on a causal graph.* Placing our queries on the graph together with the observable nodes has the important advantage of allowing us to graphically identify the possibilities for learning about these queries: that is, to say which observable nodes are potentially informative about a given query.
 
-We thus define causal inference more generally as *the assessment of the value of one or more unobserved (possibly unobservable) exogenous nodes on a causal graph, given observable data.*  To think through the steps in this process, it is useful to distinguish among three different features of the world, as represented in our causal model: there are the things we want to learn about; the things we have already observed; and the things we could observe. As notation going forward, let:
+<!-- Case-level causal effects and causal paths can be defined in terms of response-type nodes; average effects and notable causes in terms of population-level parameter nodes (e.g., $\pi$ or $\lambda$ terms); and questions about actual causes in terms of exogenous conditions that yield particular endogenous values (conditioning on which makes some variable a counterfactual cause).  -->
 
-* $\mathcal Q$ denote the exogenous variables that define our *query*; we generally assume that $\mathcal Q$ cannot be directly observed so that its values must be inferred
-* $\mathcal W$ denote a set of previously observed nodes in the causal model, and 
+<!-- We thus define   -->
+
+To think through the logic of potential probative value, it is useful to distinguish among three different features of the world, as represented in our causal model: there are the things we want to learn about; the things we have already observed; and the things we could observe. As notation going forward, we let:
+
+* $\mathcal Q$ denote the collection of $\theta^j$ nodes that define our *query*; $\mathcal Q$ cannot be directly observed so that its values must be inferred;
+* $\mathcal W$ denote a set of previously observed nodes in the causal model; and 
 * $\mathcal K$ denote a set of additional  variables---clues---that we have not yet observed but could observe.
 
 Now suppose that we seek to design a research project to investigate a causal question. How should the study be designed? Given that there are some features of the world that we have already observed, which additional clues should we seek to collect to shed new light on our question? In terms of the above notation, what we need to figure out is whether a given $\mathcal K$ might be informative about---might provide additional leverage on---$\mathcal Q$ given the prior observation of $\mathcal W$. 
@@ -714,7 +718,7 @@ To ask whether one variable (or set of variables) is informative about another i
 
 Thus, asking whether a set of clues, $\mathcal K$, is informative about $\mathcal Q$ given the prior observation of $\mathcal W$, is equivalent to asking whether $\mathcal K$ and $\mathcal Q$ are conditionally independent given $\mathcal W$. That is, $\mathcal K$ can be informative about $\mathcal Q$ given $\mathcal W$ only if $\mathcal K$ and $\mathcal Q$ are *not* conditionally independent of one another given $\mathcal W$. 
 
-As we have shown, as long as we have built $\mathcal Q$, $\mathcal K$, and $\mathcal W$ into our causal model of the phenomenon of interest, we can answer this kind of question by inspecting the structure of the model's DAG. In particular, what we need to go looking for are relationships of *$d$-separation*. The following proposition, with only the names of the variable sets altered, is from @pearl2009causality (Proposition 1.2.4): 
+As our discussion of conditional independence in Chapter \@ref(models) implies, as long as we have built $\mathcal Q$, $\mathcal K$, and $\mathcal W$ into our causal model of the phenomenon of interest, we can answer this kind of question by inspecting the structure of the model's DAG. In particular, what we need to go looking for are relationships of *$d$-separation*. The following proposition, with only the names of the variable sets altered, is from @pearl2009causality (Proposition 1.2.4): 
 
 **Proposition 1:**  If sets $\mathcal Q$ and $\mathcal K$ are $d$-separated by $\mathcal W$ in a DAG, $\mathcal G$, then $\mathcal Q$ is independent of $\mathcal K$ conditional on $\mathcal W$ in every distribution compatible with $\mathcal G$. Conversely, if $\mathcal Q$ and $\mathcal K$ are *not* $d$-separated by $\mathcal W$ in DAG $\mathcal W$, then $\mathcal Q$ and $\mathcal K$ are dependent conditional on $\mathcal W$ in at least one distribution compatible with $\mathcal G$.
 
