@@ -526,7 +526,7 @@ To test these assumptions, we in fact need to depart from @haggard2012distributi
 
 * **Pressure**: We draw on the GIGA Sanctions Dataset to measure international pressure, $P$. Specifically, we code a country case as $P=1$ if and only if the country was the target of democratization-focused sanctions during the 1990-2000 period. 
 
-* **Democratization**: We use dichotomous democracy measures from @cheibub2010revisited, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990. We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
+* **Democratization**: We use dichotomous democracy measures from @cheibub2010revisited, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
 
 
 We check the models' assumptions in relation to conditional independencies through a set of simple regression models, displayed in \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in these two rows that the data pattern is consistent with our assumptions of unconditional independence for these two pairs of variables.
@@ -542,8 +542,11 @@ independencies <- function(model){
 # independencies(pimd)
 
 
-dd <- CausalQueries::democracy_data 
+# dd <- CausalQueries::democracy_data 
 
+dd <- read.csv("data/pimd2.csv") %>% 
+  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  rename(P = P2, I = I2, M= M2, D = D2)
 
 rbind(
   lm_robust(P~I, data = dd) %>% tidy %>% filter(term == "I"), 
