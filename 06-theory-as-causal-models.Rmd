@@ -384,6 +384,82 @@ Functional (but not probabilistic)  causal models allow for the representation o
 
 ### Gains from theory
 
+One metric is to assess the *expected (squared) error* resulting from posterior beliefs. In other words: how wrong are you likely to be if you base your best guess on your posterior mean? Another way to think of the gains is as the *expected posterior variance*: how certain do you expect you will be after you make use of this new information?^[Other loss functions could be used, including functions that take account of the costs of collecting additional data or to the risks associated with false diagnoses. For instance, in @heckerman1991toward, an objective function is generated using  expected utility gains from diagnoses generated based on new information over diagnoses based on what is believed already. In their treatment [@heckerman1991toward, Equation 6],  the expected value of new information $K$, given existing information $W$ is: $\sum{K}P(K|W)( EU(d(Q,W,K)|W, K) - EU(d(Q, W)|W, K))$ where $EU$ is expected utility and $d$ is the optimal inference (diagnosis) given available data. Note that the diagnosis can take account of $K$ when it is observed, but the expected utility depends on $K$ whether or not it is observed, as $K$ carries information about the state of interest.] 
+
+
+
+In fact these two quantities are equivalent  (see for example @scharf1991statistical)--at least if you assess expectations using the same priors as you use for forming posteriors.  
+
+To see this, imagine a situation in which there is an unknown parameter $q$ and we have a data strategy that produces a distribution over data $k$, given $q$. Let $p(q,k)$ denote the joint prior distribution over $q$ and  $k$ with marginal distributions $p(k)$ and $p(q)$. For any $k$ there is posterior estimate $q_k$ and a posterior variance $v_k$, both estimated using Bayes rule. The expected squared error is then:
+
+
+$$ESE := \int_q\int_k \left({q}_k-q\right)^2p(k, q)dkdq $$
+
+This takes the error one might get with repsect to any true value of the parameter ($q$), given the data one might see given $q$ and the inferences one might draw.  The expected posterior variance can be written:
+
+$$EV := \int_k v_k p(k)dk$$
+
+This takes the posterior variance, given some data, over all the possible data one might see given marginal distribution $p(k)$.
+
+To show that these are equivalent we take advantage of the fact that $p(q,k) = p(k)p(q|k) = p(q)p(k|q)$ and that $p(q|k)$ gives the posterior distribution of $q$ given $k$. We then have:
+
+$$
+\begin{eqnarray}
+ESE &=& \int_q\int_k \left({q}_k-q\right)^2p(q,k)dkdq \\
+    &=& \int_k\int_q \left({q}_k-q\right)^2p(q,k)dq dk \\
+    &=& \int_k\int_q \left({q}_k-q\right)^2p(k)p(q|k)dq dk \\
+    &=& \int_k\int_q \left({q}_k-q\right)^2p(q|k)dq p(k)dk \\
+    &=& \int_k\left[\int_q \left({q}_k-q\right)^2p(q|k)dq\right]p(k)dk \\
+    &=& \int_k v_k p(k)dk \\
+    & = & EV
+\end{eqnarray}
+$$
+
+Note that the key move is in recognizing that $p(q |k)$ is in fact the posterior distribution on $q$ given $k$. In using this we assume that the same distribution is used for assessing error and for conducing analysis---that is we take the researcher's prior to be the relevant one for assessing error.
+
+Moreover, it is easy to see that whenever inferences are sensitive to $K$, the expected variance of the posterior will be lower than  the variance of the prior. This can be seen from the law of total variance, written here to highlight the gains from observation of $K$, given what is already known from observation of $W$.^[See @raiffa1961applied. A similar expression can be given for the expected posterior variance from learning $K$ in addition to $W$ when $W$ is not yet known. See, for example, Proposition 3 in @geweke2014analysis.]  
+$$Var(Q|W) = E_{K|W}(Var(Q|K,W)) +Var_{K|W}(E(Q|K,W))$$
+
+However although *expected* posterior variance goes down, it is still always possible that posterior variance rises. The increase in uncertainty does not however mean you haven't been learning. Rather you have learned that things aren't as simple as you thought.
+
+### Illustration
+
+For illustration say that it is known that $X=1, Y=1$ and that, given this information (playing the role of $W$), the posterior probability that a unit is of type $b$---for whom $Y$ would be 0 were $X=0$ (and not type $d$, for which $Y$ would be 1 regardless) is $p$. Say then that that under some theory we have $\phi_b := \Pr(K=1 | Y(0)=0, Y(1)=1, X=1)$, $\phi_d := \Pr(K=1 | Y(0)=1, Y(1)=1, X=1)$. 
+
+Then what is the value added of this theory? Define $Q$ here as the query regarding whether the unit is a $b$ type. Then the prior variance, $Var(Q|W)$, is simply $p(1-p)^2 +(1-p)p^2 = p(1-p)$. 
+
+<!-- Would be best to  write down the theory as a structural equation that has phi_j as p(K=1|j) -->
+
+To calculate $E_{K|W}(Var(Q|K,W))$, note that the posterior if $K$ is observed is $\frac{\phi_bp}{\phi_bp+\phi_d(1-p)}$. Let us call this $\hat{q}_K$, and the belief when $K$ is not observed $\hat{q}_{\overline{K}}$.
+In that case the  *expected error* is: 
+
+$$\text{Expected Error} = p\phi_b\left(1-\hat{q}_K\right)^2+(1-p)\phi_d\hat{q}_K^2+p(1-\phi_b)\left(1-\hat{q}_{\overline{K}}\right)^2+(1-p)(1-\phi_d)\hat{q}_{\overline{K}}^2$$
+
+where the four terms are the errors when $K$ is seen for a $b$ type, when $K$ is seen for a $d$ type, when $K$ is not seen for a $b$ type, and when $K$ is not see for a $d$ type.
+
+
+Defining $\rho_K = (p\phi_b+(1-p)\phi_d)$ as the probability of observing $K$ given the prior, we can write the posterior variance as:
+
+$$\text{Expected Posterior Variance} = \rho_K\hat{q}_K(1-\hat{q}_K)+(1-\rho_K)\hat{q}_{\overline{K}}(1-\hat{q}_{\overline{K}})$$
+
+
+<!-- Making use of the fact that $\rho_K\hat{q}_K = ({\phi_bp+\phi_d(1-p)})\frac{\phi_bp}{\phi_bp+\phi_d(1-p)} = \phi_bp$ and similarly  -->
+<!-- $(1-\rho_K)\hat{q}_{\overline{K}} = (1-\phi_b)p$, this can be written in terms of primitives as: -->
+
+With a little manipulation, both of these expressions simplify to:
+
+$$\text{Expected Posterior Variance} =p(1-p)\left(\frac{\phi_b\phi_d}{\phi_bp+\phi_d(1-p)} + \frac{(1-\phi_b)(1-\phi_d)}{(1-\phi_b)p+(1-\phi_d)(1-p)}\right)$$
+
+The gains are then:
+
+$$\text{Gains} =1- \frac{\phi_b\phi_d}{\phi_bp+\phi_d(1-p)} - \frac{(1-\phi_b)(1-\phi_d)}{(1-\phi_b)p+(1-\phi_d)(1-p)}$$
+
+Note that we still learn even if our posterior variance increases. For example say $p = 1/5$, $\phi_d = 1/3$, $\phi_b = 2/3$ and we observe $K=1$. Then our prior variance is $p(1-p) = 4/15$. Our posterior is $1/3$ and our posterior variance is 2/9, an increase. Even still although we are more uncertain we are wiser since we attribute a squared error to the guesses made by our former selves now of $(1/3)(1-1/5)^2 + (2/3)(0 - 1/5)^2 = 6/25$.
+
+<!-- .2 2/3 / .2 2/3 + .8 1/3 ) = .4/ .4 + .8    -->
+
+
+
 We begin with theory $M_1$ which together with data $D$ implies claim $M_2$. We then posit theory $M_0$ of $M_1$---and so $M_0$ implies $M_1$, but $M_0$, coupled with $D$, produces a claim , $M_2'$, that is different---and hopefully better---than $M_2'$.
 
 We  illustrate using a theory that allows use of the "front door criterion." 
