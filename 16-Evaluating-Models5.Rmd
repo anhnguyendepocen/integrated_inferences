@@ -455,7 +455,7 @@ We also note that in cases in which you cannot quantify uncertainty about parame
 
 ## Evaluating the Democracy-Inequality model
 
-** FLAG: GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA ** 
+<!-- ** FLAG: GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA **  -->
 
 
 ```{r pimdmodelsch15, echo = FALSE}
@@ -475,15 +475,15 @@ pimd_negmed <- make_model("I -> M -> D <- P; I -> D") %>%
 
 pimd_nonmon <- make_model("I -> M -> D <- P; I -> D")
 
-#data <- CausalQueries::democracy_data
+data <- CausalQueries::democracy_data
 
-#data_2 <- read.csv("data/pimd2.csv") %>% 
- # mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
-  #rename(P = P2, I = I2, M= M2, D = D2)
-
-data <- read.csv("data/pimd2.csv") %>% 
+data_2 <- read.csv("data/pimd2.csv") %>% 
   mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
-  rename(P = P2, I = I2, M= M2, D = D2) 
+  rename(P = P2, I = I2, M= M2, D = D2)
+
+#data <- read.csv("data/pimd2.csv") %>% 
+ # mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
+  #rename(P = P2, I = I2, M= M2, D = D2) 
 
 
 if(do_diagnosis){
@@ -533,7 +533,7 @@ To test these assumptions, we in fact need to depart from @haggard2012distributi
 * **Democratization**: We use dichotomous democracy measures from @cheibub2010revisited, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
 
 
-We check the models' assumptions in relation to conditional independencies through a set of simple regression models, displayed in \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in these two rows that the data pattern is consistent with our assumptions of unconditional independence for these two pairs of variables.
+We check the model's assumptions in relation to conditional independencies through a set of simple regression models, displayed in Table \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in the first row that the data pattern is consistent with our assumption of unconditional independence of $I$ and $P$. However, we also see that there *is* an unconditional correlation between $I$ and $M$, something that is excluded by our model.
 
 <!-- MH: Realize we actually have a big iussue here: we only have M,P data in cases with D = 1 so we are in fact condtiioining on D and so we do *not* expect independence  -->
 
@@ -549,12 +549,12 @@ independencies <- function(model){
 # dd <- CausalQueries::democracy_data 
 
 rbind(
-  lm_robust(P~I, data = data) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~M, data = data) %>% tidy %>% filter(term == "M"), 
-  lm_robust(P~I, data = filter(data, M==0)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~I, data = filter(data, M==1)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~M, data = filter(data, I==0)) %>% tidy %>% filter(term == "M"), 
-  lm_robust(P~M, data = filter(data, I==1)) %>% tidy %>% filter(term == "M")) %>%   mutate(Given = c("-", "-", "M = 0", "M = 1", "I = 0", "I = 1")) %>%
+  lm_robust(P~I, data = data_2) %>% tidy %>% filter(term == "I"), 
+  lm_robust(P~M, data = data_2) %>% tidy %>% filter(term == "M"), 
+  lm_robust(P~I, data = filter(data_2, M==0)) %>% tidy %>% filter(term == "I"), 
+  lm_robust(P~I, data = filter(data_2, M==1)) %>% tidy %>% filter(term == "I"), 
+  lm_robust(P~M, data = filter(data_2, I==0)) %>% tidy %>% filter(term == "M"), 
+  lm_robust(P~M, data = filter(data_2, I==1)) %>% tidy %>% filter(term == "M")) %>%   mutate(Given = c("-", "-", "M = 0", "M = 1", "I = 0", "I = 1")) %>%
   select(Given, estimate, std.error, p.value) %>% 
   mutate(Correlation = c("P,I", "P,M", "P,I", "P,I","P,M", "P,M")) %>%
   select(Correlation, everything()) %>%
@@ -563,11 +563,12 @@ rbind(
 
 ```
 
-<!-- Should add columns saying for which two nodes the correlation is being assessed. -->
 
-We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$, and of $M$ given $I$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in the next 4 rows. In rows 3 and 4 of the table, we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is more troubling for our model, as we see a relative strong relation between $P$ and $I$ when $M=1$. Substantively, this implies that in cases where there is mobilization, pressure is more common where inequality is high than where inequality is low. While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization a collider for inequality and pressure. 
 
-Looking at rows 5 and 6, we see that there is a correlation between $P$ and $M$ when inequality is low. Substantively, in states with low inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization.
+We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$, and of $M$ given $I$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in the next 4 rows. In rows 3 and 4 of the table, we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is more troubling for our model, as we see a relative strong negative correlation between $P$ and $I$ when $M=0$, and a positive correlation when $M=1$. While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization a collider for inequality and pressure. Looking at rows 5 and 6, we see that there is a correlation between $P$ and $M$ when inequality is high, but not when inequality is low. 
+
+
+<!-- Substantively, in states with high inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization. -->
 
 <!-- Unclear what the case numbers above are referring to. For instance, I see 13 cases with I=0, P=0. But what's the 0?-->
 
