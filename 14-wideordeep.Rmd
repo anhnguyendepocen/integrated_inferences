@@ -89,7 +89,7 @@ It is also interesting to note that we cannot learn as much by updating *only* u
 We use this example to illustrate a simple but stark point: there will be situations in which the expected gains from collecting more data on the same cases and from collecting the same data on more cases will be different, sometimes very different. The model and the prior data shape the tradeoff. In this particular setup, it is the confounding together with the large number of prior $X,Y$ observations that makes depth the better strategy. Once we have learned from 2000 $X,Y$ observations, data of the same form from more cases will not change beliefs. Yet going deep---even if only in a few cases---provides information on parameters we know nothing about, helping us interpret the $X,Y$ correlation in causal terms.
 
 
-### Results from simulations
+### A simulation-based approach to choosing mixes
 
 While the results in the last section are striking, they depend upon particular realizations of the data under each strategy. When selecting strategies we, of course, do not know how the data will turn out. Our problem becomes, as in the case-selection analyses, one of figuring out the *expected posterior variance* from different strategies. 
 
@@ -136,19 +136,45 @@ The more general, simulation-based approach that we introduce here is parallel t
 
 <!-- This approach can be applied to *any* model, with *any* query, and *any* prior set of data.  -->
 
-We now explore alternative mixes of going wide and going deep for a range of models and queries, the same set that we examined for case-selection in Chapter \@ref(caseselection). We present the results in compact form in Figure \@ref(morn3). 
+#### Simulation results
+
+We now explore alternative mixes of going wide and going deep for a range of models and queries, the same set that we examined for case-selection in Chapter \@ref(caseselection). We present the results in compact form in Figure \@ref(morn3). The structure of the panels is the same as those in the figure in Chapter \@ref(caseselection), with models being crossed with queries. Within each panel, each line represents going wide to a differing degree: collecting $X,Y$ data for $N=100$, for $N=400$, and for $N=1600$. As we move rightward along each line, we are adding depth: we show results for a strategy with no process-tracing, for process tracing 50 of the $X,Y$ cases, and for process-tracing 100 of the $X,Y$ cases. On the $y-$axis of each graph, we plot the expected posterior variance from each wide-deep combination.^[Note that the expected posterior variance is always $0$ for queries that are already answered with certainty by the model itself, such as the probability of a negative effect in a model with negative effects excluded.]
+
+Looking at the figure as a whole, one pattern that leaps out is that there are, for almost all model-query combinations, gains from going wider. We can also see, unsurprisingly, that the marginal gains to going wide are diminishing. It is also interesting to note where going wider appears to add little or nothing: when we want to estimate the probability that a positive effect runs through the indirect path, we learn nothing from observing $X$ and $Y$ for a larger set of cases. 
+
+Focusing just on the gains to depth, we see that these are much more concentrated in specific model-query combinations. Going deep to learn about the $ATE$ or the probability of positive or negative causation appears at best marginally advantageous --- at least up to $N=100$ --- for the unconstrained confounded and moderator models and for both unconstrained and monotonic two-path models. Notably, we *do* learn from going deep in both the unconstrained and monotonic chain models. As for going wide, the marginal gains from going deep are also diminishing, with the biggest gains arising from the first 50 cases in which we observe $M$.
+
+Part of what is likely going on here is that unconstrained models are ones in which we start out with no information about $M$'s probative value. We can *learn* about $M$'s effects from observing $M$ (as discussed in Chapters \@ref(mixing) and \@ref(mixingapp)); this is why we can learn from process tracing in even the unconstrained version of the chain model. However, that learning gets much harder in unconstrained models with confounding or in models with two paths. In a confounded model, for instance, suppose we see $M$ positively correlated with $X$ and negatively correlated with $Y$, with $X$ and $Y$ themselves negatively correlated. This pattern is consistent with $M$ having a positive effect on $X$ and a negative effect on $Y$, and thus a high degree of confounding. But it is equally consistent with $M$ having only a positive effect on $X$ and $X$ having a negative effect on $Y$, with no $M \rightarrow Y$ effect and thus no confounding. A monotonicity assumption makes $M$ *a priori* informative: for instance, when we see $X=1, Y=1$, confounding is only a possibility if we also see $M=1$; confounding is ruled out if we observe $M=0$. 
+
+In a two-path model, observing $M$ correlated with $X$ and with $Y$ across a set of cases should allow us to learn about $M$'s informativeness about the operation of an *indirect* effect, just as we can learn about $M$'s probative value in a chain model. The problem is that knowing about the indirect effect in a two-path model contributes only marginally to the first three queries in the figure since these are about total effects. Thus, even adding monotonicity restrictions, which makes $M$ *a priori* informative, does not significantly improve learning from $M$ about total effects.
+
+The important exception, when it comes to learning about the two-path model, is when it is the *pathway itself* that we seek to learn about. As we can see in the figure, we can learn a great deal about whether effects operate via $M$ by observing $M$, even in an unconstrained two-path model. Interestingly, the gains from depth for causal-effect queries in an unconstrained chain model closely resemble the gains from depth for the indirect-effect query in the unconstrained two-path model. This similarity suggests that both kinds of model-query combinations allow for learning *about* $M$ that, in turn, permits learning *from* $M$. 
+
+We also see that the context in which depth delivers the steepest gains of all is when we seek to learn about the probability of an indirect-effect in a monotonic two-path model. Part of the reason is likely that $M$ is *a priori* informative about the operation of the mediated pathway (as it is about the operation of effects in the monotonic chain model). Additionally, however, it appears that we start out with relatively high uncertainty about the pathway query because the model itself is quite uninformative about it. Thus, for instance, we learn much more from depth here than we do for a total effect query in a monotonic chain model: the monotonicity assumptions themselves already tell us a great deal about total effects, whereas they imply nothing about the path through which effects unfold. There is simply more to be learned from $M$ about pathways than about total effects.
+
+Most interesting perhaps is using the graphs to examine different wide versus deep tradeoffs we might face. Suppose, for instance, that we wish to learn about the probability of negative causation in an unconstrained chain model for $X=0, Y=1$ cases. We start out with $X,Y$ data for 100 cases and have additional resources with which to collect more data. Let us further assume that the cost of collecting $X,Y$ data for an additional 300 cases is equal to the cost of collecting $M$ on 50 of the original 100 cases. Where whould we invest?
+
+We can read a fairly clear answer off of the graph. As we can see in the relevant graph, we can expect to do better from adding depth than by adding breadth. In fact, even expanding our $X,Y$ sample to 1600 cases only gets us about as much leverage as get from process-tracing 50 cases.
+
+We can also see how the optimal choice depends on what data-collection we have already committed to. Consider the probability of positive causation query for a monotonic confounded model. If we start with $X,Y$ data for 100 cases, we expect to gain more from going deep in 50 of these cases than from going wide to an additional 300. However, once we have decided to process-trace 50 cases, if we have additional resources, we then expect do be much better by investing in an expansion to 300 $X,Y$ cases than by process-tracing the other 50 $X,Y cases.
+
+A further question we can ask is: where is mixing methods advantageous? And where are maximally wide or maximally deep strategies best? We can examine this question by comparing a strategy with maximal breadth and no process tracing; a strategy with maximal process-tracing and minimal breadth; and a strategy in which we invest in a mixture of new data, by examining $X,Y$ in 400 cases while process-tracing 50 cases. 
+
+We see some places where we are best off going as wide as possible, at least for the ranges we explore in these simulations. For instance, if we wish to estimate the $ATE$ in a chain model (unconstrained or monotonic), a pure "going wide" strategy is optimal. At the other extreme, when we seek to learn about the probability of an indirect effect from an unconstrained two-path model, we are best off process-tracing our original 100 cases and gain nothing by expanding our sample.
+
+In many contexts, however, it is the mixed strategy that performs best. The advantage of mixing appears starkest for the confounded monotonic model: examining $X$ and $Y$ for 400 cases and process-tracing 50 of these delivers much greater gains, for estimation of the $ATE$ and probability of positive causation, than either expanding the sample to 1600 $X,Y$ cases or than going deeper into the original 100 cases.
+
+<!-- Interestingly, it does not appear to be generically the case that depth is of greater value for some estimands than for others, at least for the models explored here. The gains to depth for a given query depend on the model. However, going wide *does* generally seem more advantageous for learning about the $ATE$ than for learning about other estimands, even for the models with confounding.  -->
 
 
 
 
 
+<!-- For the purposes of this illustration, we focus on the $ATE$ and the probability of positive causation as queries, and the results of the exercise would likely differ for different queries. On each graph, we plot 3 lines, each representing a different number of "wide" ($X,Y$-data only) cases, ranging from 100 to 1600. Each line then shows how the expected posterior variance changes as we add "depth," going from observing $M$ in 0 cases to observing it in 50 and then 100 cases. -->
 
+<!-- Starting with the chain model ($X \rightarrow Y$), we see that there are gains to be reaped from both breadth and depth, for both queries. We can also get a sense of the nature of the tradeoffs. One thing we observe is that, for the $ATE$, the gains to breadth are greater the less depth we have. Once we have process-traced 100 cases, the difference in the posterior variance we expect between having $X,Y$ data only on those 100 cases and having $X,Y$ data on an additional 300 cases is very modest compared to the situation in which we have done no process tracing. Likewise, the gains to depth diminish with breadth: the slope of the depth line flattens as we add $X,Y$ cases. Further, there appear to be diminishing returns to each strategy on its own terms: note, for instance, how the move from 50 to 100 process-tracing cases deliver less expected learning than does the move from 0 to 50. -->
 
-For the purposes of this illustration, we focus on the $ATE$ and the probability of positive causation as queries, and the results of the exercise would likely differ for different queries. On each graph, we plot 3 lines, each representing a different number of "wide" ($X,Y$-data only) cases, ranging from 100 to 1600. Each line then shows how the expected posterior variance changes as we add "depth," going from observing $M$ in 0 cases to observing it in 50 and then 100 cases.
-
-Starting with the chain model ($X \rightarrow Y$), we see that there are gains to be reaped from both breadth and depth, for both queries. We can also get a sense of the nature of the tradeoffs. One thing we observe is that, for the $ATE$, the gains to breadth are greater the less depth we have. Once we have process-traced 100 cases, the difference in the posterior variance we expect between having $X,Y$ data only on those 100 cases and having $X,Y$ data on an additional 300 cases is very modest compared to the situation in which we have done no process tracing. Likewise, the gains to depth diminish with breadth: the slope of the depth line flattens as we add $X,Y$ cases. Further, there appear to be diminishing returns to each strategy on its own terms: note, for instance, how the move from 50 to 100 process-tracing cases deliver less expected learning than does the move from 0 to 50.
-
-We can also how the tradeoff varies by estimand. For the $ATE$, the gains to going deep in an additional 50 cases look roughly equivalent to those of expanding the dataset by 100 cases. However, for the probability of positive causation, the scales tip quite dramatically in favor of depth: The gains to depth in 50 cases are more than double the gains of broadening by as many as 300 cases. 
+<!-- We can also how the tradeoff varies by estimand. For the $ATE$, the gains to going deep in an additional 50 cases look roughly equivalent to those of expanding the dataset by 100 cases. However, for the probability of positive causation, the scales tip quite dramatically in favor of depth: The gains to depth in 50 cases are more than double the gains of broadening by as many as 300 cases.  -->
 
 ```{r morn3, fig.width = 10, fig.height = 7, echo = FALSE, message = FALSE, fig.cap = "Expected posterior variance over multiple models with multiple data strategies."}
 
@@ -157,38 +183,43 @@ read_rds("saved/wide_deep_fig_book.rds")
 ```
 
 
- 
-In the chain model we see similar posterior variance from the following three strategies: 
+### Factoring in the cost of data
 
-1. Wide: 400w
-2. Deep: 100w + 100d
-3. Mixed: 200w + 50 d
+We can also use these results to think through optimal allocations of resources with varying prices of breadth and depth. To illustrate, consider the unconstrained chain model, where we see similar expected posterior variance for the probability of positive causation query from the following three combinations of wide and deep: 
 
-For difference prices of $m$ and $d$ any of these may be best. In particular if the cost of w is $1: 
+1. Maximally wide: 1600 wide + 0 deep
+2. Maximally deep: 100 wide + 100 deep
+3. Mixed: 400 wide + 50 deep
 
-* strategy 2, mixed is better if deep costs between $2 and $4
-* if deep costs more than $4 then go all wide
-* If deep costs < $2 then go all deep
+However, which strategy is optimal will depend on the relative cost of collecting $X,Y$ data for a new case (let this be $w$) and collecting $M$ for an existing case ($d$).
+
+Assume, to simplify things, that $w=1$. Then, for this model-query combination, the widest strategy is better than the deepest strategy if and only if $1600 < 100 + 100d$, that is, when $d > 14.3$. The mixed strategy is better than the maximally deep strategy if and only if $400 + 50d < 100 + 100d$, that is when $d > 5.9$. And the maximally wide strategy is better than the mixed strategy if and only if $1600 < 400 + 50d$, or $d > 25$. Thus, roughly speaking, if $d > 25$, our preference-ordering is widest > mixed > deepest. If $14.3 < d < 25$, our ordering is mixed > widest > deepest. And if $5.9 < d < 14.3$, our ordering is mixed > deepest > widest. If $d < 5.9$, then our ordering is deepest > mixed > widest. We can, thus, see that the mixed strategy is optimal across a broad range of $d$, anywhere from about $5.9$ to $25$.
+
+<!-- For difference prices of $m$ and $d$ any of these may be best. In particular if the cost of w is $1:  -->
+
+<!-- * strategy 2, mixed is better if deep costs between $2 and $4 -->
+<!-- * if deep costs more than $4 then go all wide -->
+<!-- * If deep costs < $2 then go all deep -->
 
 
-Common set
+<!-- Common set -->
 
-* Chain
-* Chain monotonic
-* Moderator
-* Moderator monotonic
-* Two path
-* Two path monotonic
-* Confounded
-* Confounded monotonic
+<!-- * Chain -->
+<!-- * Chain monotonic -->
+<!-- * Moderator -->
+<!-- * Moderator monotonic -->
+<!-- * Two path -->
+<!-- * Two path monotonic -->
+<!-- * Confounded -->
+<!-- * Confounded monotonic -->
 
-Mediation estimand for two path models
+<!-- Mediation estimand for two path models -->
 
-## Principles
+<!-- ## Principles -->
 
-*  Qualitative and quantitative data can act as partial substitutes for assessing causal effects.
-*  The *relative* marginal gains from going wider and going deeper vary with the study design. 
-* Optimal strategies might involve going deep in a subsample of cases only.
+<!-- *  Qualitative and quantitative data can act as partial substitutes for assessing causal effects. -->
+<!-- *  The *relative* marginal gains from going wider and going deeper vary with the study design.  -->
+<!-- * Optimal strategies might involve going deep in a subsample of cases only. -->
 
 
 
