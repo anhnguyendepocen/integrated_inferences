@@ -477,7 +477,7 @@ pimd_nonmon <- make_model("I -> M -> D <- P; I -> D")
 
 data <- CausalQueries::democracy_data
 
-data_2 <- read.csv("data/pimd2.csv") %>% 
+data_2 <- read.csv("data/pimd2.csv") %>% #new data we compiled from other sources
   mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
   rename(P = P2, I = I2, M= M2, D = D2)
 
@@ -522,7 +522,7 @@ pimd_nonmon_2 <-   read_rds("saved/ch15_pimd_nonmon_model_2.rds")
 
 Our model presupposes that $P$ and $I$ are independent and that $P$ and $M$ are independent. Note that the model is consistent with the possibility that, conditional on $D$, there is a correlation betwen $M$ and $P$ or between $I$ and $P$, as $D$ acts as a collider for these pairs of nodes. 
 
-To test these assumptions, we in fact need to depart from @haggard2012distributive's dataset because these authors only examined cases in which $D=1$, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on $D$ or conditional on $D=0$. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000^[The data that we use to measure mobilization, from @clark2016mobilization, covers only the 1990s.]:
+To test these assumptions, we in fact need to depart from the dataset drawn from @haggard2012distributive because these authors only examined cases in which $D=1$, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on $D$ or conditional on $D=0$. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000^[The data that we use to measure mobilization, from @clark2016mobilization, covers only the 1990s.]:
 
 * **Inequality**: We measure inequality, $I$, using the Gini estimates from the University of Texas Inequality Project (@galbraith2019inequality). As we want to measure inequality at the beginning of the period, we take the Gini measure for each country that is closest in time to the year 1989. We then dichotomize the variable using the median value for the period as a cutoff. 
 
@@ -552,11 +552,12 @@ rbind(
   lm_robust(P~I, data = data_2) %>% tidy %>% filter(term == "I"), 
   lm_robust(P~M, data = data_2) %>% tidy %>% filter(term == "M"), 
   lm_robust(P~I, data = filter(data_2, M==0)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~I, data = filter(data_2, M==1)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~M, data = filter(data_2, I==0)) %>% tidy %>% filter(term == "M"), 
-  lm_robust(P~M, data = filter(data_2, I==1)) %>% tidy %>% filter(term == "M")) %>%   mutate(Given = c("-", "-", "M = 0", "M = 1", "I = 0", "I = 1")) %>%
+  lm_robust(P~I, data = filter(data_2, M==1)) %>% tidy %>% filter(term == "I"))  %>% 
+  #lm_robust(P~M, data = filter(data_2, I==0)) %>% tidy %>% filter(term == "M"), 
+  #lm_robust(P~M, data = filter(data_2, I==1)) %>% tidy %>% filter(term == "M"))    
+ mutate(Given = c("-", "-", "M = 0", "M = 1")) %>%
   select(Given, estimate, std.error, p.value) %>% 
-  mutate(Correlation = c("P,I", "P,M", "P,I", "P,I","P,M", "P,M")) %>%
+  mutate(Correlation = c("P,I", "P,M", "P,I", "P,I")) %>%
   select(Correlation, everything()) %>%
   kable(digits = 3, caption =  "Regression coefficients to assess conditional independence")
 
@@ -565,7 +566,9 @@ rbind(
 
 
 
-We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$, and of $M$ given $I$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in the next 4 rows. In rows 3 and 4 of the table, we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is more troubling for our model, as we see a relative strong negative correlation between $P$ and $I$ when $M=0$, and a positive correlation when $M=1$. While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization a collider for inequality and pressure. Looking at rows 5 and 6, we see that there is a correlation between $P$ and $M$ when inequality is high, but not when inequality is low. 
+We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in rows 3 and 4 of the table, wgere we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is also troubling for our model, as we see a relatively strong negative correlation between $P$ and $I$ when $M=0$, and positive correlation when $M=1$. 
+
+While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization the product of inequality and pressure jointly.^[There is, in fact, also a strong positive interaction between $I$ and $P$ in a linear model of $M$.] A model with an arrow running from $P$ to $M$ would make the model consistent with the unconditional correlation between these two variables, the conditional correlation between $P$ and $I$ given $M$ (since $M$ would now be a collider for $I$ and $P$), as well as the unconditional independence of $I$ and $P$. A possible way forward --- which we do not pursue here --- would be to now amend the model and evaluate the revised model against an independent set of data. 
 
 
 <!-- Substantively, in states with high inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization. -->
@@ -577,7 +580,7 @@ We can dig a little deeper, however. The model *also* implies that $P$ should be
 
 ### Bayesian $p$-value
 
-We turn next to 
+We turn next to evaluating the democratization model using the Bayesian $p-$value approach, and for this purpose can return to the data that we coded from @haggard2012distributive's qualitative vignettes. In the two panels of Figure \@ref(fig:ch15pvalue_pimd), we plot the posterior predictive distributions from our updated model for two quantities of interest: the outcome $D$ and the correlation between $I$ and $M$. In each graph, we indicate with a vertical line the mean value for these quantities for the data at hand and report the $p-$value: the probability of the observed data conditional on our model. As we can see both visually and from the $p-$values, the model performs well here as the data that we observe are not at all unexpected under the model.
 
 ```{r ch15pvalue_pimd, echo = FALSE}
 if(do_diagnosis){
@@ -657,7 +660,7 @@ hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
 
 ### LOO validation
 
-Turning to "leave one out" model assessment, we now consider comparing the base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$ and instead put a low prior probability on negative $I \rightarrow M$ effects. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
+Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$ and instead put a low prior probability on negative $I \rightarrow M$ effects. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
 ```{r loo_pimdplots, echo = FALSE}
 # Leave one out
