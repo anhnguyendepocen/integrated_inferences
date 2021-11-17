@@ -477,7 +477,7 @@ pimd_nonmon <- make_model("I -> M -> D <- P; I -> D")
 
 data <- CausalQueries::democracy_data
 
-data_2 <- read.csv("data/pimd2.csv") %>% 
+data_2 <- read.csv("data/pimd2.csv") %>% #new data we compiled from other sources
   mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
   rename(P = P2, I = I2, M= M2, D = D2)
 
@@ -522,7 +522,7 @@ pimd_nonmon_2 <-   read_rds("saved/ch15_pimd_nonmon_model_2.rds")
 
 Our model presupposes that $P$ and $I$ are independent and that $P$ and $M$ are independent. Note that the model is consistent with the possibility that, conditional on $D$, there is a correlation betwen $M$ and $P$ or between $I$ and $P$, as $D$ acts as a collider for these pairs of nodes. 
 
-To test these assumptions, we in fact need to depart from @haggard2012distributive's dataset because these authors only examined cases in which $D=1$, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on $D$ or conditional on $D=0$. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000^[The data that we use to measure mobilization, from @clark2016mobilization, covers only the 1990s.]:
+To test these assumptions, we in fact need to depart from the dataset drawn from @haggard2012distributive because these authors only examined cases in which $D=1$, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on $D$ or conditional on $D=0$. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000^[The data that we use to measure mobilization, from @clark2016mobilization, covers only the 1990s.]:
 
 * **Inequality**: We measure inequality, $I$, using the Gini estimates from the University of Texas Inequality Project (@galbraith2019inequality). As we want to measure inequality at the beginning of the period, we take the Gini measure for each country that is closest in time to the year 1989. We then dichotomize the variable using the median value for the period as a cutoff. 
 
@@ -552,11 +552,12 @@ rbind(
   lm_robust(P~I, data = data_2) %>% tidy %>% filter(term == "I"), 
   lm_robust(P~M, data = data_2) %>% tidy %>% filter(term == "M"), 
   lm_robust(P~I, data = filter(data_2, M==0)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~I, data = filter(data_2, M==1)) %>% tidy %>% filter(term == "I"), 
-  lm_robust(P~M, data = filter(data_2, I==0)) %>% tidy %>% filter(term == "M"), 
-  lm_robust(P~M, data = filter(data_2, I==1)) %>% tidy %>% filter(term == "M")) %>%   mutate(Given = c("-", "-", "M = 0", "M = 1", "I = 0", "I = 1")) %>%
+  lm_robust(P~I, data = filter(data_2, M==1)) %>% tidy %>% filter(term == "I"))  %>% 
+  #lm_robust(P~M, data = filter(data_2, I==0)) %>% tidy %>% filter(term == "M"), 
+  #lm_robust(P~M, data = filter(data_2, I==1)) %>% tidy %>% filter(term == "M"))    
+ mutate(Given = c("-", "-", "M = 0", "M = 1")) %>%
   select(Given, estimate, std.error, p.value) %>% 
-  mutate(Correlation = c("P,I", "P,M", "P,I", "P,I","P,M", "P,M")) %>%
+  mutate(Correlation = c("P,I", "P,M", "P,I", "P,I")) %>%
   select(Correlation, everything()) %>%
   kable(digits = 3, caption =  "Regression coefficients to assess conditional independence")
 
@@ -565,7 +566,9 @@ rbind(
 
 
 
-We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$, and of $M$ given $I$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in the next 4 rows. In rows 3 and 4 of the table, we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is more troubling for our model, as we see a relative strong negative correlation between $P$ and $I$ when $M=0$, and a positive correlation when $M=1$. While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization a collider for inequality and pressure. Looking at rows 5 and 6, we see that there is a correlation between $P$ and $M$ when inequality is high, but not when inequality is low. 
+We can dig a little deeper, however. The model *also* implies that $P$ should be independent of $I$ given $M$ --- since $D$ blocks all paths between $P$ and either $I$ or $M$. We test these assumptions in rows 3 and 4 of the table, wgere we examine the conditional independence of $P$ and $I$ given $M=0$ and given $M=1$. Here the evidence is also troubling for our model, as we see a relatively strong negative correlation between $P$ and $I$ when $M=0$, and positive correlation when $M=1$. 
+
+While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization the product of inequality and pressure jointly.^[There is, in fact, also a strong positive interaction between $I$ and $P$ in a linear model of $M$.] A model with an arrow running from $P$ to $M$ would make the model consistent with the unconditional correlation between these two variables, the conditional correlation between $P$ and $I$ given $M$ (since $M$ would now be a collider for $I$ and $P$), as well as the unconditional independence of $I$ and $P$. A possible way forward --- which we do not pursue here --- would be to now amend the model and evaluate the revised model against an independent set of data. 
 
 
 <!-- Substantively, in states with high inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization. -->
@@ -577,7 +580,7 @@ We can dig a little deeper, however. The model *also* implies that $P$ should be
 
 ### Bayesian $p$-value
 
-We turn next to 
+We turn next to evaluating the democratization model using the Bayesian $p-$value approach, and for this purpose can return to the data that we coded from @haggard2012distributive's qualitative vignettes. In the two panels of Figure \@ref(fig:ch15pvalue_pimd), we plot the posterior predictive distributions from our updated model for two quantities of interest: the outcome $D$ and the correlation between $I$ and $M$. In each graph, we indicate with a vertical line the mean value for these quantities for the data at hand and report the $p-$value: the probability of the observed data conditional on our model. As we can see both visually and from the $p-$values, the model performs well here as the data that we observe are not at all unexpected under the model.
 
 ```{r ch15pvalue_pimd, echo = FALSE}
 if(do_diagnosis){
@@ -657,7 +660,7 @@ hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
 
 ### LOO validation
 
-Turning to "leave one out" model assessment, we now consider comparing the base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$ and instead put a low prior probability on negative $I \rightarrow M$ effects. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
+Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
 ```{r loo_pimdplots, echo = FALSE}
 # Leave one out
@@ -696,18 +699,17 @@ plot_loo(loo_pimdnegmed, name = "unrestricted model")
 plot_loo(loo_pimdnonmon, name = "fully unrestricted model")
 
 ```
-<!-- AJ: Getting error for LOO plots -- can't find plot_loo function. -->
 
 In Figures \@ref(loo_pimdplots), we show the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
 
-More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restrictive model performs best, by about an order of magnitude, followed by the least restrictive model, and then the moderately restrictive one.
+More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $\I rightarrow M$).
 
 
 ### Sensitivity to priors
 
-In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this?  We answer the question by comparing our conclusion to what we would conclude withiout this assumption. Our answers depend on the quantity examined.
+In our base model we assume a set of monotonicity relations among nodes. How much do conclusions depend on these restrictions?  We answer the question by comparing our conclusion with these restrictions to what we would conclude without this assumption. As above, we compare the fully restricted model ($M1$) to a model that is unrestricted at $M$ ($M2$) and a model that is fully unrestricted ($M3$). 
 
-We first show results for population inference from a mixed methods analysis. As seen in Table XX our inferences regarging the overall effect of $I$ on $D$ are not very sensitive to this assumption. Our conditional inferences are, however. In particular, in cases with $I=0, D=1$ we are more likely to think that democratization was due to *low* inequality given the  unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
+We first show results for population inference from a mixed methods analysis. As seen in Table \@ref(tab:15pimdgraphs), our inferences regarding the overall effect of $I$ on $D$ are not very sensitive to the monotonicity assumption at $M$. However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around $-0.25$ to $0$ when we remove all restrictions.  Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with $I=0, D=1$ we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
 
 <!-- FLAG: AJ: Check intuition here! -->
 
@@ -740,7 +742,7 @@ if(do_diagnosis){
 
 ateid <- read_rds("saved/ch15_ateID.rds") 
 
-kable(ateid, caption = "Posteriors on the effect of I on D depending on whether the to M relation is assumed to be monotonic (M1) or not (M2)", digits = 2)
+kable(ateid, caption = "Posteriors on the effect of I on D with all relations monotonic (M1), restriction dropped for $M$ (M2), and all restrictions dropped (M3)", digits = 2)
 
 
 if(do_diagnosis)
@@ -754,9 +756,35 @@ read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
 
 ```
 
-We now consider case-level analysis. For this setup, we consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$ in comparison to the 0, 1/3,1/3,1/3 distribution. We show the results for the inferences given different findings in Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant). 
+```{r 15pimdgraphs2, echo = FALSE, fig.cap = "ATE of I on D."}
+
+if(do_diagnosis)
+  list(pimd = pimd, pimd_negmed = pimd_negmed, pimd_nonmon = pimd_nonmon) %>% 
+    lapply(function(m) query_model(m, "D[I=1] - D[I=0]", using = "posteriors", 
+                           given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1", "I==1 & M==0 & D==1"))) %>%
+    bind_rows(.id = "model") %>%
+    write_rds("saved/ch15_ateID2.rds")
+
+ateid2 <- read_rds("saved/ch15_ateID2.rds") 
+
+kable(ateid2, caption = "Posteriors on the effect of I on D with all relations monotonic (M1), restriction dropped for $M$ (M2), and all restrictions dropped (M3)", digits = 2)
 
 
+if(do_diagnosis)
+  q_pimd_2 <- query_model(pimd_nonmon_2, "D[I=1] - D[I=0]", given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1", "I==0 & M==1 & D==1",
+                                                                    "I==0 & M==0 & D==1 & P == 1", "I==0 & M==1 & D==1 & P == 1"),
+                        using = "posteriors")
+if(do_diagnosis)
+ write_rds(q_pimd_2, "saved/ch15_q_pimd_2.rds")
+                        
+read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
+
+```
+
+
+We now consider case-level analysis. For this setup, we compare our restricted model to one in which we allow for negative effects of $I$ on $M$, but consider them to be *unlikely* rather than impossible (with null and positive effects somewhat likely). We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Specifically, we set prior probabilities on the elements of $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$. This is in comparison to the 0, 1/3,1/3,1/3 distribution implied by the restricted model. 
+
+In Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant), we simply call these our restricted and unrestricted models and compare findings for a set of cases with different data realizations.
 
 ```{r HK8cases1quant, echo = FALSE, eval = TRUE}
 
@@ -826,11 +854,8 @@ q_11 %>%
 ```
 
 
-The results differ in various modest ways. In the case in which $I=D=1$, conditional inferences are unaffected by the assumption about the effect of $I$ on $M$. The reason is that, since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$, the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$ we know that there was no (indirect) effect if $M$ were 0. If however $M$ were 1, then $I$ did not have a negative effect on $M$ and the only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative size ot $\theta^M_{11}$ and $\theta^M_{01}$.
+The results differ in various modest ways. In Table \@ref(tab:HK8cases1quant), we examine $I=0, D=1$ cases and ask whether the low inequality caused democratization. There are significant differences when we are looking for negative effects of inequality, though the ordering of inferences does not change. The differences appear in the cases of Albania and Nicaragua, where $M=1$. Under priors fully constrained to monotonic causal effects, we see that observing $M=1$ makes us think low inequality was less likely to have caused democracy because $M=1$ represents an alternative cause and because low inequality cannot cause democratization via $M$ if $I \rightarrow M$ effects cannot be negative. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, we know believe a negative effect of inequality on democratization, conditional on mobilization, to be more likely since now that effect *can* run from $I=0$ to $M=1$ to $D=1$. Thus, our estimate for Albania and Nicaragua goes up relative to the restricted model. We see, likewise, that $M$ becomes less *informative* about the effect, as the estimates for Albania ($M=1, P=0$) converge on those for Mexico ($M=0, P=0$), and those for Nicaragua ($M=1, P=1$) on those for Taiwan ($M=0, P=1$).
 
-There are bigger differences when we are looking for negative effects of inequality, but even in this case the ordering of inferences does not change. As before in cases where $M=0$, the monotonicity of M in D is not relevant since htere is no question of a negative effect anyhow. However if $M=1$, then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows non monotonicity and so we put more weight on the possibility that $I=0$ was the cause. 
+<!-- As before, in cases where $M=0$, the monotonicity of $M$ in $D$ is not relevant since there is no question of a negative effect anyway. However if $M=1$, then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows negative effects and so we put more weight on the possibility that $I=0$ was the cause.  -->
 
-We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, $M$, made only a small difference to our inferences. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively. 
-
-
-
+Turning to Table \@ref(tab:HK8cases2quant) and cases with high inequality and democratization, inferences about the probability of positive causation are unaffected by the assumption about the effect of $I$ on $M$. The reason is that, since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$ (no positive effects), the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$, it remains the case in both models that observing $M=0$ rules out a positive indirect effect. If however $M=1$, then $I$ did not have a negative effect on $M$ and the only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative sizes of $\theta^M_{11}$ and $\theta^M_{01}$, which remain the same (and equal to one another) in both models.
