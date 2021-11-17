@@ -758,26 +758,12 @@ read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
 
 ```{r 15pimdgraphs2, echo = FALSE, fig.cap = "ATE of I on D."}
 
-if(do_diagnosis){
-  
-  ate_id2  <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
-  ate_id22 <- query_distribution(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors")
- 
-
-  q_ate_id12 <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
-                           given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1"))
-  q_ate_id22 <- query_model(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors", 
-                           given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1"))
-  q_ate_id32 <- query_model(pimd_nonmon, "D[I=1] - D[I=0]", using = "posteriors", 
-                           given = c(TRUE, "I==0 & D==1","I==1 & D==1", "I==0 & M==0 & D==1"))
-
-  out2 <- cbind(q_ate_id12, q_ate_id22[, c("mean", "sd")], q_ate_id32[, c("mean", "sd")])
-  names(out2) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)", "Mean (M3)", "sd (M3)") 
-  out2 <- out2 %>% select(-c(q, u))
-
- write_rds(out2, "saved/ch15_ateID2.rds")
-
- }
+if(do_diagnosis)
+  list(pimd = pimd, pimd_negmed = pimd_negmed, pimd_nonmon = pimd_nonmon) %>% 
+    lapply(function(m) query_model(m, "D[I=1] - D[I=0]", using = "posteriors", 
+                           given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1", "I==1 & M==0 & D==1"))) %>%
+    bind_rows(.id = "model") %>%
+    write_rds("saved/ch15_ateID2.rds")
 
 ateid2 <- read_rds("saved/ch15_ateID2.rds") 
 
