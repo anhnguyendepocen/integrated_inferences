@@ -12,8 +12,8 @@ library(tidyverse)
 # if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 # BiocManager::install("Rgraphviz")
 # BiocManager::install("RBGL")
-# # library(Rgraphviz)
-# library(RBGL)
+library(Rgraphviz)
+library(RBGL)
 
 # install.packages("remotes")
 # library(remotes)
@@ -40,7 +40,8 @@ pacman::p_load(
   # bindrcpp,
   ggplot2,
   estimatr,
-# StanHeaders,
+  pcalg,
+  # StanHeaders,
   rstan,
 # rstanarm,
   knitr,
