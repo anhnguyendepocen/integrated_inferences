@@ -760,28 +760,28 @@ read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
 
 if(do_diagnosis){
   
-  ate_id  <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
-  ate_id2 <- query_distribution(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors")
+  ate_id2  <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
+  ate_id22 <- query_distribution(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors")
  
 
-  q_ate_id1 <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
+  q_ate_id12 <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
                            given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1"))
-  q_ate_id2 <- query_model(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors", 
+  q_ate_id22 <- query_model(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors", 
                            given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1"))
-  q_ate_id3 <- query_model(pimd_nonmon, "D[I=1] - D[I=0]", using = "posteriors", 
+  q_ate_id32 <- query_model(pimd_nonmon, "D[I=1] - D[I=0]", using = "posteriors", 
                            given = c(TRUE, "I==0 & D==1","I==1 & D==1", "I==0 & M==0 & D==1"))
 
-  out <- cbind(q_ate_id1, q_ate_id2[, c("mean", "sd")], q_ate_id3[, c("mean", "sd")])
-  names(out) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)", "Mean (M3)", "sd (M3)") 
-  out <- out %>% select(-c(q, u))
+  out2 <- cbind(q_ate_id12, q_ate_id22[, c("mean", "sd")], q_ate_id32[, c("mean", "sd")])
+  names(out2) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)", "Mean (M3)", "sd (M3)") 
+  out2 <- out2 %>% select(-c(q, u))
 
- write_rds(out, "saved/ch15_ateID.rds")
+ write_rds(out2, "saved/ch15_ateID2.rds")
 
  }
 
-ateid <- read_rds("saved/ch15_ateID.rds") 
+ateid2 <- read_rds("saved/ch15_ateID2.rds") 
 
-kable(ateid, caption = "Posteriors on the effect of I on D with all relations monotonic (M1), restriction dropped for $M$ (M2), and all restrictions dropped (M3)", digits = 2)
+kable(ateid2, caption = "Posteriors on the effect of I on D with all relations monotonic (M1), restriction dropped for $M$ (M2), and all restrictions dropped (M3)", digits = 2)
 
 
 if(do_diagnosis)
@@ -796,9 +796,9 @@ read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
 ```
 
 
-We now consider case-level analysis. For this setup, we consider negative effects of $I$ on $M$ *unlikely*, rather than impossible, and we consider null and positive effects somewhat likely. We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Here, we set our prior on $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$ in comparison to the 0, 1/3,1/3,1/3 distribution. We show the results for the inferences given different findings in Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant). 
+We now consider case-level analysis. For this setup, we compare our restricted model to one in which we allow for negative effects of $I$ on $M$, but consider them to be *unlikely* rather than impossible (with null and positive effects somewhat likely). We refer to these priors as "quantitative priors" in the sense that they place a numerical value on beliefs rather than a logical restriction. Specifically, we set prior probabilities on the elements of $\theta^M$ as: $p(\theta^M=\theta^M_{10})=0.1$, $p(\theta^M=\theta^M_{00})=0.3$, $p(\theta^M=\theta^M_{11})=0.3$, and $p(\theta^M=\theta^M_{01})=0.3$. This is in comparison to the 0, 1/3,1/3,1/3 distribution implied by the restricted model. 
 
-
+In Tables \@ref(tab:HK8cases1quant) and \@ref(tab:HK8cases2quant), we simply call these our restricted and unrestricted models and compare findings for a set of cases with different data realizations.
 
 ```{r HK8cases1quant, echo = FALSE, eval = TRUE}
 
@@ -868,11 +868,11 @@ q_11 %>%
 ```
 
 
-The results differ in various modest ways. In the case in which $I=D=1$, conditional inferences are unaffected by the assumption about the effect of $I$ on $M$. The reason is that, since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$, the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$ we know that there was no (indirect) effect if $M$ were 0. If however $M$ were 1, then $I$ did not have a negative effect on $M$ and the only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative size ot $\theta^M_{11}$ and $\theta^M_{01}$.
+The results differ in various modest ways. In Table \@ref(tab:HK8cases1quant), we examine $I=0, D=1$ cases and ask whether the low inequality caused democratization. There are significant differences when we are looking for negative effects of inequality,thought the ordering of inferences does not change. As before, in cases where $M=0$, the monotonicity of $M$ in $D$ is not relevant since there is no question of a negative effect anyhow. However if $M=1$, then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows non monotonicity and so we put more weight on the possibility that $I=0$ was the cause. We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, $M$, made only a small difference to our inferences. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively.
 
-There are bigger differences when we are looking for negative effects of inequality, but even in this case the ordering of inferences does not change. As before in cases where $M=0$, the monotonicity of M in D is not relevant since htere is no question of a negative effect anyhow. However if $M=1$, then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows non monotonicity and so we put more weight on the possibility that $I=0$ was the cause. 
+In a case in which $I=D=1$, conditional inferences are unaffected by the assumption about the effect of $I$ on $M$. The reason is that, since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$, the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$ we know that there was no (indirect) effect if $M$ were 0. If however $M$ were 1, then $I$ did not have a negative effect on $M$ and the only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative size ot $\theta^M_{11}$ and $\theta^M_{01}$.
 
-We see these differences most clearly in the cases of Albania (as compared to Mexico) and Nicaragua (as compared to Taiwan). Under priors fully constrained to monotonic causal effects, we saw that the mediator clue, $M$, made only a small difference to our inferences. However, if we allow for a negative effect of $I$ on $M$, even while believing it to be unlikely, observing mobilization in Albania and Nicaragua makes us substantially more confident that inequality mattered, and differentiates our conclusions about these cases more sharply from our conclusions about Mexico and Taiwan, respectively. 
+ 
 
 
 
