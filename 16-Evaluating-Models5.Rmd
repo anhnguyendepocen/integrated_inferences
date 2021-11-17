@@ -660,7 +660,7 @@ hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
 
 ### LOO validation
 
-Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$ and instead put a low prior probability on negative $I \rightarrow M$ effects. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
+Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
 ```{r loo_pimdplots, echo = FALSE}
 # Leave one out
@@ -699,18 +699,17 @@ plot_loo(loo_pimdnegmed, name = "unrestricted model")
 plot_loo(loo_pimdnonmon, name = "fully unrestricted model")
 
 ```
-<!-- AJ: Getting error for LOO plots -- can't find plot_loo function. -->
 
 In Figures \@ref(loo_pimdplots), we show the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
 
-More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restrictive model performs best, by about an order of magnitude, followed by the least restrictive model, and then the moderately restrictive one.
+More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $\I rightarrow M$).
 
 
 ### Sensitivity to priors
 
-In our model we assumed that $M$ is monotonic in $I$. How much do conclusions depend on this?  We answer the question by comparing our conclusion to what we would conclude withiout this assumption. Our answers depend on the quantity examined.
+In our base model we assume that $M$ is monotonic in $I$. How much do conclusions depend on this restriction?  We answer the question by comparing our conclusion to what we would conclude without this assumption. As we will see, the answer depends on the query examined.
 
-We first show results for population inference from a mixed methods analysis. As seen in Table XX our inferences regarging the overall effect of $I$ on $D$ are not very sensitive to this assumption. Our conditional inferences are, however. In particular, in cases with $I=0, D=1$ we are more likely to think that democratization was due to *low* inequality given the  unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
+We first show results for population inference from a mixed methods analysis. As seen in Table \@ref(tab:15pimdgraphs), our inferences regarding the overall effect of $I$ on $D$ are not very sensitive to this assumption. Our conditional inferences about the probability of causation are, however. In particular, in cases with $I=0, D=1$ we are more likely to think that democratization was due to *low* inequality given the unrestricted model. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
 
 <!-- FLAG: AJ: Check intuition here! -->
 
@@ -743,7 +742,7 @@ if(do_diagnosis){
 
 ateid <- read_rds("saved/ch15_ateID.rds") 
 
-kable(ateid, caption = "Posteriors on the effect of I on D depending on whether the to M relation is assumed to be monotonic (M1) or not (M2)", digits = 2)
+kable(ateid, caption = "Posteriors on the effect of I on D depending on whether the to-M relation is assumed to be monotonic (M1) or not (M2)", digits = 2)
 
 
 if(do_diagnosis)
