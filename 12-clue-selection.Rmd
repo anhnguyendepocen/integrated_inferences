@@ -695,10 +695,9 @@ We represent each of these 3 2-step strategies (3 of many possible ones) in Tabl
 
 Table XXXX: Illustration of three (of many) possible two step strategies.
 
-We can, of course, also calculate the expected costs of different strategies while allowing different clues to come at different costs. Figure \@ref(fig:tradeoffs) plots a collection of strategies based on two criteria: the variance-reduction and the expected number of clues sought, which could be an indicator for cost. One can see a frontier of optimal strategies, depending on how these two desiderata trade-off against each other. For the figure, we imagined that $X$ is the most costly to collect, followed by $C$, then $S$, then $Y$, then $R$. The cheapest strategy among those that minimize variance involves gathering $C$ only. The lowest-variance strategy that minimizes costs involves gathering $Y$ only.
+We can, of course, also calculate the expected costs of different strategies while allowing different clues to come at different costs. Figure \@ref(fig:runexam) plots all 2-clue strategies, assuming $Y=0$ has already been observed, based on two criteria: expected variance-reduction for the query, "Did $S$ cause $Y$?" and expected cost. For this exercise, we set differential clue prices such that $X$ is the most costly clue to collect, followed by $C$, then $S$, then $Y$, then $R$. We have labeled the strategies that lie along the frontier of optimal strategies, with our choice dependent on how we want to trade off cost against learning. Among the notable points along this frontier, we see that the cheapest strategy among those that minimize variance involves gathering $S$ and then gathering $C$ if and only if we observe $S=1$. We can also see that the lowest-variance strategy that minimizes costs involves gathering $S$ only and then stopping.
 
-
-Here we implement the same exercise for the basic democracy model. We illustrate with a case where we know there is inequality and democratization and we want to know if inequality caused democratization. We will assume for the illustratation that mobilization is easy to observe but pressure is difficult.
+Here we implement the same exercise for the basic democracy model. We illustrate for a situation in which we know there is high inequality and democratization has occurred, and we want to know if high inequality caused the democratization. We will assume here that mobilization is easy to observe (low-cost) but pressure is difficult (high-cost).
 
 
 ```{r model7, echo = FALSE, message = FALSE}
@@ -758,10 +757,10 @@ with(results_pimd_tradeoff, {
 
 We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:
 
-1 Observe $M$ first, then stop. This strategy has relatively high expected uncertainty but minimizes costs relative to any other strategy: we observe just one clue, and it's the cheaper one.
-2 Observe $P$ first, then stop. We'll learn more from this strategy than from Strategy 1, though at higher cost. Still there is no other strategy that allows us to reduce costs without increasing variqnce.
-3 Observe $P$ first; if $P=0$, observe $M$, otherwise stop. We, again, get uncertainty reduction here, relative to Strategy 2, but again at higher cost.
-4 Observe $M$ first; if $M=0$, stop; if $M=1$, observe $P$. This strategy gets us the lowest expected posterior variance of any strategy. Moreover, it is not the highest-cost strategy, which would be to observe both clues no matter what. Once we've observed $M=0$, we get nothing from the additional investment in $P$ since $M=0$ already tells us that $I$ could not have had a positive effect on $D$.
+1. Observe $M$ first, then stop. This strategy has relatively high expected uncertainty but minimizes costs relative to any other strategy: we observe just one clue, and it's the cheaper one.
+2. Observe $P$ first, then stop. We'll learn more from this strategy than from Strategy 1, though at higher cost. Still there is no other strategy that allows us to reduce costs without increasing variance.
+3. Observe $P$ first; if $P=0$, observe $M$, otherwise stop. We, again, get uncertainty reduction here, relative to Strategy 2, but again at higher cost.
+4. Observe $M$ first; if $M=0$, stop; if $M=1$, observe $P$. This strategy gets us the lowest expected posterior variance of any strategy. Moreover, it is not the highest-cost strategy, which would be to observe both clues no matter what. Once we've observed $M=0$, we get nothing from the additional investment in $P$ since $M=0$ already tells us that $I$ could not have had a positive effect on $D$.
 
 Note also that both Strategy 3 and Strategy 4 are *conditional* two-clue strategies: they involve first seeking one clue and seeking a second clue only under one of the possible realizations of the first clue. But they have different outcomes. Perhaps most interestingly, we don't expect to learn the most by starting with the most probative clue. If we start with the more informative clue, $P$, observing $M$ only if $P=0$, we expect to end up with *more* uncertainty than if we start with the less informative clue, $M$, and observe $P$ only if $M=1$. 
 
