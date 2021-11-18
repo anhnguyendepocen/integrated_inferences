@@ -35,7 +35,7 @@ The key insight driving our approach is that the inference about a causal questi
 
 The question of interest can be about any number of case-level causal features, including questions about a case-level causal effect, the pathway through which an effect operates, an actual cause, or causal attribution. We use observations from the case itself to address this query. We do so via a procedure in which we first encode prior knowledge in the form of a causal model, then use data to learn about features of the model, and finally take what we have learned about the model and map it into our query.
 
-Given a causal model, we form posteriors over estimands as follows:
+Given a causal model, we form posteriors over queries as follows:
 
 1. **Specify all possible causal types for a model**. A causal type, recall, is a particular combination of nodal types for all nodes in a unit. That is, a single causal type specifies both a specific set of values of all exogenous variables in a model and the values that all endogenous variables *would* potentially take on for all possible values of the exogenous variables. For a simple, binary $X \rightarrow Y$ model, the number of possible causal types will be 2 (the number of possbile values $X$, the exogenous node, can take on) times 4 (the number of possible nodal types for $Y$, the endogenous node). Three of these causal types would be:
   * Type 1: ($X=1$) *and* ($Y=1$ if $X=1$, $Y=0$ if $X=0$).
@@ -47,7 +47,7 @@ Whatever the model, we generate a complete set of all possible causal types.
 
 2. **Specify priors over causal types.** We report how likely we think it is that a given unit is of a particular causal type. In the simplest situation, we might place 0 weight on some causal types (which might be ruled out by background theory, for example) and equal weight on the others. 
 
-3. **Specify the query, or estimand, in terms of causal types.** For instance, for the simple $X \rightarrow Y$ model, the query "$Y$ responds positively to $X$" can be thought of as a collection of causal types: Q={Type 1, Type 2}.^[More generally an estimand might be a function of the distribution of causal types.]
+3. **Specify the query in terms of causal types.** For instance, for the simple $X \rightarrow Y$ model, the query "$Y$ responds positively to $X$" can be thought of as a collection of causal types: Q={Type 1, Type 2}.^[More generally a query might be a function of the distribution of causal types.]
 
 4. **Once we observe the data, specify the set of causal types that are consistent with those data.** For instance, if we observe $X=1, Y=1$ we might specify the data-consistent set as {Type 1, Type 3}, excluding Type 2 with which these data are inconsistent.
 
@@ -66,13 +66,13 @@ Whatever the model, we generate a complete set of all possible causal types.
 
 <!-- 6. **Form posteriors**. We now scale up the probabilities on all remaining causal types, providing a posterior probability on each type. -->
 
-<!-- 7. **Map from causal types to query**. As any causal query can be formulated as a question about causal types (see Chapter \@ref(questions)), we can now map from our posteriors on causal types to a posterior probability on the estimand of interest: whether a causal effect, a causal pathway, causakl attribution, or some other case-level causal quantity. -->
+<!-- 7. **Map from causal types to query**. As any causal query can be formulated as a question about causal types (see Chapter \@ref(questions)), we can now map from our posteriors on causal types to a posterior probability on the query of interest: whether a causal effect, a causal pathway, causakl attribution, or some other case-level causal quantity. -->
 
 ```{r plotrix, include = FALSE}
 library(plotrix)
 ```
 
-```{r ptvenn, echo = FALSE, fig.width=6, fig.height=6, fig.cap = "Logic of simple updating on arbitrary estimands.", fig.align = "center", out.width = "50%"}
+```{r ptvenn, echo = FALSE, fig.width=6, fig.height=6, fig.cap = "Logic of simple updating on arbitrary queries.", fig.align = "center", out.width = "50%"}
 
 par(mar = c(.1,.1,.1,.1))
 frame()
@@ -91,6 +91,7 @@ draw.circle(.5,.65,.3,nv=100,border=NULL,col=mycols[3],lty=1,density=NULL,
 text(.5, .8, "Consistent\nwith query")
 text(.2, .35, "Consistent\nwith priors")
 text(.8, .35, "Consistent\nwith data")
+text(.05, .95, expression(Theta))
 text(.15, .95, "All\ncausal types")
 text(.5, .45, "A")
 text(.32, .55, "B")
@@ -109,7 +110,7 @@ What we are doing here is straightforward: assessing causal possibilities for th
 
 ### A formalization of the general approach
 
-More formally, the general approach to inference draws on the components we outlined in chapters 2 to 4: graphical causal models (DAGs), nodal and causal types, and priors. We now show how these elements formally interact with data to generate causal inferences. We continue to focus on a situation with binary variables, though suggest later in the chapter how this can be extended. Though we walk through the procedure for simple models, the approach outlined here can be applies to *any* causal model with binary variables and to any estimands defined over the model.
+More formally, the general approach to inference draws on the components we outlined in chapters 2 to 4: graphical causal models (DAGs), nodal and causal types, and priors. We now show how these elements formally interact with data to generate causal inferences. We continue to focus on a situation with binary variables, though suggest later in the chapter how this can be extended. Though we walk through the procedure for simple models, the approach outlined here can be applies to *any* causal model with binary variables and to any queries defined over the model.
 
 The process tracing procedure operates as follows:
 
@@ -174,9 +175,9 @@ The process tracing procedure operates as follows:
 
 In general, when doing process tracing in this framework, we think of a given case of interest -- the one we are studying and seek to learn about -- as being drawn at random from a population. Thus, our prior beliefs about a *single* case -- before we do the process tracing -- are really beliefs about that population. So, for instance, our prior belief about the probability that inequality has a positive effect on democratization in Mexico in 1999 is our belief about how commonly inequality has a positive effect on democratization in the population of cases that are "like" Mexico in 1999.^[The reference population for a case is defined based on whatever we already know about the case. Thus, for instance, if we already know that the case has $Y=1$ before we begin process tracing, then the relevant population for the formation of prior beliefs is all cases in which $Y=1$.] 
 
-We let $\lambda^j$ denote our belief about the population distribution of nodal types at node $j$. A $\lambda^j$ is simply a vector of proportions, one for each possible nodal type, with the proportions adding up to $1$. So, for instance, $\lambda^Y$ for our current example would be a vector with four values, each of which expresses a proportion for one of the four nodal types at $Y$. So we might have $\lambda^Y_{01}=0.1$, $\lambda^Y_{11}=0.05$, and so on -- with the $\lambda^Y$ values summing to $1$ because these values are defined over the full set of possible nodal types for $Y$. 
+We let $\lambda^j$ denote our beliefs over $\theta^j$---nodal types at node $j$. We sometimes think of $\lambda^j$ as the population distribution of $\theta^j$, but this interpretation is not necessary for case level inference. A $\lambda^j$ is simply a vector of numbers (or proportions), one for each possible nodal type, with all numbers non negative and summing to $1$. So, for instance, $\lambda^Y$ for our current example would be a vector with four values, each of which expresses a probability on one of the four nodal types at $Y$. So we might have $\lambda^Y_{01}=0.1$, $\lambda^Y_{11}=0.05$, and so on -- with the $\lambda^Y$ values summing to $1$ because these values are defined over the full set of possible nodal types for $Y$. 
 
-We can, in turn, use these population parameters -- these beliefs about nodal-type proportions in the population -- to create prior probabilities over the *causal* type for the case at hand. Since causal types are merely combinations of nodal types, and our case has been drawn at random from the population, we can take a set of posited proprtions of nodal types in the population and readily calculate the probability that our case is of any given causal type. To do so, we need to join together $\lambda$'s across the nodes in a model. 
+We can, in turn, use these beliefs about nodal-type probabilities -- to create prior probabilities over the *causal* type for the case at hand. Since causal types are merely combinations of nodal types we can take a set of probabilities on nodal types and calculate the probability that our case is of any given causal type. To do so, we need to join together $\lambda$'s across the nodes in a model. 
 
 Let us first see how this works in a situation in which we assume that the nodal types are independent of one another. We can think of this as a situation in which there is no confounding that is not captured in the graph -- no variable missing from the model that is a common ancestor of multiple nodes in the model. Here, our beliefs over causal types are simply the product of our beliefs over the component nodal types (since the joint probability of independent events is simply the product of their individual probabilities). For instance, one causal type might be "a unit in which $X=1$ and in which $Y=1$ no matter what value $X$ takes." In this case the probability that a case is of this causal type might be written $\Pr(\theta^X = \theta^X_1)\Pr(\theta^Y = \theta^Y_{11}) = \lambda^X_1\lambda^Y_{11}$.
 
@@ -184,7 +185,9 @@ The simplest way in which we can express beliefs about the differential probabil
 
 In a situation of unobserved confounding, our beliefs over causal types are still well defined, though they are no longer the simple product of beliefs over nodal types. Let us imagine for instance, in a simple $X \rightarrow Y$ model, that we believe that some unobserved factor both affects both the likelihood of $X = 1$ and also $X$'s effect on $Y$: maybe, for instance, $X$ is more likely to be assigned to 1 where $X$ has a positive effect. This is the same as saying that the probability that $\theta^X$ and $\theta^Y$ are correlated. Now, the probability of any combination of $\theta^X$ and $\theta^Y$ must be calculated using the joint probability formula, $\Pr(A, B) = \Pr(A)\Pr(B|A)$.^[In words, the probability of $A$ and $B$ occurring is equal to the probability of $A$ occurring times the probability of $B$ occurring *given* that $A$ occurs.] Thus, for instance, $\Pr(\theta^Y = \theta^Y_{01}, \theta^X = \theta^X_1) = \Pr(\theta^Y = \theta^Y_{01})\Pr(\theta^X = \theta^X_1 | \theta^Y = \theta^Y_{01})$. To form priors over causal types in this situation, we need to posit beliefs about a set of more complex, conditional proportions for $X$'s type. Specifically, we need to posit, *for those cases* with a positive effect of $X$ on $Y$, what proportion are "assigned" to $X=1$; *for those cases* with a negative effect, what proportion are assigned to $X=1$; and so on, conditioning on each of $Y$'s nodal types.
 
-These conditional proportions may, of course, be difficult for the researcher to form beliefs about. Forming a belief about them amounts to saying that we do not know what generates confounding, but we know the correlations it generates in the data. We may wonder how often we will be in that epistemological position. An alternative way to parse the problem, then, is to *model* the confounding by including the confounder (say, $Z$) as a new node in the graph. In the above example, $Z$ would point into both $X$ and $Y$. We would then posit population proportions for a set of nodal types for $X$ -- representing $X$'s possible responses to $Z$ -- and for $Y$ -- representing $Y$'s possible responses to both $X$ and $Z$. We may find it easier to reason and form beliefs about these more complex nodal types than about the conditional proportions involved in unobserved confounding. The two approaches work out to be analytically equivalent given equivalent underlying beliefs, so the choice between them will be a matter of researcher preference.^[As we will see later in the book, another approach is to gather data on additional cases. When analyzing multiple cases, we can set up our priors to allow for the possibility of unobserved confounding and then, potentially, learn about that confounding from the data. This is not possible under our procedure for single-case process tracing, where we treat the population parameters as given and fixed.]
+<!-- FLAG: Check population slanguage -->
+
+These conditional proportions may, of course, be difficult for the researcher to form beliefs about. Forming a belief about them amounts to saying that we do not know what generates confounding, but we know the correlations it generates in the data. We may wonder how often we will be in that epistemological position. An alternative way to parse the problem, then, is to *model* the confounding by including the confounder (say, $Z$) as a new node in the graph. In the above example, $Z$ would point into both $X$ and $Y$. We would then posit probabilities (or population proportions) for a set of nodal types for $X$ -- representing $X$'s possible responses to $Z$ -- and for $Y$ -- representing $Y$'s possible responses to both $X$ and $Z$. We may find it easier to reason and form beliefs about these more complex nodal types than about the conditional proportions involved in unobserved confounding. The two approaches work out to be analytically equivalent given equivalent underlying beliefs, so the choice between them will be a matter of researcher preference.^[As we will see later in the book, another approach is to gather data on additional cases. When analyzing multiple cases, we can set up our priors to allow for the possibility of unobserved confounding and then, potentially, learn about that confounding from the data. This is not possible under our procedure for single-case process tracing, where we treat the population parameters as given and fixed.]
 
 Importantly, in process tracing, we are focused on drawing case-level inferences and, as such, we treat the population-level parameters as given and fixed. In general, these parameters derive from our beliefs about how the world works, and those beliefs will typically be uncertain.  The key point, however, is that in process tracing, the population parameters serve as an *input* into the analysis, conditioning our inferences from the evidence: we interpret a case in light of what we know about general causal relations. But, in the process-tracing setup, we do not *update* on these population-level beliefs once we see the data from a single case. Importantly, as we show later in the book, we *do* update on population-level inferences in the more general setup that we introduce in Chapter \@ref(mixing) for analyzing mixed data in multiple cases. We also show in Chapter \@ref(evaluation) how we can test the sensitivity of conclusions to the values at which we set population parameters. Interestingly, as we also show, process-tracing inferences, including uncertainty about conclusions, are unaffected by the level of uncertainty we might have about population parameters; we thus do not specify this uncertainty for the purposes of process tracing.
 
@@ -427,7 +430,7 @@ ambXMY_with_priors%>%
 <!--    kable(digits = 2) -->
 <!-- ``` -->
 
-**Updating on estimands.**  We now have a posterior probability for each causal type for the case at hand. The causal question we are interested in answering, our estimand, may not be about causal types *per se.* It is about an estimand that can be expressed as a *combination* of causal types. 
+**Updating on queries.**  We now have a posterior probability for each causal type for the case at hand. The causal question we are interested in answering, our query, may not be about causal types *per se.* It is about a query  that can be expressed as a *combination* of causal types, as decribed in Chapter \@ref(questions). 
 
 For instance, suppose we are working with the model $X \rightarrow M \rightarrow Y$; and that our question is, "Did $X=1$ cause $Y=1$?". This question is asking both:
 
@@ -446,14 +449,14 @@ Thus, the qualifying causal types in this model are:
 * $\theta^X_1, \theta^M_{01}, \theta^Y_{01}$
 * $\theta^X_1, \theta^M_{10}, \theta^Y_{10}$
 
-Our *prior* on the estimand---what we believe before we collect data on the case at hand---is given simply by summing up the prior probabilities on each of the causal types that correspond to the estimand. Note that we must calculate the prior from the full ambiguity matrix, before excluding types for inconsistency with the data. Returning to the full ambiguity matrix in Table \@ref(tab:ambigmatrixmed), we see that the priors on these two types (given the population parameters assumed there) are 0.08 and 0.02, respectively, giving a prior for the estimand of 0.1. 
+Our *prior* on the query---what we believe before we collect data on the case at hand---is given simply by summing up the prior probabilities on each of the causal types that correspond to the query. Note that we must calculate the prior from the full ambiguity matrix, before excluding types for inconsistency with the data. Returning to the full ambiguity matrix in Table \@ref(tab:ambigmatrixmed), we see that the priors on these two types (given the population parameters assumed there) are 0.08 and 0.02, respectively, giving a prior for the query of 0.1. 
 
-The posterior on any estimand is, likewise, given by summing up the posterior probabilities on each of the causal types that correspond to the estimand, drawing of course from the updated ambiguity matrix. For instance, if we observe the data $X=1, M=1, Y=1$, we update to the ambiguity matrix in Table \@ref(tab:ambigmedupdate2).  Our posterior on the estimand, "Did $X=1$ cause $Y=1$?" is the sum of the posteriors on the above two causal types. Since $\theta^X_1, \theta^M_{10}, \theta^Y_{10}$ is excluded by the data, this just leaves the posterior on $\theta^X_1, \theta^M_{01}, \theta^Y_{01}$, 0.4444, which is the posterior belief on our estimand. 
+The posterior on any query is, likewise, given by summing up the posterior probabilities on each of the causal types that correspond to the query, drawing of course from the updated ambiguity matrix. For instance, if we observe the data $X=1, M=1, Y=1$, we update to the ambiguity matrix in Table \@ref(tab:ambigmedupdate2).  Our posterior on the query, "Did $X=1$ cause $Y=1$?" is the sum of the posteriors on the above two causal types. Since $\theta^X_1, \theta^M_{10}, \theta^Y_{10}$ is excluded by the data, this just leaves the posterior on $\theta^X_1, \theta^M_{01}, \theta^Y_{01}$, 0.4444, which is the posterior belief on our query. 
 
-If we observe only the partial data, $X=1, Y=1$, then we update to the ambiguity matrix in Table \@ref(tab:ambigmedupdatepartial2). Now both corresponding causal types are included, and we sum their posteriors to get the posterior on the estimand: $0.0769 + 0.3077 = 0.3846$.
+If we observe only the partial data, $X=1, Y=1$, then we update to the ambiguity matrix in Table \@ref(tab:ambigmedupdatepartial2). Now both corresponding causal types are included, and we sum their posteriors to get the posterior on the query: $0.0769 + 0.3077 = 0.3846$.
 
 
-<!-- FLAG: Briefly discuss other estimand(s) one could do, though don't show in detail here. Will do pathways in Chap. 7. -->
+<!-- FLAG: Briefly discuss other query(s) one could do, though don't show in detail here. Will do pathways in Chap. 7. -->
 
 
 ```{r ambXMYwithpriors, echo = FALSE}
@@ -502,10 +505,10 @@ Table: (\#tab:ambigmedupdatepartial2). An updated version of the ambiguity matri
 <!-- ``` -->
 
 
-For more complex models and estimands, it can be more difficult to eyeball the corresponding causal types. In practice, therefore, we use the `get_query_types` function in the `CausalQueries` package to do this for us. 
+For more complex models and queries, it can be more difficult to eyeball the corresponding causal types. In practice, therefore, we use the `get_query_types` function in the `CausalQueries` package to do this for us. 
 
 
-<!-- For example, supposer we want to know whether $X$ has some causal effect on $Y$ in our simple mediation model. The estimand, "$X$ haa a causal effect on $Y$" maps onto a relatively large, though still easily calculated, collection of types. Using `gbiqq`'s get_types function, we would define our query as a search for all causal types in which $Y$'s potential outcome when $X=1$ is different from $Y$'s potential outcome when $X=0$. The function then reports back all causal types meeting this condition: -->
+<!-- For example, supposer we want to know whether $X$ has some causal effect on $Y$ in our simple mediation model. The query, "$X$ haa a causal effect on $Y$" maps onto a relatively large, though still easily calculated, collection of types. Using `gbiqq`'s get_types function, we would define our query as a search for all causal types in which $Y$'s potential outcome when $X=1$ is different from $Y$'s potential outcome when $X=0$. The function then reports back all causal types meeting this condition: -->
 
 <!-- ```{r, eval = FALSE} -->
 <!-- get_types(XMY, "Y[X=1] != Y[X=0]") -->
@@ -528,7 +531,7 @@ cat(paste0(names(types$types[types$types]), collapse = ", "))
 
 **Illustration of Process Tracing with Code**
 
-We illustrate process tracing for a simple mediation model. First, we define the structure of the model using the `make_model` function. We then use `set_parameters` to specify our beliefs about population-level shares of nodal types for each node, entering one proportion for each nodal type in the model. The ordering of nodal types can be viewed within the model summary (`summary(XMY)`). We then query the model to find out what we should believe about the estimand of interest given different possible data-realizations. Here we define the query (PC) as the probability that $X$ has a positive effect on $Y$. We then use the `given` argument to list the possible data-realizations for which we want to report an estimate for this query. Finally, we tell `CausalQueries` to use the parameter values that we have specified to generate the estimates.
+We illustrate process tracing for a simple mediation model. First, we define the structure of the model using the `make_model` function. We then use `set_parameters` to specify our beliefs about population-level shares of nodal types for each node, entering one proportion for each nodal type in the model. The ordering of nodal types can be viewed within the model summary (`summary(XMY)`). We then query the model to find out what we should believe about the query of interest given different possible data-realizations. Here we define the query (PC) as the probability that $X$ has a positive effect on $Y$. We then use the `given` argument to list the possible data-realizations for which we want to report an estimate for this query. Finally, we tell `CausalQueries` to use the parameter values that we have specified to generate the estimates.
 
 ```{r XMY, eval = FALSE}
 
@@ -634,11 +637,13 @@ text(.1,.25, expression(phi[d]))
 
 While `CausalQueries` can implement process-tracing inference for us, it is helpful for researchers to be able to reason their way through what is happening "under the hood." We provide here some core principles and intuitions for thinking through the features of models and queries that influence whether and how much we can learn from within-case observations.
 
-### A DAG alone does not get us probative value 
+### A DAG alone does not get us probative value for a single case 
 
 Suppose that we start with the belief that any effect of $X$ on $Y$ must run through $M$, and that there is no confounding at any stage. This implies the simple $X \rightarrow M \rightarrow Y$ model. Suppose, further, that we have no prior knowledge about the distribution of nodal types and thus posit flat priors over $\theta^M$ and $\theta^Y$. Now we would like to conduct process tracing and observe $M$ to tell us about the effect of $X$ on $Y$. In an $X=Y=1$ case, for instance, is this model sufficient to allow the observation of $M$ to provide leverage on whether $X=1$ caused $Y=1$?
 
 It is not. We can learn nothing from about $X$'s effect on $Y$ from $M$. Observing a process is *uninformative* if all that we know is the structure of relations of conditional independence. 
+
+<!-- FLAG: PROVE CLAIM -->
 
 To see why at an intuitive level, consider that there are two causal types that will satisfy the query, $X=1$ caused $Y=1$. Those are the types $\theta^X_1 \theta^M_{01} \theta^Y_{01}$ and $\theta^X_1 \theta^M_{10} \theta^Y_{10}$: either linked positive effects or linked negative effects could generate an overall positive effect of $X$ on $Y$. Moreover, with flat priors over nodal types, these causal types are equally likely. Now, think about what we would conclude if we collected process data and observed $M=1$ in the $X=Y=1$ case. This observation would rule out one way in which the query could be satisfied: the causal type with linked negative effects. And what if we observed, instead, $M=0$? This would rule out the other way in which the query could be satisfued: linked positive effects. But since each of these causal types started out with equal weights in our priors, there can be no updating from eliminating one or the other.
 
@@ -655,6 +660,8 @@ To take a less extreme example, suppose that our priors put a *very high probabi
 
 We address the concept of expected learning more systematically in Chapters \@ref(clue) and \@ref(caseselection), but our general point here is that, we will learn more from process-tracing evidence, to the extent that (a) we know enough about causal relations in a domain to know how to make causal sense of the evidence we find, but (b) we do not know so much that that evidence can be largely predicted from what we have already observed.
 
+
+<!-- FLAG: mh check -->
 
 ### Multiple ways for queries to be satisfied
 
@@ -682,17 +689,17 @@ In sum, what seems intuitively like a simple question will sometimes be a very u
 
 In the procedure described for process tracing in this chapter (and different to what we introduce in Chapter 8) we assume that $\lambda$ is known and we do not place uncertainty around it.
 
-This might appear somewhat heroic, but in fact for single case inference it is  without loss of generality. The expected inferences we would make for any estimand accounting for priors  is the same as the inferences we if we use the expectation only.  
+This might appear somewhat heroic, but in fact for single case inference it is  without loss of generality. The expected inferences we would make for any query accounting for priors  is the same as the inferences we if we use the expectation only.  
 
-To see this, let $\pi_j$ denote the probability of observing causal type $j$ and $p(D)$ te probability of observing data realization $D$. Say that $j \in D$ if type $j$ produces data type $D$ and say $j \in E$ if causal type $j$ is an element of the estimand set of interest. 
-The posterior on an estimand $E$ given data $D$ given prior over $\pi$, $p(\pi)$ is:
+To see this, let $\pi_j$ denote the probability of observing causal type $j$ and $p(D)$ te probability of observing data realization $D$. Say that $j \in D$ if type $j$ produces data type $D$ and say $j \in E$ if causal type $j$ is an element of the query set of interest. 
+The posterior on a query $E$ given data $D$ given prior over $\pi$, $p(\pi)$ is:
 
 $$\Pr(E | D) = \int_\pi  \frac{\sum_{j \in E \cap D}\pi_j}{\sum_{j \in D}\pi_j} f(\pi)d\pi$$
 
 However, since for any $\pi$, $\sum_{j \in D}\pi_j = p(D)$ we have:
 
 $$\Pr(E | D) = \int_\pi  \sum_{j \in E \cap D}\pi_j f(\pi)d\pi/p(D) = \sum_{j \in  E \cap D} \overline{\pi}_j/p(D)$$
-For instance in an $X \rightarrow Y$ model, if we observe $X=Y=1$ then $D$ consists of causal types $D={(\theta^X_1, \theta^Y_{01}), (\theta^X_1, \theta^Y_{11})})$ and the estimand set for "$X$ has a positive effect on  $Y$" consists of  $E={(\theta^X_1, \theta^Y_{01}), (\theta^X_0, \theta^Y_{01})})$. Let $\pi_1$, $\pi_2$ denote the priors on the two elecments of $D$. We then have:
+For instance in an $X \rightarrow Y$ model, if we observe $X=Y=1$ then $D$ consists of causal types $D={(\theta^X_1, \theta^Y_{01}), (\theta^X_1, \theta^Y_{11})})$ and the query set for "$X$ has a positive effect on  $Y$" consists of  $E={(\theta^X_1, \theta^Y_{01}), (\theta^X_0, \theta^Y_{01})})$. Let $\pi_1$, $\pi_2$ denote the priors on the two elements of $D$. We then have:
 
 $$\Pr(E | D) =  \frac{\pi_1}{\pi_1 + \pi_2}$$
 
@@ -918,9 +925,9 @@ Other patterns involving instrumentation are also imaginable, though not graphed
 In a sense, then, the role of confounders as clues in case-level inference is the mirror image of the role of confounders as covariates in cross-case correlational inference. In a correlational inferential framework, controlling for a variable in $K$'s position in graph (5) renders the $X, Y$ correlation (which we assume to be observed) informative about $X$'s average causal effect. When we use confounders as evidence in within-case inference, it is our observations of other variables that determine how informative the confounder *itself* will be about $X$'s causal effect.
 
 
-It is important to be precise about the kinds of claims that one can make from graphs like those in Figure \{fig:34graphs}. The graphs in this figure allow us to identify informativeness about an unobserved node $Q$ that is a parent of $Y$. This setup does not, however, capture all ways in which clues can be informative about the causal effect of $X$ on $Y$ or about other causal estimands of interest. For instance, as noted above, even if a clue is uninformative about a $Q$ node pointing into $Y$, it may still help establish whether $X$ causes $Y$: the statement that $X$ causes $Y$ will for some graphs be a statement about a *collection* of nodes that form the set of query variables $\mathcal Q$. This is the case, for instance, in any graph of the form $X \rightarrow M  \rightarrow Y$, where we are interested not just in $Y$'s response to $M$ (the mediator) but also in $M$'s response to $X$. Of interest, thus, are not just a $Q^Y$ response-type node pointing into $Y$ but also a $Q^M$ response-type node that is a parent of $M$. Observations that provide leverage on either $Q$ term will thus aid an inference about the overall causal effect. A clue $K$ that is $d-$separated from $Q^Y$ may nevertheless be informative about $X$'s effect on $Y$ if it is not $d-$separated from $Q^M$; this opens up a broader range of variables as informative clues. 
+It is important to be precise about the kinds of claims that one can make from graphs like those in Figure \{fig:34graphs}. The graphs in this figure allow us to identify informativeness about an unobserved node $Q$ that is a parent of $Y$. This setup does not, however, capture all ways in which clues can be informative about the causal effect of $X$ on $Y$ or about other causal queries of interest. For instance, as noted above, even if a clue is uninformative about a $Q$ node pointing into $Y$, it may still help establish whether $X$ causes $Y$: the statement that $X$ causes $Y$ will for some graphs be a statement about a *collection* of nodes that form the set of query variables $\mathcal Q$. This is the case, for instance, in any graph of the form $X \rightarrow M  \rightarrow Y$, where we are interested not just in $Y$'s response to $M$ (the mediator) but also in $M$'s response to $X$. Of interest, thus, are not just a $Q^Y$ response-type node pointing into $Y$ but also a $Q^M$ response-type node that is a parent of $M$. Observations that provide leverage on either $Q$ term will thus aid an inference about the overall causal effect. A clue $K$ that is $d-$separated from $Q^Y$ may nevertheless be informative about $X$'s effect on $Y$ if it is not $d-$separated from $Q^M$; this opens up a broader range of variables as informative clues. 
 
-Additionally, as our discussion in Chapter 2 makes clear, estimands other than the case-level causal effect---such as average causal effects, actual causes, and causal paths---involve particular features of context: particular sets of exogenous nodes as members of our query set, $\mathcal Q$. Thus, even for the same causal model, informativeness will be defined differently for each causal question that we seek to address. The broader point is that we can identify what kinds of observations may address our estimand if we can place that estimand on a causal graph and then assess the graph for relationships of $d$-separation and -connection.
+Additionally, as our discussion in Chapter 2 makes clear, queries other than the case-level causal effect---such as average causal effects, actual causes, and causal paths---involve particular features of context: particular sets of exogenous nodes as members of our query set, $\mathcal Q$. Thus, even for the same causal model, informativeness will be defined differently for each causal question that we seek to address. The broader point is that we can identify what kinds of observations may address our query if we can place that query on a causal graph and then assess the graph for relationships of $d$-separation and -connection.
 
 Further, we emphasize that a DAG can only tell us when a clue *may* be informative (conditional some prior observation): $d-$connectedness is necessary but not sufficient for informativeness. This fact derives directly from the rules for drawing a causal graph: the absence of an arrow between two variables implies that they are *not* directly causally related, while the presence of an arrow does not imply that they always are. As we saw in our analysis of the government-removal example in Chapter 2, whether variables connected to one another by arrows in the original DAG were in fact linked by a causal effect depended on the context. Likewise, whether a clue $K$ is in fact informative may depend on particular values of $\mathcal W$---the variables that have already been observed. As a simple example, let $q = k_1w + (1-w)k_2$, where $W$ is a variable that we have already observed and $K_1$ and $K_2$ are clues that we might choose to observe next. Here, if $w=1$ then learning $K_1$ will be informative about $Q$, and learning $K_2$ will not; but if $w=0$, then $K_1$ will be uninformative (and $K_2$ informative). 
 

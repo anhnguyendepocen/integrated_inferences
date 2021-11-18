@@ -166,7 +166,7 @@ div.csl-indent {
 <li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
 <li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#three-principles-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Three principles of Bayesian updating</a>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#features-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Features of Bayesian updating</a>
 <ul>
 <li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
 <li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
@@ -359,7 +359,7 @@ div.csl-indent {
 <p><br></p>
 <p>Bayesian methods are just sets of procedures to figure out how to update beliefs in light of new information.</p>
 <p>We begin with a prior belief about the probability that a hypothesis is true. New data then allow us to form a posterior belief about the probability of the hypothesis. Bayesian inference takes into account the consistency of the evidence with a hypothesis, the uniqueness of the evidence to that hypothesis, and background knowledge about the problem.</p>
-<p>In the next section we review the basic idea of Bayesian updating. The following section applies it to the problem of updating on causal estimands given a causal model and data.</p>
+<p>In the next section we review the basic idea of Bayesian updating. The following section applies it to the problem of updating on causal queries given a causal model and data.</p>
 <div id="bayes-basics" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Bayes Basics</h2>
 <p>For simple problems, Bayesian inference accords well with our intuitions. Once problems get slightly more complex however, our intuitions often fail us.</p>
@@ -476,8 +476,8 @@ Figure 5.2:  A mapping from the probability of observing a clue if the propositi
 <div id="a-generalization-bayesian-inference-on-queries" class="section level3" number="5.2.2">
 <h3><span class="header-section-number">5.2.2</span> A Generalization: Bayesian Inference on Queries</h3>
 <!-- ## FLAG -- MAKE CONSISTENT WITH QUERY SECTION -->
-<p>In Chapter <a href="questions.html#questions">4</a>, we described estimands of interest as queries over nodal types in causal models.</p>
-<p>Once queries are defined in terms of nodal types, the formation of beliefs, given data <span class="math inline">\(W\)</span>, about estimands follows immediately from application of Bayes rule.</p>
+<p>In Chapter <a href="questions.html#questions">4</a>, we described queries of interest as queries over nodal types in causal models.</p>
+<p>Once queries are defined in terms of nodal types, the formation of beliefs, given data <span class="math inline">\(W\)</span>, about queries follows immediately from application of Bayes rule.</p>
 <p>Let <span class="math inline">\(Q(\theta)\)</span> define the value of the query in context <span class="math inline">\(\theta\)</span>. The updated beliefs about the query are given by the distribution:</p>
 <p><span class="math display">\[P(q | W) = \int_{\theta:Q(\theta) = q} P(\theta|W)du =  \int_{\theta:Q(\theta) = q} \frac{P(W|\theta)P(\theta)}{\int_{\theta&#39;}P(W|\theta&#39;)P(\theta&#39;)du&#39;}du\]</span></p>
 <p>This expression gathers together all the causal types (combinations of nodal types) that satisfy a query and assesses how likely these are, collectively, given the data.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> For an abstract representation of the relations between assumptions, queries, data, and conclusions, see Figure 1 in <span class="citation"><a href="#ref-pearl2012causal" role="doc-biblioref">Pearl</a> (<a href="#ref-pearl2012causal" role="doc-biblioref">2012</a>)</span>.</p>
@@ -560,10 +560,12 @@ The result can then be figured out as <span class="math inline">\(P(Q=1) = \frac
 <!-- \Pr(\lambda_b=1|\mathcal{D}) =\frac{\frac{1}{2} \times \frac{1}{2}}{\frac{1}{2} \times \frac{1}{2} + \frac{1}{8}\times \frac{1}{2}} = \frac{4}{5}  -->
 <!-- \end{eqnarray*} -->
 <!-- The key difference between this example and more general applications is simply that in the general case we allow for uncertainty --- and updating --- not simply over whether $\lambda_b$ is 0 or 1, but over a range of possible values for multiple parameters of interest. Though this adds complexity, it does not change the fundamental logic of updating.   -->
+<!-- FLAG: RETURN TO THESE -->
 </div>
 </div>
-<div id="three-principles-of-bayesian-updating" class="section level2" number="5.3">
-<h2><span class="header-section-number">5.3</span> Three principles of Bayesian updating</h2>
+<div id="features-of-bayesian-updating" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Features of Bayesian updating</h2>
+<p>Bayesian updating has implications that may not be obvious at first glance. These will matter for all forms of inference we examine in this book, but they can all be illustrated in simple settings.</p>
 <div id="AppPriors" class="section level3" number="5.3.1">
 <h3><span class="header-section-number">5.3.1</span> Priors matter</h3>
 <p>The amount of learning that results from a given piece of new data depends strongly on prior beliefs. We have already seen this with the example of interpreting our test results above. Figure <a href="bayeschapter.html#fig:CluesInferences2">5.3</a> illustrates the point for process tracing inferences.</p>
@@ -592,11 +594,11 @@ Figure 5.3: Figure shows how the learning from different types of tests depends 
 Figure 5.4:  Joint posteriors distribution on whether a case is a <span class="math inline">\(b\)</span> or <span class="math inline">\(d\)</span> and on the probability of seeing a clue for a <span class="math inline">\(b\)</span> type (<span class="math inline">\(\phi_b\)</span>).
 </p>
 </div>
-<p>Figure <a href="bayeschapter.html#fig:ch5joint">5.5</a> provides a second example, this time showing the joint distribution for the belief that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> in cases in which <span class="math inline">\(X=1, Y=1\)</span> and the relative likelihood that <span class="math inline">\(K=1\)</span> when <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> (and <span class="math inline">\(X=1, Y=1\)</span>) relative to the likelihood that <span class="math inline">\(K=1\)</span> when <span class="math inline">\(X\)</span> does not cause <span class="math inline">\(Y\)</span> (and <span class="math inline">\(X=1, Y=1\)</span>). In this case the joint posterior is derived from a model in which probative value of <span class="math inline">\(K\)</span> is inferred from data, rather than assumed by researchers. We develop more models of this form in later chapters but for now highlight only that in simple setups the distribution of beliefs over estimands and over the informativeness of clues are likely not independent of each other.</p>
+<p>Figure <a href="bayeschapter.html#fig:ch5joint">5.5</a> provides a second example, this time showing the joint distribution for the belief that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> in cases in which <span class="math inline">\(X=1, Y=1\)</span> and the relative likelihood that <span class="math inline">\(K=1\)</span> when <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> (and <span class="math inline">\(X=1, Y=1\)</span>) relative to the likelihood that <span class="math inline">\(K=1\)</span> when <span class="math inline">\(X\)</span> does not cause <span class="math inline">\(Y\)</span> (and <span class="math inline">\(X=1, Y=1\)</span>). In this case the joint posterior is derived from a model in which probative value of <span class="math inline">\(K\)</span> is inferred from data, rather than assumed by researchers. We develop more models of this form in later chapters but for now highlight only that in simple setups the distribution of beliefs over queries and over the informativeness of clues are likely not independent of each other.</p>
 <div class="figure"><span style="display:block;" id="fig:ch5joint"></span>
-<img src="ii_files/figure-html/ch5joint-1.png" alt="Correlated beliefs on estimands and probative value" width="960" />
+<img src="ii_files/figure-html/ch5joint-1.png" alt="Correlated beliefs on queries and probative value" width="960" />
 <p class="caption">
-Figure 5.5: Correlated beliefs on estimands and probative value
+Figure 5.5: Correlated beliefs on queries and probative value
 </p>
 </div>
 </div>

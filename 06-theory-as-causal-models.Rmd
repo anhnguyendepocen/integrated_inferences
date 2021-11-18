@@ -26,6 +26,9 @@ In this short conceptual chapter we describe an approach in which theoretical cl
 <!-- 6.3.2 Structural consistency (both ways) -->
 <!-- 6.3.3 Distributional consistency -->
 
+<!-- FLAG: AJ GO OVER PROBABILISTIC SECTION TO CONNECT TO OTHER VERSIONS OF THEORY -->
+<!-- FLAG: MH CHECK CONNECTION BETWEE EVALUATION AND JUSTIFICATION -->
+
 In Chapter \@ref(illustratemodels), we described a set of theories and represented them as causal models. But so far we haven't been very explicit in what we mean by a theory or how  theory maps onto a causal-model framework. 
 
 In this book, we will think of theory as a type of *explanation*: a theory provides an account of how or under what conditions a set of causal relationships operate. We generally express both a theory and the claims being theorized as causal models. The theory is then is a model that *implies* another model---possibly with the help of some data. 
@@ -52,6 +55,8 @@ Let us say that a causal model, $M^\prime$, is a *theory of* $M$ if $M$ is impli
 <!-- ### Disaggregating nodes -->
 
 Both structural models and probabilistic models---possibly in combination with data---imply other models. We discuss each in turn.
+
+<!-- FLAG: DISCUSS UP FRON DIFFERENT WAYS WE USE THE TERM JIMPLICAITON -->
 
 ### Implications of structural causal models
 
@@ -158,7 +163,7 @@ hj_dag(x = c(1,2, 2, 1.5),
 
 **Type-reducing theorization.** There is a second way in which we might imagine a model being implied by another model that does not involve a change in nodes. Let $\Theta(\mathcal M_1)$ denote the set of causal types in model $\mathcal M_1$. Then we can say that $\mathcal M_0$ implies $\mathcal M_1$ if $\Theta(\mathcal M_0)\subseteq \Theta(\mathcal M_1)$. Informally this means that any relation admitted by theory $\mathcal M_0$ is representable in model $\mathcal M_1$, though the converse may not be true. We can think of a theory of $\mathcal M_1$ as a *restriction* of ranges of $\Theta(M_1)$. 
 
-``` {r, evaluate = FALSE, echo = FALSE}
+``` {r, eval  = FALSE, echo = FALSE}
 mm <- make_model("X -> M -> Y <- X") %>% 
   set_restrictions("Y[X=1, M = .] != Y[X=0, M = .]")
 
@@ -166,7 +171,7 @@ mm <- make_model("X -> M -> Y <- X") %>%
 mm$nodal_types$Y
 
 
-"0000" "1100" "0011" "1111"
+# "0000" "1100" "0011" "1111"
 ```
 
 We illustrate the idea in Figure \@ref(fig:Highlowreduce). In panel (a) of the figure, we have a model, $\mathcal M_1$ in which $Z$ can have both a direct and an indirect effect (via $X$) on $Y$. Suppose that we believed that $\mathcal M_1$ was technically true but overly permissive, in the sense that it allowed for causal relations that we do not in fact believe are operating. We might believe, for instance, that $Z$ has no direct effect on $Y$ and that $Z$ has no negative effects on $X$ --- the beliefs we would need to hold to treat $Z$ as an instrument for $X$. We could thus write down a lower-level model, $\mathcal M_0$,in which we have *reduced* the type space accordingly. Specifically, in $\mathcal M_0$, we would restrict the nodal types at $Y$ to only the $\theta^Y_{0000}$, $\theta^Y_{1100}$, $\theta^Y_{0011}$, and $\theta^Y_{1111}$; and we would reduce the nodal types at $X$ to $\theta^X_{00}$, $\theta^X_{01}$, and $\theta^X_{11}$. In panel (b), we (somewhat loosely) represent $\mathcal M_0$. We have now eliminated the arrow from $Z$ to $Y$ to represent the dropping of all nodal types involving a direct effect of $Z$ on $Y$; not pictured is the montonicity assumption at $X$. However, we have relabeled the nodal-type nodes for both $X$ and $Y$ to represent the fact that these are different objects from the nodal type nodes in the higher-level model.^[We drop the arrow in Figure \@ref(fig:Highlowreduce), however, in order to help visually convey the difference between the two models. In fact, we would construct $\mathcal M_0$ by placing restrictions at nodes in $\mathcal M_1$, rather than by changing the model's structure, so that the allowed types in $\mathcal M_0$ form a subset of those in $\mathcal M_1$.]
@@ -463,7 +468,7 @@ Functional (but not probabilistic)  causal models allow for the representation o
 <!-- #### Relation to technical literature -->
 
 <!-- Formally moving from lower level DAG to a higher level DAG requires *marginalization*: assessing the joint marginal distribution of observed nodes in the higher level graph over the distribution of unobserved nodes in the lower level graph.  -->
-<!-- <!-- In Verma and Pearl 1990 (Equivalence and Synthesis of Causal Models) these higher level models are called "embedded causal models." --> -->
+<!-- <!-- In Verma and Pearl 1990 (Equivalence and Synthesis of Causal Models) these higher level models are called "embedded causal models." --> 
 
 <!-- Unfortunately there is no guarantee that the  margin of a distribution that is consistent with a lower level DAG will be consistent with any higher level DAG (techically, "DAGS are not closed under marginalization").  -->
 
@@ -1122,7 +1127,7 @@ Second, the discussion highlights how the causal modelling framework can make de
 
 Third the example shows a way of building a bridge from pure theory to empirical claims. One can think of Nash's theory as an entirely data free set of claims. When translate into an applied theory---a set of proposition about the ways actual players *might* behave---and represented as a causal model, we are on a path to being able to use data to refine the theory. Thus we might begin with a formal specification like that in Figure \@ref(fig:nfg5) but with initial uncertainty about player rationality, optimizing behavior, and equilibrium selection. This theory nests Nash but does not presume the theory to be a valid description of processes in the world. Combined with data, however, we shift to a  more refined theory that selects Nash from the lower level model. 
 
-Finally, we can then apply the ideas of section \@ref(theorygains) to applied formal theories and ask: is the theory useful? For instance, does the data on player rationality help us better understand the relationship between game structure and welfare?
+Finally, we can then apply the ideas of section \@ref(theorygains) to applied formal theories and ask: is the theory useful? For instance, does data on player rationality help us better understand the relationship between game structure and welfare?
 
 <!-- Other possible measures of gains from theory might include the simple correlation between $K$ and $Q$, or entropy-based measures (see @zhang2003properties for many more possibilities).  -->
 
