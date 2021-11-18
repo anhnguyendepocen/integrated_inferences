@@ -326,7 +326,7 @@ We can see that the share of cases overall in which inequality causes democratiz
 
 We also see that the absence of mobilization tells us for certain that democratization was not caused by inequality. Interestingly, however, this result derives purely from the model restrictions, rather than from the data: under the restrictions we imposed, a positive effect of inequality can operate *only* through mobilization.
 
-Turning now to the cases in which Democraxy did not occur, Figure \@ref(fig:mixedhist2) asks for what proportion of cases overall inequality has a negative effect on democratization; for what proportion of $I=1, D=0$ cases inequality prevented democratization; and this latter query conditional on different clue realizations. 
+Turning now to the cases in which democratization did not occur, Figure \@ref(fig:mixedhist2) asks for what proportion of cases overall inequality has a negative effect on democratization; for what proportion of $I=1, D=0$ cases inequality prevented democratization; and this latter query conditional on different clue realizations. 
 
 ```{r pimdnegqueries, include = FALSE, warning = FALSE}
 
@@ -403,7 +403,9 @@ The key difference between case-level inference from mixed data and the pure pro
 
 ### How much do we get from the model vs. the data?
 
-We might wonder, at the same time, how much we are in fact learning from the data, as compared to what we built into the model at the outset, including through the monotonicity restrictions that we imposed. To examine this, in Figures \@ref(fig:dcaused) and \@ref(fig:dprevented), we plot the mean (and one-standard-deviation error bars) of our prior and our posterior on the same set of queries. We see that there is almost no shift in beliefs for the positive-effect queries, with a somewhat greater shift in means for the negative-effect queries. However, our uncertainty remains high even in for negative effects, though has shrunk some. By comparing the estimates given $M=1$ to those given $M=0$, we can also see that, in this example, we do not happen to learn anything from the data about $M$'s probative value: the change in beliefs between observing $M=1$ and observing $M=0$ remains about the same in our posteriors as it was in our priors. 
+We might wonder, at the same time, how much we are in fact learning from the data, as compared to what we built into the model at the outset, including through the monotonicity restrictions that we imposed. To examine this, in Figures \@ref(fig:dcaused) and \@ref(fig:dprevented), we plot the mean (and one-standard-deviation error bars) of our prior and our posterior on the same set of queries. We see that there is almost no shift in beliefs for the positive-effect queries, with a somewhat greater shift in means for the negative-effect queries. However, our uncertainty about negative effects shrinks some, though remains quite high. 
+
+By comparing the prior and posterior estimates given $M=1$ and given $M=0$, we can also assess whether we have learned about $M$'s informativeness. We see that, in this example, we do not happen to learn anything from the data about $M$'s probative value: the difference in beliefs between each estimate given $M=1$ and that estimate given $M=0$ remains about the same in our posteriors as it was in our priors. 
 
 ```{r ppcomparison, include = FALSE}
 # Estimands can be calculated for both the prior and posterior distributions.
@@ -448,9 +450,20 @@ write_rds(ch09_queryresults, "saved/ch09_queryresultsqueries.rds")
 
 ch09_queryresults_queries <- read_rds("saved/ch09_queryresultsqueries.rds")
 
+Given_labels <- c(
+`Nothing` = "-",
+`D==1 & I==1`="D==1 & I==1",
+`D==1 & I==1 & M ==1`="D==1 & I==1 & M ==1",
+`D==1 & I==1 & M==0`= "D==1 & I==1 & M==0",
+`D==0 & I==1`="D==0 & I==1",
+`D==0 & I==1 & M ==1`="D==0 & I==1 & M ==1",
+`D==0 & I==1 & M==0`= "D==0 & I==1 & M==0") 
+
 pp_comparison <- ch09_queryresults_queries  %>% bind_rows(.id = "case") %>%
   mutate(using = ifelse(grepl("priors", case), "Priors", "Posteriors"),
-         query = ifelse(grepl("result", case), "Caused", "Prevented"))
+         query = ifelse(grepl("result", case), "Caused", "Prevented"),
+         Given = factor(Given, rev(Given_labels), rev(names(Given_labels))))
+  
 ```
 
 ```{r dcaused, echo = FALSE, fig.cap = "Priors and posteriors on the probability that inequality caused democratization (probability that I has a positive effect on D) given different kinds of observed case-level data. The error bars show plus or minus one standard deviation of the posterior variance. "}
