@@ -155,30 +155,89 @@ hj_dag(x = c(1,2, 2, 1.5),
 ```
 
 
-**Type reducing theorization.** There is a second way in which we might imagine a model being implied by another model that does not involve a change in nodes. Let $\Theta(M)$ denote the set of causal types in $M$. Then we can say that  $M_0$ implies $M_1$ if $\Theta(M_0)\subseteq \Theta(M_1)$. Informally this means that any relation admitted by theory $M_0$ is representable in model $M_1$, though the converse may not be true. We can think of a theory of $M_1$ as a *restriction* of ranges of $\Theta(M_1)$. 
 
-Put differently, if two variables are independent--- or conditionally independent given a third variable---in one model, then this same relation of independence (or conditional independence) must be captured in any theory of that model. A theory can have *additional* conditional independencies not present in the higher-level model.  But we may not theorize *away*s (conditional) independencies insisted on by our higher-level claim.
+**Type-reducing theorization.** There is a second way in which we might imagine a model being implied by another model that does not involve a change in nodes. Let $\Theta(\mathcal M_1)$ denote the set of causal types in model $\mathcal M_1$. Then we can say that $\mathcal M_0$ implies $\mathcal M_1$ if $\Theta(\mathcal M_0)\subseteq \Theta(\mathcal M_1)$. Informally this means that any relation admitted by theory $\mathcal M_0$ is representable in model $\mathcal M_1$, though the converse may not be true. We can think of a theory of $\mathcal M_1$ as a *restriction* of ranges of $\Theta(M_1)$. 
+
+``` {r, evaluate = FALSE, echo = FALSE}
+mm <- make_model("X -> M -> Y <- X") %>% 
+  set_restrictions("Y[X=1, M = .] != Y[X=0, M = .]")
 
 
+mm$nodal_types$Y
 
-Common restictions of this form include monotonicity restrictions and exclusion restrictions.  Both of these are invoked, for example, when researchers resort to theory to argue that conditions hold for an instrument to recover the average treatment effect for compliers: that is, that the instrument does not cause the outcome directly and that it has no negative effect on a treatment.
+
+"0000" "1100" "0011" "1111"
+```
+
+We illustrate the idea in Figure \@ref(fig:Highlowreduce). In panel (a) of the figure, we have a model, $\mathcal M_1$ in which $Z$ can have both a direct and an indirect effect (via $X$) on $Y$. Suppose that we believed that $\mathcal M_1$ was technically true but overly permissive, in the sense that it allowed for causal relations that we do not in fact believe are operating. We might believe, for instance, that $Z$ has no direct effect on $Y$ and that $Z$ has no negative effects on $X$ --- the beliefs we would need to hold to treat $Z$ as an instrument for $X$. We could thus write down a lower-level model, $\mathcal M_0$,in which we have *reduced* the type space accordingly. Specifically, in $\mathcal M_0$, we would restrict the nodal types at $Y$ to only the $\theta^Y_{0000}$, $\theta^Y_{1100}$, $\theta^Y_{0011}$, and $\theta^Y_{1111}$; and we would reduce the nodal types at $X$ to $\theta^X_{00}$, $\theta^X_{01}$, and $\theta^X_{11}$. In panel (b), we (somewhat loosely) represent $\mathcal M_0$. We have now eliminated the arrow from $Z$ to $Y$ to represent the dropping of all nodal types involving a direct effect of $Z$ on $Y$; not pictured is the montonicity assumption at $X$. However, we have relabeled the nodal-type nodes for both $X$ and $Y$ to represent the fact that these are different objects from the nodal type nodes in the higher-level model.^[We drop the arrow in Figure \@ref(fig:Highlowreduce), however, in order to help visually convey the difference between the two models. In fact, we would construct $\mathcal M_0$ by placing restrictions at nodes in $\mathcal M_1$, rather than by changing the model's structure, so that the allowed types in $\mathcal M_0$ form a subset of those in $\mathcal M_1$.]
+
+Thus, while we can theorize by adding substantive nodes to a model and thus splitting types, we can also theorize by maintaining existing nodes but constraining relations among them. In both forms of theorization, we start with a model that allows for a broad, and possibly unknown, range of possibilities: for instance, a broad range of paths through which or conditions under which $X$ might affect $Y$ or a broad range of causal effects operating at each node. Theorization of both forms then involves making a *stronger* claim: for instance, a claim about *how* or *when* $X$ affects $Y$ (via type-splintering) or a claim about the *particular* causal effects operating at a given node (via type-reduction). In both forms of theory, believing the stronger claim in the lower-level model implies believing the weaker claim in the higher-level model. Further, both modes of theorization also map nicely onto common ways in which we think about theory-development in the social sciences: we theorize mechanisms, sources of heterogeneity, and directions of effects (starting with a beleif that $X$ affects $Y$, for instance, and moving to a more constrained belief about whether that effect is positive or negative). 
+
+Finally, as we speak to below, theorization of both forms can generate gains for causal inference, by allowing us to use data in ways that we are unable to use it in the higher-level model.
+
+**Preserving (conditional) independencies**
+
+Not all potential mappings from higher- to lower-levels are permitted. In particular, when theorizing, we may *add* but may not *remove* independencies implied by the original model. If two variables are independent--- or conditionally independent given a third variable---in one model, then this same relation of independence (or conditional independence) must be captured in any theory of that model. For instance, if we start with a model of the form $X \rightarrow Y \leftarrow W$, where $W$ and $X$ are independent, we could not theorize this model by adding an arrow from $X$ to $W$. A theory can have *additional* conditional independencies not present in the higher-level model, as in the example in Figure \@ref(fig:Highlowreduce).  But we may not theorize *away* (conditional) independencies insisted on by our higher-level claim. 
+
+This is a key part of what it means for the lower-level model to *justify* the higher-level model. A model makes claims about what is (conditionally) independent of what. The claims about conditional independence implied by the higher-level model must therefore be warranted by (conditional) independencies operating in the lower-level model. If we introduce new dependencies via theorization, then our higher-level model (which excludes these dependencies) would no longer be justified by the lower-level model.  
+
+```{r Highlowreduce, echo = FALSE, fig.width = 7, fig.height = 5,  fig.align="center", out.width='80%', fig.cap = "Here we represent theorization via type-reduction. Though we show the removal of an arrow to help convey the idea, we would in fact reduce types by imposing restrictions on the nodal types at Y within the same DAG."}
+
+par(mfrow = c(2,1))
+par(mar=c(1,1,3,1))
+
+hj_dag(x = c(1,2,2, 1.5, 1.5),
+       y = c(1,1,2, 1.5  , 2.5),
+       names = c(
+         expression(paste(Z)),
+         expression(paste("Y")),  
+         expression(paste(theta^Y)),
+         expression(paste(X)),
+         expression(paste(theta[X])) 
+         ),
+       arcs = cbind( c(1, 3, 5, 4, 1),
+                     c(4, 2, 4, 2, 2)),
+       title = "(a) A higher-Level Model, M_1",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .1)
+       
+       
+hj_dag(x = c(1,2,2, 1.5, 1.5),
+       y = c(1,1,2, 1.5  , 2.5),
+       names = c(
+         expression(paste(Z)),
+         expression(paste("Y")),  
+         expression(paste(theta^Y[lower])),
+         expression(paste(X)),
+         expression(paste(theta^X[lower])) 
+         ),
+       arcs = cbind( c(1, 3, 5, 4),
+                     c(4, 2, 4, 2)),
+       title = "(b) A lower-Level Model, M_0, with types reduced",
+       add_functions = 0, 
+       contraction = .16, 
+       padding = .1
+)
+```
 
 
 ### Probabilistic causal models
 
-A probabilistic model can also be implied by another probabilistic model, possibly coupled with data. 
+At the structural level, then, there are two types of theory, or two types of relations between levels of model: those defined by type-splintering and those defined by type-reduction. In general, we will want to be working with probabilistic causal models --- i.e., those that include distributions over nodal types. We can describe straightforwardly how distributions in a higher-level model relate to --- and must change with --- distributions at the lower level. Indeed, it is these relations that unlock the opportunity for reaping empirical gains from theory.
 
-**Theoretical implications of probabilistic models.** Consider first implications without data. Causal Model (b) in Figure \@ref(fig:Highlow), coupled with a distribution over  $\theta^K$ and  $\theta^Y_{lower}$, produces a probabilistic causal model, $M_{higher}$. This model in turn implies a probabilistic model, $M_{higher}$, formed from Causal Model (a) in Figure \@ref(fig:Highlow), and a *particular* distribution over $\theta^Y_{higher}$, that is, the distribution that preserves the causal relations implied by $M_{lower}$. Thus, for instance, the probability that $X$ has a positive effect on $Y$ in $M_{higher}$ is $\theta^{Y_{higher}}_{01}$; the probability that  $X$ has a positive effect on $Y$ in $M_{lower}$ is  $\theta^{M_{lower}}_{01}\theta^{Y_{lower}}_{01}  + \theta^{M_{lower}}_{10}\theta^{Y_{lower}}_{10}$.  Consistency then requires that $\theta^{M_{lower}}_{01}\theta^{Y_{lower}}_{01}  + \theta^{M_{lower}}_{10}\theta^{Y_{lower}}_{10} = \theta^{Y_{higher}}_{01}$ and so the value of  $\theta^{Y_{higher}}_{01}$ is *implied* by $\theta^{M_{lower}}_{01},\theta^{Y_{lower}}_{01}, \theta^{M_{lower}}_{10},\theta^{Y_{lower}}_{10}$, but not vice versa.
+**Theoretical implications of probabilistic models.** Suppose we start with the mediation model in panel (b) of Figure \@ref(fig:Highlow). Wen then add to it a distribution over $\theta^K$ and $\theta^Y_{lower}$, giving us a probabilistic causal model that we will denote $\mathcal M^p_{lower}$. $\mathcal M^p_{lower}$, in turn, implies a higher-level probabilistic model, $\mathcal M^p_{higher}$, formed from the structure of Model (a) in Figure \@ref(fig:Highlow), and a *particular* distribution over $\theta^Y$: specifically, $\theta^Y$ will have the distribution that preserves the causal relations implied by the beliefs in $\mathcal M^p_{lower}$. Thus, for instance, the probability that $X$ has a positive effect on $Y$ in $\mathcal M^p_{higher}$ is $\theta^{Y}_{01}$; the probability that  $X$ has a positive effect on $Y$ in $\mathcal M^p_{lower}$ is  $\theta^{K_{lower}}_{01}\theta^{Y_{lower}}_{01}  + \theta^{K_{lower}}_{10}\theta^{Y_{lower}}_{10}$.  Consistency then requires that $\theta^{M_{lower}}_{01}\theta^{Y_{lower}}_{01}  + \theta^{K_{lower}}_{10}\theta^{Y_{lower}}_{10} = \theta^{Y_{higher}}_{01}$. So the value of  $\theta^{Y_{higher}}_{01}$ is *implied* by $\theta^{K_{lower}}_{01},\theta^{Y_{lower}}_{01}, \theta^{K_{lower}}_{10},\theta^{Y_{lower}}_{10}$, but not vice-versa. 
 
-**Deducing models from theory and data.** A probabilisitc causal model coupled with data  implies  another model via Bayes rule.  For this reason we can fruitfully think of an initial model as being a *theory of* an updated model, coupled with data. Thought of in this way we have clarity over what is meant when we turn to theory to support a claim, but also what is meant when we seek to justify a theory. We might imagine a scholar arguing: "$M$: $X$ caused $Y$ in country $j$." When pushed for a justification for the claim they provide the lower level model: "$M:$ the average effect of $X$ on $Y$ in countries with feature $C=1$ is 0.95, making it likely that $X$ caused $Y$ in this case." Here $M$ is implied by $M$ coupled with data $C=1$. If pushed further as to why that theory is itself credible they might point to a lower level model consisting of structural model $X\rightarrow Y \leftarrow C$ plus flat priors coupled with data on $X,Y$ and $C$.  At each stage, as more justification is provided, the researcher formally provides lower level models.  
+**Deducing models from theory and data.** Now we can see what happens if we bring data to the lower-level model. A probabilisitc causal model coupled with data implies another probabilistic causal model via Bayes rule.  For this reason, we can fruitfully think of an initial model as being a *theory of* an updated model, coupled with data. Thought of in this way we have clarity over what is meant when we turn to theory to support a claim, but also what is meant when we seek to justify a theory. We might imagine a scholar arguing: "$\mathcal M_1$: $X$ caused $Y$ in country $j$." When pushed for a justification for the claim they provide the lower level model: "$\mathcal M_0:$ the average effect of $X$ on $Y$ in countries with feature $C=1$ is 0.95, making it likely that $X$ caused $Y$ in this case." Here $\mathcal M_1$ is implied by $\mathcal M_0$ coupled with data $C=1$. If pushed further as to why that theory is itself credible they might point to a lower level model consisting of structural model $X\rightarrow Y \leftarrow C$ plus flat priors coupled with data on $X,Y$ and $C$.  At each stage, as more justification is provided, the researcher formally provides lower-level models.  
 
-Moving up, as more data is provided, more "specific" higher level models emerge, justified by lower models plus data. These models are more specific in the sense that they are implied by the higher level models, plus data,  but not vice versa.  But they are also more also  (generally) more specific in a second sense: that they make stronger statements about how causal processes operate.^[This is not universally true, a point we return to below.]  They place greater weight on a smaller set of causal claims.^[In frequentist frameworks we often think of analysis as implementing up-or-down empirical tests against data to parse between theories that should be maintained and theories that should be rejected. In a Bayesian framework we think more continuously of shifting our beliefs across causal possibilities within a multi-dimensional theoretical space.] 
+Moving up, as more data is provided, more "specific" higher level models emerge, justified by lower models plus data. These models are more specific in the sense that they are implied by the higher level models, plus data,  but not vice versa.  But they are also  (generally) more specific in a second sense: that they make stronger statements about how causal processes operate.^[This is not universally true, a point we return to below.]  They place greater weight on a smaller set of causal claims.^[In frequentist frameworks we often think of analysis as implementing up-or-down empirical tests against data to parse between theories that should be maintained and theories that should be rejected. In a Bayesian framework we think more continuously of shifting our beliefs across causal possibilities within a multi-dimensional theoretical space.] 
 
-FLAG:  -- see use of specific here
+<!-- FLAG:  -- see use of specific here -->
 
-As the simplest illustration, we might imagine beginning with an $X\rightarrow Y$ model, $M_1$, in which, $X$ and $Y$ are binary, and we we believe that $Y$ possibly responds to $X$. If we have "flat" priors over causal types, in the sense described in chapter \@ref(bayeschapter), then our prior uncertainty over the proposition that $X$ causes $Y$, under this model, is large; as is our uncertainty that $Y=1$ is due to $X=1$ in a given case. In other words, given our theory, we are uncertain about the proposition $M_3$: $X$ caused $Y$. However if we then receive a lot of data, $D$, showing strong relations between $X$ and $Y$, then our updated model $M_2$, formed from combining $D$ and $M_1$ allows us to infer that  $X$ caused $Y$ in this case with greater certainty. 
+As the simplest illustration, we might imagine beginning with an $X\rightarrow Y$ model, $\mathcal M_1$, in which, $X$ and $Y$ are binary, and we we believe that $Y$ possibly responds to $X$. If we have "flat" priors over causal types, in the sense described in Chapter \@ref(bayeschapter), then our prior uncertainty over the proposition that $X$ causes $Y$, under this model, is large; as is our uncertainty that $Y=1$ is due to $X=1$ in a given case. In other words, given our theory, we are uncertain about the proposition $\mathcal M_3$: $X$ caused $Y$. However, if we then receive a lot of data, $\mathcal D$, showing strong relations between $X$ and $Y$, then our updated model $\mathcal M_2$, formed from combining $\mathcal D$ and $\mathcal M_1$ allows us to infer that $X$ caused $Y$ in this case with greater certainty. 
 
-Thus our new theory $M_2$ is (a) formally similar to $M_1$ (b) formed as a product of past theory plus evidence, here justified by $M_1$ given data $D$ and (c) capable of providing sharper implications than past theory.^[As a general matter an updated theory may not provider sharper claims for all queries. That is, in practice, posterio variance over queries can increase with more data. As a simple illustration; say  I start out thinking that  the probability that an outcome is due to A, B, or C is .9, .05, .05, respectively; I find evidence that convicnes me that A is not the cause, then I shift (a) to greater certainty about whether A was the cause but (b) greater uncertainty about whether B was the cause.]
+Thus our new theory $\mathcal M_2$ is (a) formally similar to $\mathcal M_1$ (b) formed as a product of past theory plus evidence, here justified by $\mathcal M_1$ given data $\mathcal D$, and (c) capable of providing sharper implications than past theory.^[As a general matter an updated theory may not provider sharper claims for all queries. That is, in practice, posterior variance over queries can increase with more data. As a simple illustration: say, we start out thinking that the probability that an outcome is due to conditions A, B, or C is .9, .05, and .05, respectively. If I find evidence that convinces me that A is not the cause, then I shift (a) to greater certainty about whether A was the cause but (b) greater uncertainty about whether B was the cause.]
+
 
 In this way, Bayesian updating provides a simple and coherent way of thinking about the integration of theory and data.  
 
@@ -723,7 +782,7 @@ Functional (but not probabilistic)  causal models allow for the representation o
 
 ## Gains from theory {#theorygains}
 
-We now turn to condier how to think about whether a theory is *useful*. We are comfortable with the idea that theories, or models more generally, are wrong. Models are not full and faithful reflections of reality; they are maps designed for a particular purpose.  We make use of them because we think that they *help* in some way.
+We now turn to consider how to think about whether a theory is *useful*. We are comfortable with the idea that theories, or models more generally, are wrong. Models are not full and faithful reflections of reality; they are maps designed for a particular purpose.  We make use of them because we think that they *help* in some way.
 
 
 <!-- In the case of causal models, the purpose is to capture relationships of independence and possible causal dependence. As we have shown, that is a purpose that allows for the stripping away of detail---though it also forbids certain simplifications (such as any simplification that removes a dependency between variables).  -->
@@ -731,40 +790,42 @@ We now turn to condier how to think about whether a theory is *useful*. We are c
 
 But how do they actually help, and can we quantify the gains we get from using them?
 
-We think we can. Using the notion of hierarchies of models we imagine  beginning with theory $M_1$ which together with data $D$ implies claim $M_2$. We then posit theory $M_0$ of $M_1$---and so $M_0$ implies $M_1$, but $M_0$, coupled with $D$, produces a claim , $M_2'$, that is different---and hopefully better---than $M_2'$. Our gain should be some summary of how much better $M_2'$ is than $M_2$.
 
-Here is an illustration using a theory that allows use of the "front door criterion." 
+We think we can. Using the notion of hierarchies of models, imagine we begin with model $\mathcal M_1$, which together with data $\mathcal D$, implies claim $\mathcal M_2$. We then posit theory $\mathcal M_0$ of $\mathcal M_1$, so $\mathcal M_0$ implies $\mathcal M_1$. But when we bring $\mathcal D$ to $\mathcal M_0$ we get a new model, $\mathcal M_2'$, that is different---and, hopefully, better---than $\mathcal M_2$. Our gain from theory $\mathcal M_0$ should be some summary of how much better $\mathcal M_2'$ is than $\mathcal M_2$.
 
-Imagine we have data on three variables, $X$, $Y$, and $M$. We begin, however, with a model $M_1$: $C \rightarrow X \rightarrow Y \leftarrow C$, that includes nodes for two of the three variables, $X$ and $Y$, but not $M$, as well as a node $C$ (a confound) for which we do not have data. 
+Here is an illustration using a theory that allows use of the "front-door criterion." 
 
-We see a strong correlation between $X$ and $Y$ and infer $M_2$: that $X$ is a likely cause $Y$. Our inference under $M_2$ is however uncertain because we are aware that the correlation may be due to the confound $C$.
 
-Say now we posit  theory $M_0$: $A \rightarrow X \rightarrow M \rightarrow Y \leftarrow A$. This theory now lets us make better use of data $M$. If we observe for instance that $X$ and $M$ are uncorrelated, then we infer with confidence that in fact $X$ did not cause $Y$, despite the correlation. 
+Imagine that we have data on three variables, $X$, $Y$, and $K$. We begin, however, with a model $\mathcal M_1$ with confounding: $C \rightarrow X \rightarrow Y \leftarrow C$. $\mathcal M_1$ includes nodes for two of the three variables we have data on, $X$ and $Y$, but not $K$. Assume, further, that we do not have data on node $C$, the confound. 
 
-Thus, in return for specifying a theory for $M_1$, we have been able to make better use of data and form a more confident conclusion. In this case the theory does not alter *priors* over our query. Our prior over the effect of $X$ on $Y$ may be identical under $M_1$ and $M_0$, but our conclusions, given data, differ, because the theory lets us make use of the data in a way that we could not before.
+Suppose that we observe a strong correlation between $X$ and $Y$ and infer $\mathcal M_2$: that $X$ is a likely cause $Y$. Our inference under $\mathcal M_2$ is, however, quite uncertain because we are aware that the correlation may be due to the confound $C$.
 
-In other examples we might imagine invoking a theory that does not necessarily involve new data but that allows us to make different, perhaps tighter inferences. An example might be the invocation of a theory that involves a monotonicity restriction, or exclusion restriction, that allows for identification of a quantity that would not be identifiable without it.    
+Suppose now that we posit the lower-level model $\mathcal M_0$: $C \rightarrow X \rightarrow K \rightarrow Y \leftarrow C$. $\mathcal M_0$ now lets us make better use of data $K$. If we observe, for instance, that $X$ and $K$ are uncorrelated, then we infer with confidence that in fact $X$ did not cause $Y$, despite the correlation. 
+
+Thus, in return for specifying a theory of $\mathcal M_1$, we have been able to make better use of data and form a more confident conclusion. In this case, stating the theory, $\mathcal M_0$, does not alter our *priors* over our query. Our prior over the effect of $X$ on $Y$ may be identical under $\mathcal M_1$ and $\mathcal M_0$---but our conclusions, given data, differ because the theory lets us make use of the data on $K$, which we could not do under $\mathcal M_1$ (which did not include $K$).
+
+
+In other situations, we might imagine invoking a theory that does not necessarily involve new data but that allows us to make different, perhaps tighter inferences using the same data. An example might be the invocation of a type-reducing theory that involves a monotonicity restriction or exclusion restriction that allows for identification of a quantity that would not be identifiable without the theory.    
 
 ```{r, echo = FALSE,  eval = FALSE}
 
-M_1 <- make_model("A -> X -> Y <- A")
+M_1 <- make_model("C -> X -> Y <- C")
 
-M_0 <- make_model("A -> X -> M -> Y <- A")
+M_0 <- make_model("C -> X -> M -> Y <- C")
 
 ```
 
-Thus one reason to theorize our models --- develop more elaborate, lower-level models to support them --- is to be able to reap greater inferential leverage from the more elaborate theory. 
+Thus, one reason to theorize our models --- develop lower-level models that make stronger claims --- is to be able to reap greater inferential leverage from the more elaborate theory. 
 
 But are we, in fact, better off? 
 
-We might imagine answering the question from an internal or external position and from an ex ante or ex post perspective.
+We might imagine answering the question in different ways: from an internal or external position, and from an *ex ante* or *ex post* perspective.
 
 In all cases we ask how much better do we do as a result of making use of a theory. 
 
-One approach for operationalizing "better" is to assess the size of the error we make, from an inference that uses a theory, compared to an inference that does not make use of the theory. That's an ex post, objective assessment. Ex ante, we might ask what the expected error is from conclusions one draws given a theory For instance: how wrong are you likely to be if you base your best guess on your posterior mean? How wrong might be operationalized in terms of mean squared error---the sqaure of the distance between the truth and the posterior mean.^[Other loss functions could be used, including functions that take account of the costs of collecting additional data or to the risks associated with false diagnoses. For instance, in @heckerman1991toward, an objective function is generated using  expected utility gains from diagnoses generated based on new information over diagnoses based on what is believed already. In their treatment [@heckerman1991toward, Equation 6],  the expected value of new information $K$, given existing information $W$ is: $\sum{K}P(K|W)( EU(d(Q,W,K)|W, K) - EU(d(Q, W)|W, K))$ where $EU$ is expected utility and $d$ is the optimal inference (diagnosis) given available data. Note that the diagnosis can take account of $K$ when it is observed, but the expected utility depends on $K$ whether or not it is observed, as $K$ carries information about the state of interest.] 
+If we are willing to posit an external ground truth, then we can define "better" in objective terms. An *ex post*, objective way of operationalizing "better" is to assess the size of the error we make relative to the ground trurh, from an inference that uses a theory, compared to an inference that does not make use of the theory. An objective *ex ante* approach might be to ask what the expected error is from conclusions one draws given a theory. For instance: how wrong are we likely to be if we base our best guess on our posterior mean? "How wrong" might be operationalized in terms of mean squared error---the square of the distance between the truth and the posterior mean.^[Other loss functions could be used, including functions that take account of the costs of collecting additional data or to the risks associated with false diagnoses. For instance, in @heckerman1991toward, an objective function is generated using  expected utility gains from diagnoses generated based on new information over diagnoses based on what is believed already. In their treatment [@heckerman1991toward, Equation 6],  the expected value of new information $K$, given existing information $W$ is: $\sum{K}P(K|W)( EU(d(Q,W,K)|W, K) - EU(d(Q, W)|W, K))$ where $EU$ is expected utility and $d$ is the optimal inference (diagnosis) given available data. Note that the diagnosis can take account of $K$ when it is observed, but the expected utility depends on $K$ whether or not it is observed, as $K$ carries information about the state of interest.] 
  
-A more subjective approach is to ask about the reduction in posterior variance from conclusions that make use of a theory compared to conclusions that do not. That's an ex position. We might also think about  the *expected posterior variance*: how certain do you expect you will be after you make use of this new information?
-
+A more subjective approach would be to ask about the reductions in posterior variance. *Ex post* we can define "better" as the reduction in posterior variance from conclusions that make use of a theory compared to conclusions that do not. We might also think about  the *expected posterior variance*: how certain do you expect you will be after you make use of this new information?
 
 More formally, imagine a situation in which there is an unknown parameter $q$ and we have a data strategy that produces a distribution over data $k$, given $q$. Let $p(q,k)$ denote the joint prior distribution over $q$ and  $k$ with marginal distributions $p(k)$ and $p(q)$. For any $k$ there is posterior estimate $q_k$.
 
@@ -785,8 +846,8 @@ $$EV := \int_k v_k p(k)dk$$
 
 This takes the posterior variance, given some data, over all the possible data one might see given marginal distribution $p(k)$.
 
-Interestingly if you assess expectations using the same priors as you use for for forming posteriors the expected posterior variance and expected squared error  are equivalent [@scharf1991statistical].
-To see this we take advantage of the fact that $p(q,k) = p(k)p(q|k) = p(q)p(k|q)$ and that $p(q|k)$ gives the posterior distribution of $q$ given $k$. We then have:
+Interestingly, if we assess expectations using the same priors as you use for for forming posteriors the expected posterior variance and expected squared error  are equivalent [@scharf1991statistical].
+To see this, we take advantage of the fact that $p(q,k) = p(k)p(q|k) = p(q)p(k|q)$ and that $p(q|k)$ gives the posterior distribution of $q$ given $k$. We then have:
 
 
 <!-- $$ -->
@@ -815,7 +876,7 @@ Note that the key move is in recognizing that $p(q |k)$ is in fact the posterior
 Moreover, it is easy to see that whenever inferences are sensitive to $K$, the *expected* variance of the posterior will be lower than  the variance of the prior. This can be seen from the law of total variance, written here to highlight the gains from observation of $K$, given what is already known from observation of $W$.^[See @raiffa1961applied. A similar expression can be given for the expected posterior variance from learning $K$ in addition to $W$ when $W$ is not yet known. See, for example, Proposition 3 in @geweke2014analysis.]  
 $$Var(Q|W) = E_{K|W}(Var(Q|K,W)) +Var_{K|W}(E(Q|K,W))$$
 
-However although *expected* posterior variance goes down, it is still always possible that posterior variance rises. The increase in uncertainty does not however mean you haven't been learning. Rather, you have learned that things aren't as simple as you thought.
+However, although *expected* posterior variance goes down, it is still always possible that posterior variance rises. The increase in uncertainty does not, however, mean you haven't been learning. Rather, you have learned that things aren't as simple as you thought.
 
 <!-- For illustration say that it is known that $X=1, Y=1$ and that, given this information (playing the role of $W$), the posterior probability that a unit is of type $b$---for whom $Y$ would be 0 were $X=0$ (and not type $d$, for which $Y$ would be 1 regardless) is $p$. Say then that that under some theory we have $\phi_b := \Pr(K=1 | Y(0)=0, Y(1)=1, X=1)$, $\phi_d := \Pr(K=1 | Y(0)=1, Y(1)=1, X=1)$.  -->
 
@@ -860,7 +921,7 @@ However although *expected* posterior variance goes down, it is still always pos
 
 <!-- We can think of the Bayes risk as the inverse of an $R^2$ measure in a regression framework (see also @gelman2006bayesian): it is the variance in our query given what we have observed. Here we are defining the gains from theory as the degree to which we have reduced that variance by observing $K$ and $\mathcal W$, relative to just observing $\mathcal W$.  -->
 
-One way to capture this idea that, although you are more uncertaint you think you are better off now than you were, is to ask: how much better are our guesses having observed $K$ compared to what we would have guessed before, *given* what we know having observed $K$? We will call this "Wisdom" to reflect the idea that it values appreciation of your uncertainty:
+One way to capture this idea that, although we are more uncertain, we think we are better off now than we were, is to ask: how much better are our guesses having observed $K$ compared to what we would have guessed before, *given* what we know having observed $K$? We will call this "Wisdom" to reflect the idea that it values appreciation of justifiable uncertainty:
 
 <!-- <!-- AJ: Needs a sentence here introducing the terminology. Is this our term, expected wisdom? --> 
 
