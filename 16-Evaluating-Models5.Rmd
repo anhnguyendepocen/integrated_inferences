@@ -717,44 +717,6 @@ In the non-monotonic model we entertain the possibility that low inequality matt
 
 In all, we judge the conditional inferences as very sensitive to the monotonicity assumptions we put in place.
 
-```{r 15pimdgraphs, echo = FALSE, fig.cap = "ATE of I on D."}
-
-if(do_diagnosis){
-  
-  ate_id  <- query_distribution(pimd, "D[I=1] - D[I=0]", using = "posteriors")
-  ate_id2 <- query_distribution(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors")
- 
-
-  q_ate_id1 <- query_model(pimd, "D[I=1] - D[I=0]", using = "posteriors", 
-                           given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
-  q_ate_id2 <- query_model(pimd_negmed, "D[I=1] - D[I=0]", using = "posteriors", 
-                           given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
-  q_ate_id3 <- query_model(pimd_nonmon, "D[I=1] - D[I=0]", using = "posteriors", 
-                           given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1"))
-
-  out <- cbind(q_ate_id1, q_ate_id2[, c("mean", "sd")], q_ate_id3[, c("mean", "sd")])
-  names(out) <- c("q", "Given", "u", "Mean (M1)", "sd (M1)", "Mean (M2)", "sd (M2)", "Mean (M3)", "sd (M3)") 
-  out <- out %>% select(-c(q, u))
-
- write_rds(out, "saved/ch15_ateID.rds")
-
- }
-
-ateid <- read_rds("saved/ch15_ateID.rds") 
-
-kable(ateid, caption = "Posteriors on the effect of I on D with all relations monotonic (M1), restriction dropped for $M$ (M2), and all restrictions dropped (M3)", digits = 2)
-
-
-if(do_diagnosis)
-  q_pimd_2 <- query_model(pimd_nonmon_2, "D[I=1] - D[I=0]", given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1", "I==0 & M==1 & D==1",
-                                                                    "I==0 & M==0 & D==1 & P == 1", "I==0 & M==1 & D==1 & P == 1"),
-                        using = "posteriors")
-if(do_diagnosis)
- write_rds(q_pimd_2, "saved/ch15_q_pimd_2.rds")
-                        
-read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
-
-```
 
 ```{r 15pimdgraphs2, echo = FALSE, fig.cap = "ATE of I on D."}
 
@@ -765,19 +727,18 @@ if(do_diagnosis)
     bind_rows(.id = "model") %>%
     write_rds("saved/ch15_ateID2.rds")
 
-ateid2 <- read_rds("saved/ch15_ateID2.rds") 
+read_rds("saved/ch15_ateID2.rds")  %>% 
+  mutate(model = factor(model, c("pimd", "pimd_negmed", "pimd_nonmon"), 
+                        c("M and D restricted", "D restricted", "Unrestricted"))) %>%
+  ggplot(aes(mean, Given, color = model)) + theme_bw() + 
+  geom_point(position=position_dodge(.5)) + 
+  theme_bw() +
+  geom_errorbarh(aes(xmin=mean - sd, xmax=mean + sd), 
+                size=.2, height = .1,
+                position=position_dodge(.5)) +
+  xlab("Posterior on average effect of I on D")
+  
 
-kable(ateid2, caption = "Posteriors on the effect of I on D with all relations monotonic (M1), restriction dropped for $M$ (M2), and all restrictions dropped (M3)", digits = 2)
-
-
-if(do_diagnosis)
-  q_pimd_2 <- query_model(pimd_nonmon_2, "D[I=1] - D[I=0]", given = c(TRUE, "I==0 & D==1", "I==0 & M==0 & D==1", "I==0 & M==1 & D==1",
-                                                                    "I==0 & M==0 & D==1 & P == 1", "I==0 & M==1 & D==1 & P == 1"),
-                        using = "posteriors")
-if(do_diagnosis)
- write_rds(q_pimd_2, "saved/ch15_q_pimd_2.rds")
-                        
-read_rds("saved/ch15_q_pimd_2.rds") %>% kable(digits = 2)
 
 ```
 

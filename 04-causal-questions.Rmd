@@ -515,6 +515,39 @@ In sum, we can define a query about causal paths as a query about the value of $
 
 It is worth noting how different this formulation of the task of identifying causal pathways is from widespread understandings of process tracing. Scholars commonly characterize process tracing as a method in which we determine whether a mechanism was operating by establishing whether the events lying along that path occurred. As a causal-model framework makes clear, finding out that $M=1$ (or $M=0$, for that matter) does not establish what was going on causally. Observing this intervening step does not by itself tell us what value $M$ *would* have taken on if $X$ had taken on a different value, or whether this would have changed $Y$'s value. We need instead to conceive of the problem of identifying pathways as one of figuring out the _counterfactual_ response patterns of the variables along the causal chain. As we will demonstrate later in the book, explicitly characterizing those response patterns as nodes in a causal model helps us think systematically about empirical strategies for drawing the relevant inferences.
 
+
+## General procedure
+
+We have been able to associate a collection of causal types to each of the causal queries we have described in this chapter. But we have not described a general method for doing so. We do that now.^[In particular we describe the algorithm used by the `CausalQueries` package. This approach is not the efficient but it is intuitive and can be used for arbitrarily complex queries.] 
+
+The algorithm  calculates the full set of outcomes on all nodes, given each possible causal type and a collection of controlled conditions ("`do` operations"). Then each causal type is marked as satisfying the query or not. This in turn then tells us the *set* of types that satisfy a query. Quantitative queries, such as the probability of a query being satisfied, or the average treatment effect, can then be calculated by taking the measure of the set of causal types that satisfies the query.  
+
+First some notation.
+
+Let $n$ denote the number of nodes. Label the nodes $V_1, \dots V_n$ subject to the requirement that each nodes' parents precede it in the ordering. Let $pa_j$ denote the set of values of the parents of node $j$ and let $V_j(pa_j, \theta_t)$ denote the value of node $j$ given the values of its parents and the causal type $\theta_j$.
+ 
+The primitives of a query are questions about the values of outcomes, $V$, given some set of controlled operations $x$. 
+
+* let $x = (x_1, \dots x_n)$ denote a set of `do` operations where each $x_i$ takes on a value in $\{-1,0,1\}$.  here -1 indicates "not controlled", 0 means set to 0 and 1 means set to 1 (this set can be expanded if $V$ is not binary)
+* let $V(x, \theta_t)$ denote that values $V$ takes given $\theta_t$
+* a "simple query" is a function $q(V(x, \theta_t))$ which returns TRUE if $V(x, \theta_t)$ satisfies some condition and FALSE otherwise.
+
+Queries are summaries of simple queries.  For instance, for nodes $X$ and $Y$:
+
+* Query $Q:1(Y(X=1)=1))$ asks whether $Y=1$ when $X$ is set to 1. 
+* Query $Q:1(Y(X=1)=1) \& 1(Y(X=0)=0))$ has two parts: the first returns true if $Y$ is 1 when $X$ is set to 1, the second returns true if $Y$ is 0 when $X$ is set to 0; both conditions holding corresponds to a positive effect on a unit.
+* Query $Q:E((1(Y(X=1)=1) \& (Y(X=0)=0)) - (1(Y(X=1)=0) \& 1(Y(X=0)=1))$ asks for the average treatment effect, represented here as the expected difference between positive and negative effects.
+
+
+Then to calculate $V(x, \theta_t)$:
+
+  1. Calculate $v_1$, the realized value of $V_1$ given $\theta_t$. This is given by $v_1 = x_1$ if $x_1 \neq -1$ and by $\theta_t^{V_1}$ otherwise.
+  2. For each $j \in 2...n$ calculate $v_j$ using either  $v_j = x_j$ if $x_j \neq -1$ and  $V_{j}(pa_j, \theta_t)$ otherwise, where the values in $pa_j$ are determined in the previous steps.
+
+We now have the outcomes, $V$, for all nodes given the operations $x$ and so can determine $q(V(x))$. From there we can calculate summaries of simple queries across causal types.
+
+A last note on conditional queries. Say we are interested in a query of the form
+
 <!-- Such a  focus on causal paths does not restrict attention to questions of the form "how did $X$ cause $Y$" but more generally, "what paths generated $Y$?" Such questions may have answers of the form "$Y=1$ occurred because $X=0$ led to $M=0$, which, when $Z=1$, gives rise to $Y=1$ and not because $X=1$  led to $M=1$, which, when $Z=0$ gives rise to $Y=1$." Such inquiries can focus on distinct sets of conditions that give rise to an outcome ("equifinality"), as in Qualitative Comparative Analysis (QCA). While QCA analysts sometimes refer to sets of conditions as "paths",  QCA does not generally involve explicit assessment of the causal steps linking conditions to outcomes. When examining paths in a causal-model framework, the analyst can address queries that involve drawing inferences about an entire chain linking $X$ to $Y$ or even an entire causal network. An understanding of a full causal network would, in turn, allow for any more specific estimand to be estimated. -->
 
 
