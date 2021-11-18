@@ -28,7 +28,7 @@ The problem with the posited model, then, is that it represents overly strong be
 
 <!-- AJ: "Restrictedness" seems a bit off here insofar as the "unrestricted" model is also restricted in essentially assuming no operative $X -> M$ arrow, as well as no negative direct effects.  -->
 
-We are perfectly able to update using this too-strong $X \rightarrow M \rightarrow Y$ model and the data --- but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a "true" model with direct effects only and an average effect of $X$ on $Y$ of $1/3$.^[Specifically, the data-generating model is $X \rightarrow M \rightarrow Y \leftarrow X$, with no effect of $X$ on $M$ and thus no indirect effect, and no negative effect of $X$ on $Y$, and an otherwise flat parameter space.] In the left panel of Figure \@ref(fig:modelsch15), we show the estimated average treatment effect of $X$ on $Y$ when using these data to update the $X \rightarrow M \rightarrow Y$ model.
+We are perfectly able to update using this too-strong $X \rightarrow M \rightarrow Y$ model and the data --- but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a "true" model with direct effects only and an average effect of $X$ on $Y$ of $1/3$.^[Specifically, the data-generating model is $X \rightarrow M \rightarrow Y \leftarrow X$, with no effect of $X$ on $M$ and thus no indirect effect, and no negative effect of $X$ on $Y$, and an otherwise flat parameter space.] In the left panel of Figure \@ref(fig:badmodels15), we show the estimated average treatment effect of $X$ on $Y$ when using these data to update the $X \rightarrow M \rightarrow Y$ model.
 
 In the righthand panel of the figure, we show the inferences using the same data but a model that makes weaker assumptions by allowing for direct effects: a $X \rightarrow M \rightarrow Y \leftarrow X$ model. With both models, we start with flat priors over nodal types.^[Note that the "true" model here involves restrictions on nodal types (no $X \rightarrow M$ effects and no negative $X \rightarrow Y$ effects) while the analysis models are both unrestricted.] 
 
@@ -92,13 +92,11 @@ ates <- read_rds("saved/ch15_ates.rds")
 
 ```
 
-```{r 15badmodels, echo = FALSE, fig.cap = "A restricted model yields a credibility interval that does not contain the actual average effect."}
-par(mfrow = 1:2)
-hist(ates$restricted_ate, xlim = c(-.1, .6), main = "Stronger model", xlab = "Effect of X on Y") 
-abline(v = .33, col = "red")
-hist(ates$unrestricted_ate, xlim = c(-.1, .6), main = "Weaker model", xlab = "Effect of X on Y")
-abline(v = .33, col = "red")
+```{r badmodels15, echo = FALSE, fig.cap = "A restricted model yields a credibility interval that does not contain the actual average effect.", message = FALSE}
 
+ates %>% gather("var", "val") %>% 
+  mutate(var = factor(var, c("restricted_ate", "unrestricted_ate"), c("Stronger Model (Restricted)", "Weaker Model  (Unrestricted)"))) %>% 
+  ggplot(aes(val)) + geom_histogram() + facet_grid(~var) + theme_bw() + xlab("Effect of X on Y") + geom_vline(xintercept = 1/3, color = "red")
 ```
 
 
@@ -212,42 +210,38 @@ if(do_diagnosis){
   
   }
 
-replicates_restricted   <-   read_rds("saved/ch15_replicates_restricted.rds") 
-replicates_unrestricted <-   read_rds("saved/ch15_replicates_unrestricted.rds") 
+df <- 
+  list(
+    Stronger = read_rds("saved/ch15_replicates_restricted.rds"),
+    Weaker =    read_rds("saved/ch15_replicates_unrestricted.rds")) %>%
+  bind_rows(.id = "Model") %>% gather("test", "Val", -Model) 
 
-par(mfrow = c(2,2))
-xlimY <- range(c(replicates_restricted$Y, replicates_unrestricted$Y))
-xlimC <- range(c(replicates_restricted$C, replicates_unrestricted$C))
 
-## FLAG: ADD p values to others graphs
-
-p_two_sided <- function(Y, y, digits = 2){
-  if(y <  mean(Y, na.rm = TRUE)) return(round(2* mean(y > Y, na.rm = TRUE), digits))
-  if(y >= mean(Y, na.rm = TRUE)) return(round(2* mean(y <= Y, na.rm = TRUE), digits))
+p_two_sided <- function(T, t, digits = 2){
+  if(t <  mean(T, na.rm = TRUE)) return(round(2* mean(t > T, na.rm = TRUE), digits))
+  if(t >= mean(T, na.rm = TRUE)) return(round(2* mean(t <= T, na.rm = TRUE), digits))
 }
-p_temp <- p_two_sided(replicates_restricted$Y, mean(data$Y))
-hist(replicates_restricted$Y, 
-     main = paste("Y mean | stronger: p = ", p_temp),
-                  xlim = xlimY, xlab = "predictions") 
-     abline(v = mean(data$Y), col = "red")
 
-p_temp <- p_two_sided(replicates_restricted$C, cor(data$Y, data$X))
-hist(replicates_restricted$C, 
-     main = paste("X, Y covariance | stronger: p =", p_temp), 
-     xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+tests <- c("Test stat: Mean of Y", "Test stat: X, Y covariance")
 
-p_temp <- p_two_sided(replicates_unrestricted$Y, mean(data$Y))
-hist(replicates_unrestricted$Y, 
-     main = paste("Y mean | weaker: p = ", p_temp),
-     xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red")
+wegot <- data.frame(test = c("Y", "C"), 
+                    wegot = c(mean(data$Y), cor(data$Y, data$X)))
+wegot_labelled <-  wegot  %>%
+  mutate(test = factor(test, c("Y", "C"), tests))
+                       
+ps <- df %>% group_by(Model, test) %>% left_join(wegot) %>% 
+  summarize(p = p_two_sided(Val, wegot[1])) %>% 
+  mutate(Val = 1, x = 0, y = 120, label = paste0("p = ", p))
 
-p_temp <- p_two_sided(replicates_unrestricted$C, cor(data$Y, data$X))
-hist(replicates_unrestricted$C, 
-     main = paste("X, Y covariance | weaker: p = ", p_temp), 
-     xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red")
+ps_labelled <- ps %>%
+  mutate(test = factor(test, c("Y", "C"), tests)) 
+  
+df %>%
+  mutate(test = factor(test, c("Y", "C"), tests)) %>% 
+  ggplot(aes(Val)) + geom_histogram() + facet_grid(Model ~ test) + xlab("predictions") +
+  geom_vline(data = wegot_labelled, aes(xintercept = wegot), color = "red") + theme_bw() + 
+  ggtext::geom_textbox(data  = ps_labelled, aes(x = x, y = y, label = label), width = unit(0.4, "npc"))
 
-
-# FLAG: WOULD LIKE THIS DONE WITH GGPLOT
 ```
 
 
