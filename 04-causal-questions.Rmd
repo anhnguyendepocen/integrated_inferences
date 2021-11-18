@@ -524,7 +524,7 @@ The algorithm  calculates the full set of outcomes on all nodes, given each poss
 
 First some notation.
 
-Let $n$ denote the number of nodes. Label the nodes $V_1, \dots V_n$ subject to the requirement that each nodes' parents precede it in the ordering. Let $pa_j$ denote the set of values of the parents of node $j$ and let $V_j(pa_j, \theta_t)$ denote the value of node $j$ given the values of its parents and the causal type $\theta_j$.
+Let $n$ denote the number of nodes. Label the nodes $V_1, \dots V_n$ subject to the requirement that each node's parents precede it in the ordering. Let $pa_j$ denote the set of values of the parents of node $j$ and let $V_j(pa_j, \theta_t)$ denote the value of node $j$ given the values of its parents and the causal type $\theta_j$.
  
 The primitives of a query are questions about the values of outcomes, $V$, given some set of controlled operations $x$. 
 
@@ -536,7 +536,7 @@ Queries are summaries of simple queries.  For instance, for nodes $X$ and $Y$:
 
 * Query $Q:1(Y(X=1)=1))$ asks whether $Y=1$ when $X$ is set to 1. 
 * Query $Q:1(Y(X=1)=1) \& 1(Y(X=0)=0))$ has two parts: the first returns true if $Y$ is 1 when $X$ is set to 1, the second returns true if $Y$ is 0 when $X$ is set to 0; both conditions holding corresponds to a positive effect on a unit.
-* Query $Q:E((1(Y(X=1)=1) \& (Y(X=0)=0)) - (1(Y(X=1)=0) \& 1(Y(X=0)=1))$ asks for the average treatment effect, represented here as the expected difference between positive and negative effects.
+* Query $Q:E((1(Y(X=1)=1) \& (Y(X=0)=0)) - (1(Y(X=1)=0) \& 1(Y(X=0)=1))$ asks for the average treatment effect, represented here as the expected difference between positive and negative effects. This query involves weighting by the probability of the causal types.
 
 
 Then to calculate $V(x, \theta_t)$:
@@ -546,8 +546,54 @@ Then to calculate $V(x, \theta_t)$:
 
 We now have the outcomes, $V$, for all nodes given the operations $x$ and so can determine $q(V(x))$. From there we can calculate summaries of simple queries across causal types.
 
-A last note on conditional queries. Say we are interested in a query of the form
+A last note on conditional queries. Say we are interested in an attribution query of the form: what is the probability that $X$ causes $Y$ in a case in which $X=1$ and $Y=1$. In this case define simple query $q_1$ which assesses whether $X$ causes $Y$ for a given $\theta_t$ and simple query $q_2$ which assesses whether $X=1$ and $Y=1$ under $\theta_t$. We then calcualte the conditional query by conditioning on the set of $\theta$s for which $q_2$ is true and evaluating the share of these for which $q_2$ is true (weighting by the probability of the causal types). 
 
+## Appendix
+
+We demonstrate how queries are calculated using the `CausalQueries` package for a chain model of the form  $X \rightarrow M \rightarrow Y$. We imagine a model of this form in which we assume no negative effects of $M$ on $X$ or $M$ on $Y$. We will also suppose that in fact $X=1$, always. Doing this keeps the parameter space a little smaller for this demonstration but also serves to demonstrate that a causal model can make use of the counterfactual possibility that a node takes on a particular value even if it never does in fact. 
+
+We then ask two questions:
+
+Q1. What is the probability that $X$ causes $Y$? ("POS")
+Q2. What is the probability that $X$ causes $Y$ in cases in which $X=1$ and $Y=1$? ("POC")
+
+To answer these two queries we define simple query $q_1$ which assesses whether $X$ causes $Y$ for each $\theta$ and a second simple query $q_2$ which assesses whether $X=1$ and $Y=1$ for each $\theta$. In this example the first simple query involves some `do` operations, the second does not. 
+
+The answers to these two simple queries are shown in the table below, where each row corresponds to a causal type.
+
+```{r}
+model <- make_model("X -> M -> Y") %>%
+         set_restrictions("X[]==0") %>%
+         set_restrictions("M[X=1] < M[X=0]") %>%
+         set_restrictions("Y[M=1] < Y[M=0]")   
+
+q1 <- "Y[X = 1] > Y[X = 0]"
+q2 <- "X == 1 & Y == 1"
+
+df <- data.frame(
+  a1 = CausalQueries:::map_query_to_causal_type(model, q1)$types,
+  a2 = CausalQueries:::map_query_to_causal_type(model, q2)$types,
+  p  = get_type_prob(model))
+```
+
+
+```{r, echo = FALSE}
+kable(df, caption = "Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.")
+```
+
+The answer to the overall queries are then (1) the expected value of (the answers to) $q_1$ and weights $p$and  (2) the expected value of (the answers to) $q_1$ given $q_0$ and weights $p$:
+
+```{r, eval = FALSE}
+df %>% summarize(POS = weighted.mean(a1, p),
+                 POC = weighted.mean(a1[a2], p[a2]))
+```
+
+```{r, echo = FALSE}
+df %>% summarize(POS = weighted.mean(a1, p),
+                 POC = weighted.mean(a1[a2], p[a2])) %>% kable(caption = "Calculated answers to two queries.")
+```
+
+Given the equal weighting on causal types, these answers reflect the fact that for 5 of 9 causal types we expect to see $X=1$ and $Y=1$ but that; the causal effect is present for only 1 of 9 causal types and for 1 of the 5 causal types that exhibit  $X=1$ and $Y=1$.
 <!-- Such a  focus on causal paths does not restrict attention to questions of the form "how did $X$ cause $Y$" but more generally, "what paths generated $Y$?" Such questions may have answers of the form "$Y=1$ occurred because $X=0$ led to $M=0$, which, when $Z=1$, gives rise to $Y=1$ and not because $X=1$  led to $M=1$, which, when $Z=0$ gives rise to $Y=1$." Such inquiries can focus on distinct sets of conditions that give rise to an outcome ("equifinality"), as in Qualitative Comparative Analysis (QCA). While QCA analysts sometimes refer to sets of conditions as "paths",  QCA does not generally involve explicit assessment of the causal steps linking conditions to outcomes. When examining paths in a causal-model framework, the analyst can address queries that involve drawing inferences about an entire chain linking $X$ to $Y$ or even an entire causal network. An understanding of a full causal network would, in turn, allow for any more specific estimand to be estimated. -->
 
 
