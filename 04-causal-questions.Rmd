@@ -18,7 +18,7 @@ Although a lot of empirical work focuses on identifying average causal effects, 
 source("_packages_used.R")
 ```
 
-Although scholars share a broad common interest in causality there is tremendous heterogeneity in the kinds of causal questions that scholars. Consider the relationship between inequality and democratization. We might seek, for instance, to know inequality's average impact on democratization across some set of cases. Alternatively, we might be interested in a particular case---say, Mongolia in 1995---and want to know whether inequality would have an effect *here*. That is a question about causal effects at the case level. Alternatively we might wonder whether the level of democracy in Mongolia in 1995 is *due* to the level of inequality in that case---this is quite a distinct question (in the same way that establishing that poison would make you sick does not imply that you are sick because of poison). Or we may be interested in _how_ causal effects unfold, inquiring about the pathway or mechanism through which inequality affects democratization---a question we can also ask at two levels. We can ask whether inequality affected democratization in Mongolia through mobilization of the masses; or we can ask how commonly inequality affects democratization through mobilization across a broad set of cases. Pushing further we might ask a counterfactual question of the form: would inequality have produced democratization had mobilization been prevented from occurring.  
+Although scholars share a broad common interest in causality there is tremendous heterogeneity in the kinds of causal questions that scholars ask. Consider the relationship between inequality and democratization. We might seek, for instance, to know inequality's average impact on democratization across some set of cases. Alternatively, we might be interested in a particular case---say, Mongolia in 1995---and want to know whether inequality would have an effect *here*. That is a question about causal effects at the case level. Alternatively we might wonder whether the level of democracy in Mongolia in 1995 is *due* to the level of inequality in that case---this is quite a distinct question (in the same way that establishing that poison would make you sick does not imply that you are sick because of poison). Or we may be interested in _how_ causal effects unfold, inquiring about the pathway or mechanism through which inequality affects democratization---a question we can also ask at two levels. We can ask whether inequality affected democratization in Mongolia through mobilization of the masses; or we can ask how commonly inequality affects democratization through mobilization across a broad set of cases. Pushing further we might ask a counterfactual question of the form: would inequality have produced democratization had mobilization been prevented from occurring.  
 
 Distinct methodological literatures have been devoted to the study of average causal effects, the analysis of case-level causal effects and explanations, and the identification of causal pathways. Fortunately each of these questions can be readily captured as specific queries asked of (and answerable from)  a causal model. As described by @judea2010introduction, the goal is to deploy an "*algorithm* that receives a model *M* as an input and delivers the desired quantity *Q(M)* as the output." More specifically, we demonstrate how, given the structure we described in Chapter \@ref(models),  causal queries can be represented as question about one or more _nodes_ on a causal graph. When we assimilate our causal questions into a causal model, we are placing what we want to know in formal relation to both what we _already_ know and what we can potentially _observe_. As we will see in later chapters, this move allows us then to deploy the model to generate strategies of inference: to determine which observations, if we made them, would be likely to yield the greatest leverage on our query, given our prior knowledge about the way the world works. And by the same logic, once we see the evidence, this integration allows us to  "update" on our query---figure out in systematic fashion what we _have_ learned---in a manner that takes background knowledge into account.
 
@@ -98,10 +98,10 @@ hj_dag(x = c(0, 1, 1),
 
 In this model, then, the query, "What is $X$'s causal effect in this case?" simply becomes _a question about the value of the nodal type $\theta^Y$_. 
 
-Two natural variants of this question are, "What is the expected effect of $X$ on $Y$?" and "What is the probability that $X$ matters for $Y$? Answering the question requires estimating the probability that $X$ has a positive effect minus the probability that it has a negative effect: $\Pr(\theta^Y = \theta^Y_{01}) - \Pr(\theta^Y = \theta^Y_{10})$. Answering the second involves assessing $\Pr(\theta^Y = \theta^Y_{01} | \theta^Y = \theta^Y_{10})$.
+Two natural variants of this question are, "What is the expected effect of $X$ on $Y$?" and "What is the probability that $X$ matters for $Y$? Answering the question requires estimating the probability that $X$ has a positive effect minus the probability that it has a negative effect: $\Pr(\theta^Y = \theta^Y_{01}) - \Pr(\theta^Y = \theta^Y_{10})$. Answering the second involves assessing $\Pr(\theta^Y = \theta^Y_{01} \text{ OR } \theta^Y = \theta^Y_{10})$.
 
-Importantly, we can conceptualize this same question even if the  model involves more complex relations between $X$ and $Y$. The question itself does not depend on the model having a particular form.  For instance, consider a mediation model of the form $X\rightarrow M \rightarrow Y$. In this model, a positive effect of $X$ on $Y$ can emerge either from a chain of positive effects of $X$ on $M$ and of $M$ on $Y$ or from a chain of negative effects, while a negative effect of $X$ on $Y$ can emerge from a chain of opposite-signed effects. Thus, answering the question means estimating:
-$$\Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{01}) | (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{10}))   - \Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{10}) | (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{01}))$$
+We can conceptualize this same question even if the  model involves more complex relations between $X$ and $Y$. The question itself does not depend on the model having a particular form.  For instance, consider a mediation model of the form $X\rightarrow M \rightarrow Y$. In this model, a positive effect of $X$ on $Y$ can emerge either from a chain of positive effects of $X$ on $M$ and of $M$ on $Y$ or from a chain of negative effects, while a negative effect of $X$ on $Y$ can emerge from a chain of opposite-signed effects. Thus, answering the question means estimating:
+$$\Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{01})  \text{ OR }  (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{10}))   - \Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{10})  \text{ OR }  (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{01}))$$
 
 *Answering* the  question now requires guesses about nodal types for $M$ and for $Y$, not just nodal types for $Y$. Thus the question remains the same, and answerable, under different models, but the answer to the question might involve summaries of the values of different nodes. 
 
@@ -242,7 +242,7 @@ Likewise, if want to ask *how often* Sally's throw is an actual cause, in a popu
 <!-- It is also the case, as we have said, that all counterfactual causes are actual causes. They are, quite simply, counterfactual causes when we hold _nothing_ fixed ($\mathcal W$ is the empty set). Thus, in fact, any $\theta^S$, $\theta^{H^S}$ and $\theta^C$ values in which $S$ has a positive effect when $B=1$ will do. This includes, for instance, a $\theta^C$ value in which Billy's hitting has no effect on the bottle (perhaps Billy doesn't throw hard enough!): e.g., $\theta^{01}_{01}$. Here, Sally's throw is both a counterfactual cause and an actual cause of the bottle's cracking.  -->
 
 
-```{r actualquery, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\\theta^Y$. With a single binary causal variable of interest, we let $\\theta^Y$ take on values $\\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\\theta^Y$ ranges over the four values: $\\theta^Y_{00}$, $\\theta^Y_{10}$, $\\theta^Y_{01}$ and $\\theta^Y_{11}$."}
+```{r actualquery, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\\theta^Y$."}
 par(mar=c(1,1,3,1))
 hj_dag(x = c(0, 0, 1, 1, 1, 1, 3, 3),
        y = c(2, 0, 2, 3, 0, -1, 1, 2),
@@ -524,29 +524,31 @@ The algorithm  calculates the full set of outcomes on all nodes, given each poss
 
 First some notation.
 
-Let $n$ denote the number of nodes. Label the nodes $V_1, \dots V_n$ subject to the requirement that each node's parents precede it in the ordering. Let $pa_j$ denote the set of values of the parents of node $j$ and let $V_j(pa_j, \theta_t)$ denote the value of node $j$ given the values of its parents and the causal type $\theta_j$.
+Let $n$ denote the number of nodes. Label the nodes $V_1, \dots V_n$ subject to the requirement that each node's parents precede it in the ordering. Let $pa_j$ denote the set of values of the parents of node $j$ and let $V_j(pa_j, \theta_t)$ denote the value of node $j$ given the values of its parents and the causal type $\theta_t$.
  
 The primitives of a query are questions about the values of outcomes, $V$, given some set of controlled operations $x$. 
 
 * let $x = (x_1, \dots x_n)$ denote a set of `do` operations where each $x_i$ takes on a value in $\{-1,0,1\}$.  here -1 indicates "not controlled", 0 means set to 0 and 1 means set to 1 (this set can be expanded if $V$ is not binary)
-* let $V(x, \theta_t)$ denote that values $V$ takes given $\theta_t$
+* let $V(x, \theta_t)$ denote the values $V$ takes given $\theta_t$
 * a "simple query" is a function $q(V(x, \theta_t))$ which returns TRUE if $V(x, \theta_t)$ satisfies some condition and FALSE otherwise.
 
 Queries are summaries of simple queries.  For instance, for nodes $X$ and $Y$:
 
-* Query $Q:1(Y(X=1)=1))$ asks whether $Y=1$ when $X$ is set to 1. 
-* Query $Q:1(Y(X=1)=1) \& 1(Y(X=0)=0))$ has two parts: the first returns true if $Y$ is 1 when $X$ is set to 1, the second returns true if $Y$ is 0 when $X$ is set to 0; both conditions holding corresponds to a positive effect on a unit.
-* Query $Q:E((1(Y(X=1)=1) \& (Y(X=0)=0)) - (1(Y(X=1)=0) \& 1(Y(X=0)=1))$ asks for the average treatment effect, represented here as the expected difference between positive and negative effects. This query involves weighting by the probability of the causal types.
+* Query $Q_1:1(Y(X=1)=1))$ asks whether $Y=1$ when $X$ is set to 1. This requires evaluating one simple query.
+* Query $Q_2:1(Y(X=1)=1) \& 1(Y(X=0)=0))$ is composed of two simple queries: the first returns true if $Y$ is 1 when $X$ is set to 1, the second returns true if $Y$ is 0 when $X$ is set to 0; both conditions holding corresponds to a positive effect on a unit.
+* Query $Q_3:E((1(Y(X=1)=1) \& (Y(X=0)=0)) - (1(Y(X=1)=0) \& 1(Y(X=0)=1))$ asks for the average treatment effect, represented here using four simple queries:  the expected difference between positive and negative effects. This query involves weighting by the probability of the causal types.
 
 
 Then to calculate $V(x, \theta_t)$:
 
-  1. Calculate $v_1$, the realized value of $V_1$ given $\theta_t$. This is given by $v_1 = x_1$ if $x_1 \neq -1$ and by $\theta_t^{V_1}$ otherwise.
+  1. Calculate $v_1$, the realized value of the first node, $V_1$, given $\theta_t$. This is given by $v_1 = x_1$ if $x_1 \neq -1$ and by $\theta_t^{V_1}$ otherwise.
   2. For each $j \in 2...n$ calculate $v_j$ using either  $v_j = x_j$ if $x_j \neq -1$ and  $V_{j}(pa_j, \theta_t)$ otherwise, where the values in $pa_j$ are determined in the previous steps.
 
 We now have the outcomes, $V$, for all nodes given the operations $x$ and so can determine $q(V(x))$. From there we can calculate summaries of simple queries across causal types.
 
-A last note on conditional queries. Say we are interested in an attribution query of the form: what is the probability that $X$ causes $Y$ in a case in which $X=1$ and $Y=1$. In this case define simple query $q_1$ which assesses whether $X$ causes $Y$ for a given $\theta_t$ and simple query $q_2$ which assesses whether $X=1$ and $Y=1$ under $\theta_t$. We then calcualte the conditional query by conditioning on the set of $\theta$s for which $q_2$ is true and evaluating the share of these for which $q_2$ is true (weighting by the probability of the causal types). 
+A last note on conditional queries. Say we are interested in an attribution query of the form: what is the probability that $X$ causes $Y$ in a case in which $X=1$ and $Y=1$. In this case define simple query $q_1$ which assesses whether $X$ causes $Y$ for a given $\theta_t$ and simple query $q_2$ which assesses whether $X=1$ and $Y=1$ under $\theta_t$. We then calculate the conditional query by conditioning on the set of $\theta$s for which $q_2$ is true and evaluating the share of these for which $q_2$ is true (weighting by the probability of the causal types). 
+
+<!-- FLAG: Alan read -->
 
 ## Appendix
 
