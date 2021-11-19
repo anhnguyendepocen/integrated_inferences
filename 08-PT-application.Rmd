@@ -1,4 +1,4 @@
-# Application: Process Tracing with a Causal Model {#ptapp}
+# Process Tracing Application: Inequality and Democracy {#ptapp}
 
 
 ```{r packagesused07, include = FALSE}
@@ -10,7 +10,7 @@ source("_packages_used.R")
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
-We apply the causal-model-based approach to process tracing to a major substantive issue in comparative politics: the relationship between inequality and democratization. We illustrate how one can convert theories in this domain into relatively simple causal models. Drawing on data from @haggard2012inequality, we use qualitative restrictions on causal types together with flat priors to draw inferences about the probability with which inequality facilitated or hindered democratization.
+We apply the causal-model-based approach to process tracing to a major substantive issue in comparative politics: the relationship between inequality and democratization.  Drawing on case level data, we use qualitative restrictions on causal types together with flat priors to draw inferences about the probability with which inequality facilitated or hindered democratization.
 ::::
 <br>
 
@@ -54,7 +54,7 @@ hj_dag(x = c(1,2,2),
        names = c(
          "Inequality (I)",
          "Democ'n (D)",  
-         expression(paste(theta[D]))
+         expression(paste(theta^D))
          ),
        arcs = cbind( c(1,3),
                      c(2,2)),
@@ -109,21 +109,6 @@ The lower-level graph thus has two exogenous, response-type nodes that will be r
 
 $\theta^{D_{lower}}$ is considerably more complicated, however, because this node represents $D$'s response to three causal variables: $I$, $M$, and $P$. One way to put this is that the values of $\theta^{D_{lower}}$ indicate how inequality's direct effect will depend on mobilization (and vice-versa), conditional on whether or not there is international pressure. We need more complex notation than that introduced in Chapter 5 in order to represent the possible response types here. 
 
-In Chapter 5, we needed four subscripts on $\theta$ to represent the potential outcomes for the four combinations of values that two binary variables can take on. With a third binary variable, we now require eight. 
-
-| subscript position |  Interpretation                         | $\theta^D_{01011010}$  |
-|:------------------:|:---------------------------------------:|:----------------------:|
-| 1                  | Value of D when:  I = 0 & P = 0 & M = 0 | D = 0                  |
-| 2                  | Value of D when:  I = 1 & P = 0 & M = 0 | D = 1                  |
-| 3                  | Value of D when:  I = 0 & P = 1 & M = 0 | D = 0                  |
-| 4                  | Value of D when:  I = 1 & P = 1 & M = 0 | D = 1                  |
-| 5                  | Value of D when:  I = 0 & P = 0 & M = 1 | D = 1                  |
-| 6                  | Value of D when:  I = 1 & P = 0 & M = 1 | D = 0                  |
-| 7                  | Value of D when:  I = 0 & P = 1 & M = 1 | D = 1                  |
-| 8                  | Value of D when:  I = 1 & P = 1 & M = 1 | D = 0                  |
-Table: (\#tab:interpretation) Interpreting the eight subscripts on $\theta^D$ given 3 parents.
-
-Thus, to illustrate, $\theta^D_{01011010}$ represents a type in which inequality always (regardless of pressure) has a positive direct effect on democratization when $M=0$ (subscripts 2 and 4) and always has a negative direct effect on democratization when $M=1$ (subscripts 6 and 8). Also notice that pressure itself never has an effect (compare, for instance, subscript 1 and 3); and that mobilization has a positive effect when inequality is low (subscripts 5 and 7) but a negative effect when inequality is high (subscripts 6 and 8).
 
 The result is $2^8=256$ possible response types for $D$. With 4 response types for $M$, we thus have 1024 possible combinations of causal effects between named variables in the lower-level graph. How do these lower-level response types map onto the higher-level response types that are of interest? In other words, which combinations of lower-level types represent a positive, negative, or zero causal effect of inequality on democratization? 
 
@@ -171,47 +156,19 @@ In all, this reduces the number of nodal types for $D$ from 256 to just 20.
 For all remaining, allowable types, we set flat priors.
 
 
-In Table \ref{tab:apptypes2} we show, for the remaining 20  allowable types, how international pressure moderates the effects of inequality (direct) and mobilization. We use the following notation to characterize conditioning effects of pressure on the effect of another variable, $X$:
+In remaining 20  allowable types can involve a rich range of interactions between international pressure, inequality, and mobilization, including::
 
-* $N$: $P$ has no moderating effect
+1. Types for which $P$ has no moderating effect
 
-* $O_X$: $P=1$ creates an "opportunity" for $X$ to have an effect that it does not have at $P=0$; at $P=1$ and $X=0$, $D$ takes on the value it does when $X=0$ and $X$ has an effect, but does not take on this value when $P=0$ and $X=0$
+2. Types for which $P=1$ creates an "opportunity" for $X$ to have an effect that it does not have at $P=0$; at $P=1$ and $X=0$, $D$ takes on the value it does when $X=0$ and $X$ has an effect, but does not take on this value when $P=0$ and $X=0$
 
-* $C_X$: $P=1$ is a causal "complement" to $X$, allowing $X$ to have an effect it did not have at $P=0$; at $P=1$ and $X=1$, $D$ takes on the value it does when $X=1$ and $X$ has an effect, but does not take on this value when $P=0$ and $X=1$
+3. Types for which $P=1$ is a causal "complement" to $X$, allowing $X$ to have an effect it did not have at $P=0$; at $P=1$ and $X=1$, $D$ takes on the value it does when $X=1$ and $X$ has an effect, but does not take on this value when $P=0$ and $X=1$
 
-* $S_X$: $P=1$ "substitutes" for $X$, generating the outcome that $X=1$ was necessary to generate at $P=0$; at $P=1$ and $X=0$, $D$ takes on the value it does when $X=1$ and $X$ has an effect, but does not take on this value when $P=0$ and $X=0$
+4. Types for which $P=1$ "substitutes" for $X$, generating the outcome that $X=1$ was necessary to generate at $P=0$; at $P=1$ and $X=0$, $D$ takes on the value it does when $X=1$ and $X$ has an effect, but does not take on this value when $P=0$ and $X=0$
 
-* $E_X$: $P$ "eliminates" $X$'s effect, preventing $X=1$ from generating the outcome it generates when $P=0$; at $P=1$ and $X=1$, $D$ does not take on the value it does when $X=1$ and $X$ has an effect, but does take on this value when $P=0$ and $X=1$
+5. Types for which $P$ "eliminates" $X$'s effect, preventing $X=1$ from generating the outcome it generates when $P=0$; at $P=1$ and $X=1$, $D$ does not take on the value it does when $X=1$ and $X$ has an effect, but does take on this value when $P=0$ and $X=1$
 
-*FLAG: Types are given in gbiqq ordering but with this notation we need to check if interpretation is still consistent with cell contents (suspect not as P,M ordering may be reversed)*
 
-| Nodal Type $\theta^D$         | Nature of interaction | Prior probability       |
-|:-----------------------------:|:---------------------:|:-----------------------:|
-| $\theta_{00000000}$           | $N$                   |              0.05       |
-| $\theta_{00000010}$           | $C_M, O_I$            |              0.05       |
-| $\theta_{00100010}$           | $N$                   |        0.05             |
-| $\theta_{00001010}$           | $O_I$                 |        0.05             |
-| $\theta_{00101010}$           | $S_M, O_I$            |        0.05             |
-| $\theta_{10101010}$           | $N$                   |        0.05             |
-| $\theta_{00000011}$           | $C_M$                 |        0.05             |
-| $\theta_{00100011}$           | $C_M, E_I$            |        0.05             |
-| $\theta_{00110011}$           | $N$                   |        0.05             |
-| $\theta_{00001011}$           | $C_M, S_M, O_I$       |        0.05             | 
-| $\theta_{00101011}$           | $S_M, E_I, O_I$       |        0.05             | 
-| $\theta_{10101011}$           | $C_M, E_I, O_I$       |        0.05             |
-| $\theta_{00111011}$           | $S_M, O_I$            |        0.05             |
-| $\theta_{10111011}$           |    $N$                |        0.05             |
-| $\theta_{00001111}$           | $N$                   |        0.05             |
-| $\theta_{00101111}$           | $S_M, E_I$            |        0.05             |
-| $\theta_{10101111}$           |   $E_I$               |        0.05             |
-| $\theta_{00111111}$           |   $S_M$               |        0.05             |
-| $\theta_{10111111}$           | $S_M, E_I$            |        0.05             |
-| $\theta_{11111111}$           |    $N$                |        0.05             |
-Table: (\#tab:apptypes2) Table of allowable types. The table characterizes the nature of the interaction, using the notation explained in the main text. We impose flat priors across all non-excluded types.
-
-<!--  [1] "D00000000" "D00000010" "D00100010" "D00001010" "D00101010" "D10101010" "D00000011" "D00100011" -->
-<!--  [9] "D00110011" "D00001011" "D00101011" "D10101011" "D00111011" "D10111011" "D00001111" "D00101111" -->
-<!-- [17] "D10101111" "D00111111" "D10111111" "D11111111" -->
 
 Since $P$ conditions the effect of $I$, we must also establish a prior on the distribution of $P$. In this analysis, we set the prior probability of $P=1$ to 0.5, implying that before seeing the data we think that international pressures to democratize are present half the time.
 
@@ -221,12 +178,8 @@ We can now choose nodes in addition to $I$ and $D$ to observe from the lower-lev
 
 We consider four distinct situations, corresponding to four possible combinations of inequality and democratization values that we might be starting with. In each situation, the nature of the query changes. Where we start with a case with low inequality and no democratization, asking if inequality caused the outcome is to ask if the lack of inequality caused the lack of democratization. Where we have high inequality and no democratization, we want to know if democratization was prevented by high inequality (as high inequality does in Boix's account). For cases in which democratization occurred, we want to know whether the lack or presence of inequality (whichever was the case) generated the democratization. 
 
-Inference is done by applying Bayes rule to the observed data given the priors. Different "causal types" are consistent or inconsistent with possible data observations. Conversely the observation of data lets us shift weight towards causal types that are consistent with the data and  away from those that are not.  A case that displays $D=1$ when $P=M=I=0$ cannot be of type $\theta_{00000000}$, thus observation of  $P=M=I=0, D=1$ would force a shift in weight away from this (and other)  nodal types and onto nodal type $\theta_{11111111}$ (and other compatible types) .   
+Inference is done by applying Bayes rule to the observed data given the priors. Different "causal types" are consistent or inconsistent with possible data observations. Conversely the observation of data lets us shift weight towards causal types that are consistent with the data and  away from those that are not.  As a simple illustration if we observe $D=1$ then we would shift weight from types for which $D$ is always 0, given  the observed data, to types for which $D$ can be 1 given the observed data.   
 
-
-## Pathways
-
-FLAG: Do pathways as estimands
 
 
 ```{r basicPIMDmodel, eval = TRUE, message = FALSE, include = FALSE}
@@ -274,9 +227,9 @@ In coding countries' level of inequality, we rely on Haggard and Kaufman's codin
 #### $I=0, D=1$: Low inequality democracies
 
 
-In a case that had low inequality and democratized, did low inequality cause democratization, as Boix's thesis would suggest? Looking at the first set of cases in Table \@ref(tab:HK8cases1), did Mexico, Albania, Taiwan, and Nicaragua democratize because they had relatively low inequality? Based only on observing the level of inequality and the outcome of democratization, we would place a `r I0D1[1,1]` probability on inequality having been a cause. What can we learn, then, from our two clues?
+In a case that had low inequality and democratized, did low inequality cause democratization, as Boix's thesis would suggest? Looking at the first set of cases in Table \@ref(tab:HK8cases1), did Mexico, Albania, Taiwan, and Nicaragua democratize because they had relatively low inequality? Based only on observing the level of inequality and the outcome of democratization, we would place a `r round(I0D1[1,1],3)` probability on inequality having been a cause. What can we learn, then, from our two clues?
 
-We are looking here for a negative effect of $I$ on $D$, which in our model can only run via a direct effect, not through mobilization. Thus, the learning from $M$ is limited for the same reason as in an $I=1, D=0$ case. And $M$ is modestly informative as a moderator for the same reasons and in the same direction, with observing mobilization generally reducing our confidence in inequality's negative effect relative to observing no mobilization. In our four cases, if we observe the level of mobilization, our confidence that inequality mattered goes up slightly (to `r I0D1[2,1]`) in Mexico and Taiwan, where mobilization did not occur, and goes down slightly in Albania and Nicaragua (to `r I0D1[3,1]`) where mobilization did occur.
+We are looking here for a negative effect of $I$ on $D$, which in our model can only run via a direct effect, not through mobilization. Thus, the learning from $M$ is limited for the same reason as in an $I=1, D=0$ case. And $M$ is modestly informative as a moderator for the same reasons and in the same direction, with observing mobilization generally reducing our confidence in inequality's negative effect relative to observing no mobilization. In our four cases, if we observe the level of mobilization, our confidence that inequality mattered goes up slightly (to `r round(I0D1[2,1], 3)`) in Mexico and Taiwan, where mobilization did not occur, and goes down slightly in Albania and Nicaragua (to `r round(I0D1[3,1], 3)`) where mobilization did occur.
 
 
 
@@ -292,16 +245,16 @@ kable(I0D1_Cases, digits = 3, caption = "Four cases with low inequality and  dem
 ```
 
 
-Looking for the international pressure clue is, however, highly informative, though the effect runs in the opposite direction as in an $I=1, D=0$ case.  It is observing the absence of international pressure that makes us more confident in low inequality's effect. Since democratization *did* occur, the presence of international pressure makes it less likely for low inequality to have generated the outcome since international pressure could have generated democratization by itself. Once we bring this second clue into the analysis, Mexico and Taiwan sharply part ways: seeing no international pressure in Mexico, we are now much more confident that inequality mattered for the Mexican transition (`r I0D1[2,2]`); seeing international pressure in Taiwan, we are now substantially less confident that inequality mattered to the Taiwanese transition (`r I0D1[2,3]`). Similarly, observing $P$ sharply differentiates the Albanian and Nicaraguan cases: seeing no international pressure in the Albanian transition considerably boosts our confidence in inequality's causal role there (`r I0D1[3,2]`), while observing international pressure in the Nicaraguan transition strongly undermines our belief in an inequality effect there (`r I0D1[3,3]`).
+Looking for the international pressure clue is, however, highly informative, though the effect runs in the opposite direction as in an $I=1, D=0$ case.  It is observing the absence of international pressure that makes us more confident in low inequality's effect. Since democratization *did* occur, the presence of international pressure makes it less likely for low inequality to have generated the outcome since international pressure could have generated democratization by itself. Once we bring this second clue into the analysis, Mexico and Taiwan sharply part ways: seeing no international pressure in Mexico, we are now much more confident that inequality mattered for the Mexican transition (`r round(I0D1[2,2],3)`); seeing international pressure in Taiwan, we are now substantially less confident that inequality mattered to the Taiwanese transition (`r round(I0D1[2,3], 3)`). Similarly, observing $P$ sharply differentiates the Albanian and Nicaraguan cases: seeing no international pressure in the Albanian transition considerably boosts our confidence in inequality's causal role there (`r round(I0D1[3,2], 3)`), while observing international pressure in the Nicaraguan transition strongly undermines our belief in an inequality effect there (`r round(I0D1[3,3],2)`).
 
 
 #### $I=1, D=1$: High inequality democracies
 
 Where we see both high inequality and democratization, the question is whether high inequality caused democratization via a positive effect. Considering the second set of cases in Table \ref{tab:HK8cases2}, did high inequality cause Mongolia, Sierra Leone, Paraguay, and Malawi to democratize?
 
-Observing only the level of inequality and the democratization outcome, we would have fairly low confidence that inequality mattered, with a posterior on that effect of `r I1D1[1,1]`. Let us see what we can learn if we also observe the level of mobilization and international pressure.
+Observing only the level of inequality and the democratization outcome, we would have fairly low confidence that inequality mattered, with a posterior on that effect of `r round(I1D1[1,1],1)`. Let us see what we can learn if we also observe the level of mobilization and international pressure.
 
-As in an $I=0, D=0$ case, $M$ can now be highly informative since this positive effect has to run through mobilization. Here it is the observation of a lack of mobilization that is most telling: high inequality cannot have caused democratization, given our model, if inequality did not cause mobilization to occur. There is no point in looking for international pressure since doing so will have no effect on our beliefs. Thus, when we observe no mobilization by the lower classes in Mongolia and Paraguay, we can be certain (given our model) that high inequality did *not* cause democratization in these cases. Moreover, this result does not change if we also go and look for international pressure: neither seeing pressure nor seeing its absence shifts our posterior away from `r I1D1[1,1]`. 
+As in an $I=0, D=0$ case, $M$ can now be highly informative since this positive effect has to run through mobilization. Here it is the observation of a lack of mobilization that is most telling: high inequality cannot have caused democratization, given our model, if inequality did not cause mobilization to occur. There is no point in looking for international pressure since doing so will have no effect on our beliefs. Thus, when we observe no mobilization by the lower classes in Mongolia and Paraguay, we can be certain (given our model) that high inequality did *not* cause democratization in these cases. Moreover, this result does not change if we also go and look for international pressure: neither seeing pressure nor seeing its absence shifts our posterior away from `r round(I1D1[1,1],2)`. 
 
 
 ```{r HK8cases2, echo = FALSE}
@@ -322,7 +275,7 @@ If we do see mobilization, on the other hand---as in Sierra Leone and Malawi---w
 
 We next first  causal relations for cases that did not democratize. These cases are not included in @haggard2012inequality but our model nevertheless characterizes our beliefs for these cases also.
 
-The results for cases that did not democratize (at the time in question) are presented in tables \@ref(tab:Tapp1) and Table \@ref(tab:Tapp2). Each table shows, for one kind of case, our posterior beliefs on the causal responsibility of $I$ for the outcome for different search strategies.
+The results for cases that did not democratize (at the time in question) are presented in Table \@ref(tab:Tapp1) and Table \@ref(tab:Tapp2). Each table shows, for one kind of case, our posterior beliefs on the causal responsibility of $I$ for the outcome for different search strategies.
 
 
 #### $I=0, D=0$: Non democracy with low inequality
@@ -343,7 +296,7 @@ kable(dplyr::select(I0D0, P,M, posterior),digits = 3, caption = "No inequality a
 ```
 
 
-We start out, based on the $I$ and $D$ values and our model, believing that there is a `r I0D0[1,5]` chance that low inequality prevented democratization. We then see that our beliefs shift most dramatically if we go looking for mobilization and find that it was present. The reason is that any positive effect of $I$ on $D$ has to run through the pathway mediated by $M$ because we have excluded a positive direct effect of $I$ on $D$ in our priors. Moreover, since we do not allow $I$ to have a negative effect on $M$, observing $M=1$ when $I=0$ must mean that $I$ has no effect on $M$ on this case, and thus $I$ cannot have a positive effect on $D$ (regardless also of what we find if we look for $P$). If we do *not* observe mobilization when we look for it, we now think it is somewhat more likely that $I=0$ caused $D=0$ since it is still possible that high inequality *could* cause mobilization. 
+We start out, based on the $I$ and $D$ values and our model, believing that there is a `r round(I0D0[1,5],3)` chance that low inequality prevented democratization. We then see that our beliefs shift most dramatically if we go looking for mobilization and find that it was present. The reason is that any positive effect of $I$ on $D$ has to run through the pathway mediated by $M$ because we have excluded a positive direct effect of $I$ on $D$ in our priors. Moreover, since we do not allow $I$ to have a negative effect on $M$, observing $M=1$ when $I=0$ must mean that $I$ has no effect on $M$ on this case, and thus $I$ cannot have a positive effect on $D$ (regardless also of what we find if we look for $P$). If we do *not* observe mobilization when we look for it, we now think it is somewhat more likely that $I=0$ caused $D=0$ since it is still possible that high inequality *could* cause mobilization. 
 
 We also see that observing whether there is international pressure has a substantial effect on our beliefs. When we observe $M=1$ (or don't look for $M$ at all), the presence of international pressure increases the likelihood that low inequality prevented democratization. Intuitively, this is because international pressure, on average across types, has a positive effect on democratization; so pressure's presence creates a greater opportunity for low inequality to counteract international pressure's effect and prevent democratization from occurring that otherwise would have (if there had been high inequality and the resulting mobilization).
 
@@ -400,7 +353,7 @@ query_model(
 <br>
 
 
-## Concluding thoughts
+## Theory dependence
 
 Haggard and Kaufman set out to use causal process observations to test inequality-based theories of democratization against the experiences of "Third Wave" democratizations. Their principal test is to examine whether they see evidence of distributive conflict in the process of democratization, defined largely as the presence or absence of mobilization prior to the transition. They secondarily look for other possible causes, specifically international pressure and splits in the elite. 
 
@@ -410,9 +363,9 @@ Moreover, it is striking that Haggard and Kaufman lean principally on a mediator
 
 Of course, the model that we have written down is only one possible interpretation of existing theoretical knowledge. It is very possible that Haggard and Kaufman and other scholars in this domain hold beliefs that diverge from those encoded in our working model. The larger point, however, is that our process tracing inferences will inevitably *depend*---and could depend greatly---on our background knowledge of the domain under examination. Moreover, formalizing that knowledge as causal model can help ensure that we are taking that prior knowledge systematically into account---that the inferences we draw from new data are consistent with the knowledge that we bring to the table.
 
-The analysis also has insights regarding case selection. Haggard and Kaufman justify their choice of only $D=1$ cases as a strategy "designed to test a particular theory and thus rests on identification of the causal mechanism leading to regime change" (p. 4). Ultimately, however, the authors seem centrally concerned with assessing whether inequality, as opposed to something else, played a key causal role in generating the outcome. As the results above demonstrate, however, there is nothing special about the $D=1$ cases in generating leverage on this question. The tables for $D=0$ show that, given the model, the same clues can shift beliefs about as much for $D=0$ as for $D=1$ cases. We leave a more detailed discussion of this kind of issue in model-based case-selection for Chapter REFERENCE.
+The analysis also has insights regarding case selection. Haggard and Kaufman justify their choice of only $D=1$ cases as a strategy "designed to test a particular theory and thus rests on identification of the causal mechanism leading to regime change" (p. 4). Ultimately, however, the authors seem centrally concerned with assessing whether inequality, as opposed to something else, played a key causal role in generating the outcome. As the results above demonstrate, however, there is nothing special about the $D=1$ cases in generating leverage on this question. The tables for $D=0$ show that, given the model, the same clues can shift beliefs about as much for $D=0$ as for $D=1$ cases. We leave a more detailed discussion of this kind of issue in model-based case-selection for Chapter \@ref(caseselection).
 
-Finally we emphasize that all of the inference in this chapter depends on a model that is constrained by theoretical insights but not one that is trained by data. Although we are able to make many inferences using this model, given the characteristics of a case of interest, we have no empirical grounds to justify these inferences. In Chapter REFERENCE we show how this model can be trained with broader data from multiple cases and in Chapter REFERENCE we illustrate how the model itself can be put into question. 
+Finally we emphasize that all of the inference in this chapter depends on a model that is constrained by theoretical insights but not one that is trained by data. Although we are able to make many inferences using this model, given the characteristics of a case of interest, we have no empirical grounds to justify these inferences. In Chapter \@ref(mixingapp) we show how this model can be trained with broader data from multiple cases and in Chapter \@ref(evaluation)  we illustrate how the model itself can be put into question. 
 
 <!-- THE FOLLOWING TWO CONDITIONS ARE REMOVED BECAUSE, I AM ALMOST POSITIVE, THEY ARE ALREADY COVERED BY THE MONOTONICITY CONDITIONS. \item **$I=1$ dampens $M$'s effect**: Acemoglu and Robinson model inequality's effect on elite preferences (our direct effect) and and its effect on the poor's preferences (essentially, our effect via mobilization) as countervailing. While the poor want democracy more as inequality rises, the elite become more determined to avoid it. Thus, as inequality rises (holding the level of mobilization constant), mobilization should be less likely to succeed. The studies under consideration, moreover, provide no reason to think the opposite: that mobilization should become more likely to succeed as inequality goes up, holding constant the level of mobilization. To reflect these beliefs, we place zero probability on those types in which democracy will not occur at low levels of inequality but in which mobilization has a positive effect at a high level of inequality at any value of $P$. This yields average prior beliefs weighted toward inequality dampening mobilization's effect. -->
 <!-- \item **$M=1$ dampens $I$'s effect**: Likewise, where disadvantaged groups have mobilized, inequality should be less likely to have a negative direct effect. At high levels of mobilization, it will be more difficult for elite preferences (which higher inequality drives against democratizing) to prevail. And, based on the logics in the literature, it should never be the case that mobilization enhances inequality's negative effect on democratization. We thus place zero probability on those types in which, for any value of $P$, democratization would occur at high levels of inequality but in which $I$ has a negative effect when $M=1$, generating a belief set weighted toward the belief that mobilization dampens inequality's negative effect. -->
