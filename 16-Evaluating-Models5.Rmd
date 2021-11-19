@@ -580,9 +580,8 @@ While we cannot identify the correct model from this data pattern, one possible 
 
 ### Bayesian $p$-value
 
-We turn next to evaluating the democratization model using the Bayesian $p-$value approach, and for this purpose can return to the data that we coded from @haggard2012distributive's qualitative vignettes. In the two panels of Figure \@ref(fig:ch15pvalue_pimd), we plot the posterior predictive distributions from our updated model for two quantities of interest: the outcome $D$ and the correlation between $I$ and $M$. In each graph, we indicate with a vertical line the mean value for these quantities for the data at hand and report the $p-$value: the probability of the observed data conditional on our model. As we can see both visually and from the $p-$values, the model performs well here as the data that we observe are not at all unexpected under the model.
+We turn next to evaluating the democratization model using the Bayesian $p-$value approach, and for this purpose can return to the data that we coded from @haggard2012distributive's qualitative vignettes. In the two panels of Figure \@ref(fig:ch15pvalue_pimd), we plot the posterior predictive distributions from our updated model for two quantities of interest: the outcome $D$ and the correlation between $I$ and $M$. In each graph, we indicate with a vertical line the mean value for these quantities for the data at hand and report the $p-$value: the probability of the observed data conditional on our model. 
 
-FIX CHUNK:
 
 ```{r ch15pvalue_pimd, echo = FALSE, eval = FALSE}
 if(do_diagnosis){
@@ -601,100 +600,43 @@ if(do_diagnosis){
   }
 
 
-# data <-  read_rds("saved/ch15_replicates_pimd.rds")  
-# 
-# 
-# p_two_sided <- function(T, t, digits = 2){
-#   if(t <  mean(T, na.rm = TRUE)) return(round(2* mean(t > T, na.rm = TRUE), digits))
-#   if(t >= mean(T, na.rm = TRUE)) return(round(2* mean(t <= T, na.rm = TRUE), digits))
-# }
-# 
-# tests <- c("Test stat: Mean of D", "Test stat: I, M covariance")
-# 
-# replicates_pimd <- data %>% gather("test", "val")
-# 
-# wegot <- data.frame(test = c("D", "C"), 
-#                     wegot = c(mean(data$D), cor(data$M, data$I)))
-# wegot_labelled <-  wegot  %>%
-#   mutate(test = factor(test, c("D", "C"), tests))
-#                        
-# ps <- df %>% group_by(test) %>% left_join(wegot) %>% 
-#   summarize(p = p_two_sided(Val, wegot[1])) %>% 
-#   mutate(Val = 1, x = 0, y = 120, label = paste0("p = ", p))
-# 
-# ps_labelled <- ps %>%
-#   mutate(test = factor(test, c("D", "C"), tests)) 
-#   
-# df %>%
-#   mutate(test = factor(test, c("Y", "C"), tests)) %>% 
-#   ggplot(aes(Val)) + geom_histogram() + facet_grid(Model ~ test) + xlab("predictions") +
-#   geom_vline(data = wegot_labelled, aes(xintercept = wegot), color = "red") + theme_bw() + 
-#   ggtext::geom_textbox(data  = ps_labelled, aes(x = x, y = y, label = label), width = unit(0.4, "npc"))
-# 
-# 
+df <-  read_rds("saved/ch15_replicates_pimd.rds")  
 
+p_two_sided <- function(T, t, digits = 2){
+   if(t <  mean(T, na.rm = TRUE)) return(round(2* mean(t > T, na.rm = TRUE), digits))
+   if(t >= mean(T, na.rm = TRUE)) return(round(2* mean(t <= T, na.rm = TRUE), digits))
+ }
+ 
+tests <- c("Test stat: Mean of D", "Test stat: I, M covariance")
+ 
+replicates_pimd <- df %>% gather("test", "Val")
 
+pimd_data <- CausalQueries::democracy_data
 
+wegot <- data.frame(
+  test = c("D", "C"),
+  wegot = c(mean(pimd_data$D),
+            cor(pimd_data$M, pimd_data$I, use = "complete.obs")))
+wegot_labelled <-  wegot  %>%
+  mutate(test = factor(test, c("D", "C"), tests))
+                        
+ps <- replicates_pimd %>% group_by(test) %>% left_join(wegot) %>% 
+   summarize(p = p_two_sided(Val, wegot[1])) %>% 
+   mutate(Val = 1, x = 0, y = 120, label = paste0("p = ", p))
 
+ps_labelled <- ps %>%
+  mutate(test = factor(test, c("D", "C"), tests)) 
 
+replicates_pimd %>%
+   mutate(test = factor(test, c("D", "C"), tests)) %>% 
+   ggplot(aes(Val)) + geom_histogram() + facet_grid( ~ test) + xlab("predictions") +
+   geom_vline(data = wegot_labelled, aes(xintercept = wegot), color = "red") + theme_bw() + 
+   ggtext::geom_textbox(data  = ps_labelled, aes(x = x, y = y, label = label), width = unit(0.4, "npc"))
 
-par(mfrow = c(1,2))
-xlimD <- range(c(replicates_pimd$D))
-xlimC <- range(c(replicates_pimd$C))
-
-p_two_sided <- function(D, d, digits = 2){
-  if(d <  mean(D)) return(round(2* mean(d > D), digits))
-  if(d >= mean(D)) return(round(2* mean(d <= D), digits))
-}
-
-p_temp <- p_two_sided(replicates_pimd$D, mean(data$D))
-hist(replicates_pimd$D, main = paste("D mean | pimd: p= ", p_temp)
-     , xlim = xlimD, xlab = "predictions"); abline(v = mean(data$D), col = "red")
-
-p_two_sided <- function(Y, y, digits = 2){
-  if(y <  mean(Y)) return(round(2* mean(y > Y), digits))
-  if(y >= mean(Y)) return(round(2* mean(y <= Y), digits))
-}
-
-p_temp2 <- p_two_sided(replicates_pimd$C, cor(data$M, data$I, use = "complete.obs"))
-hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
-     xlim = xlimC, xlab = "predictions"); abline(v = cor(data$M, data$I, use = "complete.obs"), col = "blue")
-
-#Some problem with p_temp2 line above. cor(data$M, data$I) returns NA.  Because of missing values??
-
-# FLAG: WOULD LIKE THIS DONE WITH GGPLOT
 ```
 
 
-<!-- p_two_sided <- function(Y, y, digits = 2){ -->
-<!--   if(y <  mean(Y)) return(round(2* mean(y > Y), digits)) -->
-<!--   if(y >= mean(Y)) return(round(2* mean(y <= Y), digits)) -->
-<!-- } -->
-
-<!-- hist(replicates_restricted$Y,  -->
-<!--      main = paste("Y mean | stronger: p = ", p_temp), -->
-<!--                   xlim = xlimY, xlab = "predictions")  -->
-<!--      abline(v = mean(data$Y), col = "red") -->
-
-<!-- p_temp <- p_two_sided(replicates_restricted$C, cor(data$Y, data$X)) -->
-<!-- hist(replicates_restricted$C,  -->
-<!--      main = paste("X, Y covariance | stronger: p =", p_temp),  -->
-<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
-
-<!-- p_temp <- p_two_sided(replicates_unrestricted$Y, mean(data$Y)) -->
-<!-- hist(replicates_unrestricted$Y,  -->
-<!--      main = paste("Y mean | weaker: p = ", p_temp), -->
-<!--      xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red") -->
-
-<!-- p_temp <- p_two_sided(replicates_unrestricted$C, cor(data$Y, data$X)) -->
-<!-- hist(replicates_unrestricted$C,  -->
-<!--      main = paste("X, Y covariance | weaker: p = ", p_temp),  -->
-<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
-
-
-<!-- <!-- AJ: Should we also calculate a p-value? --> 
-<!-- AJ: And what about comparing multiple models? -->
-
+As we can see both visually and from the $p-$values, the model performs well here as the data that we observe are not at all unexpected under the model.
 
 ### LOO validation
 
@@ -856,3 +798,5 @@ The results differ in various modest ways. In Table \@ref(tab:HK8cases1quant), w
 <!-- As before, in cases where $M=0$, the monotonicity of $M$ in $D$ is not relevant since there is no question of a negative effect anyway. However if $M=1$, then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows negative effects and so we put more weight on the possibility that $I=0$ was the cause.  -->
 
 Turning to Table \@ref(tab:HK8cases2quant) and cases with high inequality and democratization, inferences about the probability of positive causation are unaffected by the assumption about the effect of $I$ on $M$. The reason is that, since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$ (no positive effects), the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$, it remains the case in both models that observing $M=0$ rules out a positive indirect effect. If however $M=1$, then $I$ did not have a negative effect on $M$ and the only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative sizes of $\theta^M_{11}$ and $\theta^M_{01}$, which remain the same (and equal to one another) in both models.
+
+Overall the evaluation of the democracy and inequality model paints a mixed picture. Although the model is able to recreate data patterns consistent with observations, the inferences from within case observations discussed in Chapter \@ref(ptapp) depended on assumptions about broader patterns that, while theoretically compelling, can  *not* be justified from observation of broader patterns data even under relatively heroic assumptions on causal identification.   

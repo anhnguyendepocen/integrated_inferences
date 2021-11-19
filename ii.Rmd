@@ -2999,12 +2999,17 @@ In this book, we will think of theory as a type of *explanation*: a theory provi
 
 To fix ideas: a simple claim might be that "*A* caused *B* in case $j$". This claim is itself a model, albeit a very simple one. The theory that supports this model might be of the form "*A* always causes *B*",  "*A* always causes *B* whenever *C* (and *C* holds in case *j*)", or  "*A* invariably causes *B* and  invariably *B* causes *C*". These all have in common that they are arguments that could be provided to support the simple claim; in each case, if you believe the theory you believe the implication.
 
-The rest of this short chapter builds out this idea and uses it to provide a way of characterizing when a theory is useful or not. 
 
 <!-- We begin by elaborating upon our working definition of "theory," showing how it operates within a conception of models in "levels." This requires thinking through how a more detailed, "lower-level" causal structure can imply, and thus *explain*, a less-detailed "higher-level" structure. We also work through how the nodal and causal types in a more detailed model, and beliefs about those types, map onto types (and beliefs about types) in a simpler model. Further, we outline what kinds of elaborations of a simple model are possible (as we outlined in Chapter \@ref(models) what kinds of simplifications of models are permissible). We then turn to the relationship between theory and evidence in a causal-model framework, as compared to the way that relationship operates in a more conventional theory-testing approach.  -->
 
-In embedding theorization within the world of causal models, we ultimately have an empirical objective in mind. Theorizing a causal relationship of interest, in our framework, means elaborating our causal beliefs about the world in greater detail. As we show in later chapters, theorizing in the form of a causal model allows us to generate research designs: to identify sources of inferential leverage and to explicitly and systematically link observations of components of a causal system to the causal questions we seek to answer. 
+
+The rest of this short chapter builds out this idea and uses it to provide a way of characterizing when a theory is useful or not. 
+In the first section, we consider multiple senses in which one model might imply, and thus serve as a *theory of*, another model. For one thing, we consider how one causal structure can imply (theorize) another causal structure, by including additional new nodes and nodal types that explain how or when causal effects in the original model will unfold. Next, we consider how the causal-type *ranges* of models can relate to one another: one model can imply another model when the former's causal types constitute a subset of the latters. In this situation, the theory represents a more specific, stronger claim about the kinds of causal effects that are operating. We then turn to logical relations between probabilistic models. We show how the distributions over nodal types in a simpler model structure can be underwritten by distributions over nodal types in a more detailed model structure. Here, a claim about the prevalence (or probability) of causal effects in a causal network is justified by claims about the prevalence or probability of causal effects in a more granular rendering of that network. Finally, we show how a probabilistic model plus *data* can provide a theoretical underpinning for a new, stronger model.
+
+Second, we consider how theories-as-models can be useful. In embedding theorization within the world of causal models, we ultimately have an empirical objective in mind. Theorizing a causal relationship of interest, in our framework, means elaborating our causal beliefs about the world in greater detail. As we show in later chapters, theorizing in the form of a causal model allows us to generate research designs: to identify sources of inferential leverage and to explicitly and systematically link observations of components of a causal system to the causal questions we seek to answer. In the second section of this chapter, however, we provide a high-level conceptualization of the empirical gains from theory.
 <!-- We discuss toward the end of the chapter how this definition of theory relates to common understandings of theory in the social sciences.  -->
+
+In the chapter's third and final section, we show how our formalization of theory maps onto *formal* theory as usually understood, showing how we can generate a causal model from a game-theoretic model.
 
 
 ## Models as *theories of* 
@@ -3205,7 +3210,7 @@ Moving up, as more data is provided, more "specific" higher level models emerge,
 
 As the simplest illustration, we might imagine beginning with an $X\rightarrow Y$ model, $\mathcal M_1$, in which, $X$ and $Y$ are binary, and we we believe that $Y$ possibly responds to $X$. If we have "flat" priors over causal types, in the sense described in Chapter \@ref(bayeschapter), then our prior uncertainty over the proposition that $X$ causes $Y$, under this model, is large; as is our uncertainty that $Y=1$ is due to $X=1$ in a given case. In other words, given our theory, we are uncertain about the proposition $\mathcal M_3$: $X$ caused $Y$. However, if we then receive a lot of data, $\mathcal D$, showing strong relations between $X$ and $Y$, then our updated model $\mathcal M_2$, formed from combining $\mathcal D$ and $\mathcal M_1$ allows us to infer that $X$ caused $Y$ in this case with greater certainty. 
 
-Thus our new theory $\mathcal M_2$ is (a) formally similar to $\mathcal M_1$ (b) formed as a product of past theory plus evidence, here justified by $\mathcal M_1$ given data $\mathcal D$, and (c) capable of providing sharper implications than past theory.^[As a general matter an updated theory may not provider sharper claims for all queries. That is, in practice, posterior variance over queries can increase with more data. As a simple illustration: say, we start out thinking that the probability that an outcome is due to conditions A, B, or C is .9, .05, and .05, respectively. If I find evidence that convinces me that A is not the cause, then I shift (a) to greater certainty about whether A was the cause but (b) greater uncertainty about whether B was the cause.]
+Thus our new theory $\mathcal M_2$ is (a) formally similar to $\mathcal M_1$, (b) formed as a product of past theory plus evidence, here justified by $\mathcal M_1$ given data $\mathcal D$, and (c) capable of providing sharper implications than past theory.^[As a general matter an updated theory may not provider sharper claims for all queries. That is, in practice, posterior variance over queries can increase with more data. As a simple illustration: say, we start out thinking that the probability that an outcome is due to conditions A, B, or C is .9, .05, and .05, respectively. If I find evidence that convinces me that A is not the cause, then I shift (a) to greater certainty about whether A was the cause but (b) greater uncertainty about whether B was the cause.]
 
 
 In this way, Bayesian updating provides a simple and coherent way of thinking about the integration of theory and data.  
@@ -4443,15 +4448,17 @@ We now turn to a formalization of these ideas.
 
 ### A formalization of the general approach
 
-More formally, the general approach to inference draws on the components we outlined in chapters 2 to 4: graphical causal models (DAGs), queries, and priors. We now show how these elements interact with data to generate causal inferences. We continue to focus on a situation with binary variables, though describe later how this can be extended. Though we walk through the procedure for simple models, the approach outlined here can be applied to *any* causal model with discrete variables and to any queries defined over the model.
+The general approach to inference draws on the components we outlined in chapters 2 to 4: graphical causal models (DAGs), queries, and priors. Coulped with data these elements provide grounds for causal inferences. We continue to focus on a situation with binary variables, though describe later how this can be extended. We walk through the procedure for simple models, though note that the approach outlined here can be applied to *any* causal model with discrete variables and to any queries defined over the model.
 
-The process tracing procedure operates as follows:
+The process tracing procedure operates as follows.
 
 #### The model
 
+First we need a model.
+
 **A DAG**
 
-We begin with a DAG, or graphical causal model. As we know, a DAG identifies a set of variables and describes the parent-child relations between them, indicating for each variable which other variables are its direct (possible) causes. These relationship, in turn, tell us which (non-descendant) variables a given variable is *not* independent of given the other variables in the model. 
+We begin with a DAG, or graphical causal model. As discussed in Chapter 2, a DAG identifies a set of variables and describes the parent-child relations between them, indicating for each variable which other variables are its direct (possible) causes. These relationship, in turn, tell us which (non-descendant) variables a given variable is *not* independent of given the other variables in the model. 
 
 **Nodal types**
 
@@ -4516,9 +4523,9 @@ From the set of all possible nodal types for a DAG, we get the set of all possib
 
 Our background beliefs about a causal domain will usually consist of more than just beliefs about which variables have causal connections; they will also typically contain beliefs about what *kinds* of effects operate between variables. That is, they will contain beliefs about which types are possible or, more generally, are more or less common in the world. We express these beliefs over causal effects as probability distributions over the nodal types. Beliefs about causal types are implied by beliefs about nodal types. In cases with unobserved confounding beliefs are defined over the joint distributions of nodal types.
 
-For process tracing our beliefs over nodal type $\theta^j$, say, simply capture the subjective probability we have that the type takes on different values. We do not *need* to defend this belief to use the machinery.  Often however it helps with intuition to think of  a given case of interest -- the one we are studying and seek to learn about -- as being drawn at random from a population and to think about our beliefs for the *single* case as stemming from our beliefs about the population from which it is drawn. So, for instance, our prior belief about the probability that inequality has a positive effect on democratization in Mexico in 1999 is our belief about how commonly inequality has a positive effect on democratization in the population of cases that are "like" Mexico in 1999.^[The reference population for a case is defined based on whatever we already know about the case. Thus, for instance, if we already know that the case has $Y=1$ before we begin process tracing, then the relevant population for the formation of prior beliefs is all cases in which $Y=1$.] 
+For process tracing, our beliefs over nodal type $\theta^j$, say, simply capture the subjective probability we have that the type takes on different values. We do not *need* to defend this belief to use the machinery.  We use $\lambda^j_x$ to denote the probability that $\theta^j = \theta^j_x$. Often however it helps with intuition to think of  a given case of interest -- the one we are studying and seek to learn about -- as being drawn at random from a population and to think about our beliefs for the *single* case as stemming from our beliefs about the population from which it is drawn. In that case $\lambda^j_x$ can be thought of as a *share*. So, for instance, our prior belief about the probability that inequality has a positive effect on democratization in Mexico in 1999 is our belief about how commonly inequality has a positive effect on democratization in the population of cases that are "like" Mexico in 1999.^[The reference population for a case is defined based on whatever we already know about the case. Thus, for instance, if we already know that the case has $Y=1$ before we begin process tracing, then the relevant population for the formation of prior beliefs is all cases in which $Y=1$.] 
 
-We let $\lambda^j$ denote our beliefs over $\theta^j$---nodal types at node $j$.  A $\lambda^j$ is simply a vector of numbers (or proportions), one for each possible nodal type, with all numbers non negative and summing to $1$. So, for instance, $\lambda^Y$ for our current example would be a vector with four values, each of which expresses a probability on one of the four nodal types at $Y$. So we might have $\lambda^Y_{01}=0.1$, $\lambda^Y_{11}=0.05$, and so on -- with the $\lambda^Y$ values summing to $1$ because these values are defined over the full set of possible nodal types for $Y$. 
+A $\lambda^j$ is simply a vector of numbers (or proportions), one for each possible nodal type, with all numbers non negative and summing to $1$. So, for instance, $\lambda^Y$ for our current example would be a vector with four values, each of which expresses a probability on one of the four nodal types at $Y$. So we might have $\lambda^Y_{01}=0.1$, $\lambda^Y_{11}=0.05$, and so on -- with the $\lambda^Y$ values summing to $1$ because these values are defined over the full set of possible nodal types for $Y$. For the purposes of this chapter we take  $\lambda$ as given---you start with beliefs; in later chapters however, when we move beyond single cases,   $\lambda$  becomes the quantity of interest.
 
 <!-- We can, in turn, use these beliefs about nodal-type probabilities -- to create prior probabilities over the *causal* type for the case at hand. Since causal types are merely combinations of nodal types we can take a set of probabilities on nodal types and calculate the probability that our case is of any given causal type. To do so, we need to join together $\lambda$'s across the nodes in a model.  -->
 
@@ -4582,7 +4589,7 @@ Table: (\#tab:ambigmatrix). An ambiguity matrix, mapping from data types to caus
 
 <!-- In the last column, we provide prior probabilities for each of the causal types. These have been calculated directly from the parameter matrix (Table \@ref(tab:parammatrix)). To see how the calculation works, start with a causal type in the parameter matrix -- say, $\theta^X_0,\theta^Y_{01}$. We go down that causal type's column and select the rows with $1$'s, representing the parameters for the included nodal types, $\lambda^X_0$ and $\lambda^Y_{01}$. As we want the joint probability of these two nodal types (and a parameter matrix is constructed such that the rows represent independent events),^[That is, when there is unobserved confounding, we express conditional proportions, making all of the proportions conditionally independent of one another.] we simply multiply together the values for these included parameters: $0.5 \times 0.4 = 0.2$. As noted, our prior belief about whether the case at hand is of a given causal type is a straightforward function of our beliefs about how prevalent each of the component nodal types is in the population.  -->
 
-As models get more complex, the numbers of causal and data types simply multiply, though generally the number of causal types incrases faster than then number of data types. For a simple mediation model ($X \rightarrow M \rightarrow Y$) there are $2^3 = 8$ data types---possible combinations of values for $X,M,Y$ but $2\times 4 \times 4$ causal types. 
+As models get more complex, the numbers of causal and data types multiply, though generally the number of causal types increases faster than the number of data types. For a simple mediation model ($X \rightarrow M \rightarrow Y$) there are $2^3 = 8$ data types---possible combinations of values for $X,M,Y$ but $2\times 4 \times 4$ causal types. 
 
 <!-- |       **Data types** $\rightarrow$      | X0M0Y0 | X1M0Y0 | X0M1Y0 | X1M1Y0 | X0M0Y1 | X1M0Y1 | X0M1Y1 | X1M1Y1 | Priors on causal types | -->
 <!-- |:---------------------------------------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:----------------------:| -->
@@ -4624,8 +4631,7 @@ As models get more complex, the numbers of causal and data types simply multiply
 <!-- Again, the ambiguities arising from data patterns are apparent. For instance, if we observe $X=1, M=0, Y=0$, we see that there are four causal types that could have generated this pattern.  -->
 
 The ambiguities matrix tells us what types are data consistent and, in doing so, shapes our inferences. 
-
- Table \@ref(tab:ambigmatrixmed)  shows a portion of the ambiguities matrix for the $X \rightarrow M \rightarrow Y$ model, with priors on causal types appended in the final column. In this model  if we observe $X=1, M=0, Y=0$ we have ambiguities over causal types. These data tell us that $\theta^X = \theta^X_1$. But they do not tell us whether $M$'s type is such that $X$ has a negative effect on $M$ ($\theta^M_{10}$) or $X$ has no effect with $M$ fixed at $0$ ($\theta^M_{00}$). Similarly, we do not know whether $M$ has a positive effect on $Y$ ($\theta^Y_{01}$) or no effect with $Y$ fixed at $0$ ($\theta^Y_{00}$). This leaves four combinations of nodal types---four causal types---that are consistent with the data. These types are picked out by the ambiguities matrix.
+Table \@ref(tab:ambigmatrixmed)  shows a portion of the ambiguities matrix for the $X \rightarrow M \rightarrow Y$ model, with priors on causal types appended in the final column. In this model  if we observe $X=1, M=0, Y=0$ we have ambiguities over causal types. These data tell us that $\theta^X = \theta^X_1$. But they do not tell us whether $M$'s type is such that $X$ has a negative effect on $M$ ($\theta^M_{10}$) or $X$ has no effect with $M$ fixed at $0$ ($\theta^M_{00}$). Similarly, we do not know whether $M$ has a positive effect on $Y$ ($\theta^Y_{01}$) or no effect with $Y$ fixed at $0$ ($\theta^Y_{00}$). This leaves four combinations of nodal types---four causal types---that are consistent with the data. These types are picked out by the ambiguities matrix.
 
 <!-- Our priors here derive from a set of parameter values, much like in the previous example, in which the $X$ types are equally common (0.5 each); a positive effect of $X$ on $M$ is twice as common (0.4) as the other $M$ types (all set to 0.2); and a positive effect of $M$ on $Y$ is twice as common (0.4) as all other $Y$ types (all at 0.2). We can then easily see why we thus get priors on some causal types are higher than those on others: for instance, the two causal types with priors of 0.08 both have two positive effects (at the $X \rightarrow Y$ and $M \rightarrow Y$ stages) while the causal types with priors of 0.02 include no positive effects at either stage. -->
 
@@ -4668,7 +4674,7 @@ Once we observe actual data in a case, we can then update on the probabilities a
 <!-- We can see how this works within an ambiguity matrix. Let's return to the ambiguity matrix in Table \@ref(tab:ambigmatrix).  -->
 As a simple example imagine we have an $X\rightarrowY $ model with equal prior weights (1/8) on each of the eight possible causal types. Now, suppose that we observe the data $X=1, Y=1$, i.e., data type $X1Y1$. This data is consistent with some causal types but not others.  Only two causal types are consistent with the data: $\theta^X_1, \theta^Y_{01}$ and $\theta^X_1, \theta^Y_{11}$. We therefore put 0 weight on all other causal types and scale up the remaining probabilities so that they sum to 1 (preserving the ratio between them).  The result gives *posterior* probabilities on the causal types. We display an "updated" ambiguity matrix, with excluded data types and causal types removed, in Table \@ref(tab:ambigupdate). 
 
-Before we see any data on the case at hand, then, we believe (based on our beliefs about the population to which the case belongs) that there is a 1/8 probability that the case is one in which $X$ is assigned to $1$ and has a positive effect on $Y$; and 1/8 probability that it's a case in which $X$ gets assigned to $1$ and has no effect on $Y$ with $Y$ fixed at $1$. Seeing the $X=1, Y=1$ data, we now believe that there is a 1/2 probability that the case is of the former type, and a 1/2 probability that it is of the latter type. Had our prior beliefs on types been different from each other, the posterior beliefs would have scaled up accordingly.
+Before we see any data on the case at hand, then, we believe (based on our beliefs about the population to which the case belongs) that there is a 1/8 probability that the case is one in which $X$ is assigned to $1$ and has a positive effect on $Y$; and 1/8 probability that it's a case in which $X$ gets assigned to $1$ and has no effect on $Y$  (and so $Y$ is $1$ regardless of $X$). Seeing the $X=1, Y=1$ data, we now believe that there is a 1/2 probability that the case is of the former type, and a 1/2 probability that it is of the latter type. Had our prior beliefs on types been different from each other, the posterior beliefs would have scaled up accordingly.
 
 |  **Data types** $\rightarrow$ | X1Y1 | Priors on causal types | Posteriors on causal types |
 |:-----------------------------:|:----:|:----------------------:|:--------------------------:|
@@ -4760,7 +4766,7 @@ ambXMY_with_priors%>%
 <!--    kable(digits = 2) -->
 <!-- ``` -->
 
-**Updating on queries.**  We now have a posterior probability for each causal type for the case at hand. The causal question we are interested in answering, our query, may not be about causal types *per se.* It is about a query  that can be expressed as a *combination* of causal types, as decribed in Chapter \@ref(questions). 
+**Updating on queries.**  We now have a posterior probability for each causal type for the case at hand. The causal question we are interested in answering, our query, may not be about causal types *per se.* It is about a query  that can be expressed as a *combination* of causal types, as described in Chapter \@ref(questions). 
 
 For instance, suppose we are working with the model $X \rightarrow M \rightarrow Y$; and that our question is, "Did $X=1$ cause $Y=1$?". This question is asking both:
 
@@ -4909,7 +4915,7 @@ These quantities allow for easy mapping between our prior beliefs about our caus
 
 In the left panel, we see that as we place a lower prior probability on $K$'s being negatively affected by $X$,^[For a given value of $\lambda^K_{01}$, we hold the other $\lambda^K$ values equal by assigning a value of $(1-\lambda^K_{01})/3$ to each.] seeking $K=1$ increasingly takes on the quality of a hoop test for $X$'s having a positive effect on $Y$. The clue, that is, increasingly becomes something we must see if $X$ positively affects $Y$, with the clue remaining moderately probable if there is no effect. Why? The less likely we believe it is that $K=0$ was caused by $X=1$, the less consistent the observation of $K=0$ is with $X$ having a positive causal effect on $Y$ via $K$ (since, to have such an effect, if $X=1$ and $K=0$, would precisely have to mean that $X=1$ *caused* $K=0$). 
 
-In the second graph, we simultaneously change the prior probabilities of zero effects at both stages in the sequence: of $K$ and $Y$ being $1$ regardless of the values of $X$ and $K$, respectively.^[For a given value of $\lambda^K_{11}$, we hold the other $\lambda^K$'s equal by assigning a value of $(1-\lambda^K_{11})/3$ to each; likewise for $\lambda^Y_{11}$ and the other $\lambda^Y$ values.] We see here that, as the probabilities of zero effects jointly diminish, seeking $K=1$ increasingly becomes a smoking-gun test for a positive effect of $X$ on $Y$: the probability of seeing the clue if the case is a $d$ type diminishes. The reason is that, as zero effects at the lower level become less likely, it becomes increasingly unlikely that $K=1$ could have occurred without a positive effect of $X$ on $K$, and that $Y=1$ could have occurred (given that we have seen $K=1$) without a posiitve effect of $K$ on $Y$.
+In the second graph, we simultaneously change the prior probabilities of zero effects at both stages in the sequence: of $K$ and $Y$ being $1$ regardless of the values of $X$ and $K$, respectively.^[For a given value of $\lambda^K_{11}$, we hold the other $\lambda^K$'s equal by assigning a value of $(1-\lambda^K_{11})/3$ to each; likewise for $\lambda^Y_{11}$ and the other $\lambda^Y$ values.] We see here that, as the probabilities of zero effects jointly diminish, seeking $K=1$ increasingly becomes a smoking-gun test for a positive effect of $X$ on $Y$: the probability of seeing the clue if the case is a $d$ type diminishes. The reason is that, as zero effects at the lower level become less likely, it becomes increasingly unlikely that $K=1$ could have occurred without a positive effect of $X$ on $K$, and that $Y=1$ could have occurred (given that we have seen $K=1$) without a positive effect of $K$ on $Y$.
 
 <!-- This example also helps clarify the kind of theoretical knowledge required for drawing inferences from clues. As we have emphasized, the structural equations comprising a causal model can be fully non-parametric. As the example illustrates, $\theta_Y$ can be a type variable that determines different the equation for an endogenous variable in a causal model can  can take the form of beliefs about the proportions of  -->
 
@@ -9693,18 +9699,29 @@ do_diagnosis = FALSE
 
 The approaches to inference that we have described always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters. 
 
-The problem of stating priors is most acute for case-level process-tracing inferences, for two reasons. First, the  beliefs we have to state are beliefs over the distribution of individual level effects and not just the beliefs over average effects. This puts us up against the fundamental problem of causal inference [@holland1986statistics]. Second, the beliefs can do a lot of work---especially in small-$n$ applications. Indeed for case level queries, inferences might be little more than conditional applications of a model.
-
 We see two broad responses to this problem.
 
-One is to *emphasize the model-contingent nature of claims*. As we outlined in Chapter 4, some causal models might reasonably reflect actual beliefs about the world---for example, one might be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then simple models such as that represented by an $X \rightarrow Y$ DAG is a representation of coarse beliefs about the world and not a model of the world, in the sense of a  representation of a simplified  world.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable involves a form of modeling.] But as we noted in Chapter 4, for an even modestly more complex situation, it seems inevitable that the model being used really is a model and hard to think of as a faithful summary of beliefs. 
-
-Recognizing that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. That is the subject of Chapter 15.
-
-A second approach is to justify a process-tracing model by claiming exchangeability with units for which we have a lower-level  model. In a sense, this approach  pushes the question down a level, since the lower level model itself needs to be justified. There are two further responses to this concern. One is to justify the lower-level model with  data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of the structural assumptions made in our DAG, an approach that we address in Chapter \@ref(evaluation).
+One is to *emphasize the model-contingent nature of claims*. Some causal models might reasonably reflect actual beliefs about the world---for example, one might be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled from a distribution of types. All of these beliefs may be unwise, of course. But if held, then simple models such as that represented by an $X \rightarrow Y$ DAG is a representation of coarse beliefs about the world and not a model of the world, in the sense of a  representation of a simplified  world.^[Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable involves a form of modeling.] Recognizing that we are generally dealing with models that are not true results in a reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. 
 
 
-## Nothing from nothing
+<!-- For an even modestly more complex situation, it seems inevitable that the model being used really is a model and hard to think of as a faithful summary of beliefs.  -->
+
+
+<!-- That is the subject of Chapter \@ref(evaluation). -->
+
+A second approach is to seek justify a model empirically. In this chapter, we explore some of the constraints on and possibilities for empirical model-justification. We take up the problem in two steps. First, we ask whether and when, given we a causal structure, can empirically derive the probative value required for process tracing. Second, we briefly summarize an approach to discovering causal structures, which are of course a critical input into both process tracing and mixed-method inference.
+
+<!-- by claiming exchangeability with units for which we have a lower-level  model. In a sense, this approach  pushes the question down a level, since the lower level model itself needs to be justified. There are two further responses to this concern. One is to justify the lower-level model with  data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of the structural assumptions made in our DAG, an approach that we address in Chapter \@ref(evaluation). -->
+
+
+## Justifying probative value for process-tracing
+
+The problem of justifying assumptions is most acute for case-level process-tracing inferences, for two reasons. First, the  beliefs that come into play in generating probative value for our clues are beliefs over the distribution of *individual-level* effects, not just beliefs over average effects. We need beliefs, for instance, about the probability of seeing some clue, $K$, in a given case if $X=1$ causes $Y=1$ in the cases. This puts us up against the fundamental problem of causal inference [@holland1986statistics]. Second, in single-case inference, we do not have opportunities to learn about our model from the case at hand; so the beliefs we go in with are critical. Indeed for case-level queries, inferences might be little more than conditional applications of a model.
+
+The question we pursue in this chapter is whether and under what conditions we can empirically justify those beliefs that yield probative value for our clues.
+
+
+### Nothing from nothing
 
 
 ```{r, echo = FALSE, include = FALSE}
@@ -9851,65 +9868,106 @@ kable(cbind(prior = get_parameters(model1, param_type = "flat"),
 ```
 
 
-This example illustrates the Cartwight idea we pointed to in Chapter 2: no causes in, no causes out  [@cartwright1994nature]. It poses, we think, a challenge to process tracing approaches: observational data alone is not sufficient to generate a justification for process tracing inferences for 3 node problems *even when in reality* causal structures are simple.
+This example nicely illustrates the @cartwright1994nature's idea of "no causes in, no causes out." It also poses, we think, a challenge to any process-tracing exercise that aspires to than model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems *even when in reality* causal structures are simple.
 
-## Justifying the classic process tracing tests
+### Justifying the classic process-tracing tests
 
-Now,  more positively, we show the  possibility of justification of each of the four classical "qualitative tests" described by @collier2011understanding and drawing on @Van-Evera:1997, at least when treatment assignment is randomized. 
+Now,  on a more encouraging note, we show the  possibility of justification of each of the four classical "qualitative tests" described by @collier2011understanding and drawing on @Van-Evera:1997, at least when treatment assignment is randomized. 
 
-Recall the four tests are "smoking gun" tests, "hoop" tests, "doubly decisive" tests, and "straw-in-the-wind" tests. A hoop test is one which, if failed, bodes especially badly for a claim; a smoking gun test is one that bodes well for a hypothesis if passed; a doubly decisive test is strongly conclusive no matter what is found, and a straw-in-the-wind test is suggestive, though not conclusive, either way.
+Recall that the four tests are "smoking gun" tests, "hoop" tests, "doubly-decisive" tests, and "straw-in-the-wind" tests. A hoop test is one which, if failed, bodes especially badly for a claim; a smoking gun test is one that bodes especially well for a hypothesis if passed; a doubly decisive test is strongly conclusive no matter what is found; and a straw-in-the-wind test is suggestive, though not conclusive, either way. Of course, Bayesian inference involves continuous probabilities, not discrete test categories, but we speak to these categories for heuristic purposes. The more general point is that probative value can be derived from data in which randomization of a causal variable can be assumed.
 
-In some treatments (such as @humphreys2015mixing), formalization involves specifying a prior that a hypothesis is true and an independent set of beliefs about the probability of seeing some data if the hypothesis is true and if it is false. Then updating proceeds using Bayes' rule. 
+In some treatments of Bayesian process tracing (such as our own work in @humphreys2015mixing), formalization involves specifying (a) a prior that a hypothesis is true and, *independently* of that (b) a set of beliefs about the probability of seeing a given data pattern if the hypothesis is true and if it is false. Updating then proceeds using Bayes' rule. 
 
-This simple approach suffers from two related weaknesses however: first, there is no good reason to expect these probabilities to be independent; second, there is nothing in the set-up to indicate how beliefs around the probative value of clues can be established or justified. 
+This simple approach suffers from two related weaknesses however. First, there is no good reason to expect these probabilities to be independent. Our prior beliefs about the hypotheses constitute beliefs about *how the world works*, and beliefs about how the world works should have implications for the conditions under which clues are likely to be observed. Second, there is nothing in the setup to indicate how beliefs about the probative value of clues should be established or justified. 
 
-Both of these problems are resolvable if the problem is articulated using fully specified causal models.
+Both of these problems are resolvable in the context of inference from fully specified causal models. We illustrate first by using an idealized example to show that a case-level "doubly decisive" test can be justified by population-level data from factorial designs, then generalize to all four tests.
 
-We illustrate first by using an idealized example to show that a case level "doubly decisive" test can be justified by population data from factorial designs.
+Suppose that we have observed just $X$ and $Y$ across a large set of cases, allowing us to infer that $\Pr(Y=1|X=1) = \Pr(Y=1|X=0) = .5$. Here we have an average treatment effect of 0. But suppose, further, that our query is whether $X=1$ caused $Y=1$ in a particular case with $X=1, Y=1$. The marginal distributions we have observed so far are consistent with a world in which $X$ never affects $Y$; one in which $X$ always affects $Y$ (sometimes negatively, sometimes positively); and with many possibilities in between. 
 
-Say we have from observing just $X$ and $Y$ that $\Pr(Y=1|X=1) = \Pr(Y=1|X=0) = .5$. Here we have an average treatment effect of 0. We are interested in a particular case with $X=1, Y=1$ and specifically whether  $X=1$ caused $Y=1$ in that case. The marginal information so far is consistent with a world in which $X$ never affects $Y$ and one in which $X$ always affects $Y$ (sometimes negatively, sometimes positively). 
-
-Say now that we had data on $K$ and found (a) that $K=1$ arises with 50% probabilities, and (b) that the marginal distributions of $Y$ given $X$ and $K$ are as follows:
+Now, let's say that we have data on a third variable, $K$, and find (a) that $K=1$ arises with 50% probability and (b) that the marginal distributions of $Y$ given $X$ and $K$ are as follows:
 
 * $\Pr(Y=1|X=0, K = 0) = 1$
 * $\Pr(Y=1|X=1, K = 0) = .5$
 * $\Pr(Y=1|X=0, K = 1) = 0$
 * $\Pr(Y=1|X=1, K = 1) = .5$
 
-In that case we see that in cases in which $K=1$, $X=0$ is a necessary condition for $Y=1$. So if $K=1$ then certainly $X=1$ caused $Y=1$ (since, in that case, were $X$ zero then certainly $Y$ would be 0.) On the other hand were $K=0$ then $X=0$ would be a sufficient condition for $Y=1$, which means that in this case $X=1$ most certainly did *not* cause $Y=1$.  We have then that if $K=1$ then  certainly $X=1$ caused $Y=1$ whereas if  $K=0$ then  certainly $X=1$ did not cause $Y=1$
+We thus see that, in cases in which $K=1$, $X=0$ is a necessary condition for $Y=1$. So if $K=1$, then $X=1$ certainly caused $Y=1$ (since, in that case, were $X$ zero then $Y$ would certainly be 0.) On the other hand, were $K=0$, then $X=0$ would be a sufficient condition for $Y=1$, which means that in this case $X=1$ most certainly did *not* cause $Y=1$.  We have then that, if $K=1$, then certainly $X=1$ caused $Y=1$ whereas if  $K=0$, then certainly $X=1$ did not cause $Y=1$
  
-This argument demonstrates that it is possible to justify a doubly decisive test on the basis of experimental data---provided your case can be considered exchangeable with cases in the experimental data.  
+This example demonstrates that, with infinite data, it is in principle possible to justify a doubly decisive test on the basis of experimental data---provided that the case about which we seek to make inferences can be considered exchangeable with the cases in the experimental data.  
 
-Table \@ref(tab:tests15) shows how this logic generalizes to different types of tests.
+Table \@ref(tab:tests15) shows how this logic generalizes to different types of tests. For each test we first show the data available to us (first 5 rows); we then show the inferences on whether $X=1$ causes $Y=1$ in cases where $X=1$ and $Y=1$ as a function of $K$.
+
+``` {r tests15, echo = FALSE}
+
+bounds <- function(p0, p1){
+  tau = p1 - p0
+  rho = p1 - (1-p0)
+  if(tau>=0)
+  x <- c(lower = (2*tau / (1+ tau + rho)), upper = ifelse(rho<0, 1, (1+tau -abs(rho))/(1+tau + abs(rho)))) 
+  x
+}
+
+# bounds(.25, .75)
+# bounds(.5, .75)
+# bounds(1/3, .75)
 
 
-```{r tests15, echo = FALSE}
-data.frame(Value = c(
-"$\\Pr(K = 1)$", 
-"$\\Pr(Y=1 \\vert X=0, K = 0)$", 
-"$\\Pr(Y=1 \\vert X=1, K = 0)$",
-"$\\Pr(Y=1 \\vert X=0, K = 1)$", 
-"$\\Pr(Y=1 \\vert X=1, K = 1)$", 
-"$\\Pr(X \\text{  causes }Y \\vert K=1)$",
-"$\\Pr(X \\text{  causes }Y \\vert K=0)$"),
 
-DD =      c(.5, 1,     .5,   0,    .5,  1, 0),
-Hoop =    c(.9, 1,     .5, .44, "4/9", "", 0),
-Smoking = c( 1, "4/9", .5,   0, .5,     1, ""), 
-Straw =   c(.5,    .6, .5,  .4, .5,    "", "") 
-)  %>% kable(col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw in the wind"),
+
+table <- data.frame(Value = c(
+  "$\\Pr(K = 1)$", 
+  "$\\Pr(Y=1 \\vert X=0, K = 0)$", 
+  "$\\Pr(Y=1 \\vert X=1, K = 0)$",
+  "$\\Pr(Y=1 \\vert X=0, K = 1)$", 
+  "$\\Pr(Y=1 \\vert X=1, K = 1)$", 
+  "$\\Pr(X \\text{  causes }Y \\vert K=1)$",
+  "$\\Pr(X \\text{  causes }Y \\vert K=0)$"),
+  
+  DD =      c(0.5, 1,     "1/2",   0,    "1/2",  1, 0),
+  Hoop =    c(0.9, 1,     "1/2", "1/3", "2/3", "[1/2, 1]", 0),
+  Smoking = c( 0.1, "1/3", "2/3",   0, "1/2",     1, "[.5, 1]"), 
+  Straw =   c(0.5,    "1/2", "3/4",  "1/4", "3/4",    "[1/3,2/3]", "[2/3,1]") 
+) 
+
+kable(table, col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw in the wind"),
              caption = "Known probabilities from a model with  $X \\rightarrow Y \\leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.", align=c("l", rep('c', 4)))
-
 
 ```
 
-`r flag()` Put bounds in empty cells.
+<!-- ```{r tests15, echo = FALSE} -->
+<!-- data.frame(Value = c( -->
+<!-- "$\\Pr(K = 1)$",  -->
+<!-- "$\\Pr(Y=1 \\vert X=0, K = 0)$",  -->
+<!-- "$\\Pr(Y=1 \\vert X=1, K = 0)$", -->
+<!-- "$\\Pr(Y=1 \\vert X=0, K = 1)$",  -->
+<!-- "$\\Pr(Y=1 \\vert X=1, K = 1)$",  -->
+<!-- "$\\Pr(X \\text{  causes }Y \\vert K=1)$", -->
+<!-- "$\\Pr(X \\text{  causes }Y \\vert K=0)$"), -->
 
-Note that some entries in Table \@ref(tab:tests15)  were given as ranges. This reflects that fact that unless we are at edge cases the estimand here is not identified even with infinite  experimental data. In practice we expect never to be at these edges. Even still, the procedures given in Chapters XX above let us form posteriors over inferences with finite data. 
+<!-- DD =      c(.5, 1,     .5,   0,    .5,  1, 0), -->
+<!-- Hoop =    c(.9, 1,     .5, .44, "4/9", "", 0), -->
+<!-- Smoking = c( 1, "4/9", .5,   0, .5,     1, ""),  -->
+<!-- Straw =   c(.5,    .6, .5,  .4, .5,    "", "")  -->
+<!-- )  %>% kable(col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw in the wind"), -->
+<!--              caption = "Known probabilities from a model with  $X \\rightarrow Y \\leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.", align=c("l", rep('c', 4))) -->
 
-For the illustration we first make use of a function that generates data from a model with a constrained set of types for $Y$ and a given prior distribution over clue $K$.
 
-We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data. Note that the model that is updated has no constraints on $Y$, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ reacts to $X$. 
+<!-- ``` -->
+
+<!-- `r flag()` Put bounds in empty cells. -->
+
+Note that some entries in Table \@ref(tab:tests15)  appear as ranges. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. However, despite not being identified, bounds can be placed on causal quantities. For instance, for the hoop test, when $K=1$ the bounds are $[.5,1]$. The reason that the probability of causation here can not be *less* than 0.5, is that we can see from the data when $X=1, X=0$ that *at most* one third of cases can by cases for which $Y=1$ regardless of $X$ ($\theta^Y_{11}$) meaning that at *least* half of cases that produce $Y=1$ when $X=1$ and $K=1$ are cases for which $Y=1$ *because* $X=1$. In these examples the fact that queries are not point identified with infinite data does not detract from the fact that $K$ is informative in the ways associated with the different types of tests. 
+
+The procedures given in Chapter \@ref(mixing) let us form posteriors over inferences with finite data. We briefly illustrate in Table \@ref(testsfinite). The results displayed here are drawn from simulations in which we start by making four different $X \rightarrow Y \leftarrow K$ models. For each model, we set particular restrictions on $Y$'s nodal types and a particular value for $Pr(\theta^K)$ such that $K$ provides different kinds of probative value about $X$'s effect. (We have set these restrictions and assignment propensities for $K$ such that the four resulting data-generating processes will, in the next steps, generate learning about $K$ that turns our clue into one of the four classic tests.)  We then simulate 1000 observations from each model and next update an agnostic $X \rightarrow Y \leftarrow K$ model. 
+
+In Table \@ref(testsfinite), we show the inferences we would now draw from observing $K=1$ versus $K=0$ in a single case, based on the *updated* model. Each column---which we have labelled with the classic test names---represents our beliefs about $K$'s probative value as derived from a different simulated data pattern. Thus, for instance, in the "hoop test" column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case slightly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case greatly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ slightly undermines our confidence in such an effect.
+
+We underline that we have here *derived* the probative value of the clue from observed data and a model that was entirely agnostic about the clue's probative value (but which did assume *some* priors on causal types). In particular, the model that we start with has no restrictions on $Y$'s nodal types, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ responds to $X$. It does, however, assume that $X$ and $K$ are exogenous, as might be the case if these were experimentally manipulated.
+
+
+<!-- ^[We retain the $Y$ types in which $X$ and only $X$ has a positive effect on $U$, only $K$ matters, or you have to have both.] -->
+
+<!-- We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data.  -->
 
 
 ```{r, echo = FALSE}
@@ -9934,12 +9992,11 @@ van_evera_inference <- function(data)
               using = "posteriors")
 ```
 
-We can now generate posterior beliefs, given $K$, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model.
-  
-Results:
+<!-- We can now generate posterior beliefs, given $K$, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model. -->
 
 
-```{r, echo = FALSE}
+
+```{r, testsfinite, echo = FALSE}
 if(do_diagnosis){
 doubly_decisive <- van_evera_data("0001", .5) %>% van_evera_inference
 
@@ -9966,11 +10023,11 @@ for(j in 4:7){
 teststable[c(2, 4, 6), j] <- paste0("(", teststable[c(2, 4, 6), j], ")")}
 
   teststable %>% 
-  kable(caption= "Classic tests with probative value inferred from (simulated) data", row.names = FALSE)
+  kable(caption= "Classic tests with probative value inferred from (simulated) data, for query, Does $X$ have a positive effect on $Y$ in this case?", row.names = FALSE)
 ```
 
 
-We see that these tests all behave as expected. Importantly, however, the approach to thinking about the tests is quite different to that described in @collier2011understanding or @humphreys2015mixing. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that relates a clue to possible causal effects. Critically, with this approach,  the inferences made from observing clues can be justified by reference to a more fundamental,  agnostic model, that has been updated in light of data. The updated model yields both a prior over the proposition, belief about probative values, and guidance for what conclusions to draw given knowledge of $K$. 
+This approach to thinking about process tracing tests is quite different to that described in existing (including Bayesian) treatments such as @collier2011understanding, @BennettAppendix, @fairfield2017explicit, or @humphreys2015mixing. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that embeds a clue in a network of possible causal effects. Critically, with this approach, the inferences made from observing clues can be justified by reference to a more fundamental,  relatively agnostic model, that has been updated in light of data. The updated model yields a prior over the proposition, beliefs about probative values, and guidance for what conclusions to draw given knowledge of $K$. 
 
 
 <!-- ## Bounds on probative value -->
@@ -10189,76 +10246,81 @@ We see that these tests all behave as expected. Importantly, however, the approa
 
 <!-- In short we emphasize that difficult as it might seem at first it is possible to put relatively tight bounds on probative value for causal types with access to experimental data on exchangeable units.  -->
 
-<!-- FLAG: The below is imported from Chap 14. Should bring in part of the relevant table with conditioning on M. -->
 
-It is also easy to show how conducting process tracing on a set of cases can incrementally add probative value to a clue. Consider the setup we employed to assess case-selection strategies in Chapter \@ref(caseselection), where we began with positively correlated $X,Y$ data in 6 cases. We showed there that, if we start with Jeffreys priors for all  parameters in a chain model, nothing can be learned about the $ATE$ or the probability of causation from observing $M$ in a single case. However, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$. Recall that the $X,Y$ pattern tells us that (with respect to the $X \rightarrow Y$ relationship) there are relatively more $b$'s than other types in the population. This means, in turn, that an $X=1, Y=1$ case is more likely to be a $b$ than a $d$. If we now observe $M=1$ in an $X=1, Y=1$---a case we think is probably a $b$---we now have reason to believe that positive $X \rightarrow Y$ effects operate through a positive $X \rightarrow M$ effect followed by a positive $M \rightarrow Y$ effect. (And had we seen $M=0$ in this case, we'd believe positive effects more likely operate through a negative effect followed by a positive effect.) Put differently, we now believe that $M=1$ in an $X=1, Y=1$ case is a clue that that case is likely a $b$ type---and our belief about the causal effect in an $X=1, M=1, Y=1$ case shifts upward. It shifts upward in two senses. 
+<!-- ### Learning about probative value from process tracing -->
 
-Thus, while we do not learn about the overall population from an N=1 process-tracing exercise, process-tracing in that single case does make $M$ *informative* about *other* cases. We can see this by comparing our beliefs about an $X=1, M=1, Y=1$ case in the row in which we have only observed the $X,Y$ correlation to our beliefs about that same kind of case in the row in which we have process-traced in an on-the-line case. While in the first instance conditioning on $M=1$ has no impact on the estimated causal effect (because we haven't previously learned about $M$), it does have an impact in the latter instance.
+<!-- <!-- FLAG: The below is imported from Chap on case selection. May want to resurrect. But would need to bring in part of the relevant table (commented out) with conditioning on M. --> -->
 
-We also see that our belief about the causal effect in an $X=0, M=1, Y=1$ case shifts upward. Why? Updating toward the belief that positive effects --- which we believe to be relatively common --- more often operate via linked positive positive effects implies that $X$ more often has a positive than a negative effect on $M$. Yet for an $X=0, M=1, Y=1$ to be a case with a negative causal effect, $X$'s effect on $M$ would have to be negative. Thus, interestingly, evidence from *on* the regression line can inform inferences about cases *off* the regression line via information about mediating processes.
+<!-- It is also easy to show how conducting process tracing on a set of cases can incrementally add probative value to a clue. Consider the setup we employed to assess case-selection strategies in Chapter \@ref(caseselection), where we began with positively correlated $X,Y$ data in 6 cases. We showed there that, if we start with Jeffreys priors for all  parameters in a chain model, nothing can be learned about the $ATE$ or the probability of causation from observing $M$ in a single case. However, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$.  -->
 
-<!-- FLAG: Haven't figured out why seeing M=1 in an X=1, Y=0 case reduces the estimated causal effect for an X=1, M=1, Y=1 case relative to just seeing the X,Y pattern. If we see M=1 in this off-line case, we have evidence in favor of X having a positive effect on M, and M having a negative effect on Y. So this should generally speak against positive effects in  X=1, M=1, Y=1 cases. But if we'd seen M=0, wouldn't this have the same effect? It would suggest negative X->M effects and positive M->Y effects, which would also speak against a positive effect in an  X=1, M=1, Y=1 case. So how does observing M help? -->
+<!-- The $X,Y$ pattern in the initial 6 cases---a weak positive relationship---tells us that (with respect to the $X \rightarrow Y$ relationship) there are relatively more $b$'s than other types in the population. This means, in turn, that an $X=1, Y=1$ case is more likely to be a $b$ than a $d$. If we now observe $M=1$ in an $X=1, Y=1$---a case we think is probably a $b$---we now have reason to believe that positive $X \rightarrow Y$ effects operate through a positive $X \rightarrow M$ effect followed by a positive $M \rightarrow Y$ effect. (And had we seen $M=0$ in this case, we'd believe positive effects more likely operate through a negative effect followed by a positive effect.) Put differently, we now believe that seeing $M=1$ in an $X=1, Y=1$ case is a clue that that case is likely a $b$ type---and our belief about the causal effect in an $X=1, M=1, Y=1$ case shifts upward. -->
 
-We see even stronger learning about an off-the-line $X=0, M=1, Y=1$, however, if we process trace off-the-line. The observation of $M=1$ in an $X=1, Y=0$ case counts as evidence against the operation of *both* steps in the causal chain through which $X$ could have a negative effect on $Y$ in an $X=0, M=1, Y=1$ case: it suggests that $X$'s effect on $M$ is more likely positive than negative *and* that $M$'s effect on $Y$ is more likely negative---precisely the opposite of what would have to be true for a negative effect to emerge in this kind of case. Thus, we now think this kind of case is less likely to involve a causal effect.
+<!-- Thus, while we do not learn about the overall population from an $N=1$ process-tracing exercise, process-tracing in that single case does make $M$ informative about *other* cases. We can see this by comparing our beliefs about an $X=1, M=1, Y=1$ case in the row in which we have only observed the $X,Y$ correlation to our beliefs about that same kind of case in the row in which we have process-traced in an on-the-line case. While in the first instance conditioning on $M=1$ has no impact on the estimated causal effect (because we haven't previously learned about $M$), it does have an impact in the latter instance. -->
 
+<!-- We also see that our belief about the causal effect in an $X=0, M=1, Y=1$ case shifts upward. Why? Updating toward the belief that positive effects --- which we believe to be relatively common --- more often operate via linked positive positive effects implies that $X$ more often has a positive than a negative effect on $M$. Yet for an $X=0, M=1, Y=1$ to be a case with a negative causal effect, $X$'s effect on $M$ would have to be negative. Thus, interestingly, evidence from *on* the regression line can inform inferences about cases *off* the regression line via information about mediating processes. -->
 
-## Justification from experimental designs
+<!-- <!-- FLAG: Haven't figured out why seeing M=1 in an X=1, Y=0 case reduces the estimated causal effect for an X=1, M=1, Y=1 case relative to just seeing the X,Y pattern. If we see M=1 in this off-line case, we have evidence in favor of X having a positive effect on M, and M having a negative effect on Y. So this should generally speak against positive effects in  X=1, M=1, Y=1 cases. But if we'd seen M=0, wouldn't this have the same effect? It would suggest negative X->M effects and positive M->Y effects, which would also speak against a positive effect in an  X=1, M=1, Y=1 case. So how does observing M help? --> 
 
-idea: show inferences given for example parallel designs for mediation
-
-### Mediator
-
-Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$. 
-
-Say the transition matrices from $X$ to $K$ and $K$ to $Y$ are:
-
-$$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$ 
-Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$. 
-
-To see this, note that we can calculate:
-
-* $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$
-* $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$
-
-and so:
-
-* $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$
-* $\lambda_d^u = \lambda_d^Y$ 
-* $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$.
-
-whence:
-
-* $\phi_{b1} = 1$
-* $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$
-
-More generally we can calculate the lower bound on the probability that $X$ caused $Y$ as the product of the lower bounds that $X$ caused $M$ and that $M$ caused $Y$, and similarly for the upper bound, using the same formula as before. Signing things so that $\tau^j\geq 0$, $j \in {1,2}$:
-
-$$\frac{2\tau_1}{1+\tau_1+\rho_1}\frac{2\tau_2}{1+\tau_2+\rho_2}  \leq PC \leq \frac{1+\tau_1-|\rho_1|}{1+\tau_1+\rho_1}\frac{1+\tau_2-|\rho_2|}{1+\tau_2+\rho_2} $$
+<!-- We see even stronger learning about an off-the-line $X=0, M=1, Y=1$, however, if we process trace off-the-line. The observation of $M=1$ in an $X=1, Y=0$ case counts as evidence against the operation of *both* steps in the causal chain through which $X$ could have a negative effect on $Y$ in an $X=0, M=1, Y=1$ case: it suggests that $X$'s effect on $M$ is more likely positive than negative *and* that $M$'s effect on $Y$ is more likely negative---precisely the opposite of what would have to be true for a negative effect to emerge in this kind of case. Thus, we now think this kind of case is less likely to involve a causal effect. -->
 
 
-We have undertaken essentially the same operations as above except that now we are placing bounds on a substantive estimand of interest rather than first placing bounds on probative value of a clue and then turning to Bayes rule to place bounds on the estimand.
+<!-- ## Justification from experimental designs -->
+
+<!-- idea: show inferences given for example parallel designs for mediation -->
+
+<!-- ### Mediator -->
+
+<!-- Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$.  -->
+
+<!-- Say the transition matrices from $X$ to $K$ and $K$ to $Y$ are: -->
+
+<!-- $$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$  -->
+<!-- Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$.  -->
+
+<!-- To see this, note that we can calculate: -->
+
+<!-- * $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$ -->
+<!-- * $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$ -->
+
+<!-- and so: -->
+
+<!-- * $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$ -->
+<!-- * $\lambda_d^u = \lambda_d^Y$  -->
+<!-- * $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$. -->
+
+<!-- whence: -->
+
+<!-- * $\phi_{b1} = 1$ -->
+<!-- * $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$ -->
+
+<!-- More generally we can calculate the lower bound on the probability that $X$ caused $Y$ as the product of the lower bounds that $X$ caused $M$ and that $M$ caused $Y$, and similarly for the upper bound, using the same formula as before. Signing things so that $\tau^j\geq 0$, $j \in {1,2}$: -->
+
+<!-- $$\frac{2\tau_1}{1+\tau_1+\rho_1}\frac{2\tau_2}{1+\tau_2+\rho_2}  \leq PC \leq \frac{1+\tau_1-|\rho_1|}{1+\tau_1+\rho_1}\frac{1+\tau_2-|\rho_2|}{1+\tau_2+\rho_2} $$ -->
 
 
-### Moderator
-Consider now  a situation  in which our case is drawn from a set of cases for which $X$ and $K$ were each randomly assigned. Say then that the transition matrices, conditional on $K$ look as follows:
-
-$$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$
-In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$ --- before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$. 
-
-How about $\phi_{b1}$ and $\phi_{d1}$?
-
-Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue.
+<!-- We have undertaken essentially the same operations as above except that now we are placing bounds on a substantive estimand of interest rather than first placing bounds on probative value of a clue and then turning to Bayes rule to place bounds on the estimand. -->
 
 
+<!-- ### Moderator -->
+<!-- Consider now  a situation  in which our case is drawn from a set of cases for which $X$ and $K$ were each randomly assigned. Say then that the transition matrices, conditional on $K$ look as follows: -->
+
+<!-- $$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$ -->
+<!-- In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$ --- before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$.  -->
+
+<!-- How about $\phi_{b1}$ and $\phi_{d1}$? -->
+
+<!-- Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue. -->
 
 
-## Causal discovery
 
-The last sections---as well as the core content in chapters 10 and 11 `r flag()` showed how higher level models can be justified by reference to lower level models plus data. Even these lower level presupposed beliefs about the basic causal structure. But where does this knowledge come from?
 
-The discovery of causal structure is itself a very large field of inquiry and we cannot do it justice here. For a review see for instance @glymour2019review.
+## Empirical discovery of causal structure
 
-Here we illustrate simply the possibility of  casual discovery. We illustrate with three cases in which there is a true---but unknown model---relating $X,M,$ and $Y$ to each other. Critically we assume that there are no unobserved confounding relations (this is a requirement for the "PC" algorithm but not for the "Fast Causal Inference" algorithm). In each case we show the true relationship and the "skeleton" of the model as discovered by a prominent technique that uses a "constraint-based algorithm"--- examining whether observed data correlations are consistent with one or other set of conditional independence relations.   
+In the preceding discussion of learning about probative value for process tracing, we have taken causal structure---the DAG itself---as given. Moreover, even when we are engaged in mixed-data inference on multiple cases---where we can start with *only* the DAG---we need to start with some causal structure. Where does knowledge of causal structure come from?
+
+The empirical discovery of causal structure is itself a very large field of inquiry and we cannot do it justice here. For a review see, for instance, @glymour2019review.
+
+Here we seek simply to illustrate the possibility of casual discovery. We demonstrate with three situations in which there is a true---but unknown model---relating $X,M,$ and $Y$ to each other. Critically, we assume that there are no unobserved confounding relations (this is a requirement for the "PC" algorithm but not for the "Fast Causal Inference" algorithm). In each situation, we show the true relationship and the "skeleton" of the model as discovered by a prominent technique that uses a "constraint-based algorithm"---examining whether observed data correlations are consistent with one or another set of conditional-independence relations.   
 
 
 ```{r skeleton, include = FALSE, eval = TRUE, message = FALSE}
@@ -10292,7 +10354,7 @@ recover_model <- function(model) {
   }
 ```
 
-In the  first model  $X$ affects $Y$ directly and indirectly through $M$. We simulate data from this model -- assuming monotonicity but otherwise a flat distribution on types.
+In Figure \@ref(fig:plots), the top row of models represent the true models from which simulated data are generated. The objective is then to see how much of this true causal structure the discovery algorithm can recover from the data. In the first true model, $X$ affects $Y$ directly and indirectly through $M$. In the second model, $Y$ has two causes that do not influence each other. Finally, in the third model, $X$ causes $Y$ through $M$ but not directly. When we simulate data from these models, we assume monotonicity but otherwise a flat distribution over nodal types. We also assume no confounding: there is nothing not represented on the graph that affects more than one node on the graph.
 
 
 ```{r model1ch14, include = FALSE}
@@ -10302,10 +10364,6 @@ model1 <- make_model("X -> M -> Y <- X") %>%
 ```
 
 
-
-Next we consider the model in which $Y$ has two causes that do not influence each other. 
-
-Finally  we consider the model in which $X$ causes $Y$ through $M$ but not directly. Again we impose monotonicity, draw data.
 
 
 ```{r model3ch14, include = FALSE}
@@ -10340,13 +10398,13 @@ recover_model(model2)
 recover_model(model3)
 ```
 
-In all cases we correctly recover the skeleton. Note that the "o" in the skeleton graphs indicate that we may have an arrow head or an arrow tail. In the first case the skeleton is unrestricted, in the second and third cases the correct restricted skeleton is found. In all cases if we have access to all relevant variables the true graph can  be recovered with knowledge of the temporal ordering of variables. 
+In the bottom row of Figure \@ref(fig:plots), we show the structures that we recover. In all situations, we correctly recover the skeleton: which nodes are connected to which nodes. Note that, for any link where we have an "o" on both ends of the link, we do not know in which direction causal effects flow. 
 
-Perhaps the most impressive of these discoveries is the last: here $X$, $M$ and $Y$ are all correlated with each other, but the correct graph is discovered because $X$ and $M$ are not correlated with each other *conditional* on $M$.
+In the first situation, the skeleton is unrestricted: we have correctly *not* excluded links between any two nodes, but we have not learned about the directions of effects. In the second situation, however, we have fully recovered the causal structure. Thus, the algorithm has figured out that  $X_1$ and $X_2$ are not children of $Y$. The algorithm sees, in essence, data patterns that are distinctively associated with colliders: $X_1$, $X_2$ correlated conditional on $Y$ but not otherwise.  In the last setup, we have not figured out the direction of the causal arrows, but the inference is still rather impressive. Although $X$, $M$ and $Y$ are all correlated with each other, the algorithm has figured out that there should be no direct link between $X$ and $Y$---by observing that $X$ and $M$ are not correlated with each other *conditional* on $M$.
 
-The second graph is also impressive as here we observe arrow heads in the estimated graphs. Thus even without knowledge of the timing of the variables the algorithm indicate that  $X_1$ and $X_2$ are not children of $Y$ --- it sees, in essence, data patterns that are distinctive of colliders---$X_1$, $X_2$ correlated conditional on $Y$ but not otherwise. With that said, if confounding is possible we do not know for sure whether  $Y$ is a child of $X_1$ or whether $Y$ and $X_1$ are confounded. 
+Note also that, in all three situations, if we have access to all relevant variables the true graph can be recovered with additional knowledge of the temporal ordering of the variables.
 
-These examples provide  grounds for hope that causal models can be discovered and not simply assumed. In cases in which unobserved confounding is possible the results do not identify a unique causal structure. If all nodes are known and measured however---a tall order for sure---causal structures can be identified from data.  
+The assumption that we have captured all nodes that might generate confounding is critical to these results. Yet these examples provide grounds for hope that causal models can be discovered and not simply assumed. If all relevant nodes are known and measured---a tall order for sure---causal structures can be identified from data.  
 
 
 <!-- ### A model of models -->
@@ -10991,9 +11049,8 @@ While we cannot identify the correct model from this data pattern, one possible 
 
 ### Bayesian $p$-value
 
-We turn next to evaluating the democratization model using the Bayesian $p-$value approach, and for this purpose can return to the data that we coded from @haggard2012distributive's qualitative vignettes. In the two panels of Figure \@ref(fig:ch15pvalue_pimd), we plot the posterior predictive distributions from our updated model for two quantities of interest: the outcome $D$ and the correlation between $I$ and $M$. In each graph, we indicate with a vertical line the mean value for these quantities for the data at hand and report the $p-$value: the probability of the observed data conditional on our model. As we can see both visually and from the $p-$values, the model performs well here as the data that we observe are not at all unexpected under the model.
+We turn next to evaluating the democratization model using the Bayesian $p-$value approach, and for this purpose can return to the data that we coded from @haggard2012distributive's qualitative vignettes. In the two panels of Figure \@ref(fig:ch15pvalue_pimd), we plot the posterior predictive distributions from our updated model for two quantities of interest: the outcome $D$ and the correlation between $I$ and $M$. In each graph, we indicate with a vertical line the mean value for these quantities for the data at hand and report the $p-$value: the probability of the observed data conditional on our model. 
 
-FIX CHUNK:
 
 ```{r ch15pvalue_pimd, echo = FALSE, eval = FALSE}
 if(do_diagnosis){
@@ -11012,100 +11069,43 @@ if(do_diagnosis){
   }
 
 
-# data <-  read_rds("saved/ch15_replicates_pimd.rds")  
-# 
-# 
-# p_two_sided <- function(T, t, digits = 2){
-#   if(t <  mean(T, na.rm = TRUE)) return(round(2* mean(t > T, na.rm = TRUE), digits))
-#   if(t >= mean(T, na.rm = TRUE)) return(round(2* mean(t <= T, na.rm = TRUE), digits))
-# }
-# 
-# tests <- c("Test stat: Mean of D", "Test stat: I, M covariance")
-# 
-# replicates_pimd <- data %>% gather("test", "val")
-# 
-# wegot <- data.frame(test = c("D", "C"), 
-#                     wegot = c(mean(data$D), cor(data$M, data$I)))
-# wegot_labelled <-  wegot  %>%
-#   mutate(test = factor(test, c("D", "C"), tests))
-#                        
-# ps <- df %>% group_by(test) %>% left_join(wegot) %>% 
-#   summarize(p = p_two_sided(Val, wegot[1])) %>% 
-#   mutate(Val = 1, x = 0, y = 120, label = paste0("p = ", p))
-# 
-# ps_labelled <- ps %>%
-#   mutate(test = factor(test, c("D", "C"), tests)) 
-#   
-# df %>%
-#   mutate(test = factor(test, c("Y", "C"), tests)) %>% 
-#   ggplot(aes(Val)) + geom_histogram() + facet_grid(Model ~ test) + xlab("predictions") +
-#   geom_vline(data = wegot_labelled, aes(xintercept = wegot), color = "red") + theme_bw() + 
-#   ggtext::geom_textbox(data  = ps_labelled, aes(x = x, y = y, label = label), width = unit(0.4, "npc"))
-# 
-# 
+df <-  read_rds("saved/ch15_replicates_pimd.rds")  
 
+p_two_sided <- function(T, t, digits = 2){
+   if(t <  mean(T, na.rm = TRUE)) return(round(2* mean(t > T, na.rm = TRUE), digits))
+   if(t >= mean(T, na.rm = TRUE)) return(round(2* mean(t <= T, na.rm = TRUE), digits))
+ }
+ 
+tests <- c("Test stat: Mean of D", "Test stat: I, M covariance")
+ 
+replicates_pimd <- df %>% gather("test", "Val")
 
+pimd_data <- CausalQueries::democracy_data
 
+wegot <- data.frame(
+  test = c("D", "C"),
+  wegot = c(mean(pimd_data$D),
+            cor(pimd_data$M, pimd_data$I, use = "complete.obs")))
+wegot_labelled <-  wegot  %>%
+  mutate(test = factor(test, c("D", "C"), tests))
+                        
+ps <- replicates_pimd %>% group_by(test) %>% left_join(wegot) %>% 
+   summarize(p = p_two_sided(Val, wegot[1])) %>% 
+   mutate(Val = 1, x = 0, y = 120, label = paste0("p = ", p))
 
+ps_labelled <- ps %>%
+  mutate(test = factor(test, c("D", "C"), tests)) 
 
+replicates_pimd %>%
+   mutate(test = factor(test, c("D", "C"), tests)) %>% 
+   ggplot(aes(Val)) + geom_histogram() + facet_grid( ~ test) + xlab("predictions") +
+   geom_vline(data = wegot_labelled, aes(xintercept = wegot), color = "red") + theme_bw() + 
+   ggtext::geom_textbox(data  = ps_labelled, aes(x = x, y = y, label = label), width = unit(0.4, "npc"))
 
-par(mfrow = c(1,2))
-xlimD <- range(c(replicates_pimd$D))
-xlimC <- range(c(replicates_pimd$C))
-
-p_two_sided <- function(D, d, digits = 2){
-  if(d <  mean(D)) return(round(2* mean(d > D), digits))
-  if(d >= mean(D)) return(round(2* mean(d <= D), digits))
-}
-
-p_temp <- p_two_sided(replicates_pimd$D, mean(data$D))
-hist(replicates_pimd$D, main = paste("D mean | pimd: p= ", p_temp)
-     , xlim = xlimD, xlab = "predictions"); abline(v = mean(data$D), col = "red")
-
-p_two_sided <- function(Y, y, digits = 2){
-  if(y <  mean(Y)) return(round(2* mean(y > Y), digits))
-  if(y >= mean(Y)) return(round(2* mean(y <= Y), digits))
-}
-
-p_temp2 <- p_two_sided(replicates_pimd$C, cor(data$M, data$I, use = "complete.obs"))
-hist(replicates_pimd$C, main = paste("I, M covariance | pimd: p= ", p_temp2),
-     xlim = xlimC, xlab = "predictions"); abline(v = cor(data$M, data$I, use = "complete.obs"), col = "blue")
-
-#Some problem with p_temp2 line above. cor(data$M, data$I) returns NA.  Because of missing values??
-
-# FLAG: WOULD LIKE THIS DONE WITH GGPLOT
 ```
 
 
-<!-- p_two_sided <- function(Y, y, digits = 2){ -->
-<!--   if(y <  mean(Y)) return(round(2* mean(y > Y), digits)) -->
-<!--   if(y >= mean(Y)) return(round(2* mean(y <= Y), digits)) -->
-<!-- } -->
-
-<!-- hist(replicates_restricted$Y,  -->
-<!--      main = paste("Y mean | stronger: p = ", p_temp), -->
-<!--                   xlim = xlimY, xlab = "predictions")  -->
-<!--      abline(v = mean(data$Y), col = "red") -->
-
-<!-- p_temp <- p_two_sided(replicates_restricted$C, cor(data$Y, data$X)) -->
-<!-- hist(replicates_restricted$C,  -->
-<!--      main = paste("X, Y covariance | stronger: p =", p_temp),  -->
-<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
-
-<!-- p_temp <- p_two_sided(replicates_unrestricted$Y, mean(data$Y)) -->
-<!-- hist(replicates_unrestricted$Y,  -->
-<!--      main = paste("Y mean | weaker: p = ", p_temp), -->
-<!--      xlim = xlimY, xlab = "predictions"); abline(v = mean(data$Y), col = "red") -->
-
-<!-- p_temp <- p_two_sided(replicates_unrestricted$C, cor(data$Y, data$X)) -->
-<!-- hist(replicates_unrestricted$C,  -->
-<!--      main = paste("X, Y covariance | weaker: p = ", p_temp),  -->
-<!--      xlim = xlimC, xlab = "predictions"); abline(v = cor(data$Y, data$X), col = "red") -->
-
-
-<!-- <!-- AJ: Should we also calculate a p-value? --> 
-<!-- AJ: And what about comparing multiple models? -->
-
+As we can see both visually and from the $p-$values, the model performs well here as the data that we observe are not at all unexpected under the model.
 
 ### LOO validation
 
@@ -11267,6 +11267,8 @@ The results differ in various modest ways. In Table \@ref(tab:HK8cases1quant), w
 <!-- As before, in cases where $M=0$, the monotonicity of $M$ in $D$ is not relevant since there is no question of a negative effect anyway. However if $M=1$, then it is possible that $I=0$ caused $D=1$ via mobilization in the model that allows negative effects and so we put more weight on the possibility that $I=0$ was the cause.  -->
 
 Turning to Table \@ref(tab:HK8cases2quant) and cases with high inequality and democratization, inferences about the probability of positive causation are unaffected by the assumption about the effect of $I$ on $M$. The reason is that, since we still maintain a monotonicity assumption for the direct effect of $I$ on $D$ (no positive effects), the only question is whether there was an indirect effect. Since we maintain the assumption of a monotonic effect of $M$ on $D$, it remains the case in both models that observing $M=0$ rules out a positive indirect effect. If however $M=1$, then $I$ did not have a negative effect on $M$ and the only question is whether $M=1$ because of $I$ or independent of it --- which depends only on the relative sizes of $\theta^M_{11}$ and $\theta^M_{01}$, which remain the same (and equal to one another) in both models.
+
+Overall the evaluation of the democracy and inequality model paints a mixed picture. Although the model is able to recreate data patterns consistent with observations, the inferences from within case observations discussed in Chapter \@ref(ptapp) depended on assumptions about broader patterns that, while theoretically compelling, can  *not* be justified from observation of broader patterns data even under relatively heroic assumptions on causal identification.   
 
 <!--chapter:end:16-Evaluating-Models5.Rmd-->
 
