@@ -23,7 +23,7 @@ drop_sd <- function(tab, name = "Doubly decisive") {
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
-We outline strategies to reduce reliance on unfounded beliefs about the probative value of clues.
+Where do our model assumptions come from? Model assumptions matter most for single-case process tracing because single-case analysis does not permit updating the model itself on the basis of the data: it is the model assumptions that generate beliefs about the probative value of clues and thus our case-level inferences. In this chapter, we outline strategies for justifying our models on the basis of data and, in particular, for *empirically grounding* our beliefs about the probative value of clues.
 ::::
 <br>
 
@@ -38,7 +38,7 @@ do_diagnosis = FALSE
 
 The approaches to inference that we have described always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters. 
 
-The problem of stating priors is most acute for case-level process tracing inferences, for two reasons. First, the  beliefs we have to state are beliefs over the distribution of individual level effects and not just the beliefs over average effects. This puts us up against the fundamental problem of causal inference [@holland1986statistics]. Second, the beliefs can do a lot of work---especially in small-$n$ applications. Indeed for case level queries, inferences might be little more than conditional applications of a model.
+The problem of stating priors is most acute for case-level process-tracing inferences, for two reasons. First, the  beliefs we have to state are beliefs over the distribution of individual level effects and not just the beliefs over average effects. This puts us up against the fundamental problem of causal inference [@holland1986statistics]. Second, the beliefs can do a lot of work---especially in small-$n$ applications. Indeed for case level queries, inferences might be little more than conditional applications of a model.
 
 We see two broad responses to this problem.
 
@@ -46,7 +46,7 @@ One is to *emphasize the model-contingent nature of claims*. As we outlined in C
 
 Recognizing that we are generally dealing with models results in a useful reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose [@clarke2012model]. That is the subject of Chapter 15.
 
-A second approach is to justify a process tracing model by claiming exchangeability with units for which we have a lower level  model. In a sense, this approach  pushes the question down a level, since the lower level model itself needs to be justified. There are two further responses to this concern. One is to justify the lower level model with  data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of DAG assumptions -- which we address in Chapter 16.
+A second approach is to justify a process-tracing model by claiming exchangeability with units for which we have a lower-level  model. In a sense, this approach  pushes the question down a level, since the lower level model itself needs to be justified. There are two further responses to this concern. One is to justify the lower-level model with  data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of the structural assumptions made in our DAG, an approach that we address in Chapter \@ref(evaluation).
 
 
 ## Nothing from nothing
@@ -83,21 +83,21 @@ agnostic_query %>% kable(caption = "Conditional inferences from an update agnost
 ```
 
 
-We start with a fairly negative result. Many of the models we have looked at---especially for process tracing---have a lot of structure, viz:  
+We start with a fairly discouraging result. Many of the models we have looked at---especially for process tracing---include a good deal of structure, viz:  
 
-* conditional independence assumptions
-* no confounding assumptions, and 
-* monotonicity assumptions, or other restrictions 
+* conditional-independence assumptions
+* assumptions of no confounding
+* monotonicity assumptions or other restrictions 
 
-What happens if you have none of these? Can access to observational data render clues meaningful for inferences on causal effects?
+What happens if we make none of these assumptions? One way to think about this question is: can we start with a DAG that makes none of these assumptions and then use observational data---i.e., learn from those data---to render clues informative about causal effects?
 
+Suppose that we would like to be able to learn from a mediator node. We work through this problem under favorable conditions: a world in which in fact (though unknown *ex ante* to the researcher): 
 
-We show the scope for learning from a mediator for a "good case"---a world in which in fact (though unknown *ex ante* to the researcher): 
+* $X$ causes $Y$ through $M$
+* $X$ is a necessary condition for $M$, and $M$ is a sufficient condition for $Y$ -- and so $Y$ is monotonic in $X$ and 
+* There is no confounding
 
-* You have access to large amounts of observational data on $X$, $Y$ and $M$.
-* In fact $X$ causes $Y$ through $M$
-* $X$ is a necessary condition for $M$ and $M$ is a sufficient condition for $Y$ -- and so $Y$ is monotonic in $X$ and 
-* There is, in fact, no confounding
+We also assume that we have access to large amounts of observational data on $X$, $M$, and $Y$.
 
 
 ```{r appnana, include = FALSE}
@@ -108,16 +108,16 @@ data <- make_model("X -> M -> Y") %>%
                   parameters = c(.5, .5, .2, 0, .8, 0, 0, 0, .8, .2))
 
 
-kable(cor(data), digits = 2, caption = "Data contains strong correlations.")
+kable(cor(data), digits = 2, caption = "Data contain strong correlations.")
 
 ```
 
 
-We imagine inferences are made starting from two types of model. In both we allow all possible links and we impose no restrictions on nodal types. Even though there are only three nodes, this model has 128 causal types ($2\times 4 \times 16$). In addition: 
+We work through inferences for two types of model in which $X$ can have both indirect and direct effects on $Y$. We impose no restrictions on nodal types in either model. Even though there are only three nodes, this model has 128 causal types ($2\times 4 \times 16$). In addition: 
 
 * In `model_1` we allow confounding between all pairs of nodes. This results in 127 free parameters. 
 
-* In `model_2` we assume that $X$ is known to be randomized. There are now only 64 free parameters.
+* In `model_2` we assume that $X$ is known to be randomized but allow for confounding between $M$ and $Y$. There are now only 64 free parameters.
 
 
 ```{r appnana3, include = FALSE}
@@ -182,11 +182,11 @@ tab <- data.frame(drop_sd(q1[c(2,4,6),], name = "M1") ,  drop_sd(q2[c(2,4,6),], 
 for(j in 4:5){
 tab[c(2, 4, 6), j] <- paste0("(", tab[c(2, 4, 6), j], ")")}
 
-tab %>% kable(caption = "Can observation of large N data render mediator $M$ informative for case level inference? Case 1: No knowledge of structure; Case 2: X known to be randomized. Posterior sd in parentheses.", col.names = c("Query",	"Given",	"Using", "Case 1", "Case 2"), row.names = FALSE)
+tab %>% kable(caption = "Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Posterior SD in parentheses.", col.names = c("Query",	"Given",	"Using", "Model 1", "Model 2"), row.names = FALSE)
 
 ```
 
-We find that even with an auspicious monotonic data generating process in which $M$ is a total mediator, $M$ gives no traction on causal inference in Case 1. In contrast it gives considerable leverage in Case 2: $M$ is informative, especially if $M=0$ (in which case we downgrade confidence that $X$ caused $Y$), when $X$ is known to be randomized.
+We find that even with an auspicious monotonic data-generating process in which $M$ is a total mediator, $M$ gives no traction on causal inference under Model 1. In contrast, it gives considerable leverage under Model 2: $M$ is informative, especially if $M=0$ (in which case we downgrade confidence that $X$ caused $Y$), when $X$ is known to be randomized.
 
 ```{r appnana6, eval = FALSE, echo = FALSE}
 model1 <- read_rds("saved/App_somethingnothing_model_1.rds")
@@ -534,7 +534,7 @@ We see that these tests all behave as expected. Importantly, however, the approa
 
 <!-- In short we emphasize that difficult as it might seem at first it is possible to put relatively tight bounds on probative value for causal types with access to experimental data on exchangeable units.  -->
 
-FLAG: The below is imported from Chap 14. Should bring in part of the relevant table with conditioning on M.
+<!-- FLAG: The below is imported from Chap 14. Should bring in part of the relevant table with conditioning on M. -->
 
 It is also easy to show how conducting process tracing on a set of cases can incrementally add probative value to a clue. Consider the setup we employed to assess case-selection strategies in Chapter \@ref(caseselection), where we began with positively correlated $X,Y$ data in 6 cases. We showed there that, if we start with Jeffreys priors for all  parameters in a chain model, nothing can be learned about the $ATE$ or the probability of causation from observing $M$ in a single case. However, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$. Recall that the $X,Y$ pattern tells us that (with respect to the $X \rightarrow Y$ relationship) there are relatively more $b$'s than other types in the population. This means, in turn, that an $X=1, Y=1$ case is more likely to be a $b$ than a $d$. If we now observe $M=1$ in an $X=1, Y=1$---a case we think is probably a $b$---we now have reason to believe that positive $X \rightarrow Y$ effects operate through a positive $X \rightarrow M$ effect followed by a positive $M \rightarrow Y$ effect. (And had we seen $M=0$ in this case, we'd believe positive effects more likely operate through a negative effect followed by a positive effect.) Put differently, we now believe that $M=1$ in an $X=1, Y=1$ case is a clue that that case is likely a $b$ type---and our belief about the causal effect in an $X=1, M=1, Y=1$ case shifts upward. It shifts upward in two senses. 
 
