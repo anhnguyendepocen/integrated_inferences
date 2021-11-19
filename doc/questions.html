@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Causal Queries | Illustrating causal models</title>
+  <meta name="description" content="Bayesian causal models for integrated inferences." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Causal Queries | Illustrating causal models" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
+  <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+  <meta property="og:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="github-repo" content="macartan/integrated_inferences" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Causal Queries | Illustrating causal models" />
+  
+  <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan M. Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="illustratemodels.html"/>
+<link rel="next" href="bayeschapter.html"/>
+<script src="libs/header-attrs/header-attrs.js"></script>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/htmlwidgets/htmlwidgets.js"></script>
+<link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding/datatables.js"></script>
+<link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="headers/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Integrated Inferences</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#key-contributions"><i class="fa fa-check"></i><b>1.2</b> Key contributions</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#counterfactualmodel"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#potential-outcomes"><i class="fa fa-check"></i><b>2.1.1</b> Potential outcomes</a></li>
+<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#generalization"><i class="fa fa-check"></i><b>2.1.2</b> Generalization</a></li>
+<li class="chapter" data-level="2.1.3" data-path="models.html"><a href="models.html#summaries-of-potential-outcomes"><i class="fa fa-check"></i><b>2.1.3</b> Summaries of potential outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#graphing-models-and-using-graphs"><i class="fa fa-check"></i><b>2.3</b> Graphing models and using graphs</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilistic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilistic relations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
+<li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.5.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.5.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.5.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.5.3" data-path="models.html"><a href="models.html#rules-for-moving-between-levels"><i class="fa fa-check"></i><b>2.5.3</b> Rules for moving between levels</a></li>
+<li class="chapter" data-level="2.5.4" data-path="models.html"><a href="models.html#reading-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.5.4</b> Reading conditional independence from a graph</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform</a></li>
+<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions"><i class="fa fa-check"></i><b>3.2</b> Military Interventions</a></li>
+<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Queries</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#actual-causes"><i class="fa fa-check"></i><b>4.3</b> Actual causes</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
+<li class="chapter" data-level="4.6" data-path="questions.html"><a href="questions.html#general-procedure"><i class="fa fa-check"></i><b>4.6</b> General procedure</a></li>
+<li class="chapter" data-level="4.7" data-path="questions.html"><a href="questions.html#appendix"><i class="fa fa-check"></i><b>4.7</b> Appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#features-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Features of Bayesian updating</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>6</b> Theories as causal models</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="theory.html"><a href="theory.html#models-as-theories-of"><i class="fa fa-check"></i><b>6.1</b> Models as <em>theories of</em></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="theory.html"><a href="theory.html#implications-of-structural-causal-models"><i class="fa fa-check"></i><b>6.1.1</b> Implications of structural causal models</a></li>
+<li class="chapter" data-level="6.1.2" data-path="theory.html"><a href="theory.html#probabilistic-causal-models"><i class="fa fa-check"></i><b>6.1.2</b> Probabilistic causal models</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="theory.html"><a href="theory.html#theorygains"><i class="fa fa-check"></i><b>6.2</b> Gains from theory</a></li>
+<li class="chapter" data-level="6.3" data-path="theory.html"><a href="theory.html#formal-theories-and-causal-models"><i class="fa fa-check"></i><b>6.3</b> Formal theories and causal models</a></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>7.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="7.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>7.1.2</b> A formalization of the general approach</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.3</b> Principles of learning</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-get-us-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.3.1</b> A DAG alone does not get us probative value for a single case</a></li>
+<li class="chapter" data-level="7.3.2" data-path="pt.html"><a href="pt.html#learning-requires-uncertainty"><i class="fa fa-check"></i><b>7.3.2</b> Learning requires uncertainty</a></li>
+<li class="chapter" data-level="7.3.3" data-path="pt.html"><a href="pt.html#multiple-ways-for-queries-to-be-satisfied"><i class="fa fa-check"></i><b>7.3.3</b> Multiple ways for queries to be satisfied</a></li>
+<li class="chapter" data-level="7.3.4" data-path="pt.html"><a href="pt.html#beware-of-highly-unlikely-queries"><i class="fa fa-check"></i><b>7.3.4</b> Beware of highly unlikely queries</a></li>
+<li class="chapter" data-level="7.3.5" data-path="pt.html"><a href="pt.html#population-level-uncertainty-does-not-alter-case-level-causal-inference"><i class="fa fa-check"></i><b>7.3.5</b> Population-level uncertainty does not alter case-level causal inference</a></li>
+<li class="chapter" data-level="7.3.6" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>7.3.6</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Process Tracing Application: Inequality and Democracy</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>8.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>8.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>8.3</b> Results</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>8.3.1</b> Inferences for cases with observed democratization</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>8.3.2</b> Cases with incomplete data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#theory-dependence"><i class="fa fa-check"></i><b>8.4</b> Theory dependence</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#from-sample-queries-to-general-processes"><i class="fa fa-check"></i><b>9.2</b> From sample queries to general processes</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
+<li class="chapter" data-level="9.2.3" data-path="mixing.html"><a href="mixing.html#wrinkles"><i class="fa fa-check"></i><b>9.2.3</b> Wrinkles</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#mixed-methods"><i class="fa fa-check"></i><b>9.3</b> Mixed methods</a></li>
+<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.4</b> Considerations</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#probative-value-can-be-derived-from-a-causal-structure-plus-data"><i class="fa fa-check"></i><b>9.4.1</b> Probative value can be derived from a causal structure plus data</a></li>
+<li class="chapter" data-level="9.4.2" data-path="mixing.html"><a href="mixing.html#learning-without-identification"><i class="fa fa-check"></i><b>9.4.2</b> Learning without identification</a></li>
+<li class="chapter" data-level="9.4.3" data-path="mixing.html"><a href="mixing.html#beyond-binary-data"><i class="fa fa-check"></i><b>9.4.3</b> Beyond binary data</a></li>
+<li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
+<li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
+<li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
+<li class="chapter" data-level="9.4.7" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>9.4.7</b> Parameteric models</a></li>
+<li class="chapter" data-level="9.4.8" data-path="mixing.html"><a href="mixing.html#prior-databeliefs-channel-the-learning-from-new-data"><i class="fa fa-check"></i><b>9.4.8</b> Prior data/beliefs “channel” the learning from new data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Integrated Inferences Application: Inequality and Democracy Revisited</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>10.1</b> A trained model</a></li>
+<li class="chapter" data-level="10.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>10.2</b> Data</a></li>
+<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference-1"><i class="fa fa-check"></i><b>10.3</b> Inference</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democratization"><i class="fa fa-check"></i><b>10.3.1</b> Did inequality <em>cause</em> democratization?</a></li>
+<li class="chapter" data-level="10.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>10.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="mixingapp.html"><a href="mixingapp.html#from-cases-to-population"><i class="fa fa-check"></i><b>10.4</b> From cases to population</a>
+<ul>
+<li class="chapter" data-level="10.4.1" data-path="mixingapp.html"><a href="mixingapp.html#contribution-to-case-level-inference"><i class="fa fa-check"></i><b>10.4.1</b> Contribution to case-level inference</a></li>
+<li class="chapter" data-level="10.4.2" data-path="mixingapp.html"><a href="mixingapp.html#how-much-do-we-get-from-the-model-vs.-the-data"><i class="fa fa-check"></i><b>10.4.2</b> How much do we get from the model vs. the data?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="mm.html"><a href="mm.html#a-jigsaw-puzzle-integrating-across-a-model"><i class="fa fa-check"></i><b>11.1</b> A jigsaw puzzle: Integrating across a model</a></li>
+<li class="chapter" data-level="11.2" data-path="mm.html"><a href="mm.html#combining-observational-and-experimental-data"><i class="fa fa-check"></i><b>11.2</b> Combining observational and experimental data</a></li>
+<li class="chapter" data-level="11.3" data-path="mm.html"><a href="mm.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>11.3</b> Transportation of findings across contexts</a></li>
+<li class="chapter" data-level="11.4" data-path="mm.html"><a href="mm.html#multilevel-models-meta-analysis"><i class="fa fa-check"></i><b>11.4</b> Multilevel models, meta-analysis</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="12" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>12</b> Clue Selection as a Decision Problem</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="clue.html"><a href="clue.html#a-model-informed-approach-to-clue-selection"><i class="fa fa-check"></i><b>12.1</b> A model-informed approach to clue-selection</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>12.1.1</b> Clue selection with a simple example</a></li>
+<li class="chapter" data-level="12.1.2" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>12.1.2</b> Dependence on prior beliefs</a></li>
+<li class="chapter" data-level="12.1.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>12.1.3</b> Clue selection for the democratization model</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Mixed methods data strategies</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through"><i class="fa fa-check"></i><b>13.3</b> Specific case walk through</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#case-selection-from-causal-models-a-simulation-based-approach"><i class="fa fa-check"></i><b>13.4</b> Case selection from causal models: a simulation-based approach</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wideordeep.html"><a href="wideordeep.html"><i class="fa fa-check"></i><b>14</b> Going wide, going deep</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wideordeep.html"><a href="wideordeep.html#walk-through-of-a-simple-comparison"><i class="fa fa-check"></i><b>14.1</b> Walk-through of a simple comparison</a></li>
+<li class="chapter" data-level="14.2" data-path="wideordeep.html"><a href="wideordeep.html#a-simulation-based-approach-to-choosing-mixes"><i class="fa fa-check"></i><b>14.2</b> A simulation-based approach to choosing mixes</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="wideordeep.html"><a href="wideordeep.html#approach"><i class="fa fa-check"></i><b>14.2.1</b> Approach</a></li>
+<li class="chapter" data-level="14.2.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results"><i class="fa fa-check"></i><b>14.2.2</b> Simulation results</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="wideordeep.html"><a href="wideordeep.html#factoring-in-the-cost-of-data"><i class="fa fa-check"></i><b>14.3</b> Factoring in the cost of data</a></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="15" data-path="justifying.html"><a href="justifying.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="justifying.html"><a href="justifying.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1</b> Nothing from nothing</a></li>
+<li class="chapter" data-level="15.2" data-path="justifying.html"><a href="justifying.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.2</b> Justifying the classic process tracing tests</a></li>
+<li class="chapter" data-level="15.3" data-path="justifying.html"><a href="justifying.html#justification-from-experimental-designs"><i class="fa fa-check"></i><b>15.3</b> Justification from experimental designs</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="justifying.html"><a href="justifying.html#mediator"><i class="fa fa-check"></i><b>15.3.1</b> Mediator</a></li>
+<li class="chapter" data-level="15.3.2" data-path="justifying.html"><a href="justifying.html#moderator"><i class="fa fa-check"></i><b>15.3.2</b> Moderator</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="justifying.html"><a href="justifying.html#causal-discovery"><i class="fa fa-check"></i><b>15.4</b> Causal discovery</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#four-strategies"><i class="fa fa-check"></i><b>16.1</b> Four Strategies</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independence"><i class="fa fa-check"></i><b>16.1.1</b> Check conditional independence</a></li>
+<li class="chapter" data-level="16.1.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value-are-the-data-unexpected-given-your-model"><i class="fa fa-check"></i><b>16.1.2</b> Bayesian <span class="math inline">\(p-\)</span>value: Are the data unexpected given your model?</a></li>
+<li class="chapter" data-level="16.1.3" data-path="evaluation.html"><a href="evaluation.html#leave-one-out-loo-cross-validation"><i class="fa fa-check"></i><b>16.1.3</b> Leave-one-out (LOO) cross-validation</a></li>
+<li class="chapter" data-level="16.1.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity"><i class="fa fa-check"></i><b>16.1.4</b> Sensitivity</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="evaluation.html"><a href="evaluation.html#check-assumptions-of-conditional-independence"><i class="fa fa-check"></i><b>16.2.1</b> Check assumptions of conditional independence</a></li>
+<li class="chapter" data-level="16.2.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value"><i class="fa fa-check"></i><b>16.2.2</b> Bayesian <span class="math inline">\(p\)</span>-value</a></li>
+<li class="chapter" data-level="16.2.3" data-path="evaluation.html"><a href="evaluation.html#loo-validation"><i class="fa fa-check"></i><b>16.2.3</b> LOO validation</a></li>
+<li class="chapter" data-level="16.2.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity-to-priors"><i class="fa fa-check"></i><b>16.2.4</b> Sensitivity to priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="conclusionchapter.html"><a href="conclusionchapter.html"><i class="fa fa-check"></i><b>17</b> Final Words</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-benefits"><i class="fa fa-check"></i><b>17.1</b> The benefits</a></li>
+<li class="chapter" data-level="17.2" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-worries"><i class="fa fa-check"></i><b>17.2</b> The worries</a></li>
+<li class="chapter" data-level="17.3" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-future"><i class="fa fa-check"></i><b>17.3</b> The future</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/CausalQueries/" target="blank">Uses CausalQueries</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Illustrating causal models</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="questions" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Causal Queries</h1>
+<div class="headerbox">
+<div class="center">
+
+</div>
+<p>Although a lot of empirical work focuses on identifying average causal effects, there is a rich array of other well defined causal questions that can be asked about how variables relate to each other causally. We describe major families of questions and illustrate how these can all be described as queries about the values of nodes in a causal model.</p>
+</div>
+<p><br></p>
+<p>Although scholars share a broad common interest in causality there is tremendous heterogeneity in the kinds of causal questions that scholars ask. Consider the relationship between inequality and democratization. We might seek, for instance, to know inequality’s average impact on democratization across some set of cases. Alternatively, we might be interested in a particular case—say, Mongolia in 1995—and want to know whether inequality would have an effect <em>here</em>. That is a question about causal effects at the case level. Alternatively we might wonder whether the level of democracy in Mongolia in 1995 is <em>due</em> to the level of inequality in that case—this is quite a distinct question (in the same way that establishing that poison would make you sick does not imply that you are sick because of poison). Or we may be interested in <em>how</em> causal effects unfold, inquiring about the pathway or mechanism through which inequality affects democratization—a question we can also ask at two levels. We can ask whether inequality affected democratization in Mongolia through mobilization of the masses; or we can ask how commonly inequality affects democratization through mobilization across a broad set of cases. Pushing further we might ask a counterfactual question of the form: would inequality have produced democratization had mobilization been prevented from occurring.</p>
+<p>Distinct methodological literatures have been devoted to the study of average causal effects, the analysis of case-level causal effects and explanations, and the identification of causal pathways. Fortunately each of these questions can be readily captured as specific queries asked of (and answerable from) a causal model. As described by <span class="citation"><a href="#ref-judea2010introduction" role="doc-biblioref">Pearl</a> (<a href="#ref-judea2010introduction" role="doc-biblioref">2010</a>)</span>, the goal is to deploy an “<em>algorithm</em> that receives a model <em>M</em> as an input and delivers the desired quantity <em>Q(M)</em> as the output.” More specifically, we demonstrate how, given the structure we described in Chapter <a href="models.html#models">2</a>, causal queries can be represented as question about one or more <em>nodes</em> on a causal graph. When we assimilate our causal questions into a causal model, we are placing what we want to know in formal relation to both what we <em>already</em> know and what we can potentially <em>observe</em>. As we will see in later chapters, this move allows us then to deploy the model to generate strategies of inference: to determine which observations, if we made them, would be likely to yield the greatest leverage on our query, given our prior knowledge about the way the world works. And by the same logic, once we see the evidence, this integration allows us to “update” on our query—figure out in systematic fashion what we <em>have</em> learned—in a manner that takes background knowledge into account.</p>
+<p>In the remainder of this chapter, we walk through the conceptualization and causal-model interpretation of five key causal queries:</p>
+<ul>
+<li><p>Case-level causal effects</p></li>
+<li><p>Case-level causal attribution</p></li>
+<li><p>Case-level explanation</p></li>
+<li><p>Average causal effects</p></li>
+<li><p>Causal pathways</p></li>
+</ul>
+<p>These five are in no way exhaustive of the causal questions that can be captured in causal graphs, but they are among the more common social scientific investigations.</p>
+<!-- * What is the average effect of a given increase in inequality is on the level of democracy for a given population of cases? -->
+<!-- * Case-level causal effects: What is the effect of $X$ on $Y$ in a given case? -->
+<!-- * Causal attribution: Did the condition $X$, present in a case, cause the outcome, $Y$, that occurred in that case? -->
+<!-- * Actual causes: Which of the antecedent conditions present in the case either was a counterfactual cause of the outcome or *could* have been a counterfactual cause given the way in which events actually played out? -->
+<!-- * Average causal effects: What is the mean effect of $X$ on $Y$ across a population of cases? -->
+<!-- * Causal pathways: How did $X$ exert its effect on $Y$ in a case? How does $X$ affect $Y$ in a population of cases? -->
+<!-- Some causal questions involve realized values of variables only, some involve counterfactual statements, and some involve combinations of these.  -->
+<p><!-- In what follows we advocate an approach in which causal questions --- which we term *queries* --- can be defined as questions about the *values of exogenous nodes on a causal graph*, including unobservable $U$ terms. ^[With some abuse of notation we use $Q$ generically to refer to the query itself and the the set of variables whose values determine the query. Thus a query may be written as the random variable $Q =\mathbb{1}((u_X = 1) \& (u_Y = 0))$, which takes on a value $q=1$ if both $u_X = 1$ and $u_Y = 0$ and 0 otherwise. Assessing this query requires understanding the values of particular roots, or query nodes, $\{U_X, U_Y\}$ which we also refer to as $Q$.]  Addressing a given causal question then involves using data on observed features of a graph to make inferences about those unobserved or unobservable features of the graph that define the query. These inferences are, of course, always conditional on the graph itself.  --></p>
+<!-- (a) uncertainty about causal questions is represented as uncertainty about  and (b)  -->
+<!-- THIS ALL SEEMS LIKE NUANCE WE DON'T REALLY NEED HERE.
+
+In this framework, inferences about causation amount to inferences about the *context* that a case is in: that is, whether conditions in the case (the relevant exogenous-variable values) are such that a given causal effect, causal pathway, etc. would have been operating. We can translate questions about causation into questions about context because, in a structural causal model, the values of all exogenous variables are sufficient to determine the value of all endogenous nodes: context determines outcomes. This further implies that, for any manipulation of an exogenous or endogenous variable, there exist one or more exogenous nodes on the graph that suffice to determine the effect on all endogenous variables in the graph: context determines *effects*. Likewise, the settings on the model's exogenous variables determine the pathway(s) through which one variable in the model will affect another. -->
+<!-- It is important to note a difference between this formulation and the conceptualization of causality typically employed in the potential outcomes framework. We characterize causal inference as learning about a unit *as it is*, conditional on a causal model, rather than learning about the unit as it is and as it could be. Suppose, for instance, that in a causal model a car will start if it has gas and if the key is turned.^[A version of this example is in @darwiche1994symbolic.] In a standard potential outcomes setup, the question "Does turning the key cause the car to start?" is equivalent to asking, "Would the car start if the key is turned?" and "Would the car start if the key is not turned?" In our model-based framework, the question of the key-turning's causal effect is somewhat differently framed as a question about an exogenous variable: "Does the car have gas?" In the model-based framework, then, our query becomes a question about the state of affairs in the case---about the case's *context*---rather than a pair of factual and counterfactual questions about outcomes with and without treatment. These two framings are fully consistent with one another, and counterfactual reasoning is no less important in the model-based framework; it has simply been displaced to the causal model, which encodes all counterfactual relations. -->
+<!-- <!-- moreover this can always be done formally, even if the causal model contains no additional assumptions about the causal process.      -->
+<div id="case-level-causal-effects" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Case-level causal effects</h2>
+<p>The simplest causal question is whether some causal effect operates in an individual case. Does <span class="math inline">\(X\)</span> have an effect on <span class="math inline">\(Y\)</span> in this case? For instance, is Yemen in 1995 a case in which a change in economic inequality would produce a change in whether or not the country democratizes? We could put the question more specifically as a query about a causal effect in a particular direction, for instance: Does inequality have a positive effect on democratization in the case of Yemen in 1995?</p>
+<p>In counterfactual terms, a query about case-level causation is a question about what would happen if we could manipulate a variable in the case: if we could hypothetically intervene to change <span class="math inline">\(X\)</span>’s value in the case, (how) would <span class="math inline">\(Y\)</span>’s value change? To ask whether a positive (or negative) effect operates for a case is to ask whether a particular counterfactual relation holds in that case. If we assume a setup with binary variables for simplicity, to ask whether inequality has a positive effect on democratization is to ask: if we set <span class="math inline">\(I\)</span> to <span class="math inline">\(0\)</span> would <span class="math inline">\(D\)</span> take on a value of <span class="math inline">\(0\)</span>, <em>and</em> if we set <span class="math inline">\(I\)</span> to <span class="math inline">\(1\)</span>, would <span class="math inline">\(D\)</span> take on a value of <span class="math inline">\(1\)</span>? (<em>Both</em> of these conditions must hold for <span class="math inline">\(I\)</span> to have a positive effect on <span class="math inline">\(D\)</span>.)</p>
+<!-- The closely connected question of causal attribution [@yamamoto2012understanding] asks: did $X$ cause $Y$'s value in this case? -->
+<p>We can easily represent this kind of query in the context of a causal model. We show the DAG for such a model in Figure <a href="questions.html#fig:casequery">4.1</a>. As introduced in Chapter <a href="models.html#models">2</a>, <span class="math inline">\(\theta^Y\)</span> here represents the nodal type characterizing <span class="math inline">\(Y\)</span>’s response to <span class="math inline">\(X\)</span> and, if <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are binary, it can take on one of four values: <span class="math inline">\(\theta^Y_{10}\)</span>, <span class="math inline">\(\theta^Y_{01}\)</span>, <span class="math inline">\(\theta^Y_{00}\)</span>, and <span class="math inline">\(\theta^Y_{11}\)</span> (which map onto our <span class="math inline">\(a, b, c\)</span> and <span class="math inline">\(d\)</span> types, respectively). Importantly, given that the value of nodes (or variables) is allowed to vary across cases, this setup allows for <span class="math inline">\(\theta^Y\)</span>—the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>—to vary across cases. Thus, <span class="math inline">\(X\)</span> may have a positive effect on <span class="math inline">\(Y\)</span> in one case (with <span class="math inline">\(\theta^Y=\theta^Y_{01}\)</span>), and a negative (<span class="math inline">\(\theta^Y=\theta^Y_{10}\)</span>) or no effect (<span class="math inline">\(\theta^Y=\theta^Y_{00}\)</span> or <span class="math inline">\(\theta^Y_{11}\)</span>) on <span class="math inline">\(Y\)</span> in other cases.</p>
+<!-- Consider again our four nodal types, above. In this setup, $X$'s causal effects on $Y$ can vary across cases. We can readily translate this setup, in which different cases have different causal effects, into a structural causal model. We can do so by letting $Y$ be a function both of $X$ and of a *causal-type variable* that encodes potential outcomes, a variable that we will denote as $Q$. We represent this simple model graphically in Figure \ref{fig:DAGtypes}. Here $Q$ can be thought of as variable that conditions the effect of $X$ on $Y$.  -->
+<!-- We then need to specify the values that $Q$ can take on, $Q$'s range. With a binary causal variable of interest, we can write down a value of $Q$ as $q_{ij}$. The pair of subscripts simply conveys the type's potential outcomes: $i$ represents the value that $Y$ takes on if $X=0$ while $j$ represents the value that $Y$ takes on if  $X=1$. Thus, in a binary framework, $Q$ can take on four values, corresponding to our original four types: $q_{00}$ (a $c$ type), $q_{10}$ (an $a$ type), $q_{01}$ (a $b$ type) and $q_{11}$ (a $d$ type). This setup also allows us to write down a simple, closed-form functional equation for å$Y$ in terms of its parents, $X$ and $Q$: $Y(x,q_{ij}) =  i(1-x) + jx$.^[To generate this closed-form function, we decompose $q_{ij}$ into its component parts, $i$ and $j$. Note that there is no loss of generality in the functional form linking $X$ and $Q$ to $Y$. In a causal model framework, the structural equations, such as those linking $X$ and $Y$ conditional on another node, can be entirely non-parametric.] -->
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:casequery"></span>
+<img src="ii_files/figure-html/casequery-1.png" alt="\label{fig:casequery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\theta^Y$. With a single binary causal variable of interest, we let $\theta^Y$ take on values $\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\theta^Y$ ranges over the four values: $\theta^Y_{00}$, $\theta^Y_{10}$, $\theta^Y_{01}$ and $\theta^Y_{11}$." width="60%" />
+<p class="caption">
+Figure 4.1:  This DAG is a graphical representation of the simple causal setup in which the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in a given case depends on the case’s nodal type, represented by <span class="math inline">\(\theta^Y\)</span>. With a single binary causal variable of interest, we let <span class="math inline">\(\theta^Y\)</span> take on values <span class="math inline">\(\theta^Y_{ij}\)</span>, with <span class="math inline">\(i\)</span> representing the value <span class="math inline">\(Y\)</span> takes on if <span class="math inline">\(X=0\)</span> and <span class="math inline">\(j\)</span> representing the value <span class="math inline">\(Y\)</span> takes on if <span class="math inline">\(X=1\)</span>. With a binary framework outcome, <span class="math inline">\(\theta^Y\)</span> ranges over the four values: <span class="math inline">\(\theta^Y_{00}\)</span>, <span class="math inline">\(\theta^Y_{10}\)</span>, <span class="math inline">\(\theta^Y_{01}\)</span> and <span class="math inline">\(\theta^Y_{11}\)</span>.
+</p>
+</div>
+<!-- Let $\lambda_1^Q$ denote a multinomial distribution over these four values and let t -->
+<p>In this model, then, the query, “What is <span class="math inline">\(X\)</span>’s causal effect in this case?” simply becomes <em>a question about the value of the nodal type <span class="math inline">\(\theta^Y\)</span></em>.</p>
+<p>Two natural variants of this question are, “What is the expected effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>?” and "What is the probability that <span class="math inline">\(X\)</span> matters for <span class="math inline">\(Y\)</span>? Answering the question requires estimating the probability that <span class="math inline">\(X\)</span> has a positive effect minus the probability that it has a negative effect: <span class="math inline">\(\Pr(\theta^Y = \theta^Y_{01}) - \Pr(\theta^Y = \theta^Y_{10})\)</span>. Answering the second involves assessing <span class="math inline">\(\Pr(\theta^Y = \theta^Y_{01} \text{ OR } \theta^Y = \theta^Y_{10})\)</span>.</p>
+<p>We can conceptualize this same question even if the model involves more complex relations between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. The question itself does not depend on the model having a particular form. For instance, consider a mediation model of the form <span class="math inline">\(X\rightarrow M \rightarrow Y\)</span>. In this model, a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> can emerge either from a chain of positive effects of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> and of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span> or from a chain of negative effects, while a negative effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> can emerge from a chain of opposite-signed effects. Thus, answering the question means estimating:
+<span class="math display">\[\Pr((\theta^M = \theta^M_{01} \&amp; \theta^Y = \theta^Y_{01})  \text{ OR }  (\theta^M = \theta^M_{10} \&amp; \theta^Y = \theta^Y_{10}))   - \Pr((\theta^M = \theta^M_{01} \&amp; \theta^Y = \theta^Y_{10})  \text{ OR }  (\theta^M = \theta^M_{10} \&amp; \theta^Y = \theta^Y_{01}))\]</span></p>
+<p><em>Answering</em> the question now requires guesses about nodal types for <span class="math inline">\(M\)</span> and for <span class="math inline">\(Y\)</span>, not just nodal types for <span class="math inline">\(Y\)</span>. Thus the question remains the same, and answerable, under different models, but the answer to the question might involve summaries of the values of different nodes.</p>
+<!-- Of course, these $\theta$s are  not directly observable: nodal types are intrinsically unobserved properties of cases. So, as we will see in later chapters, research design becomes a challenge of determining which _observable_ nodes in the graph are potentially informative about the unobservable nodes that constitute our causal queries.  -->
+<!-- We note that, in this discussion, we are employing a more generic property of causal graphs. In a graph of the general form $X \rightarrow Y \leftarrow Z$, the effect of $X$ on $Y$ in a case will depend on the value of $Z$ in that case. $Z$ in this structure might be a random disturbance term, $U_Y$, or a variable with a substantive interpretation. Either way, where a node has multiple parents, we should generally conceive of the parents as exerting their effects interactively. There are special situations in which $X$'s effect will not depend on the value of $Z$. For instance, if $Z$ operates only additively on $Y$ (say, $Y=X+Z$) and $Y$ is not bounded, then $Z$ is irrelevant to $X$'s causal effect, which will be homogeneous across cases and fixed by the model. But, in general, the causal effect of a parent on its child will depend on the value(s) of the other parent(s) (its spouse(s)).^[Nodes that share a child are spouses.] In this sense, for a given $X \rightarrow Y$ relationship, any other parents of $Y$ can be thought of as causal-type variables; these are the variables that define $X$'s case-level causal effect. Put differently, learning about the case-level effect of a causal variable on an outcome means learning about the outcome's other cause(s). -->
+<!-- Note also that, in the above illustration, the variable $Q$ is not specified in substantive terms; it is a carrier for causal information. However, social scientific theories commonly use substantive concepts as causal-type variables. The effect of fiscal stimulus on economic growth is theorized to depend on the unemployment rate; the effect of public opinion on policy is held to depend on institutional arrangements; the effect of natural resources on civil war might depend on the level of economic development. Any time one variable moderates the influence of another, the two variables operate as causal-type nodes for one another's effects on the outcome. Later in this chapter and in other chapters, we work with further examples in which the exogenous variables that define a query have a stronger substantive interpretation.    -->
+<!-- More generally, work in graphical models defines the causal effect of $X$ on $Y$ in terms of the changes in $Y$ that arise from interventions on $X$. For example, using the notation for interventions given above we can describe the effect of a change in $X$ from $x'$ to $x''$ on the probability that $Y=1$ in unit $i$ as: -->
+<!-- FLAG: SPELL OUT ALL ESTIMANDS AS COLLECTIONS OF nodal typeS -->
+</div>
+<div id="case-level-causal-attribution" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Case-level causal attribution</h2>
+<p>A query about causal attribution is related to, but different from, a query about a case-level causal effect. When asking about <span class="math inline">\(X\)</span>’s case-level effect, we are asking, “<em>Would</em> a change in <span class="math inline">\(X\)</span> cause a change in <span class="math inline">\(Y\)</span> in this case?” The question of causal attribution asks: “<em>Did</em> <span class="math inline">\(X\)</span> cause <span class="math inline">\(Y\)</span> to take on the value it did in this case?” More precisely, we are asking, “Given the values that <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> <em>in fact</em> took on in this case, would <span class="math inline">\(Y\)</span>’s value have been different if <span class="math inline">\(X\)</span>’s value had been different?”</p>
+<p>For instance, given that we know that inequality in Taiwan was relatively low and that Taiwan democratized in 1996, was low inequality a <em>cause</em> of Taiwan’s democratization in 1996? Or: given low economic inequality and democratization in Taiwan in 1996, would the outcome in this case have been different if inequality had been high?</p>
+<p>This goes beyond simply asking whether Taiwan is a case in which inequality has a causal effect on democratization. Whereas a case-level causal effect is defined in terms of the <span class="math inline">\(\theta\)</span> nodes on endogenous variables, we define a causal-attribution query in terms of a larger set of nodes. To attribute <span class="math inline">\(Y\)</span>’s value in a case to <span class="math inline">\(X\)</span>, we need to know not only whether this is the kind of case in which <span class="math inline">\(X\)</span> could have an effect on <span class="math inline">\(Y\)</span> but also whether the context is such that <span class="math inline">\(X\)</span>’s value <em>in fact</em> made a difference.</p>
+<p>Consider, for instance, the general setup in Figure <a href="questions.html#fig:attribquery">4.2</a>. Here, <span class="math inline">\(Y\)</span> is a function of two variables, <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. This means that <span class="math inline">\(\theta^Y\)</span> is somewhat more complicated than in a setup with one causal variable: <span class="math inline">\(\theta^Y\)</span> must here define <span class="math inline">\(Y\)</span>’s response to all possible combinations of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>, including interactions between them.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:attribquery"></span>
+<img src="ii_files/figure-html/attribquery-1.png" alt="\label{fig:attribquery} This DAG is a graphical representation of the simple causal setup in which $Y$ depends on two variables $X1$ and $X2$. How $Y$ responds to X1 and X2 depnds on $\theta^Y$, the DAG itself does not provide information on whether or how X1 and X2 interact with each other." width="60%" />
+<p class="caption">
+Figure 4.2:  This DAG is a graphical representation of the simple causal setup in which <span class="math inline">\(Y\)</span> depends on two variables <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span>. How <span class="math inline">\(Y\)</span> responds to X1 and X2 depnds on <span class="math inline">\(\theta^Y\)</span>, the DAG itself does not provide information on whether or how X1 and X2 interact with each other.
+</p>
+</div>
+<p>We examined the set of nodal types for a set up like this in Chapter 2 (see Table <a href="models.html#tab:PO16">2.3</a>). In the table, there are four column headings representing the four possible combinations of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> values. Each row represents one possible pattern of <span class="math inline">\(Y\)</span> values as <span class="math inline">\(X1\)</span> and <span class="math inline">\(X2\)</span> move through their four combinations.</p>
+<!-- Labelling is a little difficult with so many types. One approach used in Chapter \@ref(models) is to represent change in $X1$ on the horizontal axis, and change in the second variable, $X2$, on the vertical axis. The value of $X1$ increases from 0 to 1 as we move to the _right_ (from $i$ to $j$ or from $g$ to $h$). And the value of $X2$ increases from 0 to 1 as we move _up_ (from $i$ to $g$ or from $j$ to $h$). -->
+<p>One way to conceptualize the size of the nodal-type “space” is to note that <span class="math inline">\(X_1\)</span> can have any of our four causal effects (the four binary types) on <span class="math inline">\(Y\)</span> when <span class="math inline">\(X_2=0\)</span>; and <span class="math inline">\(X_1\)</span> can have any of four causal effects when <span class="math inline">\(X_2=1\)</span>.<a href="#fn28" class="footnote-ref" id="fnref28"><sup>28</sup></a> This yields 16 possible response patterns to combinations of <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> values.
+<!-- Thus, for instance, $\theta_{00}^{10}$ (type 5) describes a response pattern in which $W$ has a positive effect on $Y$ when $X=0$ but has no effect, with $Y$ stuck at $0$, when $X=1$; and in which $X$ has no effect when $W=0$ and a negative effect when $W=1$. For $\theta_{11}^{00}$ (type 11), $W$ has a negative effect on $Y$ regardless of $X$'s value; and $X$ has no effect regardless of $W$'s value. --></p>
+<!-- \begin{table}[h!] -->
+<!--   \centering -->
+<!--   \def\arraystretch{1.3} -->
+<!--     \begin{tabular}{ccccccc} -->
+<!--     \hline -->
+<!--     \textbf {} & \textbf {Type} &  $(Y | X=0,$ & $(Y |X=0, $ & $(Y | X=1, $ & $(Y | X=1, $\\ -->
+<!--          & & $W=0)$ & W=1)$ & $W=0)$ & $W=1)$ \\  \hline -->
+<!--     1 & $\theta_{00}^{00}$             &  0     & 0     & 0     & 0  \\ -->
+<!--     2 & $\theta_{00}^{01}$     & 0     & 0     & 0     & 1 \\ -->
+<!--     3 & $\theta_{01}^{00}$     & 0     & 0     & 1     & 0 \\ -->
+<!--     4 & $\theta_{01}^{01}$             & 0     & 0     & 1     & 1 \\ -->
+<!--     5 & $\theta_{00}^{10}$     & 0     & 1     & 0     & 0 \\ -->
+<!--     6 & $\theta_{00}^{11}$             & 0     & 1     & 0     & 1 \\ -->
+<!--     7 & $\theta_{01}^{10}$     & 0     & 1     & 1     & 0 \\ -->
+<!--     8 & $\theta_{01}^{11}$         & 0     & 1     & 1     & 1 \\ -->
+<!--     9 & $\theta_{10}^{00}$         & 1     & 0     & 0     & 0 \\ -->
+<!--     10 & $\theta_{10}^{01}$    & 1     & 0     & 0     & 1 \\ -->
+<!--     11 & $\theta_{11}^{00}$            & 1     & 0     & 1     & 0 \\ -->
+<!--     12 & $\theta_{11}^{01}$        & 1     & 0     & 1     & 1 \\ -->
+<!--     13 & $\theta_{10}^{10}$            & 1     & 1     & 0     & 0 \\ -->
+<!--     14 & $\theta_{10}^{11}$        & 1     & 1     & 0     & 1 \\ -->
+<!--     15 & $\theta_{11}^{10}$        & 1     & 1     & 1     & 0 \\ -->
+<!--     16 & $\theta_{11}^{11}$            & 1     & 1     & 1     & 1 \\ -->
+<!--     \bottomrule -->
+<!--     \end{tabular}% -->
+<!--    \caption{The table defines the 16 values (nodal types) that $\theta^Y$ can take on, given a binary $X$ and $W$ as parents of $Y$. The `Type' column lists each of the 16 values, while the four columns to its right define each value in terms of the potential outcomes that it implies.} -->
+<!--   \label{tab:types2x}% -->
+<!-- \end{table} -->
+<p>A query about causal attribution—whether <span class="math inline">\(X_1 = 1\)</span> caused <span class="math inline">\(Y=1\)</span>—for the model in Figure <a href="questions.html#fig:attribquery">4.2</a>, needs to be defined in terms of both <span class="math inline">\(X_2\)</span> and <span class="math inline">\(\theta^Y\)</span>. Parallel to our Taiwan example, suppose that we have a case in which <span class="math inline">\(Y=1\)</span> and in which <span class="math inline">\(X_1\)</span> was also 1, and we want to know whether <span class="math inline">\(X_1\)</span> caused <span class="math inline">\(Y\)</span> to take on the value it did. Answering this question requires knowing whether the case’s type is such that <span class="math inline">\(X_1\)</span> would have had a positive causal effect on <span class="math inline">\(Y\)</span>, <em>given the value of <span class="math inline">\(X_2\)</span></em> (which we can think of as part of the context). Thus, given that we start with knowledge of <span class="math inline">\(X_1\)</span>’s and <span class="math inline">\(Y\)</span>’s values, our query about causal attribution amounts to a query about two nodal types: (a) <span class="math inline">\(\theta^{X_2}\)</span> (which gives <span class="math inline">\(X_2\)</span>’s value) and (b) <span class="math inline">\(\theta^Y\)</span>, specifically whether its value is such that <span class="math inline">\(X_1\)</span> has a positive causal effect given <span class="math inline">\(X_2\)</span>’s value.</p>
+<p>Suppose, for instance, that we were to observe <span class="math inline">\(X_2=1\)</span>. We then need to ask whether the nodal type, <span class="math inline">\(\theta^Y\)</span>, is such that <span class="math inline">\(X_1\)</span> has a positive effect when <span class="math inline">\(X_2=1\)</span>. Consider <span class="math inline">\(\theta^Y_{0111}\)</span> (type 8 in Table <a href="models.html#tab:PO16">2.3</a>).<a href="#fn29" class="footnote-ref" id="fnref29"><sup>29</sup></a> This is a nodal type in which <span class="math inline">\(X_1\)</span> has a positive effect when <span class="math inline">\(X_2=0\)</span> but no effect when <span class="math inline">\(X_2=1\)</span>. Put differently, <span class="math inline">\(X_2=1\)</span> is a sufficient condition for <span class="math inline">\(Y=1\)</span>, meaning that <span class="math inline">\(X_1\)</span> makes no difference to the outcome when <span class="math inline">\(X_2=1\)</span>.</p>
+<!-- FLAG: Check notation above, is old.
+
+<!-- Looking down the table, we can readily identify the nodal types that qualify by focusing on the two superscripts---which provide responses to $X$ when $W=1$---and looking for a $01$ in that upper row.  -->
+<p>In all we have four qualifying <span class="math inline">\(Y\)</span>-types: <span class="math inline">\(\theta^Y_{0001}\)</span>, <span class="math inline">\(\theta^Y_{1001}\)</span>, <span class="math inline">\(\theta^Y_{0101}\)</span>, <span class="math inline">\(\theta^Y_{1101}\)</span>. In other words, we can attribute a <span class="math inline">\(Y=1\)</span> outcome to <span class="math inline">\(X_1=1\)</span> when <span class="math inline">\(X_2=1\)</span> and <span class="math inline">\(Y\)</span>’s nodal type is one of these four.</p>
+<p>Thus, a question about causal attribution is a question about the <em>joint</em> value of a set of nodal types: about whether the <em>combination</em> of context and the nodal type(s) governing effects is such that changing the causal factor of interest would have changed the outcome.</p>
+</div>
+<div id="actual-causes" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Actual causes</h2>
+<p>So far we have been dealing with causes in the standard counterfactual sense: antecedent conditions a change in which would have produced a different outcome. Sometimes, however, we are interested in identifying antecedent conditions that were not counterfactual difference-makers but that nonetheless <em>generated</em> or <em>produced</em> the outcome. Consider, for instance, a situation in which an outcome was overdetermined: multiple conditions were present, each of which on their own, <em>could</em> have generated the outcome. Then none of these conditions caused the outcome in the counterfactual sense; yet one or more of them may have been distinctively important in <em>producing</em> the outcome. The concept of an <em>actual cause</em> can be useful in putting a finer point on this kind of causal question.</p>
+<p>A motivating example used in much of the literature on actual causes <span class="citation">(e.g. <a href="#ref-hall2004two" role="doc-biblioref">N. Hall 2004</a>)</span> imagines two characters, Sally and Billy, simultaneously throwing stones at a bottle. Both are excellent shots and hit whatever they aim at. Sally’s stone hits first, and so the bottle breaks. However, Billy’s stone <em>would</em> have hit had Sally’s not hit, and would have broken the bottle. Did Sally’s throw cause the bottle to break? Did Billy’s?</p>
+<p>By the usual definition of causal effects, neither Sally’s nor Billy’s action had a causal effect: without either throw, the bottle would still have broken. We commonly encounter similar situations in the social world. We observe, for instance, the onset of an economic crisis and the breakout of war—either of which would be sufficient to cause the government’s downfall—but with (say) the economic crisis occurring first and toppling the government before the war could do so. In this situation, neither economic crisis nor war in fact made a difference to the outcome: take away either one and the outcome remains the same.</p>
+<p>To return to the bottle example, while neither Sally’s nor Billy’s throw is a counterfactual cause, there is an important sense in which Sally’s action obviously broke the bottle, and Billy’s did not. We can formalize this intuition by defining Sally’s throw as the <em>actual cause</em> of the outcome. Using the definition provided by <span class="citation">(<a href="#ref-halpern2015modification" role="doc-biblioref">Halpern 2015</a>)</span>, building on <span class="citation">(<a href="#ref-halpern2005causesa" role="doc-biblioref">Halpern and Pearl 2005</a>)</span> and others, we say that a condition (<span class="math inline">\(X\)</span> taking on some value <span class="math inline">\(x\)</span>) was an actual cause of an outcome (of <span class="math inline">\(Y\)</span> taking on some value <span class="math inline">\(y\)</span>), where <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> may be collections of events, if:</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(X=x\)</span> and <span class="math inline">\(Y=y\)</span> both happened</li>
+<li>there is some set of variables, <span class="math inline">\(\mathcal W\)</span>, such that if they were fixed at the levels that they actually took in the case, and if <span class="math inline">\(X\)</span> were to be changed, then <span class="math inline">\(Y\)</span> would change (where <span class="math inline">\(\mathcal W\)</span> can also be an empty set)</li>
+<li>no strict subset of <span class="math inline">\(X\)</span> satisfies 1 and 2 (there is no redundant part of the condition, <span class="math inline">\(X=x\)</span>)</li>
+</ol>
+<p>The definition thus describes a condition that <em>would</em> have been a counterfactual cause of the outcome if we were to imagine holding constant some set of events that in fact occurred (and that, in reality, might not have been constant if the actual cause had not in fact occurred).</p>
+<p>Let us now qpply these 3 conditions to the Sally and Billy example. Conditions 1 and 3 are easily satisfied, since Sally  throw and the bottle  break (Condition 1), and “Sally threw” has no strict subsets (Condition 3).</p>
+<p>Condition 2 is met if Sally’s throw made a difference, counterfactually speaking — with the important caveat that, in determining this, we are permitted to condition on (to fix in the counterfactual comparison) any event or set of events that actually happened (or on on none at all). To see why Condition 2 is satisfied, we have to think of there being three steps in the process: (1) Sally and Billy throw, (2) Sally’s or Billy’s rock hits the bottle, and (3) the bottle breaks. In actuality, Billy’s stone did not hit the bottle, so we are allowed to condition on that fact in determining whether Sally’s throw was a counterfactual cause. Conditioning on Billy’s stone not hitting, the bottle would <em>not</em> have broken had Sally not thrown.</p>
+<p>From the perspective of counterfactual causation, it may seem odd to condition on Billy’s stone not hitting the bottle when thinking about Sally not throwing the stone—since Sally’s throwing the stone was the very thing that prevented Billy from hitting the bottle. Yet Halpern argues that this is an acceptable thought experiment for establishing the importance of Sally’s throw since conditioning is constrained to the actual facts of the case. Moreover, the same logic shows why Billy is not an actual cause. The reason is that Billy’s throw is only a cause in those conditions in which Sally did not hit the bottle. But because Sally  actually hit the bottle, we are not permitted to condition on Sally not hitting the bottle in determining actual causation. We thus cannot—even through conditioning on actually occurring events—construct any counterfactual comparison in which Billy’s throw is a counterfactual cause of the bottle’s breaking.</p>
+<p>The striking result here is that there can be grounds to claim that a condition was the actual cause of an outcome even though, under the counterfactual definition, the effect of that condition on the outcome is 0. (At the same time, all counterfactual causes are automatically actual causes; they meet Condition 2 by conditioning on nothing at all, an empty set <span class="math inline">\(\mathcal W\)</span>.) One immediate methodological implication follows: since actual causes need not be causes, there are risks in research designs that seek to understand causal effects by tracing back actual causes—i.e., the way things actually happened. If we traced back from the breaking of the bottle, we might be tempted to identify Sally’s throw as the cause of the outcome. We would be right only in an actual-causal sense, but wrong in the standard, counterfactual causal sense. Chains of events that appear to “generate” an outcome are not always causes in that sense.<a href="#fn30" class="footnote-ref" id="fnref30"><sup>30</sup></a></p>
+<!-- Generally, an antecedent condition, $A$, that played a role in generating an outcome might not be a counterfactual cause because, had it not occurred, some second chain of events set in motion by $B$ would have unfolded, generating the outcome anyway. In the standard counterfactual scenario, $A$ is not a counterfactual cause: take away $A$ and the outcome still happens because of the chain of events emanating from $B$. Yet let us imagine that the fact that $A$ _did_ occur _prevented_ part of $B$'s chain of consequences from unfolding and itself producing the outcome. Then let us imagine a tweaked counterfactual comparison in which we *fix* the observed fact that $B$'s causal sequence did not fully unfold. We can then ask: *conditional on $B$'s sequence not fully unfolding*, would $A$ have been a counterfactual cause of the outcome? If so, then we say that $A$ is an "actual cause" of the outcome. We have, in a sense, identified $A$ as distinctively important in the production of the outcome, even if it was not a case-level cause in the usual sense. -->
+<p>As with other causal queries, the question “Was <span class="math inline">\(X=x\)</span> the actual cause of <span class="math inline">\(Y=y\)</span>?” can be redefined as a question about which combinations of nodal types produce conditions under which <span class="math inline">\(X\)</span> could have made a difference. To see how, let us run through the Billy and Sally example again, but formally in terms of a model. Consider Figure , where we represent Sally’s throw (<span class="math inline">\(S\)</span>), Billy’s throw (<span class="math inline">\(B\)</span>), Sally’s rock hitting the bottle (<span class="math inline">\(H^S\)</span>), Billy’s rock hitting the bottle (<span class="math inline">\(H^B\)</span>), and the bottle cracking (<span class="math inline">\(C\)</span>). Each endogenous variable has a <span class="math inline">\(\theta\)</span> term associated with it, capturing its nodal type. We capture the possible “preemption” effect with the arrow pointing from <span class="math inline">\(H^S\)</span> to <span class="math inline">\(H^B\)</span>, allowing whether Sally’s rock hits to affect whether Billy’s rock hits.<a href="#fn31" class="footnote-ref" id="fnref31"><sup>31</sup></a></p>
+<p>For Sally’s throw to be an actual cause of the bottle’s cracking, we need first to establish that Sally threw (<span class="math inline">\(\theta^S=\theta^S_1\)</span>) and that the bottle cracked (<span class="math inline">\(\theta^C=\theta^C_1\)</span>) (Condition 1). Condition 3 is automatically satisfied in that <span class="math inline">\(\theta^S=\theta^S_1\)</span> has no strict subsets. Turning now to Condition 2, we need Sally’s throw to be a counterfactual cause of the bottle cracking if we condition on the value of some set of nodes remaining fixed at the values they in fact took on. As discussed above, we know that we can meet this criterion if we condition on Billy’s throw not hitting. To make this work, we need to ensure, first, that Sally’s throw hits if and only if she throws: so <span class="math inline">\(\theta^{H^S}=\theta^{H^S}_{01}\)</span>. Next, we need to ensure that Billy’s throw does not hit whenever Sally’s does: this corresponds to any of the four nodal types for <span class="math inline">\(H^B\)</span> that take the form <span class="math inline">\(\theta^{H^B}_{xx00}\)</span>, meaning that <span class="math inline">\(H^B=0\)</span> whenever <span class="math inline">\(H^S=1\)</span>. Note that the effect of Billy throwing on Billy hitting when Sally has <em>not</em> thrown—the first two terms in the nodal-type’s subscript—does not matter since we have already selected a value for <span class="math inline">\(\theta^S\)</span> such that Sally does indeed throw.</p>
+<p>Finally, we need <span class="math inline">\(\theta^C\)</span> to take on a value such that <span class="math inline">\(H^S\)</span> has a positive effect on <span class="math inline">\(C\)</span> when <span class="math inline">\(H^B=0\)</span> (Billy doesn’t hit) since this is the actual circumstance on which we will be conditioning. This is satisfied by any of the four nodal types of the form <span class="math inline">\(\theta^C_{0x1x}\)</span>. This includes, for instance, a <span class="math inline">\(\theta^C\)</span> value in which Billy’s hitting has no effect on the bottle (perhaps Billy doesn’t throw hard enough!): e.g., <span class="math inline">\(\theta^C_{0011}\)</span>. Here, Sally’s throw is a counterfactual cause of the bottle’s cracking. And, as we have said, all counterfactual causes are actual causes. They are, simply, counterfactual causes when we hold <em>nothing</em> fixed (<span class="math inline">\(\mathcal W\)</span> in Condition 2 is just the empty set).</p>
+<p>Notably, we do not need to specify the nodal type for <span class="math inline">\(B\)</span>: given the other nodal types identified, Sally’s throw will be the actual cause regardless of whether or not Billy throws. If Billy does not throw, then Sally’s throw is a simple counterfactual cause (given the other nodal types).</p>
+<!-- can make this work if we being the actual cause of the bottle cracking requires, first of all, that $\theta^{H^B}$ take on a particular value. Specifically, we need (a) $H^B=0$ whenever $H^S=1$ (Sally's hit preempts Billy's) and (b) $B$ to have a positive effect on $H^B$ when $H^S=0$ (Billy's throw hits if Sally's doesn't). This describes the nodal type $\theta^{H^B}_{0100}$. Further, $S$ must have a positive effect on $H^S$ ($\theta^{H^S}=\theta^{H^S}_{01}$. Third, we need $\theta^C$ to take on a value such that $C=1$ if and only if either $H^B$ or $H^S$ equals $1$: this corresponds to the nodal type $\theta^C_{0111}$.  -->
+<!-- , Billy threw ($\theta^B=\theta^B_1$), -->
+<p>The larger point is that actual cause queries can, like all other causal queries, be defined as questions about the values of nodes in a causal model. When we pose the query, was Sally’s throw an actual cause of the bottle cracking, we are in effect asking whether the case’s combination of nodal types (or its causal type) matches <span class="math inline">\(\theta^S_1, \theta^B_x, \theta^{H^B}_{xx00}, \theta^{H^S}_{01}, \theta^C_{0x1x}\)</span>.</p>
+<p>Likewise, if want to ask <em>how often</em> Sally’s throw is an actual cause, in a population of throwing rounds, we can address this query as a question about the joint <em>distribution</em> of nodal types. We are then asking how common the qualifying combinations of nodal types are in the population given the distribution of types at each node.</p>
+<!-- This is a set of nodal types under which the query, "Does $S$ have a causal effect on $C$?" must be answered in the negative. Similarly, this is a context in which $C=1$ cannot be causally attributed to $S=1$. If Sally had not thrown, then Sally's rock would not have hit the bottle, which means that Billy's rock would have hit, and the bottle would still have cracked---we would still get $C=1$. Now, to verify that this setup makes Sally's throw the *actual cause* of the bottle's cracking, we need to ask whether there is some node whose value we can hold fixed at the value that it _actually_ assumed in the case such that $S$ *would* have a causal effect on the outcome. Since our collection of nodal types implies $H^B=0$ --- Billy's rock does not hit --- we can hold this node's value constant, creating an "opportunity" for $S$ to matter: under $\theta^C_{0111}$, if $H^B=0$, $S$ has a positive effect on $C$.  in that $C$ is no longer forced to 1 (by Billy's rock hitting). But for $S$ to matter under his scenario, something else has to be true: $\theta^C$'s value must allow for $H^S$ to have a positive effect on $C$ when $H^B=0$.  -->
+<!-- Using our two-cause notation (with $H^S$ on the horizontal axis, and $H^B$ on the vertical), and given that we have already stipulated that $C=1$ when $H^B=1$, the one permissible value for $\theta^C$ is $\theta^{11}_{01}$. This is a nodal type in which neither $H^B$ nor $H^S$ can be causal if both Billy and Sally throw: whenever one variable is 1, the other has no effect. But it is also a type in which each has a causal effect if the other is held at 0.  -->
+<!-- It is also the case, as we have said, that all counterfactual causes are actual causes. They are, quite simply, counterfactual causes when we hold _nothing_ fixed ($\mathcal W$ is the empty set). Thus, in fact, any $\theta^S$, $\theta^{H^S}$ and $\theta^C$ values in which $S$ has a positive effect when $B=1$ will do. This includes, for instance, a $\theta^C$ value in which Billy's hitting has no effect on the bottle (perhaps Billy doesn't throw hard enough!): e.g., $\theta^{01}_{01}$. Here, Sally's throw is both a counterfactual cause and an actual cause of the bottle's cracking.  -->
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:actualquery"></span>
+<img src="ii_files/figure-html/actualquery-1.png" alt="\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\theta^Y$." width="60%" />
+<p class="caption">
+Figure 4.3:  This DAG is a graphical representation of the simple causal setup in which the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> in a given case depends on the case’s nodal type for <span class="math inline">\(Y\)</span>, represented by <span class="math inline">\(\theta^Y\)</span>.
+</p>
+</div>
+<p>Actual causes are conceptually useful whenever there are two sufficient causes for an outcome, but one preempts the operation of the other. For instance, we might posit that both the United States’ development of the atomic bomb was a sufficient condition for U.S. victory over Japan in World War II, and that U.S. conventional military superiority was also a sufficient condition and would have operated via a land invasion of Japan. Neither condition was a counterfactual cause of the outcome because both were present. However, holding constant the <em>absence</em> of a land invasion, the atomic bomb was a difference-maker, rendering it an actual cause. The concept of actual cause thus helps capture the sense in which the atomic bomb distinctively contributed to the outcome, even if it was not a counterfactual cause.</p>
+<!-- Similarly, the question of how *common* it is for a condition to be an actual cause can be expressed as values of nodes, possibly including nodes that record parameter values for the relevant exogenous nodes. -->
+<!-- We should try to be more specific here and for notable causes about what the nodes we'd want to learn about are. -->
+<p>An extended notion <span class="citation">(<a href="#ref-halpern2016actual" role="doc-biblioref">Halpern 2016</a>, p 81)</span> of actual causes restricts the imagined counterfactual deviations to states that are more likely to arise (more “normal”) than the factual state. We will call this notion a “notable cause.” We can say that one cause, <span class="math inline">\(A\)</span>, is “more notable” than another cause, <span class="math inline">\(B\)</span>, if a deviation in <span class="math inline">\(A\)</span> from its realized state is (believed to be) more likely than a deviation in <span class="math inline">\(B\)</span> from its realized state.</p>
+<p>For intuition, we might wonder why a Republican was elected to the presidency in a given election. In looking at some minimal winning coalition of states that voted Republican, we might distinguish between a set of states that <em>always</em> vote Republican and a set of states that usually go Democratic but voted Republican this time. If the coalition is minimal winning, then every state that voted Republican is a cause of the outcome in the standard (difference-making) sense. However, only the states that usually vote Democratic are notable causes since it is only for them that the counterfactual scenario (voting Democratic) was more likely to arise than the factual scenario. In a sense, we take the “red” states’ votes for the Republican as given—placing them, as it were, in the causal background—and identify as “notable” those conditions that mattered and easily could have gone differently. By the same token, we can say that, among those states that voted Republican this time, those that more commonly vote Democratic are <em>more</em> notable causes than those that less commonly vote Democratic.</p>
+<p>How notable a counterfactual cause is can be expressed as a claim about the distribution of a set of nodal types. For instance, if we observe <span class="math inline">\(R^j=1\)</span> for state <span class="math inline">\(j\)</span> (it voted Republican), then the notability of this vote directly increases in our belief about the probability that <span class="math inline">\(\theta^{R^j}=\theta_0^{R^j}\)</span>: the probability that the state’s vote could have gone the other way.</p>
+<!-- Though not a focus of our applied examples we show formally how to estimate these estimands in the Appendix, section XXX. -->
+<!-- So there are 2 things being defined: notable vs. not notable, and more vs. less notable. -->
+<!-- The election example seems to be illustrating the first of these since it refers to the volatile states being notable.  -->
+<!-- But the reasoning doesn't line up with the definition of notable given here: we haven't said that these are states that usually vote non-Republican. We've only said that their voting non-R is more likely than the other states' voting non-R. -->
+<!-- Shall I fix by simply changing the volatile states to ones that usually vote D? -->
+<!-- Also, we are not saying what the nodes in Q are, just that there are some. Could we say that they're the same nodes as for a plain actual cause PLUS nodes going into X (a possible notable cause) representing parameters of the distribution of X? -->
+</div>
+<div id="average-causal-effects" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Average causal effects</h2>
+<p>A more general query asks about an average causal effect in some population. In counterfactual terms, a question about average causal effects is: if we manipulated the value of <span class="math inline">\(X\)</span> for all cases in the population—first setting <span class="math inline">\(X\)</span> to one value for all cases, then changing it to another value for all cases—by how much would the average value of <span class="math inline">\(Y\)</span> in the population change? Like other causal queries, a query about an average causal effect can be conceptualized as learning about a node in a causal model.</p>
+<p>We can do this by conceiving of any given case as being a member of a population composed of different nodal types. When we seek to estimate an average causal effect, we seek information about the <em>shares</em> of these nodal types in the population.</p>
+<p>More formally and adapted from <span class="citation"><a href="#ref-humphreys2015mixing" role="doc-biblioref">Humphreys and Jacobs</a> (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span>, we can use <span class="math inline">\(\lambda^Y_{ij}\)</span> to refer to the <em>share</em> of cases in a population that has nodal type <span class="math inline">\(\theta^Y_{ij}\)</span>. Thus, given our four nodal types in a two-variable binary setup, <span class="math inline">\(\lambda^Y_{10}\)</span> is the proportion of cases in the population with negative effects; <span class="math inline">\(\lambda_{01}\)</span> is the proportion of cases with positive effects; and so on. One nice feature of this setup, with both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> as binary, is that the average causal effect can be simply calculated as the share of positive-effect cases less the share of negative-effect cases: <span class="math inline">\(\lambda^Y_{01} - \lambda^Y_{10}\)</span>.</p>
+<p>Graphically, we can represent this setup by including <span class="math inline">\(\lambda^Y\)</span> in a more complex causal graph as in Figure . As in our setup for case-level causal effects, <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(Y\)</span> in a case depends on (and only on) the case’s nodal type, <span class="math inline">\(\theta^Y\)</span>. The key difference is that we now model the case’s type not as exogenously given, but as a function of two additional variables: the distribution of nodal types in a population and a random process through which the case’s type is “drawn” from that distribution. We represent the type distribution as <span class="math inline">\(\lambda^Y\)</span> (a vector of values for the proportions <span class="math inline">\(\lambda^Y_{10}, \lambda^Y_{01}, \lambda^Y_{00}, \lambda^Y_{11}\)</span>) and the random process drawing a <span class="math inline">\(\theta^Y\)</span> value from that distribution as <span class="math inline">\(U^\theta\)</span>.</p>
+<!-- AJ: FLAG: CLARIFY PHILOSOPHOICAL INTERPREATAION OF LAMBDA AS SHARES -->
+<!-- We can also think of these shares as probabilities; that is, we can think of any given case as being ``drawn'' from a multinomial distribution with probabilities $\lambda = (\lambda^Y_{10}, \lambda^Y_{01}, \lambda^Y_{00}, \lambda^Y_{11})$. -->
+<!-- We might stipulate, for instance, that $U_\theta$ has a uniform distribution, between 0 and 1. We could write down the structural equation for $\theta^Y$ as:  -->
+<!-- $\theta^Y=$ -->
+<!--   $\theta^Y_{10}$ if $U_\theta < \lambda^Y_{10}$ -->
+<!--   $\theta^Y_{01}$ if $\lambda^Y_{10} < U_\theta < \lambda^Y_{10} + \lambda^Y_{01}$ -->
+<!--   $\theta^Y_{00}$ if $\lambda^Y_{10} + \lambda^Y_{01} < U_\theta < \lambda^Y_{10} + \lambda^Y_{01} + \lambda^Y_{00}$ -->
+<!--   $\theta^Y_{11}$ if $\lambda^Y_{10} + \lambda^Y_{01} + \lambda^Y_{00} < U_\theta < \lambda^Y_{10} + \lambda^Y_{01} + \lambda^Y_{00} + \lambda^Y_{11}$ -->
+<!-- \begin{equation}  -->
+<!-- (\#eq:Q) -->
+<!-- \end{equation}  -->
+<!-- *** -->
+<p>In this model, our causal query—about <span class="math inline">\(X\)</span>’s average causal effect—is thus defined by the vector <span class="math inline">\(\lambda^Y\)</span>, and specifically by the shares of negative- and positive-causal-effect cases, respectively, in the population. What is <span class="math inline">\(X\)</span>’s average effect on <span class="math inline">\(Y\)</span> amounts to asking: what are the values of <span class="math inline">\(\lambda^Y_{10}\)</span> and <span class="math inline">\(\lambda^Y_{01}\)</span>? As with <span class="math inline">\(\theta^Y\)</span>, <span class="math inline">\(\lambda^Y\)</span> is not directly observable. And so the empirical challenge is to figure out what we <em>can</em> observe that would allow us to learn about <span class="math inline">\(\lambda^Y\)</span>’s component values?<a href="#fn32" class="footnote-ref" id="fnref32"><sup>32</sup></a></p>
+<!-- Of course, like $\theta^Y$, $\lambda^Y$ is not directly observable. Thus, inference about average causal effects will necessarily involve using information about *observable* nodes to learn both about unobservables of interest. We might, for instance, use observations of $X$ and $Y$ to learn about a case's nodal type ($Q$) and, possibly repeating across many cases, about the share of different types in the population ($\lambda$). -->
+<!-- **I have decided not to incorporate $U_\lambda$ in the graph because it would actually require a node for the distribution's hyperparameters as well and I think would in any case cloud the point we want to make here.** -->
+<!-- Formally, this kind of average causal effect is also calculated using Equation \ref{ate}, though for a model that is not conditional on the case at hand. -->
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:DAGace"></span>
+<img src="ii_files/figure-html/DAGace-1.png" alt="\label{fig:DAGace} This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\lambda$ is a vector representing the multinomial distribution of nodal types in the population while $U^\theta$ is a random variable representing the draw of each case from the distribution defined by $\lambda$. A case's nodal type, $\theta^Y$, is thus a joint function of $\lambda^Y$ and $U^{\theta^Y}$." width="60%" />
+<p class="caption">
+Figure 4.4:  This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(Y\)</span> is a function of a causal-type variable, <span class="math inline">\(\theta^Y\)</span>. Yet here we explicitly model the process through which the case’s type is drawn from a distribution of types in a population. The variable <span class="math inline">\(\lambda\)</span> is a vector representing the multinomial distribution of nodal types in the population while <span class="math inline">\(U^\theta\)</span> is a random variable representing the draw of each case from the distribution defined by <span class="math inline">\(\lambda\)</span>. A case’s nodal type, <span class="math inline">\(\theta^Y\)</span>, is thus a joint function of <span class="math inline">\(\lambda^Y\)</span> and <span class="math inline">\(U^{\theta^Y}\)</span>.
+</p>
+</div>
+<p>We can, of course, likewise pose queries about other population-level causal quantities. For instance, we could ask for what proportion of cases in the population <span class="math inline">\(X\)</span> has a positive effect: this would be equivalent to asking the value of <span class="math inline">\(\lambda^Y_{01}\)</span>, one element of the <span class="math inline">\(\lambda^Y\)</span> vector. Or we could ask about the proportion of cases in which <span class="math inline">\(X\)</span> has no effect, which would be asking about <span class="math inline">\(\lambda^Y_{00} + \lambda^Y_{11}\)</span>.</p>
+</div>
+<div id="causal-paths" class="section level2" number="4.5">
+<h2><span class="header-section-number">4.5</span> Causal Paths</h2>
+<p>To develop richer causal understandings, researchers often seek to describe the causal path or paths through which effects propagate. Consider the DAG in Figure <a href="questions.html#fig:DAGpaths">4.5</a>, in which <span class="math inline">\(X\)</span> can affect <span class="math inline">\(Y\)</span> through two possible pathways: directly and via <span class="math inline">\(M\)</span>. Assume again that all variables are binary, taking on values of <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>. Here we have nodal types defining <span class="math inline">\(M\)</span>’s response to <span class="math inline">\(X\)</span> (<span class="math inline">\(\theta^M\)</span>) and defining <span class="math inline">\(Y\)</span>’s response to both <span class="math inline">\(X\)</span> (directly) and <span class="math inline">\(M\)</span> (<span class="math inline">\(\theta^Y\)</span>).</p>
+<p>Suppose that we observe <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span> in a case. Suppose, further, that we have reasonable confidence that <span class="math inline">\(X\)</span> has had a positive effect on <span class="math inline">\(Y\)</span> in this case. We may nonetheless be interested in knowing whether that causal effect ran <em>through</em> <span class="math inline">\(M\)</span>. We will refer to this as a query about a causal path. Importantly, a causal path query is not satisfied simply by asking whether some mediating event along the path occurred. We cannot, for instance, establish that the top path in Figure  was operative simply by determining the value of <span class="math inline">\(M\)</span> in this case—though that will likely be useful information.</p>
+<p>Rather, the question of whether the mediated (via <span class="math inline">\(M\)</span>) causal path is operative is a composite question of two parts: First, does <span class="math inline">\(X\)</span> have an effect on <span class="math inline">\(M\)</span> in this case? Second, does that effect—the difference in <span class="math inline">\(M\)</span>’s value caused by a change in <span class="math inline">\(X\)</span>—in turn <em>cause</em> a change in <span class="math inline">\(Y\)</span>’s value? In other words, what we want to know is whether the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> depends on—that is, <em>will not operate without</em>—the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span>.<a href="#fn33" class="footnote-ref" id="fnref33"><sup>33</sup></a> Framing the query in this way makes clear that asking whether a causal effect operated via a given path is in fact asking about a specific set of causal effects lying along that path.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:DAGpaths"></span>
+<img src="ii_files/figure-html/DAGpaths-1.png" alt="\label{fig:DAGpaths} Here $X$ has effects on $Y$ both indirectly through $M$ and directly." width="60%" />
+<p class="caption">
+Figure 4.5:  Here <span class="math inline">\(X\)</span> has effects on <span class="math inline">\(Y\)</span> both indirectly through <span class="math inline">\(M\)</span> and directly.
+</p>
+</div>
+<p>As we can show, we can define this causal-path query as a question about specific nodes on a causal graph. In particular, a causal path can be defined in terms of the values of <span class="math inline">\(\theta\)</span> nodes: specifically, in the present example, in terms of <span class="math inline">\(\theta^M\)</span> and <span class="math inline">\(\theta^Y\)</span>. To see why, let us first note that there are two combinations of effects that would allow <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(Y\)</span> to operate via <span class="math inline">\(M\)</span>: (1) <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(M\)</span>, which in turn has a positive effect on <span class="math inline">\(Y\)</span>; or (2) <span class="math inline">\(X\)</span> has a negative effect on <span class="math inline">\(M\)</span>, which has a negative effect on <span class="math inline">\(Y\)</span>.</p>
+<p>Thus, in establishing whether <span class="math inline">\(X\)</span> affects <span class="math inline">\(Y\)</span> through <span class="math inline">\(M\)</span>, the first question is whether <span class="math inline">\(X\)</span> affects <span class="math inline">\(M\)</span> in this case. Whether or not it does is a question about the value of <span class="math inline">\(\theta^M\)</span>. We know that <span class="math inline">\(\theta^M\)</span> can take on four possible values corresponding to the four possible responses to <span class="math inline">\(X\)</span>: <span class="math inline">\(\theta^M_{10}, \theta^M_{01}, \theta^M_{00}, \theta^M_{11}\)</span>. For sequence (1) to operate, <span class="math inline">\(\theta^M\)</span> must take on the value <span class="math inline">\(\theta^M_{01}\)</span>, representing a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span>. For sequence (2) to operate, <span class="math inline">\(\theta^M\)</span> must take on the value <span class="math inline">\(\theta^M_{10}\)</span>, representing a negative effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span>.</p>
+<p><span class="math inline">\(\theta^Y\)</span> defines <span class="math inline">\(Y\)</span>’s response to different combinations of two other variables—here, <span class="math inline">\(X\)</span> and <span class="math inline">\(M\)</span>—since <em>both</em> of these variables point directly into <span class="math inline">\(Y\)</span>. Where <span class="math inline">\(X\)</span> can have both a mediated effect through <span class="math inline">\(M\)</span> and a direct effect, <span class="math inline">\(X\)</span> and <span class="math inline">\(M\)</span> also potentially <em>interact</em> in affecting <span class="math inline">\(Y\)</span>. Another way to think about this setup is that <span class="math inline">\(M\)</span> is not just a possible mediator of <span class="math inline">\(X\)</span>’s indirect effect; <span class="math inline">\(M\)</span> is also a potential <em>moderator</em> of <span class="math inline">\(X\)</span>’s direct effect. This results in sixteeen possible values for <span class="math inline">\(\theta^Y\)</span>—again as shown above in Table <a href="models.html#tab:PO16">2.3</a>.</p>
+<!-- AJ: This table, in Chap 2, is in terms of X1 and X2. And we don't really want people having to flip back. Think we should resurrect one of the tables below, wiht correct theta notation.  -->
+<!-- We spell out potential outcomes for the 16 resulting types---each a possible value of $\theta^Y$---in Table \@ref(tab:typespaths), which is parallel to Table \@ref(tab:types2x). Within $\theta$'s sub- and superscripts, the value of $X$ increases from 0 to 1 as we move to the right while the value of $M$ increases from 0 to 1 as we move up. -->
+<!-- \begin{table}[h!] -->
+<!--   \centering -->
+<!--   \def\arraystretch{1.3} -->
+<!--     \begin{tabular}{ccccccc} -->
+<!--     \hline -->
+<!--     \textbf {} & \textbf {Type} &  $(Y | X=0,$ & $(Y |X=0, $ & $(Y | X=1, $ & $(Y | X=1, $\\ -->
+<!--          & & $M=0)$ & $M=1)$ & $M=0)$ & $M=1)$ \\  \hline -->
+<!--     1 & $\theta_{00}^{00}$             &  0     & 0     & 0     & 0  \\ -->
+<!--     2 & $\theta_{00}^{01}$     & 0     & 0     & 0     & 1 \\ -->
+<!--     3 & $\theta_{01}^{00}$     & 0     & 0     & 1     & 0 \\ -->
+<!--     4 & $\theta_{01}^{01}$             & 0     & 0     & 1     & 1 \\ -->
+<!--     5 & $\theta_{00}^{10}$     & 0     & 1     & 0     & 0 \\ -->
+<!--     6 & $\theta_{00}^{11}$             & 0     & 1     & 0     & 1 \\ -->
+<!--     7 & $\theta_{01}^{10}$     & 0     & 1     & 1     & 0 \\ -->
+<!--     8 & $\theta_{01}^{11}$         & 0     & 1     & 1     & 1 \\ -->
+<!--     9 & $\theta_{10}^{00}$         & 1     & 0     & 0     & 0 \\ -->
+<!--     10 & $\theta_{10}^{01}$    & 1     & 0     & 0     & 1 \\ -->
+<!--     11 & $\theta_{11}^{00}$            & 1     & 0     & 1     & 0 \\ -->
+<!--     12 & $\theta_{11}^{01}$        & 1     & 0     & 1     & 1 \\ -->
+<!--     13 & $\theta_{10}^{10}$            & 1     & 1     & 0     & 0 \\ -->
+<!--     14 & $\theta_{10}^{11}$        & 1     & 1     & 0     & 1 \\ -->
+<!--     15 & $\theta_{11}^{10}$        & 1     & 1     & 1     & 0 \\ -->
+<!--     16 & $\theta_{11}^{11}$            & 1     & 1     & 1     & 1 \\ -->
+<!--     \bottomrule -->
+<!--     \end{tabular}% -->
+<!--    \caption{The table defines the 16 values (nodal types) that $\theta^Y$ can take on, given a binary $X$ and $M$ as parents of $Y$. The `Type' column lists each of the 16 values, while the four columns to its right define each value in terms of the potential outcomes that it implies.} -->
+<!--   \label{tab:typespaths}% -->
+<!-- \end{table} -->
+<!-- ------------------------------------------------------------------- -->
+<!--    **Type**    $(Y | X=0,$  $(Y |X=0,$   $(Y | X=1,$   $(Y | X=1,$   -->
+<!--                   $M=0)$       $M=1)$       $M=0)$        $M=1)$     -->
+<!-- -------------  -----------  -----------  ------------  ------------ -->
+<!-- $\theta_{0j}^{gh}$             0            0             0             0       -->
+<!--       2             0            0             0             1       -->
+<!--       3             0            0             1             0       -->
+<!--       4             0            0             1             1       -->
+<!--       5             0            1             0             0       -->
+<!--       6             0            1             0             1       -->
+<!--       7             0            1             1             0       -->
+<!--       8             0            1             1             1       -->
+<!--       9             1            0             0             0       -->
+<!--       10            1            0             0             1       -->
+<!--       11            1            0             1             0       -->
+<!--       12            1            0             1             1       -->
+<!--       13            1            1             0             0       -->
+<!--       14            1            1             0             1       -->
+<!--       15            1            1             1             0       -->
+<!--       16            1            1             1             1       -->
+<!-- ------------------------------------------------------------------- -->
+<!-- Table: (\#tab:typespaths)$Y$'s 16 nodal types---values of $Q^Y$---given binary $X$ and $M$ as parents of $Y$ -->
+<p>What values of <span class="math inline">\(\theta^Y\)</span>
+<!-- , of those displayed in Table \@ref(tab:typespaths),  -->
+then are compatible with the operation of the <span class="math inline">\(M\)</span> causal path? Let us first consider this question with respect to sequence (1), in which <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(M\)</span>, and that positive effect is necessary for <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(Y\)</span> to occur. For this sequence to operate, <span class="math inline">\(\theta^M\)</span> must take on the value of <span class="math inline">\(\theta^M_{01}\)</span>. When it comes to <span class="math inline">\(\theta^Y\)</span>, then, what we need to look for types in which <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(Y\)</span> <em>depends on <span class="math inline">\(M\)</span>’s taking on the value it does as a result of <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(M\)</span></em>.</p>
+<p>We are thus looking for nodal types that capture two kinds of counterfactual causal relations operating on nodes. First, <span class="math inline">\(X\)</span> must have a positive effect on <span class="math inline">\(Y\)</span> when <span class="math inline">\(M\)</span> changes as it does as a result of <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(M\)</span>. Second, that change in <span class="math inline">\(M\)</span>, generated by a change in <span class="math inline">\(X\)</span>, must be <em>necessary</em> for <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(Y\)</span> to operate. The thought experiment here thus imagines a situation in which <span class="math inline">\(X\)</span> changes from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>,<a href="#fn34" class="footnote-ref" id="fnref34"><sup>34</sup></a> but <span class="math inline">\(M\)</span> does <em>not</em> change to the value that it should as a result of this change in <span class="math inline">\(X\)</span>. We then inspect our types to see if <span class="math inline">\(Y\)</span> would change from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span> in this situation. It is only if <span class="math inline">\(Y\)</span> would <em>not</em> change to <span class="math inline">\(1\)</span> in this situation that we have identified a nodal type for which the <span class="math inline">\(M\)</span>-mediated path matters. It is this thought experiment that isolates the causal significance of the path that runs through <span class="math inline">\(M\)</span>.</p>
+<p>Assuming a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> (<span class="math inline">\(\theta^M=\theta^M_{01}\)</span>), we thus need to apply the following set of queries to <span class="math inline">\(\theta^Y\)</span>:<a href="#fn35" class="footnote-ref" id="fnref35"><sup>35</sup></a></p>
+<ol style="list-style-type: decimal">
+<li><p>Is <span class="math inline">\(X=1\)</span> a counterfactual cause of <span class="math inline">\(Y=1\)</span>, given <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(M\)</span>? Establishing this positive effect of <span class="math inline">\(X\)</span> involves two queries:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Where <span class="math inline">\(X=0\)</span>, does <span class="math inline">\(Y=0\)</span>? As we are assuming <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(M\)</span>, if <span class="math inline">\(X=0\)</span> then <span class="math inline">\(M=0\)</span> as well. We thus look down the <span class="math inline">\(X=0, M=0\)</span> column and eliminate those types in which we do not observe <span class="math inline">\(Y=0\)</span>. This eliminates types <span class="math inline">\(9\)</span> through <span class="math inline">\(16\)</span>.</p></li>
+<li><p>Where <span class="math inline">\(X=1\)</span>, does <span class="math inline">\(Y=1\)</span>? Again, given <span class="math inline">\(X\)</span>’s assumed positive effect on <span class="math inline">\(M\)</span>, <span class="math inline">\(M=1\)</span> under this condition. Looking down the <span class="math inline">\(X=1, M=1\)</span> column, we eliminate those types where we do not see <span class="math inline">\(Y=1\)</span>. We retain only types <span class="math inline">\(2, 4, 6,\)</span> and <span class="math inline">\(8\)</span>.</p></li>
+</ol></li>
+<li><p>Is <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(M\)</span> necessary for <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(Y\)</span>? That is, do we see <span class="math inline">\(Y=1\)</span> <em>only</em> if <span class="math inline">\(M\)</span> takes on the value that <span class="math inline">\(X=1\)</span> generates (<span class="math inline">\(M=1\)</span>)? To determine this, we inspect the <em>counterfactual</em> condition in which <span class="math inline">\(X=1\)</span> and <span class="math inline">\(M=0\)</span>, and we ask: does <span class="math inline">\(Y=0\)</span>? Of the four remaining types, only <span class="math inline">\(2\)</span> and <span class="math inline">\(6\)</span> pass this test.</p></li>
+</ol>
+<!-- \begin{table}[h!] -->
+<!--   \centering -->
+<!--     \begin{tabular}{cccccc} -->
+<!--     \hline -->
+<!--     **Type** &  $(Y | X=0,$ & $(Y |X=0, $ & $(Y | X=1, $ & $(Y | X=1, $ \\ -->
+<!--          & $M=0)$ & $M=1)$ & $M=0)$ & $M=1)$ \\  \hline -->
+<!--         1          &  0     & 0     & 0     & 0 \\ -->
+<!--     2  & 0     & 0     & 0     & 1 \\ -->
+<!--     3  & 0     & 0     & 1     & 0 \\ -->
+<!--     4          & 0     & 0     & 1     & 1 \\ -->
+<!--     5  & 0     & 1     & 0     & 0 \\ -->
+<!--     6          & 0     & 1     & 0     & 1 \\ -->
+<!--     7  & 0     & 1     & 1     & 0 \\ -->
+<!--     8      & 0     & 1     & 1     & 1 \\ -->
+<!--     9          & 1     & 0     & 0     & 0 \\ -->
+<!--     10     & 1     & 0     & 0     & 1 \\ -->
+<!--     11         & 1     & 0     & 1     & 0 \\ -->
+<!--     12     & 1     & 0     & 1     & 1 \\ -->
+<!--     13         & 1     & 1     & 0     & 0 \\ -->
+<!--     14     & 1     & 1     & 0     & 1 \\ -->
+<!--     15     & 1     & 1     & 1     & 0 \\ -->
+<!--     16         & 1     & 1     & 1     & 1 \\ -->
+<!--     \bottomrule -->
+<!--     \end{tabular}% -->
+<!--    \caption{$Y$'s 16 nodal types---values of $\Q^Y$---given binary $X$ and $M$ as parents of $Y$} -->
+<!--   \label{typespaths}% -->
+<!-- \end{table}% -->
+<p>Under these and only these two values of <span class="math inline">\(\theta^Y\)</span>—<span class="math inline">\(\theta^Y_{0001}\)</span> and <span class="math inline">\(\theta^Y_{0101}\)</span>—we will see a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> for which the <span class="math inline">\(M\)</span>-mediated path is causally necessary, given a positve effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span>. These two <span class="math inline">\(\theta^Y\)</span> values are also different from one another in an interesting way. For type <span class="math inline">\(\theta^Y_{0101}\)</span>, <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(Y\)</span> runs strictly through <span class="math inline">\(M\)</span>: if <span class="math inline">\(M\)</span> were to change from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span> <em>without</em> <span class="math inline">\(X\)</span> changing, <span class="math inline">\(Y\)</span> would still change from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>. <span class="math inline">\(X\)</span> is causally important for <span class="math inline">\(Y\)</span> <em>only</em> insofar as it affects <span class="math inline">\(M\)</span>. In a case of type <span class="math inline">\(\theta^Y_{0101}\)</span>, then, anything else that similarly affects <span class="math inline">\(M\)</span> would generate the same effect on <span class="math inline">\(Y\)</span> as <span class="math inline">\(X\)</span> does. In type <span class="math inline">\(\theta^Y_{0001}\)</span>, however, both <span class="math inline">\(X\)</span>’s change to <span class="math inline">\(1\)</span> <em>and</em> the resulting change in <span class="math inline">\(M\)</span> are necessary to generate <span class="math inline">\(Y\)</span>’s change to <span class="math inline">\(1\)</span>; <span class="math inline">\(X\)</span>’s causal effect thus requires both the mediated and the unmediated pathway. And here <span class="math inline">\(X\)</span> itself matters in the counterfactual sense; for a case of type <span class="math inline">\(\theta^Y_{0001}\)</span>, some other cause of <span class="math inline">\(M\)</span> would <em>not</em> generate the same effect on <span class="math inline">\(Y\)</span>.</p>
+<!-- The structural equation for $M$ will include $X$ and $Q_M$ as arguments. Thus, knowing the value of $M$ for any given value of $X$, conditional on a given structural equation for $M$, requires knowing $U_M$. The same logic operates for $U_Y$'s role in determining how $Y$ responds to a given change in $M$, conditional on $Y$'s structural equation.  -->
+<!-- Note that, as we saw with causal effects, it is also possible to imagine related estimands of the form "does $X$ cause $Y$ in this case through $M$?", "did $X$ cause $Y$ in this case through $M$?" (which requires knowledge of $X$), and "how often does $X$ cause $Y$ though $M$ in a larger population?" (which requires knowledge of the parameters that give rise to $U_Y$ and $U_M$).   -->
+<p>We can undertake the same exercise for sequence (2), in which <span class="math inline">\(X\)</span> first has a negative effect on <span class="math inline">\(M\)</span>, or <span class="math inline">\(\theta^M=\theta^M_{10}\)</span>. Here we adjust the three queries for <span class="math inline">\(\theta^Y\)</span> to take account of this negative effect. Thus, we adjust query 1a so that we are looking for <span class="math inline">\(Y=0\)</span> when <span class="math inline">\(X=0\)</span> and <span class="math inline">\(M=1\)</span>. In query 1b, we look for <span class="math inline">\(Y=1\)</span> when <span class="math inline">\(X=1\)</span> and <span class="math inline">\(M=0\)</span>. And for query 2, we want types in which <span class="math inline">\(Y\)</span> fails to shift to <span class="math inline">\(1\)</span> when <span class="math inline">\(X\)</span> shifts to <span class="math inline">\(1\)</span> but <span class="math inline">\(M\)</span> stays at <span class="math inline">\(1\)</span>. Types <span class="math inline">\(\theta_{0010}\)</span> and <span class="math inline">\(\theta_{1010}\)</span> pass these three tests.</p>
+<p>In sum, we can define a query about causal paths as a query about the value of <span class="math inline">\(\theta\)</span> terms on the causal graph. For the graph in Figure , asking whether <span class="math inline">\(X\)</span>’s effect runs via the <span class="math inline">\(M\)</span>-mediated path is asking whether one of four combinations of <span class="math inline">\(\theta^M\)</span> and <span class="math inline">\(\theta^Y\)</span> hold in case:</p>
+<ul>
+<li><span class="math inline">\(\theta^M=\theta^M_{01}\)</span> and (<span class="math inline">\(\theta^Y=\theta_{0001}\)</span> or <span class="math inline">\(\theta_{0101}\)</span>)</li>
+<li><span class="math inline">\(\theta^M=\theta^M_{10}\)</span> and (<span class="math inline">\(\theta^Y=\theta_{0010}\)</span> or <span class="math inline">\(\theta_{1010}\)</span>)</li>
+</ul>
+<p>It is worth noting how different this formulation of the task of identifying causal pathways is from widespread understandings of process tracing. Scholars commonly characterize process tracing as a method in which we determine whether a mechanism was operating by establishing whether the events lying along that path occurred. As a causal-model framework makes clear, finding out that <span class="math inline">\(M=1\)</span> (or <span class="math inline">\(M=0\)</span>, for that matter) does not establish what was going on causally. Observing this intervening step does not by itself tell us what value <span class="math inline">\(M\)</span> <em>would</em> have taken on if <span class="math inline">\(X\)</span> had taken on a different value, or whether this would have changed <span class="math inline">\(Y\)</span>’s value. We need instead to conceive of the problem of identifying pathways as one of figuring out the <em>counterfactual</em> response patterns of the variables along the causal chain. As we will demonstrate later in the book, explicitly characterizing those response patterns as nodes in a causal model helps us think systematically about empirical strategies for drawing the relevant inferences.</p>
+</div>
+<div id="general-procedure" class="section level2" number="4.6">
+<h2><span class="header-section-number">4.6</span> General procedure</h2>
+<p>We have been able to associate a collection of causal types to each of the causal queries we have described in this chapter. But we have not described a general method for doing so. We do that now.<a href="#fn36" class="footnote-ref" id="fnref36"><sup>36</sup></a></p>
+<p>The algorithm calculates the full set of outcomes on all nodes, given each possible causal type and a collection of controlled conditions (“<code>do</code> operations”). Then each causal type is marked as satisfying the query or not. This in turn then tells us the <em>set</em> of types that satisfy a query. Quantitative queries, such as the probability of a query being satisfied, or the average treatment effect, can then be calculated by taking the measure of the set of causal types that satisfies the query.</p>
+<p>First some notation.</p>
+<p>Let <span class="math inline">\(n\)</span> denote the number of nodes. Label the nodes <span class="math inline">\(V_1, \dots V_n\)</span> subject to the requirement that each node’s parents precede it in the ordering. Let <span class="math inline">\(pa_j\)</span> denote the set of values of the parents of node <span class="math inline">\(j\)</span> and let <span class="math inline">\(V_j(pa_j, \theta_t)\)</span> denote the value of node <span class="math inline">\(j\)</span> given the values of its parents and the causal type <span class="math inline">\(\theta_t\)</span>.</p>
+<p>The primitives of a query are questions about the values of outcomes, <span class="math inline">\(V\)</span>, given some set of controlled operations <span class="math inline">\(x\)</span>.</p>
+<ul>
+<li>let <span class="math inline">\(x = (x_1, \dots x_n)\)</span> denote a set of <code>do</code> operations where each <span class="math inline">\(x_i\)</span> takes on a value in <span class="math inline">\(\{-1,0,1\}\)</span>. here -1 indicates “not controlled,” 0 means set to 0 and 1 means set to 1 (this set can be expanded if <span class="math inline">\(V\)</span> is not binary)</li>
+<li>let <span class="math inline">\(V(x, \theta_t)\)</span> denote the values <span class="math inline">\(V\)</span> takes given <span class="math inline">\(\theta_t\)</span></li>
+<li>a “simple query” is a function <span class="math inline">\(q(V(x, \theta_t))\)</span> which returns TRUE if <span class="math inline">\(V(x, \theta_t)\)</span> satisfies some condition and FALSE otherwise.</li>
+</ul>
+<p>Queries are summaries of simple queries. For instance, for nodes <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>:</p>
+<ul>
+<li>Query <span class="math inline">\(Q_1:1(Y(X=1)=1))\)</span> asks whether <span class="math inline">\(Y=1\)</span> when <span class="math inline">\(X\)</span> is set to 1. This requires evaluating one simple query.</li>
+<li>Query <span class="math inline">\(Q_2:1(Y(X=1)=1) \&amp; 1(Y(X=0)=0))\)</span> is composed of two simple queries: the first returns true if <span class="math inline">\(Y\)</span> is 1 when <span class="math inline">\(X\)</span> is set to 1, the second returns true if <span class="math inline">\(Y\)</span> is 0 when <span class="math inline">\(X\)</span> is set to 0; both conditions holding corresponds to a positive effect on a unit.</li>
+<li>Query <span class="math inline">\(Q_3:E((1(Y(X=1)=1) \&amp; (Y(X=0)=0)) - (1(Y(X=1)=0) \&amp; 1(Y(X=0)=1))\)</span> asks for the average treatment effect, represented here using four simple queries: the expected difference between positive and negative effects. This query involves weighting by the probability of the causal types.</li>
+</ul>
+<p>Then to calculate <span class="math inline">\(V(x, \theta_t)\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li>Calculate <span class="math inline">\(v_1\)</span>, the realized value of the first node, <span class="math inline">\(V_1\)</span>, given <span class="math inline">\(\theta_t\)</span>. This is given by <span class="math inline">\(v_1 = x_1\)</span> if <span class="math inline">\(x_1 \neq -1\)</span> and by <span class="math inline">\(\theta_t^{V_1}\)</span> otherwise.</li>
+<li>For each <span class="math inline">\(j \in 2...n\)</span> calculate <span class="math inline">\(v_j\)</span> using either <span class="math inline">\(v_j = x_j\)</span> if <span class="math inline">\(x_j \neq -1\)</span> and <span class="math inline">\(V_{j}(pa_j, \theta_t)\)</span> otherwise, where the values in <span class="math inline">\(pa_j\)</span> are determined in the previous steps.</li>
+</ol>
+<p>We now have the outcomes, <span class="math inline">\(V\)</span>, for all nodes given the operations <span class="math inline">\(x\)</span> and so can determine <span class="math inline">\(q(V(x))\)</span>. From there we can calculate summaries of simple queries across causal types.</p>
+<p>A last note on conditional queries. Say we are interested in an attribution query of the form: what is the probability that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> in a case in which <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span>. In this case define simple query <span class="math inline">\(q_1\)</span> which assesses whether <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> for a given <span class="math inline">\(\theta_t\)</span> and simple query <span class="math inline">\(q_2\)</span> which assesses whether <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span> under <span class="math inline">\(\theta_t\)</span>. We then calculate the conditional query by conditioning on the set of <span class="math inline">\(\theta\)</span>s for which <span class="math inline">\(q_2\)</span> is true and evaluating the share of these for which <span class="math inline">\(q_2\)</span> is true (weighting by the probability of the causal types).</p>
+<!-- FLAG: Alan read -->
+</div>
+<div id="appendix" class="section level2" number="4.7">
+<h2><span class="header-section-number">4.7</span> Appendix</h2>
+<p>We demonstrate how queries are calculated using the <code>CausalQueries</code> package for a chain model of the form <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. We imagine a model of this form in which we assume no negative effects of <span class="math inline">\(M\)</span> on <span class="math inline">\(X\)</span> or <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>. We will also suppose that in fact <span class="math inline">\(X=1\)</span>, always. Doing this keeps the parameter space a little smaller for this demonstration but also serves to demonstrate that a causal model can make use of the counterfactual possibility that a node takes on a particular value even if it never does in fact.</p>
+<p>We then ask two questions:</p>
+<p>Q1. What is the probability that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>? (“POS”)
+Q2. What is the probability that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> in cases in which <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span>? (“POC”)</p>
+<p>To answer these two queries we define simple query <span class="math inline">\(q_1\)</span> which assesses whether <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> for each <span class="math inline">\(\theta\)</span> and a second simple query <span class="math inline">\(q_2\)</span> which assesses whether <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span> for each <span class="math inline">\(\theta\)</span>. In this example the first simple query involves some <code>do</code> operations, the second does not.</p>
+<p>The answers to these two simple queries are shown in the table below, where each row corresponds to a causal type.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="questions.html#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">make_model</span>(<span class="st">&quot;X -&gt; M -&gt; Y&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="questions.html#cb2-2" aria-hidden="true" tabindex="-1"></a>         <span class="fu">set_restrictions</span>(<span class="st">&quot;X[]==0&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="questions.html#cb2-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">set_restrictions</span>(<span class="st">&quot;M[X=1] &lt; M[X=0]&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="questions.html#cb2-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">set_restrictions</span>(<span class="st">&quot;Y[M=1] &lt; Y[M=0]&quot;</span>)   </span>
+<span id="cb2-5"><a href="questions.html#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="questions.html#cb2-6" aria-hidden="true" tabindex="-1"></a>q1 <span class="ot">&lt;-</span> <span class="st">&quot;Y[X = 1] &gt; Y[X = 0]&quot;</span></span>
+<span id="cb2-7"><a href="questions.html#cb2-7" aria-hidden="true" tabindex="-1"></a>q2 <span class="ot">&lt;-</span> <span class="st">&quot;X == 1 &amp; Y == 1&quot;</span></span>
+<span id="cb2-8"><a href="questions.html#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="questions.html#cb2-9" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-10"><a href="questions.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">a1 =</span> CausalQueries<span class="sc">:::</span><span class="fu">map_query_to_causal_type</span>(model, q1)<span class="sc">$</span>types,</span>
+<span id="cb2-11"><a href="questions.html#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">a2 =</span> CausalQueries<span class="sc">:::</span><span class="fu">map_query_to_causal_type</span>(model, q2)<span class="sc">$</span>types,</span>
+<span id="cb2-12"><a href="questions.html#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">p  =</span> <span class="fu">get_type_prob</span>(model))</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-4">Table 4.1: </span>Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">a1</th>
+<th align="left">a2</th>
+<th align="right">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X1.M00.Y00</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="even">
+<td align="left">X1.M01.Y00</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="odd">
+<td align="left">X1.M11.Y00</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="even">
+<td align="left">X1.M00.Y01</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="odd">
+<td align="left">X1.M01.Y01</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="even">
+<td align="left">X1.M11.Y01</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="odd">
+<td align="left">X1.M00.Y11</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="even">
+<td align="left">X1.M01.Y11</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">0.1111</td>
+</tr>
+<tr class="odd">
+<td align="left">X1.M11.Y11</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">0.1111</td>
+</tr>
+</tbody>
+</table>
+<p>The answer to the overall queries are then (1) the expected value of (the answers to) <span class="math inline">\(q_1\)</span> and weights <span class="math inline">\(p\)</span>and (2) the expected value of (the answers to) <span class="math inline">\(q_1\)</span> given <span class="math inline">\(q_0\)</span> and weights <span class="math inline">\(p\)</span>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="questions.html#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">POS =</span> <span class="fu">weighted.mean</span>(a1, p),</span>
+<span id="cb3-2"><a href="questions.html#cb3-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">POC =</span> <span class="fu">weighted.mean</span>(a1[a2], p[a2]))</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-6">Table 4.2: </span>Calculated answers to two queries.</caption>
+<thead>
+<tr class="header">
+<th align="right">POS</th>
+<th align="right">POC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.1111</td>
+<td align="right">0.2</td>
+</tr>
+</tbody>
+</table>
+<p>Given the equal weighting on causal types, these answers reflect the fact that for 5 of 9 causal types we expect to see <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span> but that; the causal effect is present for only 1 of 9 causal types and for 1 of the 5 causal types that exhibit <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span>.
+<!-- Such a  focus on causal paths does not restrict attention to questions of the form "how did $X$ cause $Y$" but more generally, "what paths generated $Y$?" Such questions may have answers of the form "$Y=1$ occurred because $X=0$ led to $M=0$, which, when $Z=1$, gives rise to $Y=1$ and not because $X=1$  led to $M=1$, which, when $Z=0$ gives rise to $Y=1$." Such inquiries can focus on distinct sets of conditions that give rise to an outcome ("equifinality"), as in Qualitative Comparative Analysis (QCA). While QCA analysts sometimes refer to sets of conditions as "paths",  QCA does not generally involve explicit assessment of the causal steps linking conditions to outcomes. When examining paths in a causal-model framework, the analyst can address queries that involve drawing inferences about an entire chain linking $X$ to $Y$ or even an entire causal network. An understanding of a full causal network would, in turn, allow for any more specific estimand to be estimated. --></p>
+<!-- ## Illustration with the Running Example -->
+<!-- We can more fully illustrate the definition of causal queries in terms of exogenous nodes on a graph by thinking through their application to the simple causal model described in Chapter 2.  -->
+<!-- We illustrate the model again in figure \@ref(fig:running2). -->
+<!-- ```{r, echo = FALSE} -->
+<!-- names = c("S", "X", "C", "R", "Y") -->
+<!-- M <- matrix(0, 5, 5) -->
+<!-- M[1, c(3)] <-1 -->
+<!-- M[2, c(3,4)] <-1 -->
+<!-- M[3, c(4,5)] <-1 -->
+<!-- M[4, 5] <-1 -->
+<!-- f_C <- function(V) 1- V[1]*V[2] -->
+<!-- f_R <- function(V) V[2]*V[3] -->
+<!-- f_Y <- function(V) V[3]*V[4] -->
+<!-- # Histories and effects: -->
+<!-- H <- function(do = c(0,0,NA,NA,NA)) { -->
+<!--   do[3] <- ifelse(is.na(do[3]), f_C(do), do[3]) -->
+<!--   do[4] <- ifelse(is.na(do[4]), f_R(do), do[4]) -->
+<!--   do[5] <- ifelse(is.na(do[5]), f_Y(do), do[5]) -->
+<!--   do -->
+<!--   } -->
+<!-- edges <- function(S,X) { -->
+<!--   do0 <- c(S,X,NA, NA, NA) -->
+<!--   H1   <- H(do0) -->
+<!--   out <- sapply(1:5, function(i) { -->
+<!--     do1 <- do0 -->
+<!--     do1[i] <- 1-H1[i]  # change value for i and put into do -->
+<!--     1*(H1 != H(do1)) -->
+<!--   }) -->
+<!--   diag(out) <- 0 -->
+<!--   out} -->
+<!-- ``` -->
+<!-- ```{r running2, echo = FALSE, fig.width = 11, fig.height = 11.5, fig.align="center", out.width='\\textwidth', fig.cap = "The main panel shows a simple causal model. $S$ and $X$ are stochastic, other variables determined by their parents, as shown in bottom right panel. Other panels show four possible histories that can arise depending on values taken by $S$ and $X$, along with causal relations in each case. The equations for $S$ and $X$ are written with indicator variables, which take a value of 1 whenever the $u$ value is less than the $\\lambda$ value.", fig.align="center", warning = FALSE} -->
+<!-- layout(matrix(c(1,1,2, -->
+<!--                 1,1,3, -->
+<!--                 4, 5,6), 3, 3, byrow = TRUE)) -->
+<!-- par(mar=c(1,1,3.5,1)) -->
+<!-- x = c(0,0, 1, 1, 2) -->
+<!-- y = c(2,0, 2, 0, 1) -->
+<!-- names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced") -->
+<!-- hj_dag(x =  c(x, 0, 0), -->
+<!--        y = c(y, 0.25, 1.75), -->
+<!--        names = c(names, " ", " "), -->
+<!--        arcs = cbind( c(1,2,2, 3, 4, 3, 6, 7), -->
+<!--                      c(3,3,4, 5, 5, 4, 2, 1)), -->
+<!--        title = "Free Press and Government Survival", -->
+<!--        add_functions = 0,  -->
+<!--        contraction = .15, -->
+<!--        add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS", -->
+<!--        padding = .2) -->
+<!-- text(c(0,0), c(.25, 1.75), c(expression(paste(U[X])), expression(paste(U[S])))) -->
+<!-- names = c("S", "X", "C", "R", "Y") -->
+<!-- myarcs <- list( -->
+<!--        which(t(edges(0,0))==1, arr.ind = TRUE), -->
+<!--        which(t(edges(1,0))==1, arr.ind = TRUE), -->
+<!--        which(t(edges(0,1))==1, arr.ind = TRUE), -->
+<!--        which(t(edges(1,1))==1, arr.ind = TRUE)) -->
+<!-- mysolids <- list(H(c(0,0,NA,NA,NA)),  -->
+<!--                  H(c(1,0,NA,NA,NA)),  -->
+<!--                  H(c(0,1,NA,NA,NA)),  -->
+<!--                  H(c(1,1,NA,NA,NA))) -->
+<!-- names = c("S", "X", "C", "R", "Y") -->
+<!-- titles = c("A: No free press causes Y = 0",  -->
+<!--            "B: No free press is the actual cause\nBut neither S nor X counterfactually cause Y=0", -->
+<!--            "C: Both S = 0 and X = 1 cause Y = 1.\n X = 1 is the notable cause.",  -->
+<!--            "D: Government sensitivity\ncauses Y = 0") -->
+<!-- for(j in 1:4){ -->
+<!--     hj_dag( -->
+<!--        x = x, -->
+<!--        y = y, -->
+<!--        names = names, -->
+<!--        arcs = myarcs[[j]], -->
+<!--        title = titles[[j]], -->
+<!--        add_points = TRUE, -->
+<!--        solids = c(mysolids[[j]]), -->
+<!--        contraction = .15 -->
+<!--        ) -->
+<!-- } -->
+<!-- frame(); box(); -->
+<!-- text(.1,seq(.95, .05, -.1),  -->
+<!--           c("Structural Equations:", -->
+<!--             "  Y = CR", -->
+<!--             "  C = 1 - XS", -->
+<!--             "  R = CX",  -->
+<!--             expression(paste("  S = 1(", u[S]<lambda^S[1],")")), -->
+<!--             expression(paste("  X = 1(", u[X]<lambda^X[1],")")), "  ", -->
+<!--             "P(U):", -->
+<!--             expression(paste("  ", U[S], "~Unif[01]")),  -->
+<!--             expression(paste("  ", U[X], "~Unif[01]"))  -->
+<!--             ), cex = 1.5, adj = 0) -->
+<!-- title("Structural model") -->
+<!-- ``` -->
+<!-- THe main panel here is the same as in Chapter 2 but but now we add in a set of another four panels. In these panels we leave the $\lambda$ and $U$ terms implicit as they will not come into play in our analysis of these graphs. In these four panels, we show all possible ''realizations'' of the graph given the four possible contexts defined by the exogenous nodes, $S$ and $X$. We build each of the four possible by assessing outcomes and counterfactual relationships for each possible combination of $S$ and $X$ values. A hollow circle at a node indicates that the variable takes on a value of $0$ while a shaded circle indicates a value of $1$. The arrows indicate causal effects. More specifically, an arrow pointing from one variable to another indicates that a manipulation of the first variable would cause a change in the second variable, *given the values realized by all other variables that are not the first variable's descendants*. Unlike in a conventional DAG, we represent here both the direct effect of each variable on its child and each variable's indirect (mediated) causal effects on its descendants. As we can see from the various arrows in the panels, we can use a single, simple causal model to think through a wide range of causal relationships that might be of interest.^[Though similar, these graphs are not DAGS or natural beams (or submodels). The panels reflect outcomes conditional on the values of $S$ and $X$, but they are not themselves DAGs because they indicate the values taken by nodes and include arrows between two nodes when and only when one causes the other, directly or indirectly. To construct "natural beams" [@pearl2009causality 10.3], we fix a realization of root variables, $U$,  (here, $\mathcal U = (S, X)$); then for each variable, $V_i$ we  partition $pa(V_i)$ into a set of "engaged parents," $S$, and "disengaged parents," with the property that (a) $f_i(S(u), \overline{s}, u) = V_i(u)$ for *all* values of $\overline{s}$ and (b) $f_i(s', \overline{S}(u), u) \neq V_i(u)$ for *some*  $s'$. Thus a natural beam  would connect a parent to a child if, given the particular history, the parent mattered for the child's outcome.] Since the values of all variables in a model are determined by the values of the exogenous nodes, this is equivalent to saying that the arrows show the causal effects that are operating each *context.* -->
+<!-- One important feature of DAGs is immediately evident from a comparison of the DAG with subgraphs $A, B, C$, and $D$ in the figure. Consistent with the rules of DAG-construction, the DAG includes arrows between all variables that are under any circumstances directly causally related; but the inclusion of an arrow does not mean that two variables are *always* causally related. For instance, while the DAG (large graph) has an arrow running from $X$ to $R$, we can see from the subgraphs (where we deviate from the standard grammar of DAGs) that the causal effect is contingent on context: it is present only when $S=0$ (panels $A$ and $C$) but not when $S=1$. The arrows in a DAG represent dependencies that exist under *some*, but not necessarily under all, values of the exogenous variables. -->
+<!-- These five graphs allow us to define all causal claims of interest. The graphs illustrate, in other words, how causal queries can be represented as the value of the exogenous nodes in a causal diagram. Let us consider each causal query in turn. -->
+<!-- **Case-level causal effect.** Working with the four subgraphs, we can show that the query, "What is the effect of one variable on another in this case?" is equivalent to asking about the values of the model's exogenous variables, $X$ and $S$. Consider, for instance, the query: Do media reports of corruption, $R$, have a causal effect on government removal from office, $Y$, in this case? Turning to the subgraphs, we can simply ask in which of these four graphs---in which context---$R$ has a causal effect on $Y$: where is there an arrow running from $R$ to $Y$?^[The subgraphs are derived from application of Equation EQUATION REFERENCE. We can work through the $R \rightarrow Y$ relationship to demonstrate how this is done. Consider the effect of $R$ on $Y$ given $S=0, X=0$. This is the arrow between  $R$ and $Y$ in panel $A$. Removing the arrows pointing to $R$, the distribution over nodes when $R=r'$ is: $P(c,y | \hat{r}=r', s =0, x=0)$. We are interested in $P(y=1| \hat{r}=1,  s =0, x=0) - P(y=1 | \hat{r}= 0,  s =0, x=0)$. The second term is easy as for all cases in which $r=0$, $y=0$; and so  $P(y=1|| \hat{r}= 0)=0$. We focus then on  $P(y=1| \hat{r}=1, s= 0, x= 0)$. Taking the marginal distribution, this can be written $\sum_{c=0}^1P(y=1|r=1, c)P(c|s=0,x=0)$. From the structural equations, we know that $P(c=1|s=0,x=0)=1$ and that $P(y=1|r=1, c=1)=1$. So the marginal distribution is $P(y=1| \hat{r}=1, s= 0, x= 0) = 1$; and the treatment effect of $R$ on $Y$, conditional on the characteristics of this case, is then 1. This positive effect is represented with the arrow from the $R=0$ node to the $Y=0$ node in panel $A$.] We can readily see that $R$ has an effect---a positive effect---on $Y$ in all configurations of exogenous node values (i.e., in all subgraphs) except when $X=1$ and $S=1$ (panel $D$); the absence of an arrow in panel $D$ indicates that $R$'s effect on $Y$ is 0 in that context. Thus, given our model, asking whether there is a case-level causal effect of $X$ on $Y$ is equivalent to asking whether either $S$ or $X$ or both are equal to $0$ in the case. -->
+<!-- Another way to put the point is that $S$ and $X$ jointly determine a case's nodal type when it comes to the effect of $R$ on $Y$. Returning to our four nodal types, the graphs tell us that a case is a $b$ type (positive effect) with respect to the $R \rightarrow Y$ relationship whenever at least one of $S$ or $X$ is $0$. If $S=X=1$, then a case is a $c$ type (no effect, with the outcome fixed at $Y=0$).  -->
+<!-- We can work through other relationships in the model similarly. For instance, does a free press have an effect on government removal in a case? See an $X$-to-$Y$ arrow only in panels $A$ and $C$, we can thus conclude that $X$ has a causal effect on $Y$ in (and only in) cases in which $S=0$.  -->
+<!-- For now, we are simply using the models to *define* a query about a case-level causal effect. This definition sets the stage for our discussion of research design---how one might go about empirically addressing this query---later in the book. We can point the way toward that discussion by noting making two broad points. If the presence of a free press and government's sensitivity to public opinion are observable, then estimating case-level causal effects will simply be a matter of measuring these two exogenous nodes (or, for some queries, just one of them). However, we will often be in a situation in which the nodes defining our causal query are not observable. Our models of the world often include concepts that are theoretically central to a causal logic but cannot be directly measured. Consider, for instance, government sensitivity to public opinion. When a model's exogenous variables are unobservable, then our research design may require using information from other, *observable* nodes to draw inferences about context. This is a key strategy of process tracing that we develop in later chapters. -->
+<!-- <!-- We need to resolve the contradiction between the above footnote and the previous one: one says they're not submodels, the other says they are. -->
+<!-- <!-- In this causal beam with binary variables,  whenever a unique path connects one node to another then the ancestor's node's condition is a cause of the descendant's condition. These case level causal relations cannot be read directly from the graph however if there are multiple paths or non dichotomous variables. To see why multiple paths prevent this inference, return to the boulder example of non transitivity described above; to see why inferences cannot be made along paths with non binary outcomes notice that $A$ and $B$ may be connected because some change in $A$ produces a change in $B$, though not necessarily *all* changes in $A$.    -->
+<!-- **Average causal effects.** Average causal effects are simply averages of case-level causal effects for the population. Since case-level causal effects are determined by the values of the exogenous nodes in cases, we need to average over the distribution of case-level contexts in the population. Put differently, the average causal effect of any variable on another will depends on how commonly the relevant case-level conditions---those in which the causal effect is and is not present---occur. In our current example, we have seen that the free press makes a difference to government survival if and only if the government is *non-sensitive* (panels $A$ and $C$): the non-sensitive government gets exposed as corrupt if and only if there is a free press while the sensitive government never gets replaced because it adjusts to the presence of a free press by eliminating corruption. Similarly, the sensitivity of the government (and the resulting level of corruption) matters only if there *is* a free press (panels $C$ and $D$). Without a free press, non-sensitive and, thus, corrupt governments do not get exposed and so stay on; with a free press, non-sensitive (and, thus, corrupt) governments get replaced.  -->
+<!-- Thus, the *average* effect of each of these initial causes on the outcome will depend on the probability with which the other cause is absent or present. To define a query about average causal effects, we need to examine the full probabilistic causal model as graphed in the large panel in Figure \@ref(fig:running2). What is the average causal effect of a free press ($X$) on government removal ($Y$)? As we have learned from the subgraphs, this effect is fully defined by the value of $S$. In particular, the effect of $X$ on $Y$ is equal to $1$ when $S=0$, and is equal to $0$ when $S=1$. As we've noted, we calculate the average causal effect by averaging causal effects over the distribution of the relevant exogenous variables -- which, here, is only $S$. In the probabilistic model, $S$ is a function of $\lambda^S$ and $U_S$. In particular, $S=1$ whenever $u_S < \lambda^S$. Since $U_S$ has a uniform distribution, this simply means that $S=1$ with probability $\lambda_1^S$; likewise, $S=0$ with probability $1-\lambda_1^S$.  Thus, we calculate $X$'s average causal effect on $Y$ by multiplying each causal effect by the probability of $S$'s taking on the value that generates that effect: $1 \times (1-\lambda_1^S) + 0 \times \lambda_1^S = 1-\lambda_1^S$. Put differently, the causal effect of a free press on government removal is equal to the commonness of insensitive governments in the relevant population of cases.  -->
+<!-- We have thus defined our causal query in terms of an exogenous variable, $\lambda_1^S$, in the probabilistic causal model. Note that, just as $S$ acts as a causal-type variable for $X$'s effect on $Y$, querying $\lambda_1^S$ is equivalent to asking about the distribution of nodal types in the population. In our four-type framework, cases with $S=0$ are $b$ (positive effect) types with respect to the $X \rightarrow Y$ relationship; cases with $S=1$ are $c$ types (no effect, $Y=0$). (There are, here, no $a$ or $d$ types.) Thus, $\lambda_1^S$ represents the share of $c$ types and $1-\lambda_1^S$ the share of $b$ types in the population, vis-a-vis $X$'s effect on $Y$.  -->
+<!-- We can follow the same procedure for all causal relationships in the model. Returning, for instance, to the effect of $R$ on $Y$, we learned from the subgraphs that $R$ has a causal effect of $1$ in panels $A,B$ and $C$---that is, whenever it is not the case that $X=1$ and $S=1$---and otherwise of $0$. Thus, the $R$'s average causal effect is the weighted average $1 \times (1-\lambda_1^S \times \lambda_1^X) + 0 \times \lambda_1^S \times \lambda_1^X$ = $1-\lambda_1^S \times \lambda_1^X$. This is simply the probability of not having both $X=1$ and $S=1$. Here, then, we have defined the causal query in terms of two exogenous nodes in the probabilistic model, $\lambda_1^S$ and $\lambda_1^X$. ^[Likewise, the average causal effect of $R$ conditional on $S=1$ is $1-\lambda_1^X$ (the probability of ending up in panel B, rather than D); and the average causal effect of $R$ given $S=0$ is 1 (since it has an effect in both panels A and C).] -->
+<!-- **TO BECOME A LONG FOOTNOTE...** -->
+<!-- These quantities can be calculated from the distributions in the same way as we calculated the case-level effects. Removing the arrows pointing to $R$, the distribution over nodes when $R=r'$---but this time not fixing $S$ and $X$---is $P(s,x,c,y | \hat{r}=r')$. Again the key part is $P(y=1| \hat{r}=1)$, which can be written $\sum_x\sum_s\sum_c P(x)P(s)P(c|x,s)P(y|c, r= 1)$. Using the structural equations, this simplifies to $\sum_x\sum_s P(x)P(s)P(c=1|x,s) = P(x=0)P(s=0) + P(x=0)P(s=1) + P(x=1)P(s=0)$, or, $1-\lambda_1^S\lambda_1^X$. -->
+<!-- In the same way, we can construct the average treatment effect for each of the exogenous variables: -->
+<!-- * $\tau_X = E_S(Y(X=1|S)-Y(X=0|S)) = -(1-\lambda_1^S)$ -->
+<!-- * $\tau_S = E_X(Y(S=1|X)-Y(S=0|X)) = \lambda_1^X$] -->
+<!-- **LONG FOOTNOTE ENDING HERE** -->
+<!-- In general, then, we can define queries about average causal effects as queries about the exogenous nodes that represent a causal model's probabilistic components. In the present example, probabilistic components enter only as determinants of the initial substantive causal variables. In other models, variables further downstream might also have stochastic components, a query about average causal effects might include thus further exogenous terms representing population-level distributions. Estimating average causal effects thus amounts drawing inferences about these nodes.^[Given the model, data will be useful for estimating average effects only if one is uncertain about the distributions of $S$ and $X$, which are a function of $U_S$ and $\lambda_1^S$ and $U_X$ and $\lambda_1^X$, respectively. In this example $\lambda_1^S$ and $\lambda_1^X$ are fixed in the model and so we do not learn anything about them from data. If however $\lambda_1^S$ and $\lambda_1^X$ are represented as nodes that are themselves produced by some other distribution -- such as a Beta distribution --- then the question of understanding average effects is the question of making inferences about these nodes.] -->
+<!-- <!-- I find the previous paragraph quite confusing in terms of what all of this says about learning about nodes. I would think we would want to set up the example so that we *can* use data to learn about the ATE and so that this runs through learning about root nodes.  -->
+<!-- **Actual cause.** Returning to a case-level query, the concept of an actual cause becomes useful when outcomes are overdetermined. Suppose there is a case with a sensitive government ($S=1$) and no free press ($X=0$), as in panel B. Then the *survival* of the government is over-determined: neither government sensitivity nor the free press is a counterfactual cause. (A lack of a free press is enough for even a corrupt government to survive; and sensitivity ensures non-corruption and, thus, survival even in the presence of a free press.)  -->
+<!-- Nevertheless, we can distinguish between the causes in terms of which one was an actual cause. Conditioning on there being corruption, which there actually was, the lack of a free press *is* a counterfactual cause of government survival: if there had been a free press, holding corruption constant, then the government would have been removed. This makes the lack of a free press an actual cause---that is, a counterfactual cause when some (or no) feature of what actually happened is kept fixed. However, there is no set of realized variable values that we can condition on to make the presence of a sensitive government a counterfactual cause; thus, it is not an actual cause. -->
+<!-- The context---the values of the exogenous nodes in the subgraphs, $S$ and $X$---determines which variables will be actual causes through setting the realized values of all endogenous variables in the model and thus restricting the values on which conditioning is permitted for the determination of actual causes. Since corruption *is* present whenever $S=1$ and $X=0$, we are permitted in this context to condition on its presence, and the free press is an actual cause of government retention. In contrast, the sensitivity of the government is not an actual cause in this same context. Given no free press, there will always be corruption but no reporting on corruption, which makes government removal impossible, regardless of government sensitivity; thus, there is no subset of actual events that, when kept fixed, would make a change to a non-sensitive government result in the government's fall. In sum, asking whether a variable in a model was the actual cause of an outcome can equivalently be understood as asking about the values of the model's exogenous nodes. Answering that question will consist either of directly observing those exogenous conditions or drawing inferences about them from other, observable nodes. -->
+<!-- <!-- This example has the odd feature that the question of whether S or X is an actual cause is itself already conditional on the values of S and X.   -->
+<!-- **Notable cause.** In the event that that there is a non-sensitive government ($S=0$) and a free press ($X=1$), as in panel $C$, the government gets replaced and *both* of the two causes matter counterfactually for government replacement. (Absent either one, the government would survive.) Again, however, we can distinguish between them, this time on the basis of notable causation. The question, for identifying a notable cause, is how commonly the causal variable in question takes on its realized, as opposed to a counterfactual, value. Thus, like average causal effects, notable causation depends on *population-level* distributions---in the present example, on the parameters $\lambda_1^S$ and $\lambda_1^X$. If, for instance, governments are more frequently sensitive (the counterfactual) than non-sensitive (the actual value)---i.e., $\lambda_1^S > 0.5$---then the non-sensitive government is a notable cause. However, if free presses are rarer than non-sensitive governments---i.e.  $\lambda_1^X < 1-\lambda_1^S$---then the free press is a *more* notable cause than the non-sensitive government. -->
+<!-- <!-- Again, would be more consistent with out queries-as-root-nodes to show the pi's as nodes. -->
+<!-- **Causal Paths.** Note finally that different causal paths can give rise to the same outcome, where the different paths can be distinguished based on values of root nodes $S$ and $X$. For example, the government may be retained ($Y=0$) because there is no free press ($X=0$) and so no negative reporting on the government, regardless of the value of $S$; or because, there is a free press ($X=1$) and a sensitive government ($S=1$) takes account of this and does not engage in corruption. **\color{red} To be improved to link more closely to our abstract discussion of paths as estimands.** -->
+<!-- What still bugs me a bit is that we don't have a way of showing, in this example, different causal paths for the same *causes* and outcomes. -->
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-hall2004two" class="csl-entry">
+Hall, Ned. 2004. <span>“Two Concepts of Causation.”</span> <em>Causation and Counterfactuals</em>, 225–76.
+</div>
+<div id="ref-halpern2015modification" class="csl-entry">
+Halpern, Joseph Y. 2015. <span>“A Modification of the Halpern-Pearl Definition of Causality.”</span> <em>arXiv Preprint arXiv:1505.00162</em>.
+</div>
+<div id="ref-halpern2016actual" class="csl-entry">
+———. 2016. <em>Actual Causality</em>. MIT Press.
+</div>
+<div id="ref-halpern2005causesa" class="csl-entry">
+Halpern, Joseph Y, and Judea Pearl. 2005. <span>“Causes and Explanations: A Structural-Model Approach. Part i: Causes.”</span> <em>The British Journal for the Philosophy of Science</em> 56 (4): 843–87.
+</div>
+<div id="ref-humphreys2015mixing" class="csl-entry">
+Humphreys, Macartan, and Alan M Jacobs. 2015. <span>“Mixing Methods: A Bayesian Approach.”</span> <em>American Political Science Review</em> 109 (04): 653–73.
+</div>
+<div id="ref-imai2010general" class="csl-entry">
+Imai, Kosuke, Luke Keele, and Dustin Tingley. 2010. <span>“A General Approach to Causal Mediation Analysis.”</span> <em>Psychological Methods</em> 15 (4): 309–34.
+</div>
+<div id="ref-menzies1989probabilistic" class="csl-entry">
+Menzies, Peter. 1989. <span>“Probabilistic Causation and Causal Processes: A Critique of Lewis.”</span> <em>Philosophy of Science</em>, 642–63.
+</div>
+<div id="ref-judea2010introduction" class="csl-entry">
+———. 2010. <span>“An Introduction to Causal Inference.”</span> <em>The International Journal of Biostatistics</em> 6 (2): 1–62.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="28">
+<li id="fn28"><p>This is precisely equivalent to noting that <span class="math inline">\(X_2\)</span>’s effect on <span class="math inline">\(Y\)</span> can be of any of the four types when <span class="math inline">\(X_1=0\)</span> and of any of the four types when <span class="math inline">\(X_1=1\)</span>.<a href="questions.html#fnref28" class="footnote-back">↩︎</a></p></li>
+<li id="fn29"><p>A reminder that, with two-parent nodes, the nodal-type subscript ordering is <span class="math inline">\(Y|(X_1=0, X_2=0); Y|(X_1=1, X_2=0); Y|(X_1=0, X_2=1); Y|(X_1=1, X_2=1)\)</span>.<a href="questions.html#fnref29" class="footnote-back">↩︎</a></p></li>
+<li id="fn30"><p>Perhaps more surprising, it is possible that the expected causal effect is negative but that <span class="math inline">\(X\)</span> is an actual cause in expectation. For instance, suppose that 10% of the time Sally’s shot intercepts Billy’s shot but without hitting the bottle. In that case the average causal effect of Sally’s throw on bottle breaking is <span class="math inline">\(-0.1\)</span> yet 90% of the time Sally’s throw is an actual cause of bottle breaking (and 10% of the time it is an actual cause of non-breaking). For related discussions, see <span class="citation"><a href="#ref-menzies1989probabilistic" role="doc-biblioref">Menzies</a> (<a href="#ref-menzies1989probabilistic" role="doc-biblioref">1989</a>)</span>.<a href="questions.html#fnref30" class="footnote-back">↩︎</a></p></li>
+<li id="fn31"><p>We do not need an arrow in the other direction because Sally throws first.<a href="questions.html#fnref31" class="footnote-back">↩︎</a></p></li>
+<li id="fn32"><p>Note also that <span class="math inline">\(\lambda^Y\)</span> can be thought of as itself drawn from a distribution, such as a Dirichlet. The hyperparameters of this underlying distribution of <span class="math inline">\(\lambda\)</span> would then represent our uncertainty over <span class="math inline">\(\lambda\)</span> and hence over average causal effects in the population.<a href="questions.html#fnref32" class="footnote-back">↩︎</a></p></li>
+<li id="fn33"><p>A very similar question is taken up in work on mediation where the focus goes to understanding quantities such as the “indirect effect” of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> via <span class="math inline">\(M\)</span>. Formally, the indirect effect would be <span class="math display">\[Y(X=1, M = M(X=1,\theta^M), 
+\theta^Y) - Y(X = 1, M = M(X=0, \theta^M), \theta^Y))\]</span>, which captures the difference to <span class="math inline">\(Y\)</span> if <span class="math inline">\(M\)</span> were to change in the way that it would change due to a change in <span class="math inline">\(X\)</span>, but without an actual change in <span class="math inline">\(X\)</span> <span class="citation"><a href="#ref-imai2010general" role="doc-biblioref">Imai, Keele, and Tingley</a> (<a href="#ref-imai2010general" role="doc-biblioref">2010</a>)</span>.<a href="questions.html#fnref33" class="footnote-back">↩︎</a></p></li>
+<li id="fn34"><p>This is the natural thought experiment when explaining a case with realized value of <span class="math inline">\(X=1\)</span>, in which the outcome can be thought of as having been generated by a change from <span class="math inline">\(X=0\)</span>. The identification of types does hinge, however, on the direction in which we imagine types changing. In other situations, we might observe <span class="math inline">\(X=Y=0\)</span> and thus conceive of the outcome as having been generated by a change from <span class="math inline">\(X=1\)</span> to <span class="math inline">\(X=0\)</span> (again, assuming a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>). When we do this, query 2 below changes: we are now looking for types in which <span class="math inline">\(Y=1\)</span> when <span class="math inline">\(X=0\)</span> but <span class="math inline">\(M=1\)</span>. (Does <span class="math inline">\(Y\)</span> stay at <span class="math inline">\(1\)</span> when <span class="math inline">\(X\)</span> moves to <span class="math inline">\(0\)</span> but <span class="math inline">\(M\)</span> doesn’t?) The queries are then satisfied by types <span class="math inline">\(6\)</span> and <span class="math inline">\(8\)</span>, rather than <span class="math inline">\(2\)</span> and <span class="math inline">\(6\)</span>.<a href="questions.html#fnref34" class="footnote-back">↩︎</a></p></li>
+<li id="fn35"><p>Using standard potential outcomes notation, we can express the overall query, conditioning on a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span>, via the inequality <span class="math inline">\(Y(1, M(1)) - Y(0, M(0)) &gt; Y(1, M(0)) - Y(0, M(0))\)</span>. The three specific queries formulated below simply correspond to the three unique elements of this expression. We can also readily map the path query that we are defining here—does the positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> depend on <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(M\)</span>—onto a query posed in terms of indirect effects. For instance, in our binary setup, conditioning our path query on a positive causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, a positive effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span>, and an imagined change from <span class="math inline">\(X=0\)</span> to <span class="math inline">\(X=1\)</span> generates precisely the same result (identifies the same <span class="math inline">\(\theta^Y\)</span> types) as asking which <span class="math inline">\(\theta^Y\)</span> types are consistent with a positive indirect effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, conditioning on a positive total effect and <span class="math inline">\(X=1\)</span>.<a href="questions.html#fnref35" class="footnote-back">↩︎</a></p></li>
+<li id="fn36"><p>In particular we describe the algorithm used by the <code>CausalQueries</code> package. This approach is not the efficient but it is intuitive and can be used for arbitrarily complex queries.<a href="questions.html#fnref36" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="illustratemodels.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="bayeschapter.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false,
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

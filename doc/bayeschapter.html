@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Bayesian Answers | Illustrating causal models</title>
+  <meta name="description" content="Bayesian causal models for integrated inferences." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Bayesian Answers | Illustrating causal models" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
+  <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+  <meta property="og:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="github-repo" content="macartan/integrated_inferences" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Bayesian Answers | Illustrating causal models" />
+  
+  <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan M. Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="questions.html"/>
+<link rel="next" href="theory.html"/>
+<script src="libs/header-attrs/header-attrs.js"></script>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/htmlwidgets/htmlwidgets.js"></script>
+<link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding/datatables.js"></script>
+<link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="headers/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Integrated Inferences</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#key-contributions"><i class="fa fa-check"></i><b>1.2</b> Key contributions</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#counterfactualmodel"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#potential-outcomes"><i class="fa fa-check"></i><b>2.1.1</b> Potential outcomes</a></li>
+<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#generalization"><i class="fa fa-check"></i><b>2.1.2</b> Generalization</a></li>
+<li class="chapter" data-level="2.1.3" data-path="models.html"><a href="models.html#summaries-of-potential-outcomes"><i class="fa fa-check"></i><b>2.1.3</b> Summaries of potential outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#graphing-models-and-using-graphs"><i class="fa fa-check"></i><b>2.3</b> Graphing models and using graphs</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilistic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilistic relations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
+<li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.5.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.5.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.5.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.5.3" data-path="models.html"><a href="models.html#rules-for-moving-between-levels"><i class="fa fa-check"></i><b>2.5.3</b> Rules for moving between levels</a></li>
+<li class="chapter" data-level="2.5.4" data-path="models.html"><a href="models.html#reading-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.5.4</b> Reading conditional independence from a graph</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform</a></li>
+<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions"><i class="fa fa-check"></i><b>3.2</b> Military Interventions</a></li>
+<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Queries</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#actual-causes"><i class="fa fa-check"></i><b>4.3</b> Actual causes</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
+<li class="chapter" data-level="4.6" data-path="questions.html"><a href="questions.html#general-procedure"><i class="fa fa-check"></i><b>4.6</b> General procedure</a></li>
+<li class="chapter" data-level="4.7" data-path="questions.html"><a href="questions.html#appendix"><i class="fa fa-check"></i><b>4.7</b> Appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#features-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Features of Bayesian updating</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>6</b> Theories as causal models</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="theory.html"><a href="theory.html#models-as-theories-of"><i class="fa fa-check"></i><b>6.1</b> Models as <em>theories of</em></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="theory.html"><a href="theory.html#implications-of-structural-causal-models"><i class="fa fa-check"></i><b>6.1.1</b> Implications of structural causal models</a></li>
+<li class="chapter" data-level="6.1.2" data-path="theory.html"><a href="theory.html#probabilistic-causal-models"><i class="fa fa-check"></i><b>6.1.2</b> Probabilistic causal models</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="theory.html"><a href="theory.html#theorygains"><i class="fa fa-check"></i><b>6.2</b> Gains from theory</a></li>
+<li class="chapter" data-level="6.3" data-path="theory.html"><a href="theory.html#formal-theories-and-causal-models"><i class="fa fa-check"></i><b>6.3</b> Formal theories and causal models</a></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>7.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="7.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>7.1.2</b> A formalization of the general approach</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.3</b> Principles of learning</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-get-us-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.3.1</b> A DAG alone does not get us probative value for a single case</a></li>
+<li class="chapter" data-level="7.3.2" data-path="pt.html"><a href="pt.html#learning-requires-uncertainty"><i class="fa fa-check"></i><b>7.3.2</b> Learning requires uncertainty</a></li>
+<li class="chapter" data-level="7.3.3" data-path="pt.html"><a href="pt.html#multiple-ways-for-queries-to-be-satisfied"><i class="fa fa-check"></i><b>7.3.3</b> Multiple ways for queries to be satisfied</a></li>
+<li class="chapter" data-level="7.3.4" data-path="pt.html"><a href="pt.html#beware-of-highly-unlikely-queries"><i class="fa fa-check"></i><b>7.3.4</b> Beware of highly unlikely queries</a></li>
+<li class="chapter" data-level="7.3.5" data-path="pt.html"><a href="pt.html#population-level-uncertainty-does-not-alter-case-level-causal-inference"><i class="fa fa-check"></i><b>7.3.5</b> Population-level uncertainty does not alter case-level causal inference</a></li>
+<li class="chapter" data-level="7.3.6" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>7.3.6</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Process Tracing Application: Inequality and Democracy</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>8.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>8.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>8.3</b> Results</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>8.3.1</b> Inferences for cases with observed democratization</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>8.3.2</b> Cases with incomplete data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#theory-dependence"><i class="fa fa-check"></i><b>8.4</b> Theory dependence</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#from-sample-queries-to-general-processes"><i class="fa fa-check"></i><b>9.2</b> From sample queries to general processes</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
+<li class="chapter" data-level="9.2.3" data-path="mixing.html"><a href="mixing.html#wrinkles"><i class="fa fa-check"></i><b>9.2.3</b> Wrinkles</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#mixed-methods"><i class="fa fa-check"></i><b>9.3</b> Mixed methods</a></li>
+<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.4</b> Considerations</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#probative-value-can-be-derived-from-a-causal-structure-plus-data"><i class="fa fa-check"></i><b>9.4.1</b> Probative value can be derived from a causal structure plus data</a></li>
+<li class="chapter" data-level="9.4.2" data-path="mixing.html"><a href="mixing.html#learning-without-identification"><i class="fa fa-check"></i><b>9.4.2</b> Learning without identification</a></li>
+<li class="chapter" data-level="9.4.3" data-path="mixing.html"><a href="mixing.html#beyond-binary-data"><i class="fa fa-check"></i><b>9.4.3</b> Beyond binary data</a></li>
+<li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
+<li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
+<li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
+<li class="chapter" data-level="9.4.7" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>9.4.7</b> Parameteric models</a></li>
+<li class="chapter" data-level="9.4.8" data-path="mixing.html"><a href="mixing.html#prior-databeliefs-channel-the-learning-from-new-data"><i class="fa fa-check"></i><b>9.4.8</b> Prior data/beliefs “channel” the learning from new data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Integrated Inferences Application: Inequality and Democracy Revisited</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>10.1</b> A trained model</a></li>
+<li class="chapter" data-level="10.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>10.2</b> Data</a></li>
+<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference-1"><i class="fa fa-check"></i><b>10.3</b> Inference</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democratization"><i class="fa fa-check"></i><b>10.3.1</b> Did inequality <em>cause</em> democratization?</a></li>
+<li class="chapter" data-level="10.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>10.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="mixingapp.html"><a href="mixingapp.html#from-cases-to-population"><i class="fa fa-check"></i><b>10.4</b> From cases to population</a>
+<ul>
+<li class="chapter" data-level="10.4.1" data-path="mixingapp.html"><a href="mixingapp.html#contribution-to-case-level-inference"><i class="fa fa-check"></i><b>10.4.1</b> Contribution to case-level inference</a></li>
+<li class="chapter" data-level="10.4.2" data-path="mixingapp.html"><a href="mixingapp.html#how-much-do-we-get-from-the-model-vs.-the-data"><i class="fa fa-check"></i><b>10.4.2</b> How much do we get from the model vs. the data?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="mm.html"><a href="mm.html#a-jigsaw-puzzle-integrating-across-a-model"><i class="fa fa-check"></i><b>11.1</b> A jigsaw puzzle: Integrating across a model</a></li>
+<li class="chapter" data-level="11.2" data-path="mm.html"><a href="mm.html#combining-observational-and-experimental-data"><i class="fa fa-check"></i><b>11.2</b> Combining observational and experimental data</a></li>
+<li class="chapter" data-level="11.3" data-path="mm.html"><a href="mm.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>11.3</b> Transportation of findings across contexts</a></li>
+<li class="chapter" data-level="11.4" data-path="mm.html"><a href="mm.html#multilevel-models-meta-analysis"><i class="fa fa-check"></i><b>11.4</b> Multilevel models, meta-analysis</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="12" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>12</b> Clue Selection as a Decision Problem</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="clue.html"><a href="clue.html#a-model-informed-approach-to-clue-selection"><i class="fa fa-check"></i><b>12.1</b> A model-informed approach to clue-selection</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>12.1.1</b> Clue selection with a simple example</a></li>
+<li class="chapter" data-level="12.1.2" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>12.1.2</b> Dependence on prior beliefs</a></li>
+<li class="chapter" data-level="12.1.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>12.1.3</b> Clue selection for the democratization model</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Mixed methods data strategies</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through"><i class="fa fa-check"></i><b>13.3</b> Specific case walk through</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#case-selection-from-causal-models-a-simulation-based-approach"><i class="fa fa-check"></i><b>13.4</b> Case selection from causal models: a simulation-based approach</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wideordeep.html"><a href="wideordeep.html"><i class="fa fa-check"></i><b>14</b> Going wide, going deep</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wideordeep.html"><a href="wideordeep.html#walk-through-of-a-simple-comparison"><i class="fa fa-check"></i><b>14.1</b> Walk-through of a simple comparison</a></li>
+<li class="chapter" data-level="14.2" data-path="wideordeep.html"><a href="wideordeep.html#a-simulation-based-approach-to-choosing-mixes"><i class="fa fa-check"></i><b>14.2</b> A simulation-based approach to choosing mixes</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="wideordeep.html"><a href="wideordeep.html#approach"><i class="fa fa-check"></i><b>14.2.1</b> Approach</a></li>
+<li class="chapter" data-level="14.2.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results"><i class="fa fa-check"></i><b>14.2.2</b> Simulation results</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="wideordeep.html"><a href="wideordeep.html#factoring-in-the-cost-of-data"><i class="fa fa-check"></i><b>14.3</b> Factoring in the cost of data</a></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="15" data-path="justifying.html"><a href="justifying.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="justifying.html"><a href="justifying.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1</b> Nothing from nothing</a></li>
+<li class="chapter" data-level="15.2" data-path="justifying.html"><a href="justifying.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.2</b> Justifying the classic process tracing tests</a></li>
+<li class="chapter" data-level="15.3" data-path="justifying.html"><a href="justifying.html#justification-from-experimental-designs"><i class="fa fa-check"></i><b>15.3</b> Justification from experimental designs</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="justifying.html"><a href="justifying.html#mediator"><i class="fa fa-check"></i><b>15.3.1</b> Mediator</a></li>
+<li class="chapter" data-level="15.3.2" data-path="justifying.html"><a href="justifying.html#moderator"><i class="fa fa-check"></i><b>15.3.2</b> Moderator</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="justifying.html"><a href="justifying.html#causal-discovery"><i class="fa fa-check"></i><b>15.4</b> Causal discovery</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#four-strategies"><i class="fa fa-check"></i><b>16.1</b> Four Strategies</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independence"><i class="fa fa-check"></i><b>16.1.1</b> Check conditional independence</a></li>
+<li class="chapter" data-level="16.1.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value-are-the-data-unexpected-given-your-model"><i class="fa fa-check"></i><b>16.1.2</b> Bayesian <span class="math inline">\(p-\)</span>value: Are the data unexpected given your model?</a></li>
+<li class="chapter" data-level="16.1.3" data-path="evaluation.html"><a href="evaluation.html#leave-one-out-loo-cross-validation"><i class="fa fa-check"></i><b>16.1.3</b> Leave-one-out (LOO) cross-validation</a></li>
+<li class="chapter" data-level="16.1.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity"><i class="fa fa-check"></i><b>16.1.4</b> Sensitivity</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="evaluation.html"><a href="evaluation.html#check-assumptions-of-conditional-independence"><i class="fa fa-check"></i><b>16.2.1</b> Check assumptions of conditional independence</a></li>
+<li class="chapter" data-level="16.2.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value"><i class="fa fa-check"></i><b>16.2.2</b> Bayesian <span class="math inline">\(p\)</span>-value</a></li>
+<li class="chapter" data-level="16.2.3" data-path="evaluation.html"><a href="evaluation.html#loo-validation"><i class="fa fa-check"></i><b>16.2.3</b> LOO validation</a></li>
+<li class="chapter" data-level="16.2.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity-to-priors"><i class="fa fa-check"></i><b>16.2.4</b> Sensitivity to priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="conclusionchapter.html"><a href="conclusionchapter.html"><i class="fa fa-check"></i><b>17</b> Final Words</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-benefits"><i class="fa fa-check"></i><b>17.1</b> The benefits</a></li>
+<li class="chapter" data-level="17.2" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-worries"><i class="fa fa-check"></i><b>17.2</b> The worries</a></li>
+<li class="chapter" data-level="17.3" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-future"><i class="fa fa-check"></i><b>17.3</b> The future</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/CausalQueries/" target="blank">Uses CausalQueries</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Illustrating causal models</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="bayeschapter" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Bayesian Answers</h1>
+<div class="headerbox">
+<div class="center">
+
+</div>
+<p>We run through the logic of Bayesian updating and show how it is used for answering causal queries. We illustrate with applications to correlational and process tracing inferences.</p>
+</div>
+<p><br></p>
+<p>Bayesian methods are just sets of procedures to figure out how to update beliefs in light of new information.</p>
+<p>We begin with a prior belief about the probability that a hypothesis is true. New data then allow us to form a posterior belief about the probability of the hypothesis. Bayesian inference takes into account the consistency of the evidence with a hypothesis, the uniqueness of the evidence to that hypothesis, and background knowledge about the problem.</p>
+<p>In the next section we review the basic idea of Bayesian updating. The following section applies it to the problem of updating on causal queries given a causal model and data.</p>
+<div id="bayes-basics" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Bayes Basics</h2>
+<p>For simple problems, Bayesian inference accords well with our intuitions. Once problems get slightly more complex however, our intuitions often fail us.</p>
+<div id="simple-instances" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Simple instances</h3>
+<p>Say I draw a card from a deck. The chances it is a Jack of Spades is just 1 in 52. If I tell you that the card is indeed a spade and asked you now what are the chances it is a Jack of Spades, you should guess 1 in 13. If I told you it was a heart you should guess there is no chance it is a Jack of Spades. If I said it was a face card and a spade you should say 1 in 3.</p>
+<p>All those answers are applications of Bayes’ rule. In each case the answer is derived by assessing what is possible, given the new information, and then assessing how likely the outcome of interest among the states that are possible. In all the cases you calculate:</p>
+<p><span class="math display">\[\text{Probability Jack of Spades | Information} = \frac{\text{Is Jack of Spades Consistent with Information?}}{\text{How many cards are consistent with Information?}} \]</span></p>
+<p>The same logic goes through when things are not quite so black and white.</p>
+<p>Now consider two slightly trickier examples.</p>
+<p><strong>Interpreting Your Test Results</strong>. Say that you take a test to see whether you suffer from a disease that affects 1 in 100 people. The test is good in the sense that if you have the disease it will say you have it with a 99% probability. If you do not have it, then with a 99% probability, it will say that you do not have it. The test result says that you have the disease. What are the chances you have it? You might think the answer is 99%, but that would be to mix up the probability of the result given the disease with the probability of the disease given the result. In fact the right answer is 50%, which you can think of as the share of people that have the disease among all those that test positive. For example if there were 10,000 people, then 100 would have the disease and 99 of these would test positive. But 9,900 would not have the disease and 99 of these would test positive. So the people with the disease that test positive are half of the total number testing positive.</p>
+<p>As an equation this might be written:</p>
+<p><span class="math display">\[\text{Probability You have the Disease | Test} = \frac{\text{How many have the disease and test positive?}}{\text{How many test positive?}} \]</span></p>
+<p><strong>Two-Child Problem</strong> Consider last an old puzzle found described <span class="citation"><a href="#ref-gardner1961second" role="doc-biblioref">Gardner</a> (<a href="#ref-gardner1961second" role="doc-biblioref">1961</a>)</span>. <em>Mr Smith has two children, <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. At least one of them is a boy. What are the chances they are both boys?</em>
+To be explicit about the puzzle, we will assume that the information that one child is a boy is given as a truthful answer to the question “is at least one of the children a boy?” Assuming that there is a 50% probability that a given child is a boy, people often assume the answer is 50%. But surprisingly the answer is 1 in 3. The information provided rules out the possibility that both children are girls and so the right answer is found by readjusting the probability that two children are boys based on this information. As an equation:</p>
+<p><span class="math display">\[\text{Probability both are boys | Not both girls} = \frac{\text{Probability  both boys}}{\text{Probability they are not both girls}} = \frac{\text{1 in 4}}{\text{3 in 4}}\]</span></p>
+</div>
+<div id="bayes-rule-for-discrete-hypotheses" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> Bayes’ Rule for Discrete Hypotheses</h3>
+<p>Formally, all of these equations are applications of Bayes’ rule which is a simple and powerful formula for deriving updated beliefs from new data.</p>
+<p>The formula is given as:
+<span class="math display">\[\begin{eqnarray}
+\Pr(H|\mathcal{D})&amp;=&amp;\frac{\Pr(\mathcal{D}|H)\Pr(H)}{\Pr(\mathcal{D})}\\
+                  &amp;=&amp;\frac{\Pr(\mathcal{D}|H)\Pr(H)}{\sum_{H&#39;}\Pr(\mathcal{D}|H&#39;)\Pr(H&#39;))}
+\end{eqnarray}\]</span></p>
+<p>where <span class="math inline">\(H\)</span> represents a hypothesis and <span class="math inline">\(\mathcal{D}\)</span> represents a particular realization of new data (e.g., a particular piece of evidence that we might observe).</p>
+<p>Looking at the formula we see that the posterior belief derives from three considerations. First, the likelihood: how likely are we to have observed these data if the hypothesis were true, <span class="math inline">\(\Pr(\mathcal{D}|H\)</span>)? Second, how likely were we to have observed these data regardless of whether the hypothesis is true or false, <span class="math inline">\(\Pr(\mathcal{D})\)</span>? These first two questions, then, capture how consistent the data are with our hypothesis and how specific the data are to our hypothesis. As shown in the equation above the second question can usefully be reposed as one about all the different ways (alternative Hypotheses, <span class="math inline">\(H&#39;\)</span>) that could give rise to the data.</p>
+<p>Note, that contrary to some claims, the denominator does not require a listing of all possible hypotheses, just an exhaustive collection of hypotheses. For example we might have the notion of the probability that the accused’s fingerprints would be on the door if she were or were guilty without having to decompose the “not guilty” into a set of hypotheses regarding who else might be guilty.</p>
+<p>Our posterior belief is further conditioned by the strength of our prior level of confidence in the hypothesis, <span class="math inline">\(\Pr(H)\)</span>. The greater the prior likelihood that our hypothesis is true, the greater the chance that new data consistent with the hypothesis has <em>in fact</em> been generated by a state of the world implied by the hypothesis.</p>
+</div>
+<div id="the-dirichlet-family-and-bayes-rule-for-continuous-parameters" class="section level3" number="5.1.3">
+<h3><span class="header-section-number">5.1.3</span> The Dirichlet family and Bayes’ Rule for Continuous Parameters</h3>
+<p>This basic formula extends in a simple way to collections of continuous variables. For example, say we are interested in the value of some parameter vector <span class="math inline">\(\theta\)</span> (as a vector, <span class="math inline">\(\theta\)</span> can contain many quantities we are uncertain about), we can calculate this, given a prior probability distribution over possible values of <span class="math inline">\(\theta\)</span>, <span class="math inline">\(p\)</span>, and given data <span class="math inline">\(D\)</span> as:</p>
+<p><span class="math display">\[p(\theta|\mathcal{D})=\frac{p(\mathcal{D}|\theta)p(\theta)}{\int_{\theta&#39;}p(\mathcal{D|\theta&#39;})p(\theta&#39;)d\theta}\]</span></p>
+<p>Bayes rule requires the ability to express a prior distribution but it does not require that the prior have any particular properties other than being probability distributions.</p>
+<p>In practice however when we are dealing with continuous parameters, it can be useful to make use of “off the shelf” distributions.</p>
+<p>In the context of the framework developed in this book, we will often be interested in forming beliefs about the share of units that are of a particular type. For this type of question we will make quite heavy use of “Dirichlet” distributions: a family of distributions that capture beliefs about shares.</p>
+<p>Consider, for example, the share of people in a population that voted; this is a quantity between 0 and 1. Two people might both believe that the turnout was around 50% but may differ in how certain they are about this claim. One might claim to have no information and to believe that any turnout rate between 0 and 100% is equally likely, giving an expected turnout of 50%; another might be completely confident that the number is 50% and entertain no other possibilities.</p>
+<p>We can capture such beliefs quite well by using the Beta distribution—a special case of the Dirichlet. The Beta is a distribution over the <span class="math inline">\([0,1]\)</span> that is governed by two parameters , <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>. In the case in which both <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are 1, the distribution is uniform – all values are seen as equally likely. As <span class="math inline">\(\alpha\)</span> rises large outcomes are seen as more likely and as <span class="math inline">\(\beta\)</span> rises, lower outcomes are seen as more likely. If both rise proportionately the expected outcome does not change but the distribution becomes tighter.</p>
+<p>An attractive feature of the Beta distribution is that if one has a prior Beta(<span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>) over the probability of some event (e.g. that a coin comes up heads), and then one observes a positive case, the Bayesian posterior distribution is also a Beta with with parameters <span class="math inline">\(\alpha+1, \beta\)</span>. Thus in a sense if people start with uniform priors and build up knowledge on seeing outcomes, their posterior beliefs should be Beta distributions.</p>
+<p>Figure <a href="bayeschapter.html#fig:Betas">5.1</a> shows a set of such distributions, starting with one that has greater variance than uniform (this corresponds to the non informative “Jeffrey’s prior”), then uniform, then for a case in which multiple negative and positive outcomes are seen, in equal number, and finally a set of priors with mean of 3/4.</p>
+<div class="figure"><span style="display:block;" id="fig:Betas"></span>
+<img src="ii_files/figure-html/Betas-1.png" alt="Beta distributions" width="672" />
+<p class="caption">
+Figure 5.1: Beta distributions
+</p>
+</div>
+<p>Dirichlet distributions generalize the Beta to the situation in which there are beliefs not just over a proportion, or a probability, but over collections of probabilities. For example, if four outcomes are possible and each is likely to occur with probability <span class="math inline">\(\theta_k\)</span>, <span class="math inline">\(k=1,2,3,4\)</span>, then beliefs about these probabilities are distributions over a three-dimensional unit simplex—that is, all 4 element vectors of probabilities that add up to 1. The distribution has as many parameters as there are outcomes and these are traditionally recorded in a vector, <span class="math inline">\(\alpha\)</span>. Similar to the Beta distribution, an uninformative prior (Jeffrey’s prior) has <span class="math inline">\(\alpha\)</span> parameters of <span class="math inline">\((.5,.5,.5, \dots)\)</span> and a uniform (“flat”) distribution has <span class="math inline">\(\alpha = (1,1,1,,\dots)\)</span>.</p>
+<p>As with the Beta distribution, the Dirichlet updates in a simple way. If you have a Dirichlet prior with parameter <span class="math inline">\(\alpha = (\alpha_1, \alpha_2, \dots)\)</span> and you observe outcome <span class="math inline">\(1\)</span>, for example, then then posterior distribution is also Dirichlet with parameter vector <span class="math inline">\(\alpha&#39; = (\alpha_1+1, \alpha_2,\dots)\)</span>.</p>
+</div>
+<div id="moments" class="section level3" number="5.1.4">
+<h3><span class="header-section-number">5.1.4</span> Moments</h3>
+<p>In what follows we often refer to the “posterior mean” or the “posterior variance.” These are simply summary statistics of the posterior distribution, or moments, and can be calculated easily once the posterior is known. For example the posterior mean of a parameter <span class="math inline">\(\theta_1\)</span>—just one in a collection of parameters stored in <span class="math inline">\(\theta\)</span>—is simply <span class="math inline">\(\overline{\theta}_1 | \mathcal{D} = \int \theta_1 p(\theta | \mathcal{D}) d\theta\)</span>. Note importantly that this is calculated using the posterior over the entire vector <span class="math inline">\(\theta\)</span>; there is no notion of updating parameter <span class="math inline">\(\theta_1\)</span> on its own. Similarly the posterior variance is <span class="math inline">\(\int (\theta_1 - (\overline{\theta}_1 | \mathcal{D})^2 p(\theta | \mathcal{D})) d\theta\)</span>.</p>
+</div>
+<div id="bayes-estimation-in-practice" class="section level3" number="5.1.5">
+<h3><span class="header-section-number">5.1.5</span> Bayes estimation in practice</h3>
+<p>Although the principle of Bayesian inference is quite simple, in practice calculating posteriors for continuous parameters is computationally complex.</p>
+<p>In principle, with continuous parameters there is an infinity of possible parameter values. Analytic solutions are not, in general, easy to come by and so researchers use some form of sampling.</p>
+<p>Imagine for instance you were interested in forming a posterior on the share of U.S. voters intending to vote Democrat, given polling data. (This is not truly continuous, but with large elections it might as well be.)s</p>
+<p>One approach is to coarsen the parameter space: we calculate the probability of observing the polling data given possible values <span class="math inline">\(\theta = 0, \theta = .1, \theta = .2, \dots, \theta = 1\)</span>, and, apply Bayes rule to form a posterior for each of these these possibilities. The downside of the this approach is that, for a decent level of precision, it becomes computationally expensive with large parameter spaces, and parameter spaces get large quickly. For instance, if we are interested in vote shares, we might find .4, .5, and .6 too coarse and want posteriors for 0.51 or even 0.505; the latter would require calculations for 200 parameter values. If we had <em>two</em> parameters that we wanted to slice up each into 200 possible values, we would then have 40,000 parameter pairs to worry about. What’s more, <em>most</em> of those calculations would not be very informative if the real uncertainty all lies in some small (though possibly unknown) range – such as between 40% and 60%.</p>
+<p>An alternative approach is to use variants of Markov Chain Monte Carlo sampling. Under these approaches, parameter vectors are sampled and their likelihood is evaluated. If a sampled parameter vector is found to have high likelihood, then new parameter vectors near it are drawn with a high probability. Based on the likelihood associated with these new draws, additional draws are made. The result is a chain of draws that build up to approximate the posterior distribution. The output from these procedures is not a set of probabilities for each possible parameter vector but rather a a set of draws of parameter vectors from the posterior distribution.</p>
+<p>Many algorithms have been developed to achieve these tasks efficiently; in all of our applications we rely on the <code>stan</code> procedures which use MCMC methods, specifically the Hamiltonian Monte Carlo (HMC) algorithm and the no-U-turn sampler (NUTS). Details on these approaches are given in the <a href="https://mc-stan.org/docs/2_18/reference-manual/hmc-chapter.html">Stan Reference Manual</a> <span class="citation">(<a href="#ref-stan2020stan" role="doc-biblioref">Stan and others 2020</a>)</span>.</p>
+</div>
+</div>
+<div id="bayes-applied" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Bayes applied</h2>
+<div id="simple-bayesian-process-tracing" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Simple Bayesian Process Tracing</h3>
+<p>Process tracing in its most basic form seeks to use within-case evidence to draw inferences about a case. For example, with a focus on whether <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span>, data on a within-case “clue,” <span class="math inline">\(K\)</span>, is used to make inference about whether or not the outcome in that case was generated by the case’s treatment status on <span class="math inline">\(X\)</span>. We refer to the within-case evidence gathered during process tracing as <em>clues</em> in order to underline their probabilistic relationship to the causal relationship of interest. Readers familiar with the framework in <span class="citation"><a href="#ref-collier2004sources" role="doc-biblioref">Collier, Brady, and Seawright</a> (<a href="#ref-collier2004sources" role="doc-biblioref">2004</a>)</span> can usefully think of our “clues” as akin to causal process observations, although we highlight that there is no requirement that the clues be generated by the causal process.</p>
+<p>To make inferences, the analyst looks for clues that will be observed with some probability if the case is of a given type and that will <em>not</em> be observed with some probability if the case is <em>not</em> of that type.</p>
+<p>It is relatively straightforward to express the logic of process tracing in Bayesian terms, a step that will aid the integration of qualitative with quantitative causal inferences. As noted by others (e.g. <span class="citation"><a href="#ref-BennettBayes" role="doc-biblioref">Bennett</a> (<a href="#ref-BennettBayes" role="doc-biblioref">2008</a>)</span>, <span class="citation"><a href="#ref-beachpedersen2013process" role="doc-biblioref">Beach and Pedersen</a> (<a href="#ref-beachpedersen2013process" role="doc-biblioref">2013</a>)</span>, <span class="citation"><a href="#ref-rohlfing2012case" role="doc-biblioref">I. Rohlfing</a> (<a href="#ref-rohlfing2012case" role="doc-biblioref">2012</a>)</span>), there is an evident connection between the use of evidence in process tracing and Bayesian inference. See <span class="citation"><a href="#ref-fairfield2017explicit" role="doc-biblioref">Fairfield and Charman</a> (<a href="#ref-fairfield2017explicit" role="doc-biblioref">2017a</a>)</span> for a detailed treatment of Bayesian approach in qualitative research.</p>
+<p>To illustrate, suppose we are interested in regime collapse. We already have <span class="math inline">\(X,Y\)</span> data on one authoritarian regime: we know that it suffered economic crisis (<span class="math inline">\(X=1\)</span>) and collapsed (<span class="math inline">\(Y=1\)</span>). We want to know what caused the collapse. To make progress we will try to draw inferences given a “clue.” Beliefs about the probabilities of observing clues for cases with different causal effects derive from theories of, or evidence about, the causal process connecting <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. Suppose we theorize that the mechanism through which economic crisis generates collapse runs via diminished regime capacity to reward its supporters during an economic downturn. A possible clue to the operation of a causal effect, then, might be the observation of diminishing rents flowing to regime supporters shortly after the crisis. If we believe the theory, then this is a clue that we might believe to be highly probable for cases of type <span class="math inline">\(b\)</span> that have experienced economic crisis (where the crisis in fact caused the collapse) but of low probability for cases of type <span class="math inline">\(d\)</span> that have experienced crisis (where the collapse occurred for other reasons).</p>
+<p>To make use of Bayes rule we need to:</p>
+<ol style="list-style-type: decimal">
+<li>define our parameters, which are the key quantities of interest</li>
+<li>provide prior beliefs about the parameters of interest</li>
+<li>define a likelihood function</li>
+<li>provide the probability of the data</li>
+<li>plug these into Bayes’ rule to calculate a posterior on the parameters of interest</li>
+</ol>
+<p>We discuss each of these in turn, using our <span class="math inline">\(a, b, c, d\)</span> type notation for simplicity.</p>
+<p><strong>Parameters.</strong> The inferential challenge is to determine whether the regime collapsed <em>because</em> of the crisis (it is <span class="math inline">\(b\)</span> type) or whether it would have collapsed even without it (<span class="math inline">\(d\)</span> type). We do so using further information from the case—one or more clues. We use the variable <span class="math inline">\(K\)</span> to register the outcome of the search for a clue, with <span class="math inline">\(K\)</span>=1 indicating that a specific clue is searched for and found, and <span class="math inline">\(K\)</span>=0 indicating that the clue is searched for and not found.</p>
+<p>Let <span class="math inline">\(j\in \{a,b,c,d\}\)</span> refer to the type of an individual case. Our hypothesis, in this initial setup, consists simply of a belief about <span class="math inline">\(j\)</span> for the case under examination: specifically whether the case is a <span class="math inline">\(b\)</span> type (<span class="math inline">\(j=b)\)</span>. The parameter of interest is the causal type.</p>
+<p><strong>Prior.</strong> We then assign a prior degree of confidence to the hypothesis (<span class="math inline">\(p = Pr(H)\)</span>). This is, here, our prior belief that an authoritarian regime that has experienced economic crisis is a <span class="math inline">\(b\)</span>.</p>
+<p><strong>Likelihood.</strong> The likelihood, <span class="math inline">\(\Pr(K=1|H)\)</span> is the probability of observing the clue, when we look for it in our case, if the hypothesis is true—i.e., here, if the case is a <span class="math inline">\(b\)</span> type. The key feature of a clue is that the probability of observing the clue is believed to depend on the case’s causal type. In order to calculate the probability of the data we will in fact need two such probabilities: we let <span class="math inline">\(\phi_b\)</span> denote the probability of observing the clue for a case of <span class="math inline">\(b\)</span> type (<span class="math inline">\(\Pr(K=1|j=b)\)</span>), and <span class="math inline">\(\phi_d\)</span> the probability of observing the clue for a case of <span class="math inline">\(d\)</span> type (<span class="math inline">\(\Pr(K=1|j=d)\)</span>). The key idea in many accounts of process tracing is that the <em>differences</em> between these probabilities provides clues with ‘’probative value,’’ that is, the ability to generate learning about causal types. The likelihood, <span class="math inline">\(\Pr(K=1|H)\)</span>, is simply <span class="math inline">\(\phi_b\)</span>.</p>
+<p><strong>Probability of the data.</strong> This is the probability of observing the clue when we look for it in a case, <em>regardless</em> of its type, <span class="math inline">\((\Pr(K=1))\)</span>. More specifically, it is the probability of the clue in a treated case with a positive outcome. As such a case can only be a <span class="math inline">\(b\)</span> or a <span class="math inline">\(d\)</span> type, this probability can be calculated simply from <span class="math inline">\(\phi_b\)</span> and <span class="math inline">\(\phi_d\)</span>, together with our beliefs about how likely an <span class="math inline">\(X=1, Y=1\)</span> case is to be a <span class="math inline">\(b\)</span> or a <span class="math inline">\(d\)</span> type.
+This probability aligns (inversely) with Van Evera’s concept of ‘’uniqueness.’’</p>
+<p><strong>Inference.</strong> We can now apply Bayes’ rule to describe the learning that results from process tracing. If we observe the clue when we look for it in the case, then our <em>posterior</em> belief in the hypothesis that the case is of type <em>b</em> is:</p>
+<p><span class="math display">\[\begin{eqnarray*}
+\Pr(j = b |K=1, X=Y=1)=  \frac{\phi_b p }{\phi_b p+\phi_d (1-p)}
+\end{eqnarray*}\]</span></p>
+<p>In this exposition we did not make use of a causal model in a meaningful way—we simply need the priors and the clue probabilities.</p>
+<p>In fact, however, these numbers can be derived from a causal model. To illustrate, imagine a simple causal model in which the <span class="math inline">\(X, Y\)</span> relationship is completely mediated by <span class="math inline">\(K\)</span>. In particular, suppose, from background knowledge of the conditional distribution of outcomes given their causes, we have that:</p>
+<ul>
+<li><span class="math inline">\(\Pr(K=1 | X=0) = 0\)</span>, <span class="math inline">\(\Pr(K=1 | X=1) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1 | K=0) = .5\)</span>, <span class="math inline">\(\Pr(Y=1 | K=1) = 1\)</span></li>
+</ul>
+<p>This data is consistent with a world in which half <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span> types in the first step and half <span class="math inline">\(b\)</span> and <span class="math inline">\(d\)</span> types in the second step. Assume that the case at hand is sampled from this world.</p>
+<p>Then we can calculate that the prior probability, <span class="math inline">\(p\)</span>, that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> given <span class="math inline">\(X=Y=1\)</span> is <span class="math inline">\(p = \frac13\)</span>.<a href="#fn37" class="footnote-ref" id="fnref37"><sup>37</sup></a> We can also calculate the probability that <span class="math inline">\(K=1\)</span> for a treated <span class="math inline">\(b\)</span> and <span class="math inline">\(d\)</span> case respectively as <span class="math inline">\(\phi_b=1\)</span> and <span class="math inline">\(\phi_d=0.5\)</span> (convince yourself of these numbers!). We then get:</p>
+<p><span class="math display">\[\begin{eqnarray*}
+\Pr(j = b |K=1, X=Y=1)&amp;=&amp;\frac{1\times \frac13}{1 \times \frac13 + 0.5 \times \frac23}=0.5
+\end{eqnarray*}\]</span></p>
+<p>We thus shift our beliefs from a prior of <span class="math inline">\(\frac13\)</span> to a posterior of <span class="math inline">\(\frac12\)</span>. In contrast had we <em>not</em> observed the clue our posterior would have been 0.</p>
+<p>As should be clear from the above, the inferential leverage in process tracing comes from differences in the probability of observing <span class="math inline">\(K=1\)</span> for different causal types. Thus, the logic described here generalizes Van Evera’s familiar typology of tests by conceiving of the certainty and uniqueness of clues as lying along a continuum.</p>
+<p>Van Evera’s four tests (“smoking gun,” “hoop,” “straw in the wind,” and “doubly decisive”) represent, in this sense, special cases—particular regions that lie on the boundaries of a “probative-value space.” To illustrate the idea, we represent the range of combinations of possible probabilities for <span class="math inline">\(\phi_b\)</span> and <span class="math inline">\(\phi_d\)</span> as a square in Figure (CluesInferences1) and mark the spaces inhabited by Van Evera’s tests. As can be seen, the type of test involved depends on both the relative <em>and</em> absolute magnitudes of <span class="math inline">\(\phi_b\)</span> and <span class="math inline">\(\phi_d\)</span>. The probative value of a test depends on the difference between them. Thus, a clue acts as a smoking gun for proposition “<span class="math inline">\(b\)</span>” (the proposition that the case is a <span class="math inline">\(b\)</span> type) if it is highly unlikely to be observed if proposition <span class="math inline">\(b\)</span> is false, and more likely to be observed if the proposition is true (bottom left, above diagonal). A clue acts as a “hoop” test if it is highly likely to be found if <span class="math inline">\(b\)</span> is true, even if it still quite likely to be found if it is false. Doubly decisive tests arise when a clue is very likely if <span class="math inline">\(b\)</span> and very unlikely if not. It is, however, also easy to imagine clues with probative qualities lying in the large space amidst these extremes.<a href="#fn38" class="footnote-ref" id="fnref38"><sup>38</sup></a></p>
+<div class="figure"><span style="display:block;" id="fig:cluesinferences"></span>
+<img src="ii_files/figure-html/cluesinferences-1.png" alt="\label{CluesInferences1} A mapping from the probability of observing a clue if the proposition that a case is a $b$ type is true ($\phi_b$) or false ($\phi_d$) to a generalization of the tests described in Van-Evera (1997)." width="1152" />
+<p class="caption">
+Figure 5.2:  A mapping from the probability of observing a clue if the proposition that a case is a <span class="math inline">\(b\)</span> type is true (<span class="math inline">\(\phi_b\)</span>) or false (<span class="math inline">\(\phi_d\)</span>) to a generalization of the tests described in Van-Evera (1997).
+</p>
+</div>
+<p>In this illustration, we note that we draw both the priors and the probative value from a causal model. If we altered the model—for example, if we had a stronger first stage and so a larger value for <span class="math inline">\(\Pr(K=1|X=0)\)</span>—this would alter both our prior, <span class="math inline">\(p\)</span>, and our calculations of <span class="math inline">\(\phi_d\)</span>. An implication of this is that, although one might be tempted to think of the priors and the probative values as independent quantities, and contemplate how inferences change as priors change (as we did for example in the treatment in <span class="citation"><a href="#ref-humphreys2015mixing" role="doc-biblioref">Humphreys and Jacobs</a> (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span>), keeping probative value fixed, that kind of thought experiment may assume values that are not justified by an underlying model.</p>
+</div>
+<div id="a-generalization-bayesian-inference-on-queries" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> A Generalization: Bayesian Inference on Queries</h3>
+<!-- ## FLAG -- MAKE CONSISTENT WITH QUERY SECTION -->
+<p>In Chapter <a href="questions.html#questions">4</a>, we described queries of interest as queries over nodal types in causal models.</p>
+<p>Once queries are defined in terms of nodal types, the formation of beliefs, given data <span class="math inline">\(W\)</span>, about queries follows immediately from application of Bayes rule.</p>
+<p>Let <span class="math inline">\(Q(\theta)\)</span> define the value of the query in context <span class="math inline">\(\theta\)</span>. The updated beliefs about the query are given by the distribution:</p>
+<p><span class="math display">\[P(q | W) = \int_{\theta:Q(\theta) = q} P(\theta|W)d\theta =  \int_{\theta:Q(\theta) = q} \frac{P(W|\theta)P(\theta)}{\int_{\theta&#39;}P(W|\theta&#39;)P(\theta&#39;)d\theta&#39;}d\theta\]</span></p>
+<p>This expression gathers together all the causal types (combinations of nodal types) that satisfy a query and assesses how likely these are, collectively, given the data.<a href="#fn39" class="footnote-ref" id="fnref39"><sup>39</sup></a> For an abstract representation of the relations between assumptions, queries, data, and conclusions, see Figure 1 in <span class="citation"><a href="#ref-pearl2012causal" role="doc-biblioref">Pearl</a> (<a href="#ref-pearl2012causal" role="doc-biblioref">2012</a>)</span>.</p>
+<p>Return now to Mr Smith’s puzzle. We can think of the two “nodal types” here as the sexes of the two children, child <span class="math inline">\(A\)</span> and child <span class="math inline">\(B\)</span>. The query here is <span class="math inline">\(Q\)</span>: “Are both boys?” The statement “<span class="math inline">\(Q=1\)</span>” is equivalent to the statement, <span class="math inline">\(A\)</span> is a boy &amp; <span class="math inline">\(B\)</span> is a boy. Thus it takes the value <span class="math inline">\(q=1\)</span> under just one causal type, when both nodes have been assigned to the value “boy.” Statement <span class="math inline">\(q=0\)</span> is the statement (“<span class="math inline">\(A\)</span> is a boy &amp; <span class="math inline">\(B\)</span> is a girl” or “<span class="math inline">\(A\)</span> is a girl &amp; <span class="math inline">\(B\)</span> is a boy” or “<span class="math inline">\(A\)</span> is a girl &amp; <span class="math inline">\(B\)</span> is a girl”). Thus <span class="math inline">\(q=0\)</span> in three contexts. If we assume that each of the two children is equally likely to be a boy or a girl with independent probabilities, then each of the four contexts is equally likely.
+The result can then be figured out as <span class="math inline">\(P(Q=1) = \frac{1\times \frac{1}{4}}{1\times \frac{1}{4} + 1\times \frac{1}{4}+1\times \frac{1}{4}+0\times \frac{1}{4}} = \frac{1}{3}\)</span>. This answer requires summing over only one causal type. <span class="math inline">\(P(Q=0)\)</span> is of course the complement of this, but using the Bayes formula one can see that it can be found by summing over the posterior probability of three causal types in which the statement <span class="math inline">\(Q=0\)</span> is true.</p>
+<p>We will often want to think about our causal queries being collections of states of the world — i.e., of causal types. Returning to our discussion of queries in Chapter <a href="questions.html#questions">4</a>, suppose we start with the model <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>, and our query is whether <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>. This is a query that is satisfied by four sets of causal types: those in which <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, with <span class="math inline">\(X\)</span> being either 0 or 1; and those in which <span class="math inline">\(X\)</span> has a negative effect on <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span> has a negative effect on <span class="math inline">\(Y\)</span>, with <span class="math inline">\(X\)</span> being either 0 or 1. Our inferences on the query will thus involve gathering these different causal types, and their associated posterior probabilities, together.</p>
+<p>One way to think intuitively about Bayesian updating is to say that we update more strongly in favor of the hypothesis for which the evidence is <em>least</em> damaging to the <em>most-likely ways</em> in which the hypothesis could be true. Suppose our prior belief was that it was much more unlikely that <span class="math inline">\(M\)</span> had a negative effect on <span class="math inline">\(Y\)</span>, than that <span class="math inline">\(M\)</span> had a positive effect on <span class="math inline">\(Y\)</span>. This makes one of the ways in which <span class="math inline">\(X\)</span> could have a positive effect on <span class="math inline">\(Y\)</span> (the chain of negative effects) much less likely than the other way in which <span class="math inline">\(X\)</span> could have a positive effect on <span class="math inline">\(Y\)</span> (the chain of positive effects). This means that evidence against a chain of negative effects and evidence against a chain of positive effects will not be equally consequential for our query: in particular, we will update more strongly against the query if we find evidence against a chain of positive effects than if we find evidence against a chain of negative effects. Evidence against a chain of positive effects speaks against the <em>most</em> likely way in which the query could be true, whereas evidence against a chain of negative effects speaks against a way the query could be true that we did not think was very likely to begin with.</p>
+<!-- ### Bayesian correlational inference -->
+<!-- In all the examples describe above Bayes rule was used to update inferences about a particular case given additional information about that case. But the same logic works just as well for problems in which one tries to update about a general relation given a set of cases.  -->
+<!-- The correlational solution to the fundamental problem of causal inference is to focus on *population-level* effects. Rather than seeking to identify the types of particular cases, researchers exploit covariation across cases between the treatment and the outcome variables---i.e., dataset observations---in order to assess the {average effect} of treatment on outcomes for a {population} or {sample} of cases. In the simplest, frequentist approach, under conditions described by \citep{Rubin1974} the average effect of a treatment may be estimated as the difference between the average outcome for those cases that received treatment and the average outcome for those cases that did not receive treatment. -->
+<!-- Although this frequentist approach to estimating causal effects from correlational data is more familiar, the problem can also be described in Bayesian terms.^[For a fuller treatment, see for example \citet{heckman2014treatment}.] -->
+<!-- <!-- % I think the below is necessary because we do not properly define the Bayesian approach generally; we only do it for a very special illustration -->
+<!-- ```{r simpleXYDAG, echo = FALSE, fig.width = 7, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A graph depicting a situation in which it is possible that $X$ causes $Y$; the unit level causal type is $\\theta^Y$ and the distribution of causal types is $\\lambda^Y$."} -->
+<!-- hj_dag(x = c(0, 0, 1, 1, 2, -1), -->
+<!--        y = c(1, 0, 0, 1, 1, 1), -->
+<!--        names = c( -->
+<!--          expression(paste(theta^X)), -->
+<!--          "X", -->
+<!--          "Y", -->
+<!--          expression(paste(theta^Y)),  -->
+<!--          expression(paste(lambda^Y)),  -->
+<!--          expression(paste(lambda^X))  -->
+<!--          ), -->
+<!--        arcs = cbind( c(1, 2, 4, 5, 6), -->
+<!--                      c(2, 3, 3, 4, 1)), -->
+<!--        title = "", -->
+<!--        padding = .2, contraction = .15, box = FALSE)  -->
+<!-- ``` -->
+<!-- Suppose we are interested in determining the *distribution* of causal types in a population. We again need to specify our parameters, priors, likelihood, the probability of the data, and the inference strategy. -->
+<!-- In turn we have: -->
+<!-- **Parameters.** Our hypothesis consists of a set of $\lambda$ values: i.e., the proportion of the population of authoritarian regimes for which economic crisis would generate or has generated collapse ($\lambda_b$); the proportion for which collapse is inevitable ($\lambda_d$); and so on. -->
+<!-- We can now define our hypothesis as a vector, $\lambda = (\lambda^X_0,\lambda^X_1,\lambda^Y_{00},\lambda^Y_{10},\lambda^Y_{01}, \lambda^Y_{11})$, that registers a possible set of values for the parameters over which we will update: type proportions in the population and assignment propensities by type.  -->
+<!-- **Prior.** We next need to assign a prior probability to $\lambda$. In the general case, we will do so by defining a prior probability distribution, $p(\lambda^j)$, over possible values of the elements of $\lambda^j$. Here $\lambda^Y$ has four possible values and we use a Dirichlet distribution on a 3-simplex.  $\lambda^X$ has has only two possible values and in this case the  Dirichlet distribution reduces to a Beta distribution.   -->
+<!-- **Likelihood.** Our data, $\mathcal{D}$, consist of $X$ and $Y$ observations for a sample of cases. With binary $X$ and $Y$, there are four possible data realizations (combinations of $X$ and $Y$ values) for a given case. For a single case, it is straightforward to calculate an event probability $w_{xy}$ | that is, the likelihood of observing the particular combination of $X$ and $Y$ given the type shares and assignment probabilities in $\theta$. For instance: -->
+<!-- $$w_{00}=\Pr(X=0, Y=0|\theta)=\lambda^X_0(\lambda^Y_{00} + \lambda^Y_{01})$$ -->
+<!-- More generally, let $w_{XY}$ denote the vector of these event probabilities for each combination of $X$ and $Y$ values, conditional on $\lambda$. Further,  let $n_{XY}$ denote vector containing the number of cases observed with each $X,Y$ combination. Under an assumption of independence (data are independently and identically distributed), the full likelihood is then given by the multinomial distribution: -->
+<!-- $$\Pr(\mathcal{D}|\lambda)= \text{Multinomial}(n_{XY}  | w_{XY})$$ -->
+<!-- Note again that here we have assumed that data is randomly drawn. More general functions can allow for more complex data gathering processes. -->
+<!-- **Probability of the data.** We calculate the unconditional probability of the data, $Pr(\mathcal{D})$, by integrating the likelihood function above over all parameter values, weighted by their prior probabilities. -->
+<!-- **Inference.** After observing our data, $\mathcal{D}$, we then form posterior beliefs over  $\lambda$ by direct application of Bayes' rule, above: -->
+<!-- $$p(\lambda|\mathcal{D}) = \frac{\Pr(\mathcal{D}|\lambda)p(\lambda)}{\int\Pr(\mathcal{D}|\lambda')p(\lambda')d\lambda'}$$ -->
+<!-- This posterior distribution reflects our updated beliefs about which sets of parameter values are most likely, given the data. Critically, note that, upon observing $X$ and $Y$ data, we  simultaneously update beliefs about all parameters in $\lambda$: both beliefs about causal effects (type shares) in the population *and* beliefs about the assignment propensities for $X$. -->
+<!-- <!-- Intuitively, we treat each set of possible values of our parameters of interest---each $\lambda$ vector, that is---as a hypothesis and apply Bayes' rule to assess its probability given the data, that is, the posterior.^[More generally we might think of a hypothesis as being a subset of values of $\theta$ | e.g. "there is a positive treatment effect" corresponds to the set of values for which $b>a$.]  We use three quantities to calculate the posterior. -->
+<!-- <!-- First, we ask, if this set of parameter values is true, how likely were the observed $X, Y$ values to have emerged? {This calculation in our binary framework is simple. For example, the probability of observing the event $X=1, Y=1$ for a single randomly selected case is given by event probability $w_{11}=b\pi_b+d\pi_d$. Note that we assume in this example that each *type* is drawn independently as would be the case if cases under study were randomly sampled from a large population.} Consider a hypothesis (a specific value of $\theta$) in which most authoritarian countries are assumed to be either susceptible to a regime-collapsing effect of economic crisis or destined to collapse anyway---i.e., a $\theta$ in which $\lambda_b$ and $\lambda_d$ are very high and $\lambda_a$ and $\lambda_c$ very low. Suppose we then observe data in which a large proportion of countries display values $X=1$ and $Y=0$---they experienced crisis and did not collapse---which pegs them as either $a$ or $c$ types. The probability of these data under the hypothesized $\theta$--- $\Pr(\mathcal{D}|\theta)$ | will then be low, reducing our confidence in this hypothesis. On the other hand, such data are far more likely under any $\theta$ vector in which $\lambda_a$ or $\lambda_c$ is high, boosting our confidence in such hypotheses. -->
+<!-- <!-- Second, we ask, how likely were we to observe these data, $\mathcal{D}$, regardless of whether this particular $\theta$ is true? This value appears in the denominator, where we take into account the likelihood of observing these data for *all* of the possible values of $\theta$, weighted by their prior probabilities. More formally, under the assumption of independence, the probability of observing $\mathcal{D}$, that is, a particular collection of $X,Y$ data, is given by the corresponding value of the multinomial distribution given the event probabilities implied by $\theta$.   -->
+<!-- <!-- The more likely the data are in general|whether the hypothesis is true or not|the smaller the effect of these data on our beliefs. On the other hand, if the observation of lots of crisis-suffering, collapsing regimes was generally *unlikely* across all $\theta$s, then observing these data will generate a larger shift in our confidence toward any particular $\theta$ vector with which the data are relatively consistent. -->
+<!-- <!-- Third, we multiply the ratio of these first two quantities by our confidence in the values in this $\theta$ prior to seeing the data ($p(\theta)$). The more prior confidence we have in a hypothesis, the greater the probability that evidence consistent with and unique to the hypothesis in fact indicates that the hypothesis is true. Thus, for instance, suppose that prior evidence and logic suggest that a high proportion of authoritarian regimes in the world are susceptible to a regime-collapsing effect of crisis (are $b$ types). This strong prior belief in a high $\lambda_b$ increases the likelihood that any data pattern consistent with a high $\lambda_b$---say, many $X=1, Y=1$ cases---has *in fact* been generated by a large set of $b$ cases. -->
+<!-- We illustrate Bayesian correlational inference with a simple case. Suppose we observe for all postwar authoritarian regimes, whether they did or did not suffer economic crisis and did or did not collapse. Say for simplicity we know that all authoritarian regimes were "assigned" to economic crisis with a 0.5 probability during the period under analysis (thus assignment is known to be *as if* random). And assume that, prior to observing $X$, $Y$ data we believe that each of two propositions are true with 0.5 probability. Under proposition **($\theta_1$)** all regimes are of type $b$ (and so the average treatment effect is 1); under proposition **($\theta_2$)** 50\% of regimes are of type $c$ and 50\% are of type $d$ (and so the average treatment effect is 0).^[In this simple case we can think of $\theta$ as being constrained to take on only one of two possible values: $\theta \in  \{\theta_1=\{a=0,b=1, c=0, d=0, \pi_a=0.5,\pi_b=0.5,\pi_c=0.5,\pi_d=0.5\},\{\theta_2=\{a=0,b=0, c=.5, d=.5, \pi_a=0.5,\pi_b=0.5,\pi_c=0.5,\pi_d=0.5\} \}$.]  -->
+<!-- <!-- %Suppose that we now randomly draw a set of authoritarian regimes from the population and observe the values on $X$ and $Y$. How should our observation of this data | $\mathcal{D}$ | shift our beliefs about the value $\lambda_b$? -->
+<!-- <!-- % -->
+<!-- <!-- %A Bayesian analysis draws on our prior beliefs about three quantities: -->
+<!-- <!-- % -->
+<!-- <!-- %\begin{itemize} -->
+<!-- <!-- % -->
+<!-- <!-- %\item **$\Pr(\mathcal{D**|b=1$)}: The probability of observing this collection of $X$ and $Y$ values under $H_1$, that is, if all cases are susceptible to a positive treatment effect. Each case should either have values $X=Y=0$ or $X=Y=1$ if indeed $b=1$, and the distribution across these values should follow a binomial distribution with $p=.5$ (since cases of all types were assigned to treatment with 0.5 probability). -->
+<!-- <!-- % -->
+<!-- <!-- %\item **$\Pr(b=1$)**: The likelihood that $H_1$ is correct. This belief represents our prior level of confidence in $H_1$, before we observe the new evidence. We have set this belief in the present illustration to 0.5. -->
+<!-- <!-- % -->
+<!-- <!-- %\item **$\Pr(\mathcal{D**)$}: The probability of observing this collection of $X$ and $Y$ values *without* conditioning on $H_1$. The expression is an average of the probabilities of observing the data under the two hypotheses, weighted by our prior belief for each hypothesis that it is correct. That is, $\Pr(\mathcal{D}) = \Pr(\mathcal{D}|b=1)\Pr(b=1)+\Pr(\mathcal{D}|b=0)\Pr(b=0)$  -->
+<!-- <!-- %\end{itemize} -->
+<!-- <!-- %Thus, the observation of $X$ and $Y$ values in the sample allows us to update our beliefs %on the correlation between treatment and outcomes in the population and, hence,  -->
+<!-- <!-- %on the average treatment effect. In this simple case  -->
+<!-- <!-- %%the only data consis: do we observe data in which $X$ and $Y$ are perfectly correlated or not? In this case,  -->
+<!-- <!-- %if we see a single case that has values $(X=0, Y=1)$, then we will know for certain that $H_1$ is false since this data structure could never arise under $H_1$. If we observe data in which $X$ and $Y$ are perfectly correlated, we may still think it possible that $H_2$ is true. However, such a pattern is {*less*} likely to emerge if $H_2$ is true than if $H_1$ is true.  -->
+<!-- <!-- % -->
+<!-- <!-- Suppose we draw a random sample of $n=2$ cases and observe one case in which $X=Y=0$ and one case in which $X=Y=1$. That is, we observe a perfect correlation between $X$ and $Y$ but only two cases. What then should we infer? -->
+<!-- Applying Bayes' rule, our posterior probability on proposition $\theta_1$, having observed the data, is: -->
+<!-- \begin{eqnarray*} -->
+<!-- \Pr(\theta_1|\mathcal{D})  -->
+<!-- =\frac{\Pr(\mathcal{D}|\theta_1)\Pr(\theta_1)}{\Pr(\mathcal{D}|\theta_1)\Pr(\theta_1)+\Pr(\mathcal{D}|\theta_2)\Pr(\theta_2)} -->
+<!-- \end{eqnarray*} -->
+<!-- or equivalently:  -->
+<!-- \begin{eqnarray*} -->
+<!-- \Pr(b=1|\mathcal{D})  -->
+<!-- %=\frac{\Pr(\mathcal{D}|b=1) \Pr(b=1)}{\Pr(\mathcal{D})} -->
+<!-- =\frac{\Pr(\mathcal{D}|\lambda_b=1)\Pr(\lambda_b=1)}{\Pr(\mathcal{D}|\lambda_b=1)\Pr(\lambda_b=1)+\Pr(\mathcal{D}|\lambda_b=0)\Pr(\lambda_b=0)} -->
+<!-- \end{eqnarray*} -->
+<!-- The event probabilities of each of the observed events is $0.5$ under $\theta_1$ but just $0.25$ under $\theta_2$.  Using the binomial distribution (a special case of the multinomial for this simple case) we know that the chances of such data arising are 1 in 2 under $\theta_1$ but only 1 in 8 under $\theta_2$. Our posterior would then be: -->
+<!-- \begin{eqnarray*} -->
+<!-- \Pr(\lambda_b=1|\mathcal{D}) =\frac{\frac{1}{2} \times \frac{1}{2}}{\frac{1}{2} \times \frac{1}{2} + \frac{1}{8}\times \frac{1}{2}} = \frac{4}{5}  -->
+<!-- \end{eqnarray*} -->
+<!-- The key difference between this example and more general applications is simply that in the general case we allow for uncertainty --- and updating --- not simply over whether $\lambda_b$ is 0 or 1, but over a range of possible values for multiple parameters of interest. Though this adds complexity, it does not change the fundamental logic of updating.   -->
+<!-- FLAG: RETURN TO THESE -->
+</div>
+</div>
+<div id="features-of-bayesian-updating" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Features of Bayesian updating</h2>
+<p>Bayesian updating has implications that may not be obvious at first glance. These will matter for all forms of inference we examine in this book, but they can all be illustrated in simple settings.</p>
+<div id="AppPriors" class="section level3" number="5.3.1">
+<h3><span class="header-section-number">5.3.1</span> Priors matter</h3>
+<p>The amount of learning that results from a given piece of new data depends strongly on prior beliefs. We have already seen this with the example of interpreting our test results above. Figure <a href="bayeschapter.html#fig:CluesInferences2">5.3</a> illustrates the point for process tracing inferences.</p>
+<p>In each subgraph of Figure <a href="bayeschapter.html#fig:CluesInferences2">5.3</a> , we show how much learning occurs under different scenarios. The horizontal axis indicates the level of prior confidence in the hypothesis and the curve indicates the posterior belief that arises if we do (or do not) observe the clue. As can be seen, the amount of learning that occurs—the shift in beliefs from prior to posterior—depends a good deal on what prior we start out with. For a smoking gun test, the amount of learning is highest for values roughly in the 0.2 to 0.4 range—and then declines as we have more and more prior confidence in our hypothesis. For a hoop test, the amount of learning when the clue is <em>not</em> observed is greatest for hypotheses in which we have middling-high confidence (around 0.6 to 0.8), and minimal for hypotheses in which we have a very high or a very low level of confidence.</p>
+<div class="figure"><span style="display:block;" id="fig:CluesInferences2"></span>
+<img src="ii_files/figure-html/CluesInferences2-1.png" alt="Figure shows how the learning from different types of tests depends on priors regarding the proposition. A smoking gun test has the greatest impact on beliefs when priors are middling low and the clue is observed; a ''hoop test'' has the greatest effect when priors are middling high and the clue is not observed." width="960" />
+<p class="caption">
+Figure 5.3: Figure shows how the learning from different types of tests depends on priors regarding the proposition. A smoking gun test has the greatest impact on beliefs when priors are middling low and the clue is observed; a ‘’hoop test’’ has the greatest effect when priors are middling high and the clue is not observed.
+</p>
+</div>
+<p>The implication here is that our inferences with respect to a hypothesis must be based not just on the search for a clue predicted by the hypothesis but also on the <em>plausibility</em> of the hypothesis, based on other things we know. Suppose, for instance, that we fail to observe evidence that we are 90 percent sure we <em>should</em> observe if a hypothesized causal effect has occurred: a strong hoop test is failed. But suppose that the existing literature has given us a very high level of confidence that the hypothesis <em>is</em> right. This high prior confidence, sometimes referred to as a “base rate,” is equivalent to believing that the causal effect exists in a very high proportion of cases. Thus, while any given case with a causal effect has only a 0.1 chance of not generating the clue, the high base rate means that the vast majority of cases that we observe without the clue will nonetheless be cases with causal effects. Thus, the failure of even a strong hoop test, involving a highly certain prediction, should only marginally reduce our confidence in a hypothesis that we strongly expect to be true.</p>
+<p>A similar line of reasoning applies to smoking gun tests involving hypotheses that prior evidence suggests are very unlikely to be true. Innocent people may be very unlikely to be seen holding smoking guns after a murder. But if a very high proportion of people observed are known to be innocent, then a very high proportion of those holding smoking guns will in fact be innocent—and a smoking-gun clue will be far from decisive.</p>
+<p>We emphasize two respects in which these implications depart from common intuitions. First, we cannot make <em>general</em> statements about how decisive different categories of test, in Van Evera’s framework, will be. It is commonly stated that hoop tests are devastating to a theory when they are failed, while smoking gun tests provide powerful evidence in favor of a hypothesis. But, in fact the amount learned depends not just on features of the clues but also on prior beliefs.</p>
+<p>Second, although scholars frequently treat evidence that goes against the grain of the existing literature as especially enlightening, in the Bayesian framework the contribution of such evidence may sometimes be modest, precisely because received wisdom carries weight. Thus, although the discovery of <em>disconfirming</em> evidence—an observation thought to be strongly inconsistent with the hypothesis—for a hypothesis commonly believed to be true is more informative (has a larger impact on beliefs) than <em>confirming</em> evidence, this does not mean that we learn more than we would have if the prior were weaker. But it is not true as a general proposition that we learn more the bigger the “surprise” a piece of evidence is. The effect of disconfirming evidence on a hypothesis about which we are highly confident will be <em>smaller</em> than it would be for a hypothesis about which we are only somewhat confident. When it comes to very strong hypotheses, the “discovery” of disconfirming evidence is very likely to be a false negative; likewise, the discovery of supporting evidence for a very implausible hypothesis is very likely to be a false positive. The Bayesian approach takes account of these features naturally.<a href="#fn40" class="footnote-ref" id="fnref40"><sup>40</sup></a></p>
+</div>
+<div id="simultaneous-joint-updating" class="section level3" number="5.3.2">
+<h3><span class="header-section-number">5.3.2</span> Simultaneous, joint updating</h3>
+<p>When we update we often update over multiple quantities. When we see a smoking gun, for instance, we might update our beliefs that the butler did it, but we might also update our beliefs about how likely we are to see smoking guns – maybe they are not as rare as we thought!</p>
+<p>Intuitively we might think of this updating as happening sequentially – first of all, we update over the general proposition, then we update over the particular claim. But in fact we update over both quantities at once.</p>
+<p>Here we elaborate on the intuition using an example of Bayesian process tracing, in which updating occurs over both the nodal type (<span class="math inline">\(j\)</span>) and beliefs about the probabilities with which clues are observed for each type (<span class="math inline">\(\phi\)</span> values).</p>
+<p>Suppose that we observe a case with values <span class="math inline">\(X=1, Y=1\)</span>. We begin by defining a prior probability distribution over each parameter. Suppose that we establish a prior categorical distribution reflecting uncertainty over whether the case is a <span class="math inline">\(b\)</span> type (e.g., setting a probability of 0.5 that it is a <span class="math inline">\(b\)</span> and 0.5 that is a <span class="math inline">\(d\)</span> type). We also start with priors on <span class="math inline">\(\phi_b\)</span> and <span class="math inline">\(\phi_d\)</span>. For concreteness, suppose that we are certain that the clue is unlikely for a <span class="math inline">\(d\)</span> type (<span class="math inline">\(\phi_d=.1\)</span>), but we are very uncertain about <span class="math inline">\(\phi_b\)</span>; in particular, we have a uniform prior distribution over <span class="math inline">\([0,1]\)</span> for <span class="math inline">\(\phi_b\)</span>. Note that, even though we are very uncertain about <span class="math inline">\(\phi_b\)</span>, the clue still has probative value, arising from the fact that the expected value of <span class="math inline">\(\phi_b\)</span> is higher than that of <span class="math inline">\(\phi_d\)</span>.</p>
+<p>Suppose that we then look for the clue in the case and observe it. This observation shifts posterior weight away from a belief that the case is a <span class="math inline">\(b\)</span>. See Figure <a href="bayeschapter.html#fig:correlation">5.4</a> for an illustration. Yet it <em>simultaneously</em> shifts weight toward a higher value for <span class="math inline">\(\phi_b\)</span> and a lower value for <span class="math inline">\(\phi_d\)</span>. The reason is that the observed clue has a relatively high likelihood <em>both</em> for combinations of parameter values in which the case is a <span class="math inline">\(d\)</span> and <span class="math inline">\(\phi_b\)</span> is low <em>and</em> for combinations in which the case is a <span class="math inline">\(b\)</span> and <span class="math inline">\(\phi_b\)</span> is <em>high</em> (or, equivalently, in this example, where <span class="math inline">\(\phi_d\)</span> is low). The marginal posterior distribution of <span class="math inline">\(\phi_b\)</span> will thus be shifted upward relative to its prior marginal distribution. The joint posterior distribution will also reflect a dependency between the probability that the case is a <span class="math inline">\(b\)</span> vs. a <span class="math inline">\(d\)</span>, on the one hand, and <span class="math inline">\(\phi_b\)</span> and <span class="math inline">\(\phi_d\)</span> on the other.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:correlation"></span>
+<img src="ii_files/figure-html/correlation-1.png" alt="\label{fig:correlation} Joint posteriors distribution on whether a case is a $b$ or $d$ and on the probability of seeing a clue for a $b$ type ($\phi_b$)." width="960" />
+<p class="caption">
+Figure 5.4:  Joint posteriors distribution on whether a case is a <span class="math inline">\(b\)</span> or <span class="math inline">\(d\)</span> and on the probability of seeing a clue for a <span class="math inline">\(b\)</span> type (<span class="math inline">\(\phi_b\)</span>).
+</p>
+</div>
+<p>Figure <a href="bayeschapter.html#fig:ch5joint">5.5</a> provides a second example, this time showing the joint distribution for the belief that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> in cases in which <span class="math inline">\(X=1, Y=1\)</span> and the relative likelihood that <span class="math inline">\(K=1\)</span> when <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> (and <span class="math inline">\(X=1, Y=1\)</span>) relative to the likelihood that <span class="math inline">\(K=1\)</span> when <span class="math inline">\(X\)</span> does not cause <span class="math inline">\(Y\)</span> (and <span class="math inline">\(X=1, Y=1\)</span>). In this case the joint posterior is derived from a model in which probative value of <span class="math inline">\(K\)</span> is inferred from data, rather than assumed by researchers. We develop more models of this form in later chapters but for now highlight only that in simple setups the distribution of beliefs over queries and over the informativeness of clues are likely not independent of each other.</p>
+<div class="figure"><span style="display:block;" id="fig:ch5joint"></span>
+<img src="ii_files/figure-html/ch5joint-1.png" alt="Correlated beliefs on queries and probative value" width="960" />
+<p class="caption">
+Figure 5.5: Correlated beliefs on queries and probative value
+</p>
+</div>
+</div>
+<div id="posteriors-are-independent-of-the-ordering-of-data" class="section level3" number="5.3.3">
+<h3><span class="header-section-number">5.3.3</span> Posteriors are independent of the ordering of data</h3>
+<p>We often think of learning as a process in which we start off with some set of beliefs—our priors—we gather data, <span class="math inline">\(D_1\)</span>, and update our beliefs, forming a posterior; we then observe new data and we update again, forming a new posterior, having treated the previous posterior as a new prior. In such cases it might seem natural that it would matter which data we saw first and which later.</p>
+<!-- For instance we are interested in learning whether natural resources caused conflict. We first observe that rebels are concentrated in a natural resource rich area. We update. We then learn that these rebels are trading in resources. We update again.  -->
+<p>In fact, however, Bayesian updating is blind to ordering. If we learn first that a card is a face card and second that it is black, our posteriors that the card is a Jack of Spades go from 1 in 52 to 1 in 12 to 1 in 6. If we learn first that the card is black and second that it is a face card, our posteriors that it is a Jack of Spades go from 1 in 52 to 1 in 26 to 1 in 6. We end up in the same place in both cases. And we would have had the same conclusion if we learned in one go that the card is a black face card.</p>
+<p>The math here is easy enough. Our posterior given two sets of data <span class="math inline">\(D_1, D_2\)</span> can be written:</p>
+<p><span class="math display">\[p(\theta | D_1, D_2) = \frac{p(\theta, D_1, D_2)}{p(D_1, D_2)} = \frac{p(\theta, D_1 | D_2)p(D_2)}{p(D_1 | D_2)p(D_2)}= \frac{p(\theta, D_1 | D_2)}{p(D_1 | D_2)}\]</span></p>
+<p>or, equivalently:</p>
+<p><span class="math display">\[p(\theta | D_1, D_2) = \frac{p(\theta, D_1, D_2)}{p(D_1, D_2)} = \frac{p(\theta, D_2 | D_1)p(D_1)}{p(D_2 | D_1)p(D_1)}= \frac{p(\theta, D_2 | D_1)}{p(D_2 | D_1)}\]</span></p>
+<p>In other words our posteriors given both <span class="math inline">\(D_1\)</span> and <span class="math inline">\(D_2\)</span> can be thought of as the result of updating on <span class="math inline">\(D_2\)</span> given we already know <span class="math inline">\(D_1\)</span> or the result of updating on <span class="math inline">\(D_1\)</span> given we already know <span class="math inline">\(D_2\)</span>.</p>
+<p>This fact will be useful in applications. In practice we might assume that we have beliefs based on background data <span class="math inline">\(D_1\)</span>, for example regarding general relations between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and a flat prior, and we then update again with new data on <span class="math inline">\(K\)</span>. Rather than updating twice, the fact that updating is invariant to order means that we can assume a flat prior and update once given data on <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, and <span class="math inline">\(K\)</span>.</p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-beachpedersen2013process" class="csl-entry">
+Beach, Derek, and Rasmus Brun Pedersen. 2013. <em>Process-Tracing Methods: Foundations and Guidelines</em>. Ann Arbor, MI: University of Michigan Press.
+</div>
+<div id="ref-BennettBayes" class="csl-entry">
+Bennett, Andrew. 2008. <span>“Process Tracing. A Bayesian Perspective.”</span> In <em>The Oxford Handbook of Political Methodology</em>, edited by Janet M. Box-Steffensmeier, Henry E. Brady, and David Collier, 702–21. Oxford, UK: Oxford University Press.
+</div>
+<div id="ref-collier2004sources" class="csl-entry">
+Collier, David, Henry E Brady, and Jason Seawright. 2004. <span>“Sources of Leverage in Causal Inference: Toward an Alternative View of Methodology.”</span> In <em>Rethinking Social Inquiry: Diverse Tools, Shared Standards</em>, edited by David Collier and Henry E Brady, 229–66. Lanham, MD: Rowman &amp; Littlefield.
+</div>
+<div id="ref-fairfield2017explicit" class="csl-entry">
+Fairfield, Tasha, and Andrew Charman. 2017a. <span>“Explicit Bayesian Analysis for Process Tracing: Guidelines, Opportunities, and Caveats.”</span> <em>Political Analysis</em> 25 (3): 363–80.
+</div>
+<div id="ref-gardner1961second" class="csl-entry">
+Gardner, Martin. 1961. <em>The Second Scientific American Book of Mathematical Puzzles and Diversions</em>. Simon; Schuster New York.
+</div>
+<div id="ref-humphreys2015mixing" class="csl-entry">
+Humphreys, Macartan, and Alan M Jacobs. 2015. <span>“Mixing Methods: A Bayesian Approach.”</span> <em>American Political Science Review</em> 109 (04): 653–73.
+</div>
+<div id="ref-pearl2009causality" class="csl-entry">
+———. 2009. <em>Causality</em>. Cambridge university press.
+</div>
+<div id="ref-pearl2012causal" class="csl-entry">
+———. 2012. <span>“The Causal Foundations of Structural Equation Modeling.”</span> DTIC Document.
+</div>
+<div id="ref-rohlfing2012case" class="csl-entry">
+Rohlfing, I. 2012. <em>Case Studies and Causal Inference: An Integrative Framework</em>. Research Methods Series. New York: Palgrave Macmillan. <a href="http://books.google.ca/books?id=4W\_XuA3njRQC">http://books.google.ca/books?id=4W\_XuA3njRQC</a>.
+</div>
+<div id="ref-stan2020stan" class="csl-entry">
+Stan, Development Team, and others. 2020. <span>“Stan Modeling Language Users Guide and Reference Manual.”</span> <em>Technical Report</em>. <a href="https://mc-stan.org/docs/2_24/reference-manual/index.html">https://mc-stan.org/docs/2_24/reference-manual/index.html</a>.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="37">
+<li id="fn37"><p>Given <span class="math inline">\(X=1\)</span>, <span class="math inline">\(Y=1\)</span> is consistent with <span class="math inline">\(b\)</span> types at both stages, which arises with probability .25, or with a <span class="math inline">\(d\)</span> type in the second stage, which arises with probability .5. The conditional probability is therefore <span class="math inline">\(.25/.75 = 1/3\)</span>.<a href="bayeschapter.html#fnref37" class="footnote-back">↩︎</a></p></li>
+<li id="fn38"><p>We thank Tasha Fairfield for discussions around this graph which differs from that in <span class="citation"><a href="#ref-humphreys2015mixing" role="doc-biblioref">Humphreys and Jacobs</a> (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span> by placing tests more consistently on common rays originating from (0,0) and (1,1).<a href="bayeschapter.html#fnref38" class="footnote-back">↩︎</a></p></li>
+<li id="fn39"><p>Learning about roots from observed data is sometimes termed <em>abduction</em>; see <span class="citation"><a href="#ref-pearl2009causality" role="doc-biblioref">Pearl</a> (<a href="#ref-pearl2009causality" role="doc-biblioref">2009</a>)</span>, p 206.<a href="bayeschapter.html#fnref39" class="footnote-back">↩︎</a></p></li>
+<li id="fn40"><p>We note, however, that one common intuition—that little is learned from disconfirming evidence on a low-plausibility hypothesis or from confirming evidence on a high-plausibility one—<em>is</em> correct.<a href="bayeschapter.html#fnref40" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="questions.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="theory.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false,
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

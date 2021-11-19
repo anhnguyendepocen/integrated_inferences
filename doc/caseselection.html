@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 13 Mixed methods data strategies | Illustrating causal models</title>
+  <meta name="description" content="Bayesian causal models for integrated inferences." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 13 Mixed methods data strategies | Illustrating causal models" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
+  <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+  <meta property="og:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="github-repo" content="macartan/integrated_inferences" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 13 Mixed methods data strategies | Illustrating causal models" />
+  
+  <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan M. Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="clue.html"/>
+<link rel="next" href="wideordeep.html"/>
+<script src="libs/header-attrs/header-attrs.js"></script>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/htmlwidgets/htmlwidgets.js"></script>
+<link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding/datatables.js"></script>
+<link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="headers/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Integrated Inferences</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#key-contributions"><i class="fa fa-check"></i><b>1.2</b> Key contributions</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#counterfactualmodel"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#potential-outcomes"><i class="fa fa-check"></i><b>2.1.1</b> Potential outcomes</a></li>
+<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#generalization"><i class="fa fa-check"></i><b>2.1.2</b> Generalization</a></li>
+<li class="chapter" data-level="2.1.3" data-path="models.html"><a href="models.html#summaries-of-potential-outcomes"><i class="fa fa-check"></i><b>2.1.3</b> Summaries of potential outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#graphing-models-and-using-graphs"><i class="fa fa-check"></i><b>2.3</b> Graphing models and using graphs</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilistic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilistic relations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
+<li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.5.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.5.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.5.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.5.3" data-path="models.html"><a href="models.html#rules-for-moving-between-levels"><i class="fa fa-check"></i><b>2.5.3</b> Rules for moving between levels</a></li>
+<li class="chapter" data-level="2.5.4" data-path="models.html"><a href="models.html#reading-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.5.4</b> Reading conditional independence from a graph</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform</a></li>
+<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions"><i class="fa fa-check"></i><b>3.2</b> Military Interventions</a></li>
+<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Queries</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#actual-causes"><i class="fa fa-check"></i><b>4.3</b> Actual causes</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
+<li class="chapter" data-level="4.6" data-path="questions.html"><a href="questions.html#general-procedure"><i class="fa fa-check"></i><b>4.6</b> General procedure</a></li>
+<li class="chapter" data-level="4.7" data-path="questions.html"><a href="questions.html#appendix"><i class="fa fa-check"></i><b>4.7</b> Appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#features-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Features of Bayesian updating</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>6</b> Theories as causal models</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="theory.html"><a href="theory.html#models-as-theories-of"><i class="fa fa-check"></i><b>6.1</b> Models as <em>theories of</em></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="theory.html"><a href="theory.html#implications-of-structural-causal-models"><i class="fa fa-check"></i><b>6.1.1</b> Implications of structural causal models</a></li>
+<li class="chapter" data-level="6.1.2" data-path="theory.html"><a href="theory.html#probabilistic-causal-models"><i class="fa fa-check"></i><b>6.1.2</b> Probabilistic causal models</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="theory.html"><a href="theory.html#theorygains"><i class="fa fa-check"></i><b>6.2</b> Gains from theory</a></li>
+<li class="chapter" data-level="6.3" data-path="theory.html"><a href="theory.html#formal-theories-and-causal-models"><i class="fa fa-check"></i><b>6.3</b> Formal theories and causal models</a></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>7.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="7.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>7.1.2</b> A formalization of the general approach</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.3</b> Principles of learning</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-get-us-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.3.1</b> A DAG alone does not get us probative value for a single case</a></li>
+<li class="chapter" data-level="7.3.2" data-path="pt.html"><a href="pt.html#learning-requires-uncertainty"><i class="fa fa-check"></i><b>7.3.2</b> Learning requires uncertainty</a></li>
+<li class="chapter" data-level="7.3.3" data-path="pt.html"><a href="pt.html#multiple-ways-for-queries-to-be-satisfied"><i class="fa fa-check"></i><b>7.3.3</b> Multiple ways for queries to be satisfied</a></li>
+<li class="chapter" data-level="7.3.4" data-path="pt.html"><a href="pt.html#beware-of-highly-unlikely-queries"><i class="fa fa-check"></i><b>7.3.4</b> Beware of highly unlikely queries</a></li>
+<li class="chapter" data-level="7.3.5" data-path="pt.html"><a href="pt.html#population-level-uncertainty-does-not-alter-case-level-causal-inference"><i class="fa fa-check"></i><b>7.3.5</b> Population-level uncertainty does not alter case-level causal inference</a></li>
+<li class="chapter" data-level="7.3.6" data-path="pt.html"><a href="pt.html#probative-value-requires-d-connection"><i class="fa fa-check"></i><b>7.3.6</b> Probative value requires <span class="math inline">\(d-\)</span>connection</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Process Tracing Application: Inequality and Democracy</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>8.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>8.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>8.3</b> Results</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>8.3.1</b> Inferences for cases with observed democratization</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>8.3.2</b> Cases with incomplete data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#theory-dependence"><i class="fa fa-check"></i><b>8.4</b> Theory dependence</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#from-sample-queries-to-general-processes"><i class="fa fa-check"></i><b>9.2</b> From sample queries to general processes</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
+<li class="chapter" data-level="9.2.3" data-path="mixing.html"><a href="mixing.html#wrinkles"><i class="fa fa-check"></i><b>9.2.3</b> Wrinkles</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#mixed-methods"><i class="fa fa-check"></i><b>9.3</b> Mixed methods</a></li>
+<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.4</b> Considerations</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#probative-value-can-be-derived-from-a-causal-structure-plus-data"><i class="fa fa-check"></i><b>9.4.1</b> Probative value can be derived from a causal structure plus data</a></li>
+<li class="chapter" data-level="9.4.2" data-path="mixing.html"><a href="mixing.html#learning-without-identification"><i class="fa fa-check"></i><b>9.4.2</b> Learning without identification</a></li>
+<li class="chapter" data-level="9.4.3" data-path="mixing.html"><a href="mixing.html#beyond-binary-data"><i class="fa fa-check"></i><b>9.4.3</b> Beyond binary data</a></li>
+<li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
+<li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
+<li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
+<li class="chapter" data-level="9.4.7" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>9.4.7</b> Parameteric models</a></li>
+<li class="chapter" data-level="9.4.8" data-path="mixing.html"><a href="mixing.html#prior-databeliefs-channel-the-learning-from-new-data"><i class="fa fa-check"></i><b>9.4.8</b> Prior data/beliefs “channel” the learning from new data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Integrated Inferences Application: Inequality and Democracy Revisited</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>10.1</b> A trained model</a></li>
+<li class="chapter" data-level="10.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>10.2</b> Data</a></li>
+<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference-1"><i class="fa fa-check"></i><b>10.3</b> Inference</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democratization"><i class="fa fa-check"></i><b>10.3.1</b> Did inequality <em>cause</em> democratization?</a></li>
+<li class="chapter" data-level="10.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>10.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="mixingapp.html"><a href="mixingapp.html#from-cases-to-population"><i class="fa fa-check"></i><b>10.4</b> From cases to population</a>
+<ul>
+<li class="chapter" data-level="10.4.1" data-path="mixingapp.html"><a href="mixingapp.html#contribution-to-case-level-inference"><i class="fa fa-check"></i><b>10.4.1</b> Contribution to case-level inference</a></li>
+<li class="chapter" data-level="10.4.2" data-path="mixingapp.html"><a href="mixingapp.html#how-much-do-we-get-from-the-model-vs.-the-data"><i class="fa fa-check"></i><b>10.4.2</b> How much do we get from the model vs. the data?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="mm.html"><a href="mm.html#a-jigsaw-puzzle-integrating-across-a-model"><i class="fa fa-check"></i><b>11.1</b> A jigsaw puzzle: Integrating across a model</a></li>
+<li class="chapter" data-level="11.2" data-path="mm.html"><a href="mm.html#combining-observational-and-experimental-data"><i class="fa fa-check"></i><b>11.2</b> Combining observational and experimental data</a></li>
+<li class="chapter" data-level="11.3" data-path="mm.html"><a href="mm.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>11.3</b> Transportation of findings across contexts</a></li>
+<li class="chapter" data-level="11.4" data-path="mm.html"><a href="mm.html#multilevel-models-meta-analysis"><i class="fa fa-check"></i><b>11.4</b> Multilevel models, meta-analysis</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="12" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>12</b> Clue Selection as a Decision Problem</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="clue.html"><a href="clue.html#a-model-informed-approach-to-clue-selection"><i class="fa fa-check"></i><b>12.1</b> A model-informed approach to clue-selection</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>12.1.1</b> Clue selection with a simple example</a></li>
+<li class="chapter" data-level="12.1.2" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>12.1.2</b> Dependence on prior beliefs</a></li>
+<li class="chapter" data-level="12.1.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>12.1.3</b> Clue selection for the democratization model</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Mixed methods data strategies</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through"><i class="fa fa-check"></i><b>13.3</b> Specific case walk through</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#case-selection-from-causal-models-a-simulation-based-approach"><i class="fa fa-check"></i><b>13.4</b> Case selection from causal models: a simulation-based approach</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wideordeep.html"><a href="wideordeep.html"><i class="fa fa-check"></i><b>14</b> Going wide, going deep</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wideordeep.html"><a href="wideordeep.html#walk-through-of-a-simple-comparison"><i class="fa fa-check"></i><b>14.1</b> Walk-through of a simple comparison</a></li>
+<li class="chapter" data-level="14.2" data-path="wideordeep.html"><a href="wideordeep.html#a-simulation-based-approach-to-choosing-mixes"><i class="fa fa-check"></i><b>14.2</b> A simulation-based approach to choosing mixes</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="wideordeep.html"><a href="wideordeep.html#approach"><i class="fa fa-check"></i><b>14.2.1</b> Approach</a></li>
+<li class="chapter" data-level="14.2.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results"><i class="fa fa-check"></i><b>14.2.2</b> Simulation results</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="wideordeep.html"><a href="wideordeep.html#factoring-in-the-cost-of-data"><i class="fa fa-check"></i><b>14.3</b> Factoring in the cost of data</a></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="15" data-path="justifying.html"><a href="justifying.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="justifying.html"><a href="justifying.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1</b> Nothing from nothing</a></li>
+<li class="chapter" data-level="15.2" data-path="justifying.html"><a href="justifying.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.2</b> Justifying the classic process tracing tests</a></li>
+<li class="chapter" data-level="15.3" data-path="justifying.html"><a href="justifying.html#justification-from-experimental-designs"><i class="fa fa-check"></i><b>15.3</b> Justification from experimental designs</a>
+<ul>
+<li class="chapter" data-level="15.3.1" data-path="justifying.html"><a href="justifying.html#mediator"><i class="fa fa-check"></i><b>15.3.1</b> Mediator</a></li>
+<li class="chapter" data-level="15.3.2" data-path="justifying.html"><a href="justifying.html#moderator"><i class="fa fa-check"></i><b>15.3.2</b> Moderator</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="justifying.html"><a href="justifying.html#causal-discovery"><i class="fa fa-check"></i><b>15.4</b> Causal discovery</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#four-strategies"><i class="fa fa-check"></i><b>16.1</b> Four Strategies</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independence"><i class="fa fa-check"></i><b>16.1.1</b> Check conditional independence</a></li>
+<li class="chapter" data-level="16.1.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value-are-the-data-unexpected-given-your-model"><i class="fa fa-check"></i><b>16.1.2</b> Bayesian <span class="math inline">\(p-\)</span>value: Are the data unexpected given your model?</a></li>
+<li class="chapter" data-level="16.1.3" data-path="evaluation.html"><a href="evaluation.html#leave-one-out-loo-cross-validation"><i class="fa fa-check"></i><b>16.1.3</b> Leave-one-out (LOO) cross-validation</a></li>
+<li class="chapter" data-level="16.1.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity"><i class="fa fa-check"></i><b>16.1.4</b> Sensitivity</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="evaluation.html"><a href="evaluation.html#check-assumptions-of-conditional-independence"><i class="fa fa-check"></i><b>16.2.1</b> Check assumptions of conditional independence</a></li>
+<li class="chapter" data-level="16.2.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value"><i class="fa fa-check"></i><b>16.2.2</b> Bayesian <span class="math inline">\(p\)</span>-value</a></li>
+<li class="chapter" data-level="16.2.3" data-path="evaluation.html"><a href="evaluation.html#loo-validation"><i class="fa fa-check"></i><b>16.2.3</b> LOO validation</a></li>
+<li class="chapter" data-level="16.2.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity-to-priors"><i class="fa fa-check"></i><b>16.2.4</b> Sensitivity to priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="conclusionchapter.html"><a href="conclusionchapter.html"><i class="fa fa-check"></i><b>17</b> Final Words</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-benefits"><i class="fa fa-check"></i><b>17.1</b> The benefits</a></li>
+<li class="chapter" data-level="17.2" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-worries"><i class="fa fa-check"></i><b>17.2</b> The worries</a></li>
+<li class="chapter" data-level="17.3" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-future"><i class="fa fa-check"></i><b>17.3</b> The future</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/CausalQueries/" target="blank">Uses CausalQueries</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Illustrating causal models</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="caseselection" class="section level1" number="13">
+<h1><span class="header-section-number">Chapter 13</span> Mixed methods data strategies</h1>
+<div class="headerbox">
+<div class="center">
+
+</div>
+<p>With a causal model in hand, together with priors over parameters, we can assess in advance what conclusions we will draw from different observations and assess what kinds of observations are most worth seeking. In this chapter, we put this research-design approach to work on the problem of case-selection: given a set of cases on which we already have <span class="math inline">\(X,Y\)</span> data, which cases will it be most advantageous to choose for more in-depth investigation? As we show, the optimal case-selection strategy will depend jointly on the model we start with and the causal question we seek to answer.</p>
+</div>
+<p>A critical decision for scholars employing mixed methods is to determine when and where to look deep and when to look wide. We address this question if two steps, first addressing the problem of case selection and second the question of qualitative/quantitative mixing.</p>
+<div id="case-selection-strategies" class="section level2" number="13.1">
+<h2><span class="header-section-number">13.1</span> Case selection strategies</h2>
+<p>A host of different strategies have been proposed for selecting cases for in-depth study based on the observed values of <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span> data. Perhaps the most common strategy is to select cases in which <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span> and look to see whether in fact <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> in the case in question (using some more or less formal strategy for inferring causality from within-case evidence). But many other strategies have been proposed, including strategies to select cases “on the regression line” or, for some purposes, cases “off the regression line” (e.g., <span class="citation"><a href="#ref-Lieberman2005nested" role="doc-biblioref">Lieberman</a> (<a href="#ref-Lieberman2005nested" role="doc-biblioref">2005</a>)</span>). Some scholars suggest ensuring variation in <span class="math inline">\(X\)</span> (most prominently, <span class="citation"><a href="#ref-king1994designing" role="doc-biblioref">King, Keohane, and Verba</a> (<a href="#ref-king1994designing" role="doc-biblioref">1994</a>)</span>), while others have proposed various kinds of matching strategies. Some have pointed to the advantages of random sampling of cases, either stratified or unstratified by values on <span class="math inline">\(X\)</span> or <span class="math inline">\(Y\)</span> (<span class="citation"><a href="#ref-FL2008" role="doc-biblioref">Fearon and Laitin</a> (<a href="#ref-FL2008" role="doc-biblioref">2008</a>)</span>, <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span>).</p>
+<p>Which cases we should choose will likely depend on the purposes to which we want to put them.</p>
+<p>A matching strategy for instance—selecting cases that are comparable on many features but that differ on <span class="math inline">\(X\)</span>—replicates at a small scale the kind of inference done by matching estimators with large-<span class="math inline">\(n\)</span> data. The strategy draws leverage from <span class="math inline">\(X,Y\)</span> variation rather than from within-case information beyond what is available in the measurement of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. (FLAG: Citations needed.)</p>
+<p>Other treatments seek to use qualitative information to check assumptions made in <span class="math inline">\(X, Y\)</span> analysis: for example, is the measurement of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> reliable in critical cases? (FLAG: Citations needed) For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the <span class="math inline">\(X,Y\)</span> inferences: for example influential cases that have unusually extreme values on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.<a href="#fn72" class="footnote-ref" id="fnref72"><sup>72</sup></a> Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.</p>
+<p>A third purpose is to use a case to generate alternative or richer theories of causal processes, as in Lieberman’s “model-building” mode of “nested analysis” (<span class="citation"><a href="#ref-Lieberman2005nested" role="doc-biblioref">Lieberman</a> (<a href="#ref-Lieberman2005nested" role="doc-biblioref">2005</a>)</span>). Here it may be cases off the regression line that are of interest.</p>
+<p>Weller and Barnes (CITE article) on case selection focus on (a) X/Y relations and (b) whether the cases are useful for hypothesis generation.</p>
+<p>In what follows, we focus on a simpler goal: given existing <span class="math inline">\(X, Y\)</span> data for a set of cases and a given clue (or set of clues) that we can go looking for in the intensive analysis of some subset of these cases, for which cases would process tracing yield the greatest learning about the population-level causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>?</p>
+<p>The basic insight of this chapter is simple enough: <em>the optimal strategy for case selection for a model-based analysis are a function of the model we start with and the query we seek to address</em>, just as we saw for the optimal clue-selection strategy in Chapter <a href="#Clues"><strong>??</strong></a>. Using this strategy yields guidance that is consistent with some common advice but at odds with other advice. The main principles that emerge from the analysis can be summarized as:</p>
+<ul>
+<li>go where the probative value is, and</li>
+<li>sample from <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> values in proportion to their occurrence in the population,</li>
+<li>invest in collections of cases that provide complementary learning.</li>
+</ul>
+<p>Beyond these general principles, other patterns are more complex and thus more difficult to neatly summarize. The most general message of this chapter is about the general approach: that is, that we can use a causal model to tell us what kinds of cases are likely to yield the greatest learning, given the model and a strategy of inference. We provide a tool for researchers to undertake this analysis, at least for simple problems with <span class="math inline">\(X, Y, K\)</span> data.</p>
+<p>Most closely related to our analysis in this chapter is the contribution of <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span>, who build on <span class="citation"><a href="#ref-SeawrightGerring2008" role="doc-biblioref">Seawright and Gerring</a> (<a href="#ref-SeawrightGerring2008" role="doc-biblioref">2008</a>)</span>. While Seawright and Gerring provide a taxonomy of approaches to case selection, they do not provide a strategy for assessing the relative merits of these different approaches. As we do, <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> focus on a situation with binary <span class="math inline">\(X,Y\)</span> data and assess the gains from learning about causal type in a set of cases (interestingly in their treatment causal type, <span class="math inline">\(Z_i\)</span> is called a confounder rather than being an estimand of direct interest; in our setup, confounding as normally understood arises because of different probabilities of different causal types of being assigned to “treatment,” or an <span class="math inline">\(X=1\)</span> value). <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> assume that in any given case selected for analysis a qualitative researcher is able to infer the causal type perfectly.</p>
+<p>Our setup differs from that in <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> in a few ways. <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> paramaterize differently, though this difference is not important.<a href="#fn73" class="footnote-ref" id="fnref73"><sup>73</sup></a> Perhaps the most important difference between our analysis and that in <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> is that we connect the inference strategy to process-tracing approaches. Whereas <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> assume that causal types can be read directly, we assume that these are inferred <em>imperfectly</em> from evidence and we endogenize the informativeness of the evidence to features of the inquiries. Moreover, not only can we have uncertainty about the probative value of clues, but researchers can learn about the probative value of clues by examining cases.</p>
+<!-- As in our baseline model, our ability to make inferences for causal types can differ by type and as a function of $X$.  -->
+<!-- Are Herron and Quinn's priors Jeffrey priors? -->
+<p>Here we assume that the case selection decision is made after observing the <span class="math inline">\(XY\)</span> distribution and we explore a range of different possible contingency tables. In <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> the distribution from which the contingency tables are drawn is fixed, though set to exhibit an expected observed difference in means (though not necessarily a true treatment effect) of 0.2. They assume large <span class="math inline">\(XY\)</span> data sets (with 10,000) units and case selection strategies ranging from 1 to 20 cases.</p>
+<p>Another important difference, is that in many of their analyses, <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> take the perspective of an outside analyst who knows the true treatment effect; they then assess the expected bias generated by a research strategy over the possible data realizations. We, instead, take the perspective of a researcher who has <em>beliefs</em> about the true treatment effect that correspond to their priors, and for whom there is therefore no <em>expected</em> bias. This has consequences also for the assessment of expected posterior variance, as in our analyses the expectation of the variance is taken with respect to the researcher’s beliefs about the world, rather than being made conditional on some specific world (ATE). We think that this setup is addressed to the question that a researcher must answer when deciding on a strategy: given what they know now, what will produce the greatest reduction in uncertainty (the lowest expected posterior variance)?</p>
+<p>Finally, we proceed somewhat differently in our identification of strategies from Herron and Quinn: rather than pre-specifying particular sets of strategies (operationalizations of those identified by <span class="citation"><a href="#ref-SeawrightGerring2008" role="doc-biblioref">Seawright and Gerring</a> (<a href="#ref-SeawrightGerring2008" role="doc-biblioref">2008</a>)</span>) and evaluating them, we define a strategy as the particular distribution over <span class="math inline">\(XY\)</span> cells to be examined and proceed to examine <em>every possible strategy</em> given a choice of a certain number of cases in which to conduct process tracing. We thus let the clusters of strategies—those strategies that perform similarly—emerge from the analysis rather than being privileged by past conceptualizations of case-selection strategies.</p>
+<p>Despite these various differences, our results will agree in key ways with those in <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span>.</p>
+</div>
+<div id="no-general-rules" class="section level2" number="13.2">
+<h2><span class="header-section-number">13.2</span> No general rules</h2>
+<p>Case selection is about choosing in which cases to make observations. We obviously want to look for evidence in cases where that evidence is likely to be most informative. And the informativeness of a case depends, in turn, on our model and our query.</p>
+<p>Although it might be tempting to seek general case-selection rules of the form “examine cases in which <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span>” or “ignore cases in which <span class="math inline">\(X=0\)</span> and <span class="math inline">\(Y=1\)</span>,” it is easily demonstrated that which cases will be (in expectation) more informative depends on models and queries.</p>
+<p>Suppose we have observed <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> values for a set of random draw of cases from a population. Suppose further that we know, for this population, that:</p>
+<ul>
+<li><span class="math inline">\(X \rightarrow Y \leftarrow K\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 0) = 1\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 0) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 1) = 0\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 1) = .9\)</span></li>
+</ul>
+<p>One way to read this set of statements is that <span class="math inline">\(X\)</span>’s causal effect on <span class="math inline">\(Y\)</span> varies with <span class="math inline">\(K\)</span>. We do not know, however how common <span class="math inline">\(K\)</span> is. Thus we do not know either the average effect of <span class="math inline">\(X\)</span> or the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> in a case with particular <span class="math inline">\(X, Y\)</span> values.</p>
+<p>What do the above statements tell us about <span class="math inline">\(K\)</span>’s <em>informativeness</em>? The beliefs above imply that if, <span class="math inline">\(X=Y=1\)</span>, then <span class="math inline">\(K\)</span> is a “doubly decisive” clue for assessing whether, in a given case, <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>. In particular, we see that for an <span class="math inline">\(X=Y=1\)</span> case, observing <span class="math inline">\(K=1\)</span> implies that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span>: this is because, otherwise, <span class="math inline">\(Y\)</span> would have been 0. We also see that <span class="math inline">\(K=0\)</span>, in an <span class="math inline">\(X=1, Y=1\)</span> case implies that <span class="math inline">\(X\)</span> did not cause <span class="math inline">\(Y\)</span> since <span class="math inline">\(Y\)</span> would have still been 1 even if <span class="math inline">\(X\)</span> were 0. So an <span class="math inline">\(X=Y=1\)</span> case would be a highly informative place to go looking for <span class="math inline">\(K\)</span>.</p>
+<p>However, if we had a case in which <span class="math inline">\(X=Y=0\)</span>, then learning <span class="math inline">\(K\)</span> would be entirely uninformative for the case. In particular, we already <em>know</em> that <span class="math inline">\(K=1\)</span> in this case as the statements above exclude the possibility of a case in which <span class="math inline">\(X=Y=0\)</span> and <span class="math inline">\(K=0\)</span>. So there would be nothing gained by “looking” to see what <span class="math inline">\(K\)</span>’s value is in the case. Moreover, this knowledge is not enough to tell us whether <span class="math inline">\(X=0\)</span> caused <span class="math inline">\(Y=0\)</span>.</p>
+<p>For the same reason, we can learn nothing from <span class="math inline">\(K\)</span> in an <span class="math inline">\(X=0, Y=1\)</span> case since we know that <span class="math inline">\(K=0\)</span> in such a case. On the other hand, if we chose an <span class="math inline">\(X=1, Y=0\)</span>, then <span class="math inline">\(K\)</span> would again be doubly decisive, with <span class="math inline">\(K=0\)</span> implying that <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=0\)</span>, and <span class="math inline">\(K=1\)</span> implying that <span class="math inline">\(X=1\)</span> did not cause <span class="math inline">\(Y=0\)</span>.</p>
+<p>We have chosen extreme values for this illustration — our beliefs could, of course, allow for gradations of informativeness, rather than all-or-nothing identification — but the larger point is that beliefs about the way world work can have a powerful effect on the kind of case in which learning is possible. And note that in this example, there is nothing special about where a case lies relative to a (notional) regression line: informativeness in this setup happens to depend on <span class="math inline">\(X\)</span>’s value entirely. But, again, this is a particular feature of this particular set of beliefs about the world.</p>
+<p>Suppose, now, that we were interested in a population estimand: the average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. We can see that this is equal to <span class="math inline">\(\Pr(K=1)\times.9 + (1-\Pr(K-0))\times(-.5)) = 1.4\times Pr(K=1)-.5\)</span>. To estimate this estimand, we need only determine the prevalence of <span class="math inline">\(K=1\)</span> in the population. It might seem that this means that it is irrelevant what type of case we choose: why not use pure random sampling to determine <span class="math inline">\(K\)</span>’s prevalence. As noted above, however, we have more information about the likely value of <span class="math inline">\(K\)</span> in some kinds of cases than in others. Thus, for this population-level estimand as well, selecting an <span class="math inline">\(X=1\)</span> case will be informative while selecting an <span class="math inline">\(X=0\)</span> case will not be informative.</p>
+<p>At the same time, not all <span class="math inline">\(X=1\)</span> cases are equally informative. Should we choose an <span class="math inline">\(X=1\)</span> case in which <span class="math inline">\(Y=1\)</span> or one in which <span class="math inline">\(Y=0\)</span>? In both types of case, <span class="math inline">\(K\)</span> is doubly decisive for the probability of causation in the case. However, the two kinds of cases are differentially informative about <span class="math inline">\(K\)</span>’s prevalence in the population. For an <span class="math inline">\(X=1, Y=1\)</span> case, we think it moderately likely that <span class="math inline">\(K=1\)</span> (specifically, assuming a prior of <span class="math inline">\(\Pr(K=1)\)</span> we think <span class="math inline">\(\Pr(K=1 | X=1, Y=1) = \frac{.9}{.9+.5}=.64\)</span>). For an <span class="math inline">\(X=1, Y=0\)</span> case, we think <span class="math inline">\(K=1\)</span> is quite unlikely (<span class="math inline">\(\Pr(K=1 | X=1, Y=0) = \frac{.1}{.5+.1}=.17\)</span>). In other words, we are much more uncertain about the value of <span class="math inline">\(K\)</span> in the <span class="math inline">\(X=Y=1\)</span> case than in the <span class="math inline">\(X=1, Y=0\)</span> case. In this setup, we would thus expect to learn more about the average treatment effect by choosing to observe <span class="math inline">\(K\)</span> in an on-the-diagonal case than in an off-the-diagonal case.</p>
+<p>FLAG: What does “assuming a prior of <span class="math inline">\(\Pr(K=1)\)</span>” add to above paragraph?</p>
+<p>Specifically, let <span class="math inline">\(\kappa\)</span> denote <span class="math inline">\(\Pr(K=1)\)</span>. Suppose that we begin thinking it equally likely that <span class="math inline">\(\kappa=\kappa^H = .5\)</span> and <span class="math inline">\(\kappa=\kappa^L=0\)</span>. Suppose, further, that the distribution of <span class="math inline">\(X\)</span> is such that, for any randomly drawn case, <span class="math inline">\(\Pr(X=1) = .5\)</span>. We then observe one case with <span class="math inline">\(X=1, Y=1\)</span> and another with <span class="math inline">\(X=1, Y=0\)</span>. From that information alone, we can update over <span class="math inline">\(\kappa\)</span>. Specifically, conditioning on <span class="math inline">\(X=1\)</span>, when we observe the data pattern, <span class="math inline">\(D\)</span>, in which <span class="math inline">\(Y=0\)</span> in one case and <span class="math inline">\(Y=1\)</span> in the other, the posterior on <span class="math inline">\(\kappa\)</span> is:</p>
+<p><span class="math display">\[p(\kappa = \kappa^L|D) =  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kappa^L)}=\frac{.5}{.5 + .25\times(2\times.5\times.5 + 2\times.9\times.1 + 2\times(.9\times.5 +.1\times.5))}\]</span></p>
+<p>FLAG: Is the above expression not missing the prior?</p>
+<p>FLAG: I am not sure what we’re trying to get out of this expression, so unsure how to tie this up.</p>
+<p>In summary, under the stipulated beliefs about the world, we can learn most about the population <span class="math inline">\(ATE\)</span> by selecting an <span class="math inline">\(X=Y=1\)</span> for study. We can also learn about the case-level effect in such a case as well as in an <span class="math inline">\(X=1, Y=0\)</span> case. If we are interested in the case level estimand for any <span class="math inline">\(X=0\)</span> case, then there are no gains from any case-selection strategy since we know <span class="math inline">\(K\)</span>’s value based on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>’s value.</p>
+<p>FLAG: AJ: Check my rewrite of last statement.</p>
+<p>There is nothing preferable in general about an <span class="math inline">\(X=1\)</span> case. Under a different set of beliefs about the world, we would expect to learn more in an <span class="math inline">\(X=Y=0\)</span> than in an <span class="math inline">\(X=Y=1\)</span> case. Suppose, for instance, that we have a model in which:</p>
+<ul>
+<li><span class="math inline">\(X \rightarrow Y \leftarrow K\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 0) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 0) = 0\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 1) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 1) = 1\)</span></li>
+</ul>
+<p>In this world, we learn nothing from observing a case in which <span class="math inline">\(X=Y=1\)</span>—since we already know that <span class="math inline">\(K=1\)</span>. In contrast, if <span class="math inline">\(X=Y=0\)</span>, then if we learn that <span class="math inline">\(K=1\)</span>, we know that, were <span class="math inline">\(X=1\)</span>, <span class="math inline">\(Y\)</span> would have been 1; and if instead we observe <span class="math inline">\(K=0\)</span>, we know that <span class="math inline">\(Y\)</span> would have (still) been 0 if <span class="math inline">\(X\)</span> were 1. Now, <span class="math inline">\(K\)</span> is doubly decisive for an <span class="math inline">\(X=Y=0\)</span> case but unhelpful for an <span class="math inline">\(X=Y=1\)</span> case.</p>
+<p>The two off-diagonal cases may also be different in the opportunities for learning that they present. Suppose that you knew that:</p>
+<ul>
+<li><span class="math inline">\(X \rightarrow Y \leftarrow K\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 0) = 0\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 0) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 1) = 1\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 1) = .5\)</span></li>
+</ul>
+<p>For an <span class="math inline">\(X=1, Y=0\)</span> case, if you observe <span class="math inline">\(K=1\)</span> you know that if <span class="math inline">\(X\)</span> were 0, <span class="math inline">\(Y\)</span> would have been 1; but if <span class="math inline">\(K=0\)</span>, you know that if <span class="math inline">\(X\)</span> were 0, <span class="math inline">\(Y\)</span> would still have been 0. In that case <span class="math inline">\(K\)</span>, would be doubly decisive for <span class="math inline">\(X=1\)</span> causing <span class="math inline">\(Y=0\)</span>. But in an <span class="math inline">\(X=0, Y=1\)</span>, we already know <span class="math inline">\(K=0\)</span> before we go looking.</p>
+<p>Say instead that you knew that:</p>
+<ul>
+<li><span class="math inline">\(X \rightarrow Y \leftarrow K\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 0) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 0) = 0\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 1) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 1) = 1\)</span></li>
+</ul>
+<p>It may be better to select a case that is not “like” the cases you want to make inferences about.</p>
+<p>FLAG: Not getting the point here. How is this different from the setup two up from here?</p>
+</div>
+<div id="specific-case-walk-through" class="section level2" number="13.3">
+<h2><span class="header-section-number">13.3</span> Specific case walk through</h2>
+<p>We introduce a flexible model-based approach to comparing the prospective learning from alternative case-selection strategies. To help explore the intuition behind this strategy, we start by walking through a simplified setup.</p>
+<p>Consider a situation in which our model is <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. Suppose, further, that we restrict the nodal types such that <span class="math inline">\(X\)</span> cannot have a negative effect on <span class="math inline">\(M\)</span>, and <span class="math inline">\(M\)</span> cannot have a negative effect on <span class="math inline">\(Y\)</span>, with flat priors over all remaining nodal types. Imagine then that we begin by collecting only <span class="math inline">\(X,Y\)</span> data on six cases and obtain the following data pattern:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">event</th>
+<th align="right">count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X0Y0</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y0</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">X0Y1</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y1</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<p>These <span class="math inline">\(X,Y\)</span> data already give us some information about the causal effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. Yet, we want to learn more by examining some subset of these cases more deeply – and, specifically, by colelcting data on <span class="math inline">\(M\)</span> for two of these cases. Which cases should we select? We are considering two strategies, each conditional on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> values:</p>
+<ul>
+<li>Strategy <span class="math inline">\(A\)</span> chooses two cases on the regression line, one randomly drawn from the <span class="math inline">\(X=Y=0\)</span> cell and one randomly drawn from the <span class="math inline">\(X=Y=1\)</span> cell</li>
+<li>Strategy <span class="math inline">\(B\)</span> chooses off the regression line, one randomly drawn from the <span class="math inline">\(X=1, Y=0\)</span> cell and one randomly drawn from the <span class="math inline">\(X=0, Y=1\)</span> cell</li>
+</ul>
+<p>How can we evaluate these strategies prospectively?</p>
+<p>We start by recognizing that different strategies yield different <em>possible</em> data patterns. For instance, Strategy <span class="math inline">\(A\)</span> (on the line) could possibly give us a data pattern that includes the observation <span class="math inline">\(X=0, M=0, Y=0\)</span>. Yet Strategy <span class="math inline">\(A\)</span> cannot possibly yield a data pattern that includes the observation <span class="math inline">\(X=1, M=0, Y=0\)</span> — because it does not involve the inspection of <span class="math inline">\(M\)</span> in an <span class="math inline">\(X=1, Y=0\)</span> case — whereas Strategy <span class="math inline">\(B\)</span> (off the line) <em>can</em> yield a pattern that includes this observation. And neither strategy can possibly yield a pattern that includes both <span class="math inline">\(X=1, M=0, Y=0\)</span> and <span class="math inline">\(X=0, M=1, Y=0\)</span>.</p>
+<p>In Table <a href="caseselection.html#tab:chselillustration">13.1</a>, we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span> labeled <span class="math inline">\(A1, A2\)</span>, etc. or <span class="math inline">\(B1, B2\)</span>, etc., respectively. As we can see, there are four possible data patterns from each, representing the 4 different combinations of <span class="math inline">\(M\)</span> values we might find across the two cases selected for deeper investigation. In the comparison presented here, none of the possible data patterns overlap across strategies.</p>
+<p>The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally <em>likely</em> to emerge. We represent the data probabilities (calculated by CQTools) near the bottom of the table. How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure <span class="math inline">\(X,Y\)</span> data. Note, for instance, that data pattern <span class="math inline">\(A3\)</span> is much more likely to emerge than the other data patterns possible under Strategy <span class="math inline">\(A\)</span>. This is for two reasons. One is that <span class="math inline">\(A3\)</span> involves <span class="math inline">\(M\)</span> covarying with <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, a pattern consistent with <span class="math inline">\(X\)</span> having an effect on <span class="math inline">\(Y\)</span> – since, in this model, <span class="math inline">\(X\)</span> can only affect <span class="math inline">\(Y\)</span> if it affects <span class="math inline">\(M\)</span> and if <span class="math inline">\(M\)</span> effects <span class="math inline">\(Y\)</span>. Data patterns <span class="math inline">\(A1\)</span> and <span class="math inline">\(A4\)</span> have <span class="math inline">\(M\)</span> constant between the two cases, even as <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> vary; this is a pattern inconsistent with <span class="math inline">\(X\)</span> having an effect on <span class="math inline">\(Y\)</span>. <span class="math inline">\(A3\)</span>, then, is more likely than <span class="math inline">\(A1\)</span> or <span class="math inline">\(A4\)</span> because the restrictions on the model plus the evidence from the <span class="math inline">\(X,Y\)</span> data make us believe that <span class="math inline">\(X\)</span> <em>does</em> have an average effect on <span class="math inline">\(Y\)</span>. Second, we believe <span class="math inline">\(A3\)</span> is more probable than <span class="math inline">\(A2\)</span> because of the model’s restrictions: the model allows positive effects of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> and of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span> (a way of generating <span class="math inline">\(A3\)</span>), but rules out negative intermediate effects (a way of generating <span class="math inline">\(A2\)</span>).</p>
+<p>Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table <a href="caseselection.html#tab:chselillustration">13.1</a>, we can see the mean of the posterior distribution (for the <span class="math inline">\(ATE\)</span> of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>) under each data pattern. What is of particular interest in assessing case-selection strategies is the <em>variance</em> of the posterior distribution, which represents our <em>uncertainty</em>. This posterior variance on the <span class="math inline">\(ATE\)</span>, for each data pattern, is represented in the table’s final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the <em>expected</em> reduction in posterior variance.</p>
+<p>FLAG: Need to redo Table to conform to text: 2 strategies only.</p>
+<table>
+<caption><span id="tab:chselillustration">Table 13.1: </span>Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.</caption>
+<thead>
+<tr class="header">
+<th align="left">event</th>
+<th align="left">A1</th>
+<th align="left">A2</th>
+<th align="left">A3</th>
+<th align="left">A4</th>
+<th align="left">B1</th>
+<th align="left">B2</th>
+<th align="left">B3</th>
+<th align="left">B4</th>
+<th align="left">C1</th>
+<th align="left">C2</th>
+<th align="left">C3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">X0M0Y0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">X0M0Y1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">X0M1Y0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">X0M1Y1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">X0Y0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">X0Y1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">X1M0Y0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">X1M0Y1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">2</td>
+<td align="left">1</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">X1M1Y0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">X1M1Y1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">2</td>
+</tr>
+<tr class="odd">
+<td align="left">X1Y0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">X1Y1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">2</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Probability</td>
+<td align="left">0.171</td>
+<td align="left">0.03</td>
+<td align="left">0.625</td>
+<td align="left">0.174</td>
+<td align="left">0.27</td>
+<td align="left">0.231</td>
+<td align="left">0.23</td>
+<td align="left">0.268</td>
+<td align="left">0.09</td>
+<td align="left">0.242</td>
+<td align="left">0.668</td>
+</tr>
+<tr class="even">
+<td align="left">Posterior mean</td>
+<td align="left">0.078</td>
+<td align="left">0.041</td>
+<td align="left">0.171</td>
+<td align="left">0.078</td>
+<td align="left">0.128</td>
+<td align="left">0.141</td>
+<td align="left">0.143</td>
+<td align="left">0.131</td>
+<td align="left">0.046</td>
+<td align="left">0.089</td>
+<td align="left">0.161</td>
+</tr>
+<tr class="odd">
+<td align="left">Posterior variance</td>
+<td align="left">0.006</td>
+<td align="left">0.002</td>
+<td align="left">0.029</td>
+<td align="left">0.006</td>
+<td align="left">0.016</td>
+<td align="left">0.02</td>
+<td align="left">0.02</td>
+<td align="left">0.017</td>
+<td align="left">0.002</td>
+<td align="left">0.008</td>
+<td align="left">0.026</td>
+</tr>
+</tbody>
+</table>
+<p>From the probability of each data type (given the model and the <span class="math inline">\(X,Y\)</span> data seen so far) and the posterior variance given each data realization, the implied <em>expected</em> variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table <a href="#tab:exppostvar"><strong>??</strong></a>:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Strategy</th>
+<th align="right">Variance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Online</td>
+<td align="right">0.015</td>
+</tr>
+<tr class="even">
+<td align="left">Offline</td>
+<td align="right">0.017</td>
+</tr>
+<tr class="odd">
+<td align="left">X=1, Y=1</td>
+<td align="right">0.015</td>
+</tr>
+</tbody>
+</table>
+<p>In this example, we see that we would expect to be better off—in the sense of having less posterior uncertainty—by focusing our process-tracing efforts on the regression line than off the regression line. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below.</p>
+<p>The key takeaway here are the core elements of our model-based approach to assessing case-selection strategies:</p>
+<ol style="list-style-type: decimal">
+<li>Derive from the model the full set of possible data patterns under each case-selection strategy being assessed</li>
+<li>Calculate the probability of each data pattern given the model (with any priors or restrictions), the prior <span class="math inline">\(X,Y\)</span> data, and the strategy</li>
+<li>Generate a posterior distribution on the query of interest for each data pattern</li>
+<li>Use the probability of and posterior variance under each data pattern toalculate the expected posterior distribution on the query of interest for each strategy</li>
+</ol>
+<!-- For intuition consider first the case with flat prior data: -->
+<!-- * if we examine two cases in different quadrants *on the diagonal* (one $X=Y=0$ case and one $X=Y=1$ case) : -->
+<!--   * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a positive or a negative effect on $Y$. Since we are looking on the regression line however, our confidence that $X$ had a *positive* effect on $Y$ is more strongly reduced, producing a  posterior centered on a small negative effect.  -->
+<!--   * Conversely if we see that $M$ is different in the two cases, then we have a correlation of the same sign between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general an din particular that it had a positive effect, resulting in a posterior centered on a small positive ATE. -->
+<!-- * if we examine two cases in different quadrants *off the diagonal* (one $X=0, Y=1$ case and one $X=1, Y=0$ case) : -->
+<!--   * if  we find that $M$ is the same in the two cases then we  increase our belief that $X$ has no effect at all on $Y$ and reduce our confidence that $X$ had a negative effect  $Y$ (producing a  posterior centered on a small positive effect).  -->
+<!--   * Conversely if we see that $M$ is different in the two cases, then we have a correlation (of different signs) between both $X$ and $M$ and between $M$ and $Y$  cases. We increase our confidence that $X$ mattered for $Y$ in general and in particular that it had a negative effect, resulting in a posterior centered on a small negative ATE. -->
+<!-- * If we examine data conditioning on the value of $X$ but with variation on $Y$ (for instance $X=1, Y=0$ and   $X=1, Y=1$)  -->
+<!-- data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In the  case with flat data this changes beliefs on positive and negative effects but not the difference between them. The ate then remains unchanged. FLAG work though intuition  more -->
+<!-- * If we examine data conditioning on the value of $Y$ but with variation on $X$ (for instance $X=0, Y=1$ and   $X=1, Y=1$)  -->
+<!-- data patterns do not discriminate between X having a positive effect on Y an d X having a negative effect on Y. However variation in $M$ is more consistent with $M$ being responsive to $X$ and thus the chances that $X$ matters, positively or negatively, overall. In the  case with flat data this changes beliefs on positive and negative effects but not the difference between them. The ate then remains unchanged. -->
+<!-- For correlated data similar logics apply, but the effects are stronger for evidence on the regression line. The reason is that given correlated data we believe there are more units with positive effects than negative effects. When we find evidence against causal relations on the regression line that reduces our confidence for types with positive effects more than for types with negative effects and the  difference between the  shares with positive effects and negative effects smaller due to the fact that the beliefs in the shares with negative effects is not so strongly reduced. When we find evidence for causal relations this magnifies the  difference between beliefs in shares positive and shares negatives; these effects are magnified however since our confidence for the positive effects change more than for the negative effects, since we are examining cases on the regression line. Conversely when examining cases of the  regression line, the two forces offset each other.  -->
+</div>
+<div id="case-selection-from-causal-models-a-simulation-based-approach" class="section level2" number="13.4">
+<h2><span class="header-section-number">13.4</span> Case selection from causal models: a simulation-based approach</h2>
+<p>In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using <code>CausalQueries</code> together with <code>CQTools</code>.</p>
+<p>In all scenarios examined here, we imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming throughout that we are considering gathering additional observations in cases for which we already have <em>some</em> data. In other words, we are deciding which subset of the cases — among those we have already gathered some data on — we should investigate more <em>deeply</em>. (This is distinct from the question of “wide vs. deep,” where we might decide to observe cases we have not yet seen at all.)</p>
+<p>The general intuition of the case-selection approach that we develop here is that we can use our causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer.</p>
+<p>We proceed as follows:</p>
+<p><strong>DAG</strong>. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustrations, we consider two different DAGS: a simple mediation (or “chain”) model, <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>, and a two-path model, <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span>.</p>
+<p><strong>Restrictions or priors</strong>. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. We can also indicate our uncertainty over the latter, by setting the <span class="math inline">\(\alpha\)</span> parameters of the relevant Dirichlet distributions. For the current example, we start by setting flat priors over all nodal types and assume no unobserved confounding.</p>
+<p><strong>Given data.</strong> If we have already made observations of any of the model’s nodes in some set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed <span class="math inline">\(X\)</span>’s and <span class="math inline">\(Y\)</span>’s value in a set of cases, we might select cases for process tracing based on their values of <span class="math inline">\(X\)</span> and/or <span class="math inline">\(Y\)</span>. And, importantly, what we have already observed in the cases will affect the inferences we will draw when we observe additional data, including how <em>informative</em> a particular new observation is likely to be. For the present examples, we assume that we have already observed <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in a set of cases and found a positive correlation.</p>
+<p><strong>Query</strong>. We define our query. This could, for instance, be <span class="math inline">\(X\)</span>’s average effect on <span class="math inline">\(Y\)</span> or it might be the probability that <span class="math inline">\(X\)</span> has a negative effect on <span class="math inline">\(Y\)</span> in an <span class="math inline">\(X=1, Y=0\)</span> case. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. The best case-selection strategy for answering one query may not be the best case-selection strategy for another query.</p>
+<p><strong>Define one or more strategies</strong>. A strategy is defined, generically, as the search for data on a given set of <em>nodes</em>, in a given <em>number</em> of cases that are randomly selected <em>conditional</em> on some information we already have about potential cases. In the simulations below, our strategy will always involve uncovering <span class="math inline">\(M\)</span>’s value in 1 or 2 cases. What we are wondering is how to choose these one or two cases for deeper analysis.</p>
+<p><strong>Possible data</strong>. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the <span class="math inline">\(X,Y\)</span> patterns we have already observed plus some pattern of <span class="math inline">\(M\)</span> observations.</p>
+<p><strong>Probability of the data</strong>. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed. In practice, we do this in <code>CQtools</code> via simulation. Starting with the model together with our priors, we update our beliefs about <span class="math inline">\(\lambda\)</span> based on the previously observed data. This posterior now represents our <em>prior</em> for the purposes of the process tracing. In the analyses below, we use the already-observed <span class="math inline">\(X,Y\)</span> correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of <span class="math inline">\(\lambda\)</span> values.</p>
+<p>Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each <span class="math inline">\(lambda\)</span> draw the probability of each data possibility given that particular <span class="math inline">\(\lambda\)</span> and the strategy. We then average across repeated <span class="math inline">\(\lambda\)</span> draws. Since <span class="math inline">\(\lambda\)</span>’s are being drawn from our prior, we are automatically weighting more heavily those <span class="math inline">\(\lambda\)</span>’s that we believe to be most likely.</p>
+<p><strong>Posterior on estimate given the data</strong>. For each data possibility, we can then use <code>CQtools</code> to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies.</p>
+<p><strong>Expected posterior variance under each strategy</strong>. The quantity of ultimate interest is the posterior variance that we expect to end up with under each strategy. The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We operationalize the expected learning under a strategy as the expected <em>reduction</em> in posterior variance arising from that strategy.</p>
+<div id="models-queries-and-strategies" class="section level4" number="13.4.0.1">
+<h4><span class="header-section-number">13.4.0.1</span> Models, queries, and strategies</h4>
+<p>Here we describe the dimensions along which we vary the features of the simulations.</p>
+<p><em>Models</em></p>
+<p>We illustrate the approach using a set of relatively simply models with core structural features that we believe will be fairly common in applied settings. The four structures that we examine are:</p>
+<ul>
+<li>Chain model: an <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model, where <span class="math inline">\(M\)</span> is a mediator</li>
+<li>Confounded model: a model with <span class="math inline">\(X \rightarrow Y\)</span> and with <span class="math inline">\(M\)</span> as a confounder, pointing into both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span></li>
+<li>Moderator model: an <span class="math inline">\(X \rightarrow Y \leftarrow M\)</span>, where <span class="math inline">\(M\)</span> is a moderator</li>
+<li>Two-path model: a model in which <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span>, meaning that <span class="math inline">\(X\)</span> can affect <span class="math inline">\(Y\)</span> both through a direct path and indirectly via <span class="math inline">\(M\)</span></li>
+</ul>
+<p>For each of these causal structures, we consider both an unconstrained version (all nodal types permitted) and a monotonic version in which we use restrictions to exclude negative effects throughout the model.</p>
+<p><em>Queries</em></p>
+<p>We also examine a range of queries under each model:</p>
+<ul>
+<li><span class="math inline">\(ATE\)</span>: what is the average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> for the population?</li>
+<li>Probability of positive causation: what is the probability that <span class="math inline">\(Y=1\)</span> because <span class="math inline">\(X=1\)</span> for a case randomly drawn from the population of <span class="math inline">\(X=1, Y=1\)</span> cases</li>
+<li>Probability of negative causation: what is the probability that <span class="math inline">\(Y=1\)</span> is due to <span class="math inline">\(X=0\)</span> for a case randomly drawn from the population of <span class="math inline">\(X=0, Y=1\)</span> cases</li>
+<li>Probability of an indirect effect: defined only for the two-path models, we estimate the probability that the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> operates through the indirect path. More precisely, we ask, for an <span class="math inline">\(X=1, Y=1\)</span> case in which <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span>, what the probability is that that effect would have occurred if <span class="math inline">\(M\)</span> were held fixed at the value it takes on when <span class="math inline">\(X=1\)</span>.<a href="#fn74" class="footnote-ref" id="fnref74"><sup>74</sup></a></li>
+</ul>
+<!-- $X$'s effect on $M$  causal effect along the indirect pathway, through $M$. We calculate two indirect effects, one conditional on $X=0$ and one conditional on $X=1$. Each of these effects is defined as the effect on $Y$ of the change in $M$ that *would* result from a change in $X$ (from 0 to 1 or from 1 to 0, respectively), but with $X$ held constant (at 0 or 1, respectively). -->
+<p><em>Strategies</em></p>
+<p>Finally, for each model-query combination, we assess the contributions of 7 strategies for selecting cases for process tracing, with inferences from the <span class="math inline">\(X,Y\)</span> data alone serving as our baseline. In the figures below, the strategies run along the <span class="math inline">\(X-\)</span>axis of each graph and can be interpreted as follows:</p>
+<ul>
+<li><strong>Prior</strong>: beliefs are based on <span class="math inline">\(X,Y\)</span> data only.</li>
+<li><strong>1 off</strong>: data on <span class="math inline">\(M\)</span> is sought in one case in the <span class="math inline">\(X=1, Y=0\)</span> cell</li>
+<li><strong>1 on</strong>: data on <span class="math inline">\(M\)</span> is sought in one case in the <span class="math inline">\(X=1, Y=1\)</span> cell</li>
+<li><strong>2 off</strong>: data on <span class="math inline">\(M\)</span> is sought in one <span class="math inline">\(X=0, Y=1\)</span> case and one <span class="math inline">\(X=1, Y=0\)</span> case</li>
+<li><strong>2 pos</strong>: data on <span class="math inline">\(M\)</span> is sought for two cases in the <span class="math inline">\(X=1, Y=1\)</span> cell</li>
+<li><strong>2 on</strong>: data on <span class="math inline">\(M\)</span> is sought in one <span class="math inline">\(X=1, Y=1\)</span> case and one <span class="math inline">\(X=0, Y=0\)</span> case</li>
+<li><strong>fix <span class="math inline">\(X\)</span></strong>: a strategy in which we seek <span class="math inline">\(M\)</span> in two cases in which a causal condition was present, with <span class="math inline">\(X\)</span> fixed at 1, one with <span class="math inline">\(Y=0\)</span> and one with <span class="math inline">\(Y=1\)</span></li>
+<li><strong>fix <span class="math inline">\(Y\)</span></strong>: a strategy in which we seek <span class="math inline">\(M\)</span> in two cases in which a positive outcome was observed, with <span class="math inline">\(Y\)</span> fixed at 1, one with <span class="math inline">\(X=0\)</span> and one with <span class="math inline">\(X=1\)</span></li>
+</ul>
+<p>These are all “pure” strategies in the sense that the number of units for which data on <span class="math inline">\(M\)</span> is sought in each cell is fixed. One could also imagine random strategies in which a researcher chooses at random in which cells to look. For example, if we choose one point at random, we are randomly choosing between a case on the regression line and a case off the line. The performance of a random strategy will be a weighted average of the pure strategies over which the random strategy is randomizing.</p>
+<p>For all simulations, we assume prior <span class="math inline">\(X,Y\)</span> data of <span class="math inline">\(N=6\)</span>, with a weak positive relationship (2 <span class="math inline">\(X=1, Y=1\)</span> cases, 2 <span class="math inline">\(X=0, Y=0\)</span> cases, and 1 case in each off-diagonal cell). And it is <em>from</em> these original 6 cases that we are selecting our cases for process tracing. In the experiments below, we do not examine how the prior data itself might affect the choice of case-selection strategies (as we do, for instance, with clue-selection in Chapter <a href="clue.html#clue">12</a>), but we invite the reader to explore these relationships by adjusting the code we provide.</p>
+</div>
+<div id="results-1" class="section level4" number="13.4.0.2">
+<h4><span class="header-section-number">13.4.0.2</span> Results</h4>
+<p>The main results are shown in Figure <a href="caseselection.html#fig:caseselectionest">13.1</a> and Figure <a href="caseselection.html#fig:caseselectionvar">13.2</a>. For each model-strategy-query combination, we figure out (a) all of the possible data realizations, (b) what inferences would be made on the query from each data realization, (c) how likely each data-realization is to arise given the strategy, the model, and the prior data, and (d) the resulting expected reduction in variance from each strategy. Result (d) is our measure of expected learning.</p>
+<p>The two figures take two different approaches to representing the value of alternative strategies. In Figure <a href="caseselection.html#fig:caseselectionest">13.1</a>, we examine the informativeness of strategies by showing how much our inferences depend on what we observe within the cases. Generally, a larger spread across points (for a given model-query-strategy combination) represents a greater opportunity for learning from the data. However, as expected learning is also a function of how likely each data realization is, we represent the probability of each potential inference via shading of the points. In Figure <a href="caseselection.html#fig:caseselectionvar">13.2</a> we directly plot expected learning, operationalized as the expected reduction in posterior variance.</p>
+<p>In the remainder of this section, we walk through the results and suggest, often tentatively, interpretations of some of the more striking patterns. We caution that reasoning one’s way through expected learning for different model-query-strategy combinations, given a particular pattern in the prior data, can be tricky — hence, our recommendation that researchers simulate their way to research-design guidance, rather than relying on intuition.</p>
+<!-- These figuresare close connected of course, with a higher dispersion of estimates in Figure \@ref(fig:caseselectionest) implying a greater reduction in variance in Figure \@ref(fig:caseselectionvar). -->
+<div class="figure"><span style="display:block;" id="fig:caseselectionest"></span>
+<img src="ii_files/figure-html/caseselectionest-1.png" alt="Inferences given observations" width="960" />
+<p class="caption">
+Figure 13.1: Inferences given observations
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:caseselectionvar"></span>
+<img src="ii_files/figure-html/caseselectionvar-1.png" alt="Reduction in variance on ATE and PC given strategies" width="960" />
+<p class="caption">
+Figure 13.2: Reduction in variance on ATE and PC given strategies
+</p>
+</div>
+<!-- We see also the reduction in variance for other estimands, notably the effects of $X$ on $M$, the effects of $M$ on $Y$ as well as the direct and indirect effects for our two-path models. We display these to help with interpretation of the main results but they also usefully demonstrate the applicability of the procedure to different types of queries we might be concerned with. -->
+<!-- #### Priors: From the $X,Y$ data only -->
+<!-- <!-- we see our pure prior on each query before we have seen the $X,Y$ correlation --- i.e., based strictly on the DAG and flat priors over nodal types. The story here is straightforward. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the expected effect of $X$ on $Y$ for a randomly drawn case from the population, given nothing but the model, is 0.  -->
+<p>–&gt;</p>
+<!-- <!-- moving across the row, we see our prior beliefs for cases with more specific features. For cases with $X=1, Y=1$, our priors imply a positive effect 25\% of the time.^[This belief arises from a straightforward calculation involving the different combinations of nodal types that could generate $X=1, Y=1$ and their prior probabilities.] As we have flat priors over $M$'s type and its effects on $Y$, conditioning $M$'s value leaves this belief unaffected. By a parallel logic, the model and flat priors imply the belief that 0.25 of all $X=0, Y=1$ cases to involve a negative effect of $X$ on $Y$. -->
+<p>–&gt;</p>
+<!-- We turn first to the chain model. Before examining inferences from data, it is worth noting what a chain model with flat priors implies about the queries of interest. We start out believing that, for the $X \rightarrow M$ relationship, the population is evenly divided across the four types, $\theta^M_{00}, \theta^M_{01}, \theta^M_{10}, \theta^M_{11}$ (so 0.25 share of each). Likewise for $\theta^Y$ in relation to the $M \rightarrow Y$ relationship. We can get a positive $X,Y$ effect from a causal type involving $\theta^M_{01}$ and $\theta^Y_{01}$ or from a causal type involving $\theta^M_{10}$ and $\theta^Y_{10}$. Each of those causal types has a 0.125 probability, implying a 0.25 share of positive effects. A mirror-image of that logic gets us to a 0.25 share of negative effects, with the remaining 0.5 of the population comprising causal types that yield null effects (involving either a null effect at one or both steps in the chain). Thus, the average effect of $X$ on $Y$, given nothing but the model, is 0. Moreover, for an $X=1, Y=1$ case, the probability of a (positive) causal effect is also 0.25, as it is for a negative effect in an $X=0, Y=1$ case. -->
+<!-- Now, we introduce data. In the "prior" column of each graph in Figure \@ref(fig:caseselectionest), we see our inferences from the initial set of 6 $X,Y$ observations -- that is, *prior* to process tracing. In this model, as there is no confounding, a positive $X,Y$ correlation is evidence of a higher relative share of cases in which $X$ has a positive effect on $Y$. This implies a positive average treatment effect as well as a greater than 0.25 chance of causation for an $X=1, Y=1$ case since the $X,Y$ pattern suggests that there are more cases where $X$ has a positive effect on $Y$ than there are cases in which $Y$ is fixed at 1.  -->
+<!-- Notably, however, our beliefs for an $X=0, Y=1$ case are unaffected by observing the positive correlation. To return for a moment to our handy $a,b,c,d$ typology, the reason is that the positive $X,Y$ correlation affects our beliefs about the share of $b$ types relative to $a,c,$ and $d$ types (with reference to the overall $X \rightarrow Y$ effect), but it is uninformative about the relative shares of $a$ vs. $d$ types, the two types in contention for an $X=0, Y=1$ case. In the $X,Y$ data, the $X=0, Y=1$ case is equally likely to be an $a$ or a $d$, which is exactly what our prior belief was about a random $X=0, Y=1$ case.^[Put differently, the observed $X,Y$ correlation is equally consistent with all $X=0, Y=1$ cases being $a$'s, with them all being $d$'s, or with anything in between.] -->
+<!-- (Again, conditioning on $M$'s value has no effect since we still have no information to shift us off our flat priors relating to $M$'s causes or effects.) -->
+</div>
+<div id="n1-strategies-unconstrained-models" class="section level4" number="13.4.0.3">
+<h4><span class="header-section-number">13.4.0.3</span> <span class="math inline">\(N=1\)</span> strategies, unconstrained models</h4>
+<p>Suppose that we can only conduct process tracing (observe <span class="math inline">\(M\)</span>) for a single case drawn from our sample of 6 <span class="math inline">\(X,Y\)</span> cases. Should we choose a case from on or off the regression line implied by the <span class="math inline">\(X,Y\)</span> pattern? In Figure <a href="caseselection.html#fig:caseselectionest">13.1</a>, we can see that for all unconstrained models, our inferences are completely unaffected by the observation of <span class="math inline">\(M\)</span> in a single case, regardless of which case-selection strategy we choose and regardless of the query of interest. We see only 1 point plotted for the two <span class="math inline">\(N=1\)</span> strategies for all unconstrained models and all queries because the inference is the same regardless of the realized value of <span class="math inline">\(M\)</span>. In Figure <a href="caseselection.html#fig:caseselectionvar">13.2</a>, we see, in the same vein, that we expect 0 reduction in expected posterior variance from these <span class="math inline">\(N=1\)</span> strategies: they cannot make us any less uncertain about our estimates because the observations we glean cannot affect our beliefs.</p>
+<p>To see why, let’s first consider the on-the-line strategy. Not having observed <span class="math inline">\(M\)</span> previously, we still have flat priors over the nodal types governing <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(M\)</span> and <span class="math inline">\(M\)</span>’s effect on <span class="math inline">\(Y\)</span>. That is to say, we still have no idea whether <span class="math inline">\(X\)</span>’s positive effect on <span class="math inline">\(Y\)</span> (where present) more commonly operates through a chain of positive effects or a chain of negative effects. Thus, the observation of, say, <span class="math inline">\(M=1\)</span> in an <span class="math inline">\(X=1, Y=1\)</span> case is equally consistent with a positive <span class="math inline">\(X \rightarrow Y\)</span> (to the extent that effect operates via linked positive effects) and with no <span class="math inline">\(X \rightarrow Y\)</span> effect (to the extent positive effects operate through linked negative effects). Observing <span class="math inline">\(M=1\)</span> in an <span class="math inline">\(X=1, Y=1\)</span> case therefore tells us nothing about the causal effect in that case and, thus, nothing about the average effect either.</p>
+<p>Similarly, we have no idea whether <span class="math inline">\(X\)</span>’s negative effect on <span class="math inline">\(Y\)</span> (where present) operates through a positive-negative chain or a negative-positive chain, making <span class="math inline">\(M=1\)</span> or <span class="math inline">\(M=0\)</span> in an <span class="math inline">\(X=1, Y=0\)</span> case both equally consistent with a negative or null <span class="math inline">\(X \rightarrow Y\)</span> effect, yielding no information about causation in the case. By a similar logic, observing <span class="math inline">\(M=1\)</span> in the <span class="math inline">\(X=1, Y=1\)</span> case is uninformative about negative effects in an <span class="math inline">\(X=0, Y=1\)</span> case, and observing <span class="math inline">\(M=1\)</span> in an <span class="math inline">\(X=1, Y=0\)</span> case tells us nothing about positive effects in an <span class="math inline">\(X=1, Y=1\)</span> case.</p>
+<p>The same logic applies to drawing inferences from <span class="math inline">\(M\)</span> as a moderator or to learning from <span class="math inline">\(M\)</span> about indirect effects. In the absence of prior information about effects, one case is not enough.</p>
+</div>
+<div id="n1-strategies-monotonic-models" class="section level4" number="13.4.0.4">
+<h4><span class="header-section-number">13.4.0.4</span> <span class="math inline">\(N=1\)</span> strategies, monotonic models</h4>
+<p>The situations changes, however, when we operate with models with montonicity restrictions. Now we can see that our inferences on the queries do generally depend on <span class="math inline">\(M\)</span>’s realization in a single case and that we expect learning. For many model-query combinations, the two <span class="math inline">\(N=1\)</span> strategies perform comparably, but there are situations in which we see substantial differences.</p>
+<p>Most notably, in a chain model with negative effects ruled out by assumption, we learn almost nothing from choosing an off-the-line case: this is because we already know from the model itself that there can be no <span class="math inline">\(X \right arrow Y\)</span> effect in such a case since such an effect would require a negative effect at one stage. The only learning that can occur in such a case is about the prevalence of positive effects (relative to null effects) at individual stages (<span class="math inline">\(X \rightarrow M\)</span> and <span class="math inline">\(M \rightarrow Y\)</span>), which in turn has implications for the prevalance of positive effects (relative to null effects) of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>. Likely for similar reasons, in the monotonic two-path model, an on-the-line case is much more informative than an off-the-line case about the <span class="math inline">\(ATE\)</span> and about the probability that the effect runs via the indirect path.</p>
+<p>Interestingly, however, the on-the-line strategy is not uniformly superior for an <span class="math inline">\(N=1\)</span> process-tracing design. We appear to learn significantly more from an off-the-line case than an on-the-line case when estimating the share of positive effects in the population of <span class="math inline">\(X=1, Y=1\)</span> cases and operating with a monotonic confounded or two-path model. At first, these results seem surprising: why would we not want to choose an <span class="math inline">\(X=1, Y=1\)</span> case for learning about the population of <span class="math inline">\(X=1, Y=1\)</span> cases? One possible reason is that, in the on-the-line case, one data realization is much more likely then the other, while we are more uncertain about what we will find in the off-the-line case. For instance, in the confounding model with montonicity, in an <span class="math inline">\(X=1, Y=1\)</span> case we would learn about the prevalence of confounding from seeing <span class="math inline">\(M=0\)</span> (where confounding cannot be operating since negative effects are excluded) as opposed to <span class="math inline">\(M=1\)</span>; but we do not expect to see <span class="math inline">\(M=0\)</span> when both of its children (<span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>) take a value of 1 while negative effects are excluded. In an <span class="math inline">\(X=1, Y=0\)</span> case, however, <span class="math inline">\(M=0\)</span> and <span class="math inline">\(M=1\)</span> are about equally likely to be observed, and we can learn about confounding from each realization. We can see these differences in relative data probabilities from the shadings in the graphs, where we have more even shading for the possible inferences from the one-off strategy than for the one-one strategy.</p>
+<p>The general point here is that we expect to learn more from seeking a clue the more uncertain we are about what we will find, and some case-selection strategies will give us better opportunities to resolve uncertainty than do others.</p>
+</div>
+<div id="n2-strategies-unconstrained-models" class="section level4" number="13.4.0.5">
+<h4><span class="header-section-number">13.4.0.5</span> <span class="math inline">\(N=2\)</span> strategies, unconstrained models</h4>
+<p>Next, we consider the process tracing of <em>two</em> of our cases 6 cases. Now, because we are observing <span class="math inline">\(M\)</span> in two cases, we can learn from the variation in <span class="math inline">\(M\)</span> across these cases—or, more specifically, from its covariation with <span class="math inline">\(X\)</span> and with <span class="math inline">\(Y\)</span>. This should matter especially for unconstrained models, where we start out with no information about intermediate causal effects (e.g., whether they are more often positive or more often negative). Thus, when we only process trace one case, we cannot learn about causal effects in the cases we process-trace since we don’t know how to interpret the clue. In contrast, if we observe <span class="math inline">\(M\)</span> in two or more cases, we <em>do</em> learn about causal effects for those cases because of the leverage provided by observing covariation between the process-tracing clue and other variables.</p>
+<!-- Thus, while we have pointed out that observing $M$ within a case can lend $M$ probative value for *other* cases in which we might choose to observe $M$, $M$ has no probative value *for* that one case.  -->
+<p>We assess the expected gains from 5 <span class="math inline">\(N=2\)</span> stragies: examine two off-the line cases, one <span class="math inline">\(X=1, Y=0\)</span> case and one <span class="math inline">\(X=0, Y=1\)</span> case; examine two on-the-line cases, an <span class="math inline">\(X=Y=0\)</span> case and an <span class="math inline">\(X=Y=1\)</span> case; examine two treated, positive outcome (<span class="math inline">\(X=Y=1\)</span>) cases; select on <span class="math inline">\(X\)</span> by examining two <span class="math inline">\(X=1\)</span> cases with different <span class="math inline">\(Y\)</span> values; and select on <span class="math inline">\(Y\)</span> by examining two <span class="math inline">\(Y=1\)</span> cases with different <span class="math inline">\(X\)</span> values.</p>
+<p>A key message of these results is that, with 2 cases, the performance of each strategy depends quite heavily on the model we start with and what we want to learn. For instance, when estimating the <span class="math inline">\(ATE\)</span>, the on-the-line strategy in which we disperse the cases across cells (two-on) clearly outperforms both the dispersed off-the-line strategy (two-off) and an on-the-line strategy in which we concentrate on one cell (two-pos) <em>if</em> we are working with an unconstrained chain model, and the off-the-line strategy is clearly the worst-performing of the three. The differences in learning about the <span class="math inline">\(ATE\)</span> are more muted, however, for an unconstrained confounded model, and the two-pos strategy does <em>better</em> than the other two for a two-path model.</p>
+<p>If we seek to learn about the probability of positive causation in an <span class="math inline">\(X=1, Y=1\)</span> case, then there is little difference between two-off and two-pos, with two-on performing best. We also see that two-pos has lost its edge in an unconstrained two-path model, with no strategy offering leverage. When estimating the probability of a <em>negative</em> effect for an <span class="math inline">\(X=0, Y=1\)</span> case, we see that the two-off strategy performs best for the chain model, <em>but</em> that the two-pos strategies offers the greatest leverage in a two-path model. Finally, when estimating the probability of an indirect positive effect in an unconstrained two-path model, we get the most from a two-on strategy, though the two-off strategy does moderately well.</p>
+<p>In general, selecting conditional on a fixed value of <span class="math inline">\(X\)</span> or <span class="math inline">\(Y\)</span> (while dispersing on the other variable) does not do particularly well in unconstrained models, and it does not usually matter much which variable we fix on. There are exceptions, however. Perhaps most strikingly, in a two-path unconstrained model, we do relatively well in estimating the probability of an indirect positive effect when we fix <span class="math inline">\(Y\)</span> but stand to learn nothing if we fix <span class="math inline">\(X\)</span>. Interestingly, fixing <span class="math inline">\(Y\)</span> fairly well dominates fixing <span class="math inline">\(X\)</span> across all model-query combinations shown, given the prior data pattern we are working with.</p>
+<p>This pattern is particularly interesting in light of canonical advice in the qualitative methods literature. King, Keohane, and Verba <span class="citation">(<a href="#ref-king1994designing" role="doc-biblioref">1994</a>)</span> advise selecting for variation on the explanatory variable and, as a second-best approach, on the dependent variable. And they warn sternly against selection for variation on both at the same time. But note what happens if we follow their advice. Suppose we start with an unconstrained chain model, with to learn about the <span class="math inline">\(ATE\)</span> or probability of positive causation, and decide to select for variation on <span class="math inline">\(X\)</span>, ignoring <span class="math inline">\(Y\)</span>. We might get lucky and end up with a pair of highly informative on-the-line cases. But, depending on the joint <span class="math inline">\(X,Y\)</span> distributon in the population, we might just as easily end up with a fairly uninformative off-the-line case or <span class="math inline">\(X=0, Y=1\)</span>, <span class="math inline">\(X=1, Y=1\)</span> pair. We do better if we intentionally select on <em>both</em> <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> in this setup. This is equally true if we want to learn about the probability of negative effects in this model, in which case we want to choose an off-the-line case, or if we want to learn about positive indirect effects in a two-path model, where we want both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> to be 1. King, Keohane, and Verba’s advice makes sense if all we are interested in is examining covariation between <span class="math inline">\(X\)</span> and the <span class="math inline">\(Y\)</span>: then we can learn from forcing <span class="math inline">\(X\)</span> to vary and letting <span class="math inline">\(Y\)</span>’s values fall where they may. However, seeking leverage from observation of a third variable is a different affair. As our simulations indicate, the strategy from which we stand to learn the most will depend on how we think the world works and what we want to learn.</p>
+<!-- We plot four points for each strategy (for each query), representing the inference we would draw from four possible realizations of $M$. In most analyses, the inferences are essentially the same for pairs of data-realizations, so only two dots are apparent.^[For instance, whether we see $M=1$ in the $X=0, Y=0$ case and $M=0$ in the $X=1, Y=1$ case or vice versa, the inference is the same for a model with no restrictions.] While unlabelled, the higher dot represents the inference we would draw if $M$ varies with $X$; the lower dot represents the inference we would draw if $M$ is constant across the two cases. -->
+<!-- Let's consider the on-the-line strategy first. Consider what we infer if we observe $M$ covary (either positively or negatively) with $X$ in these cases. What we are seeing, then, is that the mediator covaries across cases with both the cause and the outcome, which constitutes evidence consistent with a causal effect of $X$ on $Y$. Since the observed pattern of covariation is consistent with a positive $X \rightarrow Y$ effect (via linked positive effects), our belief about the average effect of $X$ on $Y$ goes up. For the same reason, so too does our belief about the probability of causation in an $X=1, Y=1$ case.  -->
+<!-- <!-- We see an even bigger boost in our estimate of the effect in an $X=1, Y=1$ case conditional on $M$ also being 1. Two things are generating this upward updating. First, just as for the unconditional estimate and the estimate conditional on $X=1, Y=1$, the process tracing generates a stronger belief that $X$ generally has a positive effect on $Y$. Second, as for the $N=1$ process tracing, seeing $M=1$ in two on-the-line cases (which we already believe are mostly positive-effect cases) makes $M$ informative as a clue in favor of a positive effect---indeed, more informative than if we'd only seen $M=1$ in one on-the-line case. -->
+<!-- Now, supppose we we observe $M=1$ or $M=0$ in both on-the-line cases. This data pattern represents clear evidence *against* positive effects. We have observed that $M$ is unresponsive to changes in $X$, and that $Y$ varies without $M$ varying---null effects at both stages of the chain. Now we see that our posterior on the $ATE$ drops to about $0$. We also see a sharp downward movement in the probability of causation for an $X=1, Y=1$ case, representing our updated belief that there are few positive effects.  -->
+<!-- In Figure \@ref(fig:caseselectionvar), we see the consequences for the expected reduction in posterior variance: the large potential swings in inferences, depending on what we observe, generate the potential for quite a lot of learning. Likewise, in Figure \@ref(caseselectionvar2), we can see the learning about effects at each stage: the relatively large reduction in expected posterior variance in our estimates of the average effect of $X$ on $M$ and of $M$ on $Y$. -->
+<!-- <!-- Interestingly, whereas conditioning additionally on $M=1$ generated in a *higher* estimated effect when we observed $M$ correlated with $X$ and $Y$, it generates a *lower* estimated effect when we observe $M=1$ in both cases. One reason is likely that we have updated our belief about $\theta^M$ such that we now believe that $X=1, M=1$ cases are more likely to be $\theta^M_{11}$'s (no effect) than $\theta^M_{01}$'s. We have not similarly updated with respect to $X=1, M=0$ cases and the $\theta^M_{00}$'s than $\theta^M_{10}$ shares. Thus, for an $X=1,Y=1$ case, additionally specifying that $M=1$ implies an even higher likelihood that the case contains a null effect.  -->
+<!-- Moving down the queries, we also see that process-tracing the on-the-line cases yields leverage on negative causal effects in an *off-the-line* case. In particular, though not directly indicated on the graphs, finding evidence consistent with positive effects in those cases leads us to update in favor of stronger *negative* effects as well, while finding $M$ constant in both cases leads to a downard shift in the probability of negative causation. Why is this? -->
+<!-- Our answer is somewhat speculative, but we think there are two things going on. One is simply that the correlations between $M$ and $X$ and between $M$ and $Y$ across the two process-traced cases constitutes evidence of *effects*, period, at the intervening steps---a necessary condition for *any* $X \rightarrow Y$ effect, positive or negative. So, for an $X=0, Y=1$ case, a stronger belief that $X$ has some effect on $M$ and that $M$ has some effect on $Y$ implies a stronger belief in a negative $X \rightarrow Y$ effect.  -->
+<!-- The second thing that is probably going on is constraint imposed by prior beliefs. Having seen the $X,Y$ data, we have previously formed a belief that the *average* effect of $X$ on $Y$ is about 0.05. When we find evidence in favor of positive effects, we update to a set of beliefs that are a compromise between the new data and prior beliefs. On the one hand, we upwardly update on the $ATE$. On the other hand, our beliefs are constrained from moving *too* far away from an $ATE$ of 0.05. Recall that, in a binary setting, the average effect in a population is the share of cases with positive effects minus the share with negative effects. Thus, the conservative influence of our priors means that, as we upwardly update on positive effects, we also upwardly update our beliefs about the prevalence of *negative* effects, though not by as much. The result is that our beliefs about the $ATE$ do not shift as much as they would if we had had flat priors going into the process tracing. By more deeply anchoring our beliefs about average effects, then, the prior $X,Y$ evidence means that any evidence in favor of positive effects also constitutes evidence in favor of negative effects.  -->
+<!-- To put this point another way, while we learn *directly* about positive effects from process-tracing the on-the-line cases since these are cases in which positive effects can possible occur. But we then learn *indirectly* about negative effects from these cases *via* the prior-imposed constraint on the average effect. -->
+<!-- We also consider an off-the-line $N=2$ strategy, selecting for process tracing one $X=1, Y=0$ case and one $X=0, Y=1$ case. Again, the two types of data-realization we consider are that $M$ varies with $X$ across the two cases (higher point)  or that $M$ is constant in both cases (lower point). One thing we can observe immediately is that we get less leverage from this strategy if we are interested in either the $ATE$ or positive effects. In Figure \@ref(fig:caseselectionest), looking at both the $ATE$ and probability of causation in an $X=1, Y=1$ case, the difference in our posterior beliefs between the two data-realizations is smaller for this strategy than it is for the two data-realizations of the on-the-line strategy. We likewise see less reduction in posterior expected variance for these queries with an off-the-line strategy. However, we learn more from the off-the-line strategy about the probability of *negative* causation.  -->
+<!-- Unpacking this further, we know that we can learn directly about *negative* $X \rightarrow Y$ effects through process-tracing off-the-line cases. If we see $M$ covary with $X$ across these two cases---which also means covarying (though in the opposite direction) with $Y$---we have found evidence in favor of the operation of negative $X \rightarrow Y$ effects. Hence the upward movement in our posterior on the probability of negative causation. We also upwardly update our posterior on positive effects in an $X=1, Y=1$ case, though by a smaller amount. Again, some of this movement is likely attributable to the constraint imposed by the prior generated from the $X,Y$ data; and some of this updating is likely attributable to the fact that we have found evidence against null intermediate effects.  -->
+<!-- <!-- Curiously, under this strategy and data-realization, our beliefs about effects conditional on $X=0, M=1, Y=1$ move in the *opposite* direction from our beliefs conditional just on $X=0,Y=1$. Why might this be? This is likely because of the way in which the process-tracing has lent probative value to $M$. The pattern of $M$ data is most consistent with any negative $X \rightarrow Y$ effect operating via a *positive* $X \rightarrow M$ effect followed by a *negative* $M \rightarrow Y$ effect. Yet the intermediate effects would have to have the opposite sign for $X=0, M=1, Y=1$ to be consistent with an $X \rightarrow Y$ effect. In other words, $M=1$ rules out the likeliest way in which an $X=0, Y=1$ case could contain an effect.  -->
+<!-- If on the other hand we observe $M$ constant in both off-the-line cases, we have found evidence against the operation of negative effects. Hence the the strong downward movement of our posterior on the probability of negative causation. Likewise, we see (weaker) upward movement in our posterior on the $ATE$ and, for reasons discussed earlier, in our posterior on positive effects. In sum, an off-the-line strategy generates "direct" learning about negative effects and indirect, weaker learning about positive effects. We see the corresponding learning about average effects at each stage in the causal chain in Figure \@ref(caseselectionvar2). -->
+<!-- The remaining puzzle is why the learning about the $ATE$ from the off-the-line strategy is weaker than under the on-the-line strategy. This is at first glance puzzling in that the two strategies generate symmetrical opportunities to observe an $M$ pattern that is consistent or inconsistent with causal effects. We believe there are two reasons, both relating to where the direct and indirect learning falls. -->
+<!-- The first, more mechanical reason is that we start, given the $X,Y$ data, with a higher and higher-variance posterior on the prevalence of positive effects as compared to negative effects. So there is simply more scope for the data to influence our beliefs about positive effects, and the on-the-line cases are those in which we can learn "directly" about positive effects. In support of this view, note how much bigger the swing in beliefs, conditional on the data pattern, we see for the probability of positive causation than for the probability of negative causation. -->
+<!-- The second reason is prevalence: given the $X,Y$ correlation, we believe that there are more cases out there that potentially contain positive effects than there are cases that potentially contain negative effects. Thus, *whatever* it is we learn about positive effects is going to have a bigger impact on our beliefs about the population as a whole than is whatever we learn about negative effects. Since on-the-line cases yield the most direct learning about positive effects, they are therefore the most informative about the population. -->
+<!-- Note, importantly, that this finding is consistent with recommendations in the literature to investigate on-the-line cases [@Lieberman2005nested; @goertz2017multimethod],^[We set aside here Lieberman's recommendation to choose off-the-line cases for discovery-oriented "model-building" because we see that enterprise as distinct from the estimation endeavor to which our analysis is oriented.] but for a very different reason. Lieberman and Goertz emphasize the importance of examining cases where the theorized mechanism connecting $X$ to $Y$ might potentially play out, arguing that this would be in the set of cases that conform to theory in their $X,Y$ values. We would emphasize that, in the causal-model framework, one *can* learn about both overall effects and intermediate effects from off-the-line cases. The reason why on-the-line cases is simply that they are more *representative* about the universe about which we aim to learn (assuming we want to learn about the population from which the $X,Y$ pattern is drawn). -->
+<!-- Finally, we consider $N=2$ case-selection strategies that fix the value of $X$ or the value of $Y$ in both cases, while seeking variation on the other variable. The "fix $X=1$" strategy selects one $X=1, Y=0$ case and one $X=1, Y=1$ case. The "fix $Y=1$" strategy selects one $X=0, Y=1$ case and one $X=1, Y=1$ case.  Across queries, we see that these two strategies generate roughly equivalent opportunities for learning. Interestingly, we also see that these strategies generates significantly *less* learning than selecting on *both* $X$ and $Y$, whether on-the-line or off-the-line.  -->
+<!-- Why? When we select on-the-line or off-the-line, we are building in variation in both $X$ and $Y$ across the cases. In contrast, when we select on a value for $X$ or a value for $Y$, while letting the other variable vary, we are building in variation in only one variable. This means that the "signal" we get from the $M$ pattern is likely to be more ambiguous across the cases we end up with. For instance, if we examine an  $X=1, Y=1$ case and an $X=1, Y=0$ case, suppose we observe $M=1$ in both cases. That $M$ pattern is consistent with $X$ having an effect on $M$, but inconsistent with $M$ have an effect on $Y$. And what if, instead, we observe $M=1$ in the first case and $M=0$ in the second case? Then we have evidence of an $M \rightarrow Y$ effect but not of an $X \rightarrow M$ effect. In both scenarios, there is no strong implication for the higher-level $X \rightarrow Y$ causal queries we are interested in.   -->
+<!-- We can see this logic reflected in the expected posterior variance reductions for the $ATE$ as compared to the $ATE$ at the individual causal stages. Looking at Figure \@ref(caseselectionvar2), we see that we actually expect to learn a good deal about the $X \rightarrow M$ effect and about the $M \rightarrow Y$ effect from a fix-$X$ or fix-$Y$ strategy. The problem is that we expect rarely to learn about both stages *at the same time* -- hence the limited learning about the $X \rightarrow Y$ effect.  -->
+<!-- <!-- We note that the same difficulty would arise if we were to select for variation in $X$ or $Y$. If we select for variation in $X$, for instance, we could end up with an $X=0, Y=1$ case and an $X=1, Y=1$ case, for which $M$ will be uninformative. We could get lucky and end up with an informative pair ($X=0, Y=0$ and $X=1, Y=1$), but a strategy of selection conditional on one variable leaves that matter to chance.  -->
+</div>
+<div id="n2-strategies-monotonic-models" class="section level4" number="13.4.0.6">
+<h4><span class="header-section-number">13.4.0.6</span> <span class="math inline">\(N=2\)</span> strategies, monotonic models</h4>
+<p>Generally speaking, we get more leverage across strategies, models, and queries if we are willing to rule out negative effects by assumption. The most dramatic illustration of this is in a comparison of the unconstrained to monotonic moderator and two-path models, where we face bleak prospects of learning about the <span class="math inline">\(ATE\)</span> and probability of positive effects in an unconstrained model, regardless of strategy. Imposing monotonicity assumptions on these two models makes for relatively similar <span class="math inline">\(ATE-\)</span>learning opportunities across <span class="math inline">\(N=2\)</span> strategies while boosting the relative performance of two-on (best) and two-off (second-best) strategies for learning about the probability of positive causation.</p>
+<p>Relative performance also flips in some places. For instance, whereas two-pos gives us the most leverage for estimating the <span class="math inline">\(ATE\)</span> in an unconstrained two-path model, the two-on strategy is optimal once we impose monotonicity. And two-pos leapfrogs two-off for estimating positive indirect effects when we go from an unconstrained to a monotonic two-path model. The opposite seems to be true for estimating the <span class="math inline">\(ATE\)</span> or the probability of positive causation in a confounded model, where two-off does relatively better when we introduce montonicity restrictions.</p>
+<!-- #### Moderator models -->
+<!-- What if $M$ appears in the model as a moderator, rather than a mediator, of $X$'s effect on $Y$: $X \rightarrow Y \leftarrow M$?  -->
+<!-- Intuitively, we might think that we can learn from examining a moderator because of the fact that a moderator is another potential cause. So, for instance, if we see $M$ constant while $Y$ varies (or vice versa) this suggests evidence against $M$'s effect --- and, we might conjecture, *for* $X$'s effect on $Y$.  -->
+<!-- Our simulations, broadly, speak against this logic. We see in Figure \@ref(fig:caseselectionest) that our inferences hardly budge conditional on different realizations of the moderator variable, regardless of case-selection strategy. We also see in Figure \@ref(fig:caseselectionvar) that we get very little reduction in expected posterior variance.^[There seems to be a bit of learning about the probability of causation, but attention to the $y$-axis scale reveals that the reductions in expected posterior variance here are very small.] The key reason, we think, is the non-rivalry of causes. Given no restrictions on $Y$'s nodal types and no prior evidence pertaining to $M$/$X$ interactions, evidence for or against $M$'s effect on $Y$ has little impact on our beliefs about $X$'s effect. -->
+<!-- #### Two-path models -->
+<!-- We turn now to a two-path model in which $X$ can have both an indirect effect on $Y$ via $M$ and a direct effect on $Y$. We first examine a version with flat priors over all nodal types and then versions in which we impose some monotonicity restrictions and priors over the two paths. We note that, for a model with multiple paths, we may be interested in an additional, mechanismic query, such as the effect operating along a *particular* path. -->
+<!-- *Two-path model with flat priors.* In the two-path row of graphs, we see the results of the case-selection exercise for a two-path model with flat priors. In Figure \@ref(fig:caseselectionvar), we see that most case-selection strategies yield no prospect of learning about average effects of $X$ on $Y$ or about the probability that $X$ caused $Y$ in a given case.  -->
+<!-- The reason, we think, is the combination of the double pathway and uninformtativeness of priors about intermediate effects. We go in with a flat distribution across nodal types $\theta^M$ and nodal types $\theta^Y$. We then acquire some information on the $X \rightarrow Y$ effect from the $X,Y$ data, but those effects are equally consistent with all possible pathways---direct, indirect, or combined. Suppose we then find evidence that cuts against the operation of the indirect pathway: $M=1$ is observed in two on-the-line cases with different $X$ values. So we downgrade the probability of $\theta^M_{01}$ relative to $\theta^M_{11}$. However, we are still able to preserve our prior on the effect of $X$ on $Y$ by updating our beliefs about $\theta^Y$ in a manner that places greater weight on direct effects. To put the point differently: high flexibility in our lower-level beliefs impedes learning about higher-level quantities from observations at the lower level. This is true regardless of which quadrants we select our cases from. -->
+<!-- There is, however, one case-selection strategy that stands out: the selection of two $X=1, Y=1$ cases. The learning here relatively weak, but it is notable that our inferences about the $ATE$ and the probability of (especially negative) causation are affected by what we observe on $M$ across the two cases. It is not always easy to "intuit" one's way through updating on a causal model, and we are not sure why the 2-case $X=1, Y=1$ strategy performs better here. The learning about the $X \rightarrow Y$ causal effects is still minimal, however, even for this "optimal" strategy. -->
+<!-- What if instead of the  $X \rightarrow Y$ causal effect, we are interested in the *pathway* along which that effect unfolds? Here $M$ can be informative, as we can see from the results in Figure \@ref(fig:caseselectionvar2), displaying expected reductions in posterior variance for a range of additional queries. Moving down the graph, we first see learning emerge for the intermediate causal effects, of $X$ on $M$ and of $M$ on $Y$. Indeed, even observing $M$ in a single case yields leverage on these two effects (since, for instance, $M=1$ in an $X=1$ case is inconsistent with a negative $X \rightarrow M$ effect in that case). As for our other queries, it is the on-the-line cases that are most informative about the intermediate effects. -->
+<!-- We also see that we can learn from $M$ about the pathway through which $X$'s effect on $Y$ operates. Focusing on the indirect effect rows (one conditioning on $X=1$, one conditioning on $X=0$), we see that we need at least 2 cases to learn about these effects. We also see that, for $N=2$, we learn more about them from on-the-line than off-the-line cases. It is striking, however, that we still can learn about the mechanism through which a positive effect unfolds *by studying cases in which only a negative effect is possible*.  -->
+<!-- *Two-path model with monotonicity restrictions.* The situation changes considerably if we come in with informative beliefs at the lower level. In the two-path-monotonic set of graphs, we see results for a two-path model in which we have imposed stronger beliefs about the direction of causation at the lower level, ruling out negative $X \rightarrow M$ and negative $M \rightarrow Y$ effects. Now we see in Figure \@ref(fig:caseselectionvar) that we can learn from all of the strategies. Perhaps most striking is that we can learn even just from $N=1$ strategies in this model. Observing $M=0$ in an $X=1, Y=1$ case decisively rules out the indirect pathway as a mechanism of causation, thus making a positive effect overall less likely in the case than if we observed $M=1$.  -->
+<!-- We also see that our $N=2$ strategies are all informative. They are generally more weakly informative than for the chain model, reflecting the fact that we are still getting some countervailing updating of beliefs about the direct pathway. But the restrictions make $M$ sufficiently informative -- our beliefs about causation along the indirect pathway can shift by a sufficient magnitude -- that the updating about the direct pathway cannot fully offset it. So evidence for (against) the operation of the indirect pathway registers, on net, as evidence for (against) the operation of a total $X \rightarrow Y$ effect. -->
+<!-- In Figure \@ref(fig:caseselectionest), we can also observe asymmetries in the learning that we do not see in the other models. That is, our beliefs move further in absolute-value terms from the baseline given by the pure $X,Y$ data depending on what we find. This asymmetry is driven by the asymmetry of the restrictions. In excluding intermediate negative effects along the indirect path, we have made the search for $M=1$ a "hoop" test for the operation of this path: it *might* be operating if $M=1$ (generating a small upward shift in the causal estimand) but is certainly not operating if $M=0$ (generating a larger downward shift). We derive further information here from the shading -- representing the probability of each data-realization -- which we see is also asymmetrical. In general, we see that the data pattern that would generate the larger shift in beliefs away from the prior is *less* likely to occur (a mathematically necessary feature -- otherwise, we could not logically hold the prior belief that we hold). -->
+<!-- Another interesting result is that, under these restrictions, it is the *off*-the-line strategy that holds the potential for the greatest learning. We believe that the reason relates, again, to the asymmetry introduced by the restrictions. In an off-the-line pair of cases, we know that the indirect path cannot be fully operating: any $X \rightarrow Y$ effect here must be negative, but the restrictions only allow for a positive indirect effect. Another way to put this is that an off-the-line case is one in which we start out with the lowest prior on the mediating effects along the indirect path: it's the kind of case in which we least expect an effect of $X$ on $M$ or an effect of $M$ on $Y$. This creates an opportunity for an especially strong "surprise": in particular, if we observe $X=0, M=0, Y=1$ and $X=1, M=1, Y=0$ in the two off-the-line cases, we have found evidence in *favor* of one of the two intermediate effects, the $X \rightarrow M$ effect. Now, this pattern also constitutes evidence against the operation of an $M \rightarrow Y$ effect; but as we have said, we did not particularly expect to find such an effect in off-the-line cases, so this negative finding does not affect our beliefs much. So we see a large boost in our belief about the average effect of $X$ on $M$, a small drop on the estimated average effect of $M$ on $Y$, a considerable boost in our belief in the average indirect effect of $X$ on $Y$, and a concomitant upward shift in our beliefs about the $ATE$.  -->
+<!-- Observing $M$ vary in the opposite direction across the two off-the-line cases --- so positively varying with $Y$ but not $X$ --- generates strong downward movement in our beliefs about the indirect effect and the $ATE$. It seems that the hit to the $X \rightarrow M$ effect matters more for the indirect (and total) effect than does the boost to the $M \rightarrow Y$ effect. -->
+<!-- Looking on the line, in the monotonic two-path model, also yields opportunities to learn, but weaker ones. If we see $M$ vary in concert with $X$ and $Y$ across the one-the-line cases, we certainly shift our beliefs in indirect effects and the $ATE$ upward. But the shift is smaller than in the off-the-line comparison because these are cases in which we started out with a stronger expectation that the indirect path would be operating and, in turn, that $M$ would covary with $X$ and $Y$. There is simply less opportunity for surprise. -->
+<!-- Notably, when we turn to our pathway query (indirect effects), the monotonicity restrictions do not make nearly as a big difference to the possibility of learning as they do for the $X \rightarrow Y$ effects. We also see that the on-the-line strategy performs best for the mediation query, in constrast to the $ATE$ query, as it does for the pathway query in the unrestricted version of the model. -->
+<!-- *Two-path model with weak priors on direct path* Finally, we consider a model in which we have no restrictions but adopt priors under which the direct path is believed to be relatively weak. To think about what this means, recall that the limits to learning from $M$ in the two-path model with no informative priors or restrictions derive from the lack of constraint on countervailing updating about the direct path as we learn about the indirect path. When we start with a greater prior weight on the indirect than the direct path, however, we are dampening this countervailing updating. We should expect therefore to see more opportunities for learning from $M$. -->
+<!-- As we see in Figure \@ref(fig:caseselectionvar), the priors do not make a large difference, but they do allow for strategies beyond the strategy of selecting two $X=1, Y=1$ cases to provide leverage on the $ATE$ and, even more so, on the probability of positive and negative causation. The second-most promising strategy for the $ATE$ is the on-the-line strategy, followed by the off-the-line strategy. As with the simple chain model, we see that the off-the-line strategy performs best for the negative probability of causation query, while the on-the-line strategy performs best for the probability of positive causation --- and, in fact, dominates the $X=1, Y=1$ strategy for that query. -->
+<!-- FLAG: Cannot yet see why we learn more from the restricted 2-path model than from the flat 2-path. Yes, we can learn from n=1 about the indirect path. But in both cases, we can still have compensating updating on the direct path for anything we learn about the indirect path. In fact, the prior probability of positive effects on each path is very similar across the two models. Ignoring interactions, for indirect path, b share is like 1/8 in flat model, and 1/9 in restricted, vs. 1/4 for direct path. Is it just that the learning about the indirect path is stronger with restricted priors because M starts out as informative about the indirect path? So the learning about the indirect path more easily swamps the prior? -->
+<!-- FLAG: Incorporate as needed above and below any implications of Jeffreys priors. -->
+<!-- FLAG: Let's move the 2-pos strategy to the right of the 2 on strategy in the graphs.  -->
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-FL2008" class="csl-entry">
+Fearon, James, and David Laitin. 2008. <span>“Integrating Qualitative and Quantitative Methods.”</span> In <em>Oxford Handbook of Political Methodology</em>, edited by Janet M. Box-Steffenmeier, David Collier, and Henry E Brady, 756–76. Cambridge, UK: Oxford University Press.
+</div>
+<div id="ref-HerronQuinn" class="csl-entry">
+Herron, Michael C, and Kevin M Quinn. 2016. <span>“A Careful Look at Modern Case Selection Methods.”</span> <em>Sociological Methods &amp; Research</em> 45 (3): 458–92.
+</div>
+<div id="ref-king1994designing" class="csl-entry">
+King, G., R. O. Keohane, and S. Verba. 1994. <em>Designing Social Inquiry: Scientific Inference in Qualitative Research</em>. Princeton University Press. <a href="http://books.google.de/books?id=A7VFF-JR3b8C">http://books.google.de/books?id=A7VFF-JR3b8C</a>.
+</div>
+<div id="ref-Lieberman2005nested" class="csl-entry">
+———. 2005. <span>“Nested Analysis as a Mixed-Method Strategy for Comparative Research.”</span> <em>American Political Science Review</em> 99 (July): 435–52. <a href="https://doi.org/10.1017/S0003055405051762">https://doi.org/10.1017/S0003055405051762</a>.
+</div>
+<div id="ref-SeawrightGerring2008" class="csl-entry">
+Seawright, Jason, and John Gerring. 2008. <span>“Case Selection Techniques in Case Study Research: A Menu of Qualitative and Quantitative Options.”</span> <em>Political Research Quarterly</em> 61 (2): 294–308. <a href="https://doi.org/10.1177/1065912907313077">https://doi.org/10.1177/1065912907313077</a>.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="72">
+<li id="fn72"><p>Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.<a href="caseselection.html#fnref72" class="footnote-back">↩︎</a></p></li>
+<li id="fn73"><p><span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> have a parameter <span class="math inline">\(\theta\)</span> that governs the distribution of data over <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and then, conditional on <span class="math inline">\(X,Y\)</span> values, a set of parameters <span class="math inline">\(\psi_{xy}\)</span> that describe the probability of a case’s being of a given causal type. We take both <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\psi_{xy}\)</span> to derive from the fundamental distribution of causal types and assignment probabilities. Thus, for example, <span class="math inline">\(\psi_{00}\)</span> from <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> corresponds to <span class="math inline">\(\frac{(1-\pi_b)\lambda_b}{(1-\pi_b)\lambda_b + (1-\pi_c)\lambda_c}\)</span> in our notation. The difference in paramaterization does have implications for interpretations of the priors. For example flat priors over <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\psi\)</span> implies a tighter distribution that a uniform prior over the causal types. In fact <span class="citation"><a href="#ref-HerronQuinn" role="doc-biblioref">Herron and Quinn</a> (<a href="#ref-HerronQuinn" role="doc-biblioref">2016</a>)</span> use priors with greater variance than uniform in any event.<a href="caseselection.html#fnref73" class="footnote-back">↩︎</a></p></li>
+<li id="fn74"><p>In code, this somewhat complicated query is expressed as <code>"Y[X=0, M=M[X=1]]==Y[X=1, M=M[X=1]]"</code>, <code>given "(X == 1 &amp; Y == 1) &amp; (Y[X=1]&gt;Y[X=0])"</code>.<a href="caseselection.html#fnref74" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="clue.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="wideordeep.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false,
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
