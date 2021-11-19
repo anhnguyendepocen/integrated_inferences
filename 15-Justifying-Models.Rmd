@@ -223,7 +223,7 @@ Now, let's say that we have data on a third variable, $K$, and find (a) that $K=
 
 We thus see that, in cases in which $K=1$, $X=0$ is a necessary condition for $Y=1$. So if $K=1$, then $X=1$ certainly caused $Y=1$ (since, in that case, were $X$ zero then $Y$ would certainly be 0.) On the other hand, were $K=0$, then $X=0$ would be a sufficient condition for $Y=1$, which means that in this case $X=1$ most certainly did *not* cause $Y=1$.  We have then that, if $K=1$, then certainly $X=1$ caused $Y=1$ whereas if  $K=0$, then certainly $X=1$ did not cause $Y=1$
  
-This example demonstrates that it is in principle possible to justify a doubly decisive test on the basis of experimental data---provided that the case about which we seek to make inferences can be considered exchangeable with the cases in the experimental data.  
+This example demonstrates that, with infinite data, it is in principle possible to justify a doubly decisive test on the basis of experimental data---provided that the case about which we seek to make inferences can be considered exchangeable with the cases in the experimental data.  
 
 Table \@ref(tab:tests15) shows how this logic generalizes to different types of tests.
 
@@ -250,9 +250,9 @@ Straw =   c(.5,    .6, .5,  .4, .5,    "", "")
 
 <!-- `r flag()` Put bounds in empty cells. -->
 
-Note that some entries in Table \@ref(tab:tests15)  were given as ranges [to come]. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. Even still, the procedures given in Chapter \@ref(pt) let us form posteriors over inferences with finite data. 
+Note that some entries in Table \@ref(tab:tests15)  were given as ranges [to come]. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. 
 
-For the illustration, we first make use of a function that generates data from a model with a constrained set of types for $Y$ and a given prior distribution over clue $K$.
+The procedures given in Chapter \@ref(mixing) let us form posteriors over inferences with finite data. To illustrate, we first make use of a function that generates data from a model with a constrained set of types for $Y$ and a given prior distribution over clue $K$. We retain the $Y$ types in which only $X$ matters, only $K$ matters, or you have to have both. 
 
 We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data. Note that the model that is updated has no constraints on $Y$, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ reacts to $X$. 
 
@@ -534,15 +534,16 @@ We see that these tests all behave as expected. Importantly, however, the approa
 
 <!-- In short we emphasize that difficult as it might seem at first it is possible to put relatively tight bounds on probative value for causal types with access to experimental data on exchangeable units.  -->
 
-<!-- FLAG: The below is imported from Chap 14. Should bring in part of the relevant table with conditioning on M. -->
 
 ### Learning about probative value from process tracing
+
+<!-- FLAG: The below is imported from Chap 14. Should bring in part of the relevant table with conditioning on M. -->
 
 It is also easy to show how conducting process tracing on a set of cases can incrementally add probative value to a clue. Consider the setup we employed to assess case-selection strategies in Chapter \@ref(caseselection), where we began with positively correlated $X,Y$ data in 6 cases. We showed there that, if we start with Jeffreys priors for all  parameters in a chain model, nothing can be learned about the $ATE$ or the probability of causation from observing $M$ in a single case. However, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$. 
 
 The $X,Y$ pattern in the initial 6 cases---a weak positive relationship---tells us that (with respect to the $X \rightarrow Y$ relationship) there are relatively more $b$'s than other types in the population. This means, in turn, that an $X=1, Y=1$ case is more likely to be a $b$ than a $d$. If we now observe $M=1$ in an $X=1, Y=1$---a case we think is probably a $b$---we now have reason to believe that positive $X \rightarrow Y$ effects operate through a positive $X \rightarrow M$ effect followed by a positive $M \rightarrow Y$ effect. (And had we seen $M=0$ in this case, we'd believe positive effects more likely operate through a negative effect followed by a positive effect.) Put differently, we now believe that seeing $M=1$ in an $X=1, Y=1$ case is a clue that that case is likely a $b$ type---and our belief about the causal effect in an $X=1, M=1, Y=1$ case shifts upward.
 
-Thus, while we do not learn about the overall population from an $N=1$ process-tracing exercise, process-tracing in that single case does make $M$ *informative* about *other* cases. We can see this by comparing our beliefs about an $X=1, M=1, Y=1$ case in the row in which we have only observed the $X,Y$ correlation to our beliefs about that same kind of case in the row in which we have process-traced in an on-the-line case. While in the first instance conditioning on $M=1$ has no impact on the estimated causal effect (because we haven't previously learned about $M$), it does have an impact in the latter instance.
+Thus, while we do not learn about the overall population from an $N=1$ process-tracing exercise, process-tracing in that single case does make $M$ informative about *other* cases. We can see this by comparing our beliefs about an $X=1, M=1, Y=1$ case in the row in which we have only observed the $X,Y$ correlation to our beliefs about that same kind of case in the row in which we have process-traced in an on-the-line case. While in the first instance conditioning on $M=1$ has no impact on the estimated causal effect (because we haven't previously learned about $M$), it does have an impact in the latter instance.
 
 We also see that our belief about the causal effect in an $X=0, M=1, Y=1$ case shifts upward. Why? Updating toward the belief that positive effects --- which we believe to be relatively common --- more often operate via linked positive positive effects implies that $X$ more often has a positive than a negative effect on $M$. Yet for an $X=0, M=1, Y=1$ to be a case with a negative causal effect, $X$'s effect on $M$ would have to be negative. Thus, interestingly, evidence from *on* the regression line can inform inferences about cases *off* the regression line via information about mediating processes.
 
