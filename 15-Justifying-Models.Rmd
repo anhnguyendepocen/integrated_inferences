@@ -252,9 +252,13 @@ Straw =   c(.5,    .6, .5,  .4, .5,    "", "")
 
 Note that some entries in Table \@ref(tab:tests15)  were given as ranges [to come]. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. 
 
-The procedures given in Chapter \@ref(mixing) let us form posteriors over inferences with finite data. To illustrate, we first make use of a function that generates data from a model with a constrained set of types for $Y$ and a given prior distribution over clue $K$. We retain the $Y$ types in which only $X$ matters, only $K$ matters, or you have to have both. 
+The procedures given in Chapter \@ref(mixing) let us form posteriors over inferences with finite data. We briefly illustrate in Table \@ref(testsfinite). The results displayed here are drawn from simulations in which we start by making four different $X \rightarrow Y \leftarrow K$ models. For each model, we set particular restrictions on $Y$'s nodal types and a particular value for $Pr(\theta^K)$ such that $K$ provides different kinds of probative value about $X$'s effect. (We have set these restrictions and assignment propensities for $K$ such that the four resulting data-generating processes will, in the next steps, generate learning about $K$ that turns our clue into one of the four classic tests.)  We then simulate 1000 observations from each model and next update an agnostic $X \rightarrow Y \leftarrow K$ model. Note that the model that is updated has no restrictions on $Y$'s nodal types, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ responds to $X$. 
 
-We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data. Note that the model that is updated has no constraints on $Y$, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ reacts to $X$. 
+In Table \@ref(testsfinite), we show the inferences we would now draw from observing $K=1$ versus $K=0$ in a single case, based on the *updated* model. Each column---which we have labelled with the classic test names---represents our beliefs about $K$'s probative value as derived from a different simulated data pattern. Thus, for instance, in the "hoop test" column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case slightly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case greatly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ slightly undermines our confidence in such an effect.
+
+<!-- ^[We retain the $Y$ types in which $X$ and only $X$ has a positive effect on $U$, only $K$ matters, or you have to have both.] -->
+
+<!-- We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data.  -->
 
 
 ```{r, echo = FALSE}
@@ -279,12 +283,11 @@ van_evera_inference <- function(data)
               using = "posteriors")
 ```
 
-We can now generate posterior beliefs, given $K$, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model.
-  
-Results:
+<!-- We can now generate posterior beliefs, given $K$, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model. -->
 
 
-```{r, echo = FALSE}
+
+```{r, testsfinite echo = FALSE}
 if(do_diagnosis){
 doubly_decisive <- van_evera_data("0001", .5) %>% van_evera_inference
 
@@ -311,11 +314,11 @@ for(j in 4:7){
 teststable[c(2, 4, 6), j] <- paste0("(", teststable[c(2, 4, 6), j], ")")}
 
   teststable %>% 
-  kable(caption= "Classic tests with probative value inferred from (simulated) data", row.names = FALSE)
+  kable(caption= "Classic tests with probative value inferred from (simulated) data, for query, Does $X$ have a positive effect on $Y$ in this case?", row.names = FALSE)
 ```
 
 
-We see that these tests all behave as expected. Importantly, however, the approach to thinking about the tests is quite different to that described in @collier2011understanding or @humphreys2015mixing. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that emeds a clue in a network of possible causal effects. Critically, with this approach, the inferences made from observing clues can be justified by reference to a more fundamental,  relatively agnostic model, that has been updated in light of data. The updated model yields a prior over the proposition, beliefs about probative values, and guidance for what conclusions to draw given knowledge of $K$. 
+Importantly, this approach to thinking about the tests is quite different to that described in existing treatments of process-tracing tests, such as @collier2011understanding or @humphreys2015mixing. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that embeds a clue in a network of possible causal effects. Critically, with this approach, the inferences made from observing clues can be justified by reference to a more fundamental,  relatively agnostic model, that has been updated in light of data. The updated model yields a prior over the proposition, beliefs about probative values, and guidance for what conclusions to draw given knowledge of $K$. 
 
 
 <!-- ## Bounds on probative value -->
