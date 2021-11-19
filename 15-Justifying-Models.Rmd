@@ -657,7 +657,7 @@ recover_model <- function(model) {
   }
 ```
 
-In Figure \@ref(fig:plots), the top row of models represent the true models from which simulated data are generated. The objective is then to see how much of this true causal structure the discovery algorithm can recover from the data. In the first true model, $X$ affects $Y$ directly and indirectly through $M$. In the second model, $Y$ has two causes that do not influence each other. Finally, in the third model, $X$ causes $Y$ through $M$ but not directly. When we simulate data from these models, we assume monotonicity but otherwise a flat distribution over nodal types. 
+In Figure \@ref(fig:plots), the top row of models represent the true models from which simulated data are generated. The objective is then to see how much of this true causal structure the discovery algorithm can recover from the data. In the first true model, $X$ affects $Y$ directly and indirectly through $M$. In the second model, $Y$ has two causes that do not influence each other. Finally, in the third model, $X$ causes $Y$ through $M$ but not directly. When we simulate data from these models, we assume monotonicity but otherwise a flat distribution over nodal types. We also assume no confounding: there is nothing not represented on the graph that affects more than one node on the graph.
 
 
 ```{r model1ch14, include = FALSE}
@@ -703,11 +703,11 @@ recover_model(model3)
 
 In the bottom row of Figure \@ref(fig:plots), we show the structures that we recover. In all situations, we correctly recover the skeleton: which nodes are connected to which nodes. Note that, for any link where we have an "o" on both ends of the link, we do not know in which direction causal effects flow. 
 
-In the first situation, the skeleton is unrestricted: we have correctly *not* excluded links between any two nodes, but we have not learned about the directions of effects. In the second situation, however, we have fully recovered the causal structure. Thus, the algorithm has figured out that  $X_1$ and $X_2$ are not children of $Y$. The algorithm sees, in essence, data patterns that are distinctively associated with colliders: $X_1$, $X_2$ correlated conditional on $Y$ but not otherwise. (With that said, this result is conditional on our assuming away confounding: if we allow for confounding, we cannot tell for sure whether $Y$ is a child of $X_1$ or whether $Y$ and $X_1$ are confounded.) In the last setup, we have not figured out the direction of the causal arrows, but the inference is still rather impressive. Although $X$, $M$ and $Y$ are all correlated with each other, the algorithm has figured out that there should be no direct link between $X$ and $Y$---by observing that $X$ and $M$ are not correlated with each other *conditional* on $M$.
+In the first situation, the skeleton is unrestricted: we have correctly *not* excluded links between any two nodes, but we have not learned about the directions of effects. In the second situation, however, we have fully recovered the causal structure. Thus, the algorithm has figured out that  $X_1$ and $X_2$ are not children of $Y$. The algorithm sees, in essence, data patterns that are distinctively associated with colliders: $X_1$, $X_2$ correlated conditional on $Y$ but not otherwise.  In the last setup, we have not figured out the direction of the causal arrows, but the inference is still rather impressive. Although $X$, $M$ and $Y$ are all correlated with each other, the algorithm has figured out that there should be no direct link between $X$ and $Y$---by observing that $X$ and $M$ are not correlated with each other *conditional* on $M$.
 
 Note also that, in all three situations, if we have access to all relevant variables the true graph can be recovered with additional knowledge of the temporal ordering of the variables.
 
-These examples provide grounds for hope that causal models can be discovered and not simply assumed. In cases in which unobserved confounding is possible the results do not identify a unique causal structure. If all nodes are known and measured however---a tall order for sure---causal structures can be identified from data.  
+The assumption that we have captured all nodes that might generate confounding is critical to these results. Yet these examples provide grounds for hope that causal models can be discovered and not simply assumed. If all relevant nodes are known and measured---a tall order for sure---causal structures can be identified from data.  
 
 
 <!-- ### A model of models -->
