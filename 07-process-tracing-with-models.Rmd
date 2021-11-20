@@ -868,19 +868,45 @@ In general, then, graphical analysis alone can help us exclude unhelpful researc
 
 While `CausalQueries` can implement process-tracing inference for us, it is helpful for researchers to be able to reason their way through what is happening "under the hood." We provide here some core principles and intuitions for thinking through the features of models and queries that influence whether and how much we can learn from within-case observations.
 
-### A DAG alone does not get us probative value for a single case 
+### A DAG alone does not guarantee probative value for a single case 
 
-Suppose that we start with the belief that any effect of $X$ on $Y$ must run through $M$, and that there is no confounding at any stage. This implies the simple $X \rightarrow M \rightarrow Y$ model. Suppose, further, that we have no prior knowledge about the distribution of nodal types and thus posit flat priors over $\theta^M$ and $\theta^Y$. Now we would like to conduct process tracing and observe $M$ to tell us about the effect of $X$ on $Y$. In an $X=Y=1$ case, for instance, is this model sufficient to allow the observation of $M$ to provide leverage on whether $X=1$ caused $Y=1$?
+A DAG puts qualitative structure on causal relations but quantitative implications depend on the beliefs over causal types. In general, learning from new data requires that, conditional on known data, the probability of a new data pattern is different depending on whether or not the query is true. With flat priors this condition may not hold for many queries of interest.
 
-It is not. We can learn nothing from about $X$'s effect on $Y$ from $M$. Observing a process is *uninformative* if all that we know is the structure of relations of conditional independence. 
+To illustrate, suppose that we are interested in whether $X$ caused $Y$ and we posit a simple $X \rightarrow M \rightarrow Y$ model with flat priors over $\theta^M$ and $\theta^Y$. Now we would like to conduct process tracing and observe $M$ to tell us about the effect of $X$ on $Y$ in a case with  $X=Y=1$ case. 
+
+Does the observation of $M$ provide leverage on whether $X=1$ caused $Y=1$?
+
+It does not. We can learn nothing about $X$'s effect on $Y$ from observing $M$. 
+
+<!-- Observing a process is *uninformative* if all that we know is the structure of relations of conditional independence.  -->
 
 <!-- FLAG: PROVE CLAIM -->
 
-To see why at an intuitive level, consider that there are two causal types that will satisfy the query, $X=1$ caused $Y=1$. Those are the types $\theta^X_1 \theta^M_{01} \theta^Y_{01}$ and $\theta^X_1 \theta^M_{10} \theta^Y_{10}$: either linked positive effects or linked negative effects could generate an overall positive effect of $X$ on $Y$. Moreover, with flat priors over nodal types, these causal types are equally likely. Now, think about what we would conclude if we collected process data and observed $M=1$ in the $X=Y=1$ case. This observation would rule out one way in which the query could be satisfied: the causal type with linked negative effects. And what if we observed, instead, $M=0$? This would rule out the other way in which the query could be satisfued: linked positive effects. But since each of these causal types started out with equal weights in our priors, there can be no updating from eliminating one or the other.
+To see why, consider that there are two causal types that will satisfy the query, $X=1$ caused $Y=1$. Those are the types $\theta^X_1 \theta^M_{01} \theta^Y_{01}$ and $\theta^X_1 \theta^M_{10} \theta^Y_{10}$: either linked positive effects or linked negative effects could generate an overall positive effect of $X$ on $Y$. Moreover, with flat priors over nodal types, these causal types are equally likely. Now, think about what we would conclude if we collected process data and observed $M=1$ in the $X=Y=1$ case. This observation would rule out various ways in which $X$ did not cause $Y$ but it also rules out one way in which the query could be satisfied: the causal type with linked negative effects. And what if we observed, instead, $M=0$? This would have similar implucations, this time ruling out the other way in which the query could be satisfied: linked positive effects. Intuitively we would update the same way no matter what we find, which means we must not be updating at all. 
 
-To put the point even more precisely, learning from observing a node requires informative priors about causal effects involving *that node.* For instance, in an $X \rightarrow M \rightarrow Y$ model, where we plan to observe $M$, it would not be sufficient to have an informative prior about the $X \rightarrow Y$ relationship. Such a prior would be cast at the wrong level. Rather, we need an informative prior about the $X \rightarrow M$ or $M \rightarrow Y$ link in order to learn from $M$. 
+More formally, conditional on observing $X=1, Y=1$ our prior that $X$ caused $Y$ is:
 
-At the same time, what we need at the level of priors depends on the query. Suppose that we start with the model, $X \rightarrow M \rightarrow Y$, and formulate the following query: does $X$ have a positive effect on $Y$ that runs through a chain of positive effects via $M$? We can learn about this query without any informative priors over nodal types because of the way in which the query itself restricts the type space. Since the query is not satisfied if negative mediating effects are operating, we will update to probability 0 on the query for any observation that violates $X=M=Y$, and we will update upwards on the query for any observation of $X=M=Y$.
+$$\frac{\lambda^M_{01}\lambda^Y_{01}+ \lambda^M_{10}\lambda^Y_{10}}{(\lambda^M_{01}+\lambda^M_{11})(\lambda^Y_{01}+ \lambda^Y_{11})+ (\lambda^M_{10}+\lambda^M_{00})(\lambda^Y_{10}+ \lambda^Y_{11}) }$$
+
+Our posterior on observing $M=1$ is:
+
+$$\frac{\lambda^M_{01}\lambda^Y_{01}}{(\lambda^M_{01}+\lambda^M_{11})(\lambda^Y_{01} + \lambda^Y_{11})}$$
+it is easy to see these are equal with flat priors ($\lambda^j_{ab}=\lambda^{j*}$ for all $a,b$). What we can see from the comparison is that when we observe data we rule out half the types consistent with the data (denominator) but also rule out half the types consistent with the query *and* data (numerator) .
+
+It is worth noting however that informative priors on *either* $\theta^M$ or $\theta^Y$, would help here. 
+
+<!-- If we had flat priors on $\theta^Y$ only the comparison would be between -->
+
+<!-- $$\frac{\lambda^M_{01}+ \lambda^M_{10}}{2}$$ -->
+<!-- Our posterior on observing $M=1$ is: -->
+
+<!-- $$\frac{\lambda^M_{01}}{2(\lambda^M_{01}+\lambda^M_{11})}$$ -->
+<!-- These are different as long as  -->
+<!-- $$\lambda^M_{01}+ \lambda^M_{10} \neq \frac{\lambda^M_{01}}{(\lambda^M_{01}+\lambda^M_{11})}$$ -->
+
+<!-- learning from observing a node requires informative priors about causal effects involving *that node.* For instance, in an $X \rightarrow M \rightarrow Y$ model, where we plan to observe $M$, it would not be sufficient to have an informative prior about the $X \rightarrow Y$ relationship. Such a prior would be cast at the wrong level. Rather, we need an informative prior about the $X \rightarrow M$ or $M \rightarrow Y$ link in order to learn from $M$.  -->
+
+More generally,  what we need at the level of priors depends on the query. Suppose that we start with the model, $X \rightarrow M \rightarrow Y$, and formulate the following query: does $X$ have a positive effect on $Y$ that runs through a chain of positive effects via $M$? We can learn about this query without any informative priors over nodal types because of the way in which the query itself restricts the type space. Since the query is not satisfied if negative mediating effects are operating, we will update to probability 0 on the query for any observation that violates $X=M=Y$, and we will update upwards on the query for any observation of $X=M=Y$.
 
 
 ### Learning requires uncertainty  
