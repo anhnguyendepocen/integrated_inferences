@@ -334,7 +334,7 @@
 <div class="center">
 
 </div>
-<p>We draw out the implications of the causal model approach for clue-selection strategies. We introduce a tool for generating an optimal decision tree for clue selection given.</p>
+<p>We draw out the implications of the causal model approach for clue-selection strategies. We demonstrate procedures for assessing which clues minimize expected variance and how to construct an optimal decision tree for determining a clue gathering strategy.</p>
 </div>
 <p><br></p>
 <p>We now mobilize the causal models framework for the purposes of making research-design choices. We start with the problem of clue-selection: determining which qualitative data to gather on a case. Evidently it makes sense to gather clues that have large probative value, but whether or not a given clue will have probative value depends on the model we are working with and the question we are asking. As we will also see, a clue’s informativeness can depend on what other clues have already been collected. Finding out that the butler had no motive may be informative for the claim that he is innocent, but it may not be useful if we already know that he had no opportunity.</p>
@@ -377,7 +377,7 @@
 Figure 12.1: The figure shows a simple causal model. <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span> are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.
 </p>
 </div>
-<p>To simplify the illustration we work with a highly restricted version of this model. At node <span class="math inline">\(C\)</span>, we allow only for the possibility that corruption is always present (<span class="math inline">\(\theta^C_{1111}\)</span>) and for the possibility that corruption is always present except when there is both a free press (<span class="math inline">\(X=1\)</span>) and sensitivity to public opinion (<span class="math inline">\(S=1\)</span>) (<span class="math inline">\(\theta^C_{1110}\)</span>). At <span class="math inline">\(R\)</span>, we allow only for <span class="math inline">\(\theta^R_{0001}\)</span> and <span class="math inline">\(\theta^R_{0000}\)</span>: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption. Finally, at <span class="math inline">\(Y\)</span>, we restrict to just one nodal type, <span class="math inline">\(\theta^Y_{0001}\)</span>: the government will remain in office unless there is both corruption (<span class="math inline">\(C=1\)</span>) and reporting on corruption (<span class="math inline">\(R=1\)</span>).</p>
+<p>To simplify the illustration we work with a highly restricted version of this model. At node <span class="math inline">\(C\)</span>, we allow only two types: either corruption is always present (<span class="math inline">\(\theta^C_{1111}\)</span>) or corruption is always present except when there is both a free press (<span class="math inline">\(X=1\)</span>) and sensitivity to public opinion (<span class="math inline">\(S=1\)</span>) (<span class="math inline">\(\theta^C_{1110}\)</span>). At <span class="math inline">\(R\)</span>, we allow only for <span class="math inline">\(\theta^R_{0001}\)</span> and <span class="math inline">\(\theta^R_{0000}\)</span>: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption. Finally, at <span class="math inline">\(Y\)</span>, we restrict to just one nodal type, <span class="math inline">\(\theta^Y_{0001}\)</span>: the government will remain in office unless there is both corruption (<span class="math inline">\(C=1\)</span>) and reporting on corruption (<span class="math inline">\(R=1\)</span>).</p>
 <p>To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether or not corruption is always present; but if corruption is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it can only be because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press — the only mechanism that can generate reporting on corruption — is present. In turn, the presence of a free press can only matter for government survival if governments are <em>not</em> sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.</p>
 <!-- This model is formally defined in `CausalQueries` as follows: -->
 <p>Suppose now that our query is whether <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that <span class="math inline">\(Y=0\)</span>.</p>
@@ -385,7 +385,7 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <p>In the sixth column, we see the inference we would make from each data-realization: the posterior probability that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, given that <span class="math inline">\(Y=0\)</span>. The final column indicates the probability of each data-realization, given the chosen strategy. (Note that, in calculating these probabilities, we are <em>not</em> conditioning on the prior observation, <span class="math inline">\(Y=0\)</span>).</p>
 <!-- FLAG: AJ: Let's add posterior variance to Table \@ref(tab:showstrats5xx) -->
 <table>
-<caption><span id="tab:showstrats5xx">Table 12.1: </span>Inferences given different data patterns.</caption>
+<caption><span id="tab:showstrats5xx">Table 12.1: </span>Inferences given different data patterns, with observations on some or all nodes.</caption>
 <thead>
 <tr class="header">
 <th align="right">S</th>
@@ -796,9 +796,9 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </tr>
 </tbody>
 </table>
-<p>Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Thus, given the probability of each data-realization conditional on a given clue strategy, it is easy to assess the <em>expected</em> reduction in variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of <span class="math inline">\(Y\)</span>, in Table <a href="clue.html#tab:scxrylearning">12.2</a>.</p>
+<p>Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Thus, given the probability of each data-realization conditional on a given clue strategy, it is easy to assess the <em>expected</em> posterior variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of <span class="math inline">\(Y\)</span>, in Table <a href="clue.html#tab:scxrylearning">12.2</a>.</p>
 <table>
-<caption><span id="tab:scxrylearning">Table 12.2: </span>Expected learning from different clue selection strategies.</caption>
+<caption><span id="tab:scxrylearning">Table 12.2: </span>Expected learning from different clue selection strategies. Each strategy is a group of nodes on which within case data is gathered.</caption>
 <thead>
 <tr class="header">
 <th align="left">Strategy</th>
@@ -1200,7 +1200,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <caption><span id="tab:possibleoutcomespimdi1">Table 12.5: </span>Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>) given that data realization.</caption>
 <thead>
 <tr class="header">
-<th align="left"></th>
 <th align="right">I</th>
 <th align="right">P</th>
 <th align="right">M</th>
@@ -1211,7 +1210,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">I1P0M0D1</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1220,7 +1218,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.004</td>
 </tr>
 <tr class="even">
-<td align="left">I1P1M0D1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -1229,7 +1226,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.025</td>
 </tr>
 <tr class="odd">
-<td align="left">I1P0M1D1</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -1238,7 +1234,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.050</td>
 </tr>
 <tr class="even">
-<td align="left">I1P1M1D1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1247,7 +1242,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.117</td>
 </tr>
 <tr class="odd">
-<td align="left">I1M0D1</td>
 <td align="right">1</td>
 <td align="right"></td>
 <td align="right">0</td>
@@ -1256,7 +1250,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.029</td>
 </tr>
 <tr class="even">
-<td align="left">I1M1D1</td>
 <td align="right">1</td>
 <td align="right"></td>
 <td align="right">1</td>
@@ -1265,7 +1258,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.167</td>
 </tr>
 <tr class="odd">
-<td align="left">I1P0D1</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right"></td>
@@ -1274,7 +1266,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.054</td>
 </tr>
 <tr class="even">
-<td align="left">I1P1D1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right"></td>
@@ -1283,7 +1274,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.142</td>
 </tr>
 <tr class="odd">
-<td align="left">I1D1</td>
 <td align="right">1</td>
 <td align="right"></td>
 <td align="right"></td>
@@ -1525,7 +1515,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <caption><span id="tab:possibleoutcomespimdconf">Table 12.9: </span>Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>) given that data realization, with confounding involving <span class="math inline">\(P\)</span>.</caption>
 <thead>
 <tr class="header">
-<th align="left"></th>
 <th align="right">I</th>
 <th align="right">P</th>
 <th align="right">M</th>
@@ -1536,7 +1525,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">I1P0M0D1</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1545,7 +1533,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.0083</td>
 </tr>
 <tr class="even">
-<td align="left">I1P1M0D1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -1554,7 +1541,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.0500</td>
 </tr>
 <tr class="odd">
-<td align="left">I1P0M1D1</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -1563,7 +1549,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.1000</td>
 </tr>
 <tr class="even">
-<td align="left">I1P1M1D1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1572,7 +1557,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.2333</td>
 </tr>
 <tr class="odd">
-<td align="left">I1M0D1</td>
 <td align="right">1</td>
 <td align="right"></td>
 <td align="right">0</td>
@@ -1581,7 +1565,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.0583</td>
 </tr>
 <tr class="even">
-<td align="left">I1M1D1</td>
 <td align="right">1</td>
 <td align="right"></td>
 <td align="right">1</td>
@@ -1590,7 +1573,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.3333</td>
 </tr>
 <tr class="odd">
-<td align="left">I1P0D1</td>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right"></td>
@@ -1599,7 +1581,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.1083</td>
 </tr>
 <tr class="even">
-<td align="left">I1P1D1</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right"></td>
@@ -1608,7 +1589,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.2833</td>
 </tr>
 <tr class="odd">
-<td align="left">I1D1</td>
 <td align="right">1</td>
 <td align="right"></td>
 <td align="right"></td>
@@ -1664,13 +1644,12 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <p>Working backwards, we can readily identify the reason for this in Table <a href="clue.html#tab:possibleoutcomespimdconf">12.9</a>. We see here that observing <span class="math inline">\(P=1\)</span> moves our beliefs very little off of our prior of <span class="math inline">\(0.091\)</span> because, given the confounding, we already strongly expect to see <span class="math inline">\(P=1\)</span> in a case that democratized; actually observing <span class="math inline">\(P=1\)</span> contains only a small amount of new information. Our beliefs over the query change a great deal if we observe <span class="math inline">\(P=0\)</span>, since the absence of pressure makes it much more likely that democratization occurred because of high inequality. In fact, <span class="math inline">\(P\)</span>’s value is far more consequential than <span class="math inline">\(M\)</span>’s. However, we can also see from the last column of the table that the most impactful realization of <span class="math inline">\(P\)</span>’s value is also extremely unlikely under the model (given <span class="math inline">\(I=D=1\)</span>). Thus, <span class="math inline">\(P\)</span> <em>can</em> be highly informative under this model, but it is very unlikely to be.</p>
 <p>We turn next to examining clue strategies for a different kind of query. So far we have concerned ourselves with queries about causal effects, but we now examine a query in which we care about the <em>pathway</em> through which an effect occurs. We need to adjust the model to allow for multiple pathways since, under the restrictions we have been using so far, positive effects of inequality can run only indirectly and negative effects can only run directly. We now remove the restriction that excluded a negative effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span> and instead specify a prior belief that such a negative effect is less likely than <span class="math inline">\(M\)</span>’s other nodal types.</p>
 <p>To isolate how the query matters from how the restrictions matter, we first diagnose clue strategies for a causal-effect query under this new model: given <span class="math inline">\(I=0, D=1\)</span>, did <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span>? Inferences conditional on data-realizations and clue strategies are displayed in Table <a href="clue.html#tab:pimdposs">12.11</a> and expected posterior variances in Table <a href="clue.html#tab:pimdlearnpriorseffect">12.12</a>.</p>
-<p>Starting with Table @(tab:pimdposs), a comparison with the parallel results for the model that excludes negative <span class="math inline">\(I \rightarrow M\)</span> effects – Table <a href="clue.html#tab:possibleoutcomespimdi0">12.7</a> – is informative. Similar to what we saw in Chapter <a href="ptapp.html#ptapp">8</a>, the inferences we draw from observing <span class="math inline">\(M\)</span>’s values <em>flip</em> in direction when we allow for negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. When such effects were excluded, <span class="math inline">\(M\)</span> was informative only as a moderator of <span class="math inline">\(I\)</span>’s direct negative effect on <span class="math inline">\(D\)</span>. An observation of <span class="math inline">\(M=1\)</span> counted as evidence against <span class="math inline">\(I=0\)</span> being the cause of <span class="math inline">\(D=1\)</span> since <span class="math inline">\(M=1\)</span> could be the cause (given that <span class="math inline">\(M\)</span> could have a positive effect on <span class="math inline">\(D\)</span>); <span class="math inline">\(M=0\)</span> counted, by a similar logic, as evidence in favor of <span class="math inline">\(I\)</span>’s negative effect. Once we relax the restriction and allow negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, <span class="math inline">\(M\)</span> is additionally informative as a <em>mediator</em> along a second pathway through which <span class="math inline">\(I\)</span> can have a negative effect on <span class="math inline">\(M\)</span>. Now, observing <span class="math inline">\(M=0\)</span> cuts in two directions: on the one hand, it rules out a negative effect of <span class="math inline">\(I\)</span> running through <span class="math inline">\(M\)</span> (informativeness as mediator); on the other hand, it makes it more likely that <span class="math inline">\(I=0\)</span> caused <span class="math inline">\(D=1\)</span> indirectly (informativeness as moderator). We can see that, in this situation, the information we get from <span class="math inline">\(M\)</span> as a mediator overwhelms that which we get from <span class="math inline">\(M\)</span> as a moderator since our posterior on <span class="math inline">\(I\)</span>’s causal effect now moves <em>downwards</em> if we observe <span class="math inline">\(M=0\)</span>. <span class="math inline">\(M=1\)</span>, of course, cuts both ways as well by a parallel logic, but with the net effect being an upward shift in our posterior on the causal effect.</p>
+<p>Starting with Table <a href="clue.html#tab:pimdposs">12.11</a>, a comparison with the parallel results for the model that excludes negative <span class="math inline">\(I \rightarrow M\)</span> effects – Table <a href="clue.html#tab:possibleoutcomespimdi0">12.7</a> – is informative. Similar to what we saw in Chapter <a href="ptapp.html#ptapp">8</a>, the inferences we draw from observing <span class="math inline">\(M\)</span>’s values <em>flip</em> in direction when we allow for negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>. When such effects were excluded, <span class="math inline">\(M\)</span> was informative only as a moderator of <span class="math inline">\(I\)</span>’s direct negative effect on <span class="math inline">\(D\)</span>. An observation of <span class="math inline">\(M=1\)</span> counted as evidence against <span class="math inline">\(I=0\)</span> being the cause of <span class="math inline">\(D=1\)</span> since <span class="math inline">\(M=1\)</span> could be the cause (given that <span class="math inline">\(M\)</span> could have a positive effect on <span class="math inline">\(D\)</span>); <span class="math inline">\(M=0\)</span> counted, by a similar logic, as evidence in favor of <span class="math inline">\(I\)</span>’s negative effect. Once we relax the restriction and allow negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, <span class="math inline">\(M\)</span> is additionally informative as a <em>mediator</em> along a second pathway through which <span class="math inline">\(I\)</span> can have a negative effect on <span class="math inline">\(M\)</span>. Now, observing <span class="math inline">\(M=0\)</span> cuts in two directions: on the one hand, it rules out a negative effect of <span class="math inline">\(I\)</span> running through <span class="math inline">\(M\)</span> (informativeness as mediator); on the other hand, it makes it more likely that <span class="math inline">\(I=0\)</span> caused <span class="math inline">\(D=1\)</span> indirectly (informativeness as moderator). We can see that, in this situation, the information we get from <span class="math inline">\(M\)</span> as a mediator overwhelms that which we get from <span class="math inline">\(M\)</span> as a moderator since our posterior on <span class="math inline">\(I\)</span>’s causal effect now moves <em>downwards</em> if we observe <span class="math inline">\(M=0\)</span>. <span class="math inline">\(M=1\)</span>, of course, cuts both ways as well by a parallel logic, but with the net effect being an upward shift in our posterior on the causal effect.</p>
 <p>So how informative overall is <span class="math inline">\(M\)</span> as compared to <span class="math inline">\(P\)</span>? In the model allowing negative <span class="math inline">\(I \rightarrow M\)</span> effects, we are now learning in two ways from <span class="math inline">\(M\)</span> rather than one; so our intuition might be that <span class="math inline">\(M\)</span> has become more informative than it was in our original model. In Table <a href="clue.html#tab:pimdlearnpriorseffect">12.12</a>, we see that this is not at all the case! Much as in Table <a href="clue.html#tab:pimdlearni0d1">12.8</a>, for the same query and given data but under our original model, we still see very little—indeed, slightly less—reduction in expected posterior variance from the search for <span class="math inline">\(M\)</span>. <span class="math inline">\(M\)</span> may be informative as both moderator and mediator in the new model, but what we learn from the mediation in effect <em>undoes</em> some of the learning from the moderation by pushing our inferences in the opposing direction.</p>
 <table>
 <caption><span id="tab:pimdposs">Table 12.11: </span>Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?</caption>
 <thead>
 <tr class="header">
-<th align="left"></th>
 <th align="right">I</th>
 <th align="right">P</th>
 <th align="right">M</th>
@@ -1681,7 +1660,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">I0P0M0D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1690,7 +1668,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.044</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1M0D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -1699,7 +1676,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.102</td>
 </tr>
 <tr class="odd">
-<td align="left">I0P0M1D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -1708,7 +1684,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.073</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1M1D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1717,7 +1692,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.099</td>
 </tr>
 <tr class="odd">
-<td align="left">I0M0D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right">0</td>
@@ -1726,7 +1700,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.146</td>
 </tr>
 <tr class="even">
-<td align="left">I0M1D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right">1</td>
@@ -1735,7 +1708,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.172</td>
 </tr>
 <tr class="odd">
-<td align="left">I0P0D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right"></td>
@@ -1744,7 +1716,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.117</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right"></td>
@@ -1753,7 +1724,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.201</td>
 </tr>
 <tr class="odd">
-<td align="left">I0D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right"></td>
@@ -1817,7 +1787,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <caption><span id="tab:pimdout">Table 12.13: </span>Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?</caption>
 <thead>
 <tr class="header">
-<th align="left"></th>
 <th align="right">I</th>
 <th align="right">P</th>
 <th align="right">M</th>
@@ -1828,7 +1797,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">I0P0M0D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1837,7 +1805,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.044</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1M0D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -1846,7 +1813,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.102</td>
 </tr>
 <tr class="odd">
-<td align="left">I0P0M1D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -1855,7 +1821,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.073</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1M1D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1864,7 +1829,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.099</td>
 </tr>
 <tr class="odd">
-<td align="left">I0M0D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right">0</td>
@@ -1873,7 +1837,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.146</td>
 </tr>
 <tr class="even">
-<td align="left">I0M1D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right">1</td>
@@ -1882,7 +1845,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.172</td>
 </tr>
 <tr class="odd">
-<td align="left">I0P0D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right"></td>
@@ -1891,7 +1853,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.117</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right"></td>
@@ -1900,7 +1861,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.201</td>
 </tr>
 <tr class="odd">
-<td align="left">I0D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right"></td>
