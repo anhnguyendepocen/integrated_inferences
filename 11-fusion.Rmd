@@ -292,7 +292,7 @@ Since the model used both the experimental and the observational data, we might 
 
 <!-- FLAG: Need to create above table in appendix -->
 
-However, what we can learn about uniquely from this model and the combined observational and experimental data is *heterogeneity* in effects between those that are in treatment and those that are in control *in the observational* setting. In Table \@ref(combexpobsattatc), we display the results of $ATT$ and $ATC$ queries of the updated model. In the first two rows, we see that, in the experimental setting, the average effect of $X$ on $Y$ is the same on both the treated and control groups, exactly as we would expect under random assignment. In the third row, we see the estimate of $X$'s average effect for those assigned "by nature" to the control group in the observational setting, extracting a result close to the "true" value of $-0.2$. The final row shows our estimate of the treatment effect for those who are selected into treatment in the observational setting, again getting close to the answer implied by the underlying data-generating process ($0.6$). 
+However, what we can learn about uniquely from this model and the combined observational and experimental data is *heterogeneity* in effects between those that are in treatment and those that are in control *in the observational* setting. In Table \@ref(tab:combexpobsattatc), we display the results of $ATT$ and $ATC$ queries of the updated model. In the first two rows, we see that, in the experimental setting, the average effect of $X$ on $Y$ is the same on both the treated and control groups, exactly as we would expect under random assignment. In the third row, we see the estimate of $X$'s average effect for those assigned "by nature" to the control group in the observational setting, extracting a result close to the "true" value of $-0.2$. The final row shows our estimate of the treatment effect for those who are selected into treatment in the observational setting, again getting close to the answer implied by the underlying data-generating process ($0.6$). 
 
 ```{r combexpobsattatc, echo = FALSE}
 result2 <- query_model(
@@ -319,7 +319,7 @@ In some circumstances, we study the effect of $X$ on $Y$ in one context (a count
 
 This is the problem studied by @pearl2014external. In particular,  @pearl2014external show for which nodes data are needed in order to "licence" external claims, given a model. 
 
-We illustrate with a simple model in which an observable confounder has a different distribution across contexts. In the model drawn in Figure \@ref(extval), $Context$ determines the distribution of the confounder, $W$. We set a restriction such that the value of $W$ in Context 1 is never less than the value of $W$ in Context 0; our priors are otherwise flat over the remaining nodal types in the model.  
+We illustrate with a simple model in which an observable confounder has a different distribution across contexts. In the model drawn in Figure \@ref(fig:extval), $Context$ determines the distribution of the confounder, $W$. We set a restriction such that the value of $W$ in Context 1 is never less than the value of $W$ in Context 0; our priors are otherwise flat over the remaining nodal types in the model.  
 
 
 <!-- AJ: Macartan, can you interpret the parameter values for the sentence above? Not sure I know how to read the complements and decreasing statements correctly. -->
@@ -363,7 +363,7 @@ We show priors and true values for the estimands (drawn from the parameters) in 
 
 <!-- incidence in as well as the ATE of $X$ on $Y$ is larger in case 1 than in case 0 (in parameters, though not in priors). However the effect of $X$ on $Y$ conditional on $W$ is the same in both places.  -->
 
-We now update the model using data from one context and then see if we can transport those findings to the other context. Specifically, we update using data on $X, Y,$ and $W$ from Context 0. We then use the updated beliefs to draw inferences about Context 1, using data *only* on $W$ from Context 1. In Table \@ref(appev3), we show our posteriors on the queries of interest as compared to the truth, given the parameter values. 
+We now update the model using data from one context and then see if we can transport those findings to the other context. Specifically, we update using data on $X, Y,$ and $W$ from Context 0. We then use the updated beliefs to draw inferences about Context 1, using data *only* on $W$ from Context 1. In Table \@ref(tab:appev3), we show our posteriors on the queries of interest as compared to the truth, given the parameter values. 
 
 
 
@@ -397,7 +397,7 @@ kable(q, caption = "Extrapolation when two sites differ on $W$ and $W$ is observ
 
 By comparing the $ATE$ estimates using our posteriors and the estimates using the assigned parameter values, we see that we have done well in recovering the effects, *both* for the context we studied (i.e., in which we observed $X$ and $Y$) and for the context we did not study.  We can think of the learning here as akin to post-stratification. We have learned from observing $X, Y$, and $W$ in Context 0 how $X$'s effect depends on $W$. Then we use those updated beliefs when confronted with a new value of $W$ in Context 1 to form a belief about $X$'s effect in this second context. Of course, getting the right answer from this procedure depends, as always, on starting with the correct model.
 
-We can also see, in Table \@ref(appev4), what would have happened if we had attempted to make the extrapolation to Context 1 without data on $W$ in that context.  We would get the wrong answer for Context 1, though we would also report greater posterior variance. The higher posterior variance here captures the fact that we know things could be different in Context 1, but we don't know in what way they are different. 
+We can also see, in Table \@ref(tab:appev4), what would have happened if we had attempted to make the extrapolation to Context 1 without data on $W$ in that context.  We would get the wrong answer for Context 1, though we would also report greater posterior variance. The higher posterior variance here captures the fact that we know things could be different in Context 1, but we don't know in what way they are different. 
 
 <!-- AJ: This last set of results seems wrong. The estimates using posteriors seem again to be very close to those using parameters, and variances are not higher than in previous table. Seems we're still using info on W in code below?  -->
 
