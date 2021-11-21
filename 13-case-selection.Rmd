@@ -1,4 +1,4 @@
-# Mixed methods data strategies {#caseselection}
+# Case selection for mixed methods inference {#caseselection}
 
 ```{r packagesused13, include = FALSE}
 source("_packages_used.R")
@@ -12,6 +12,7 @@ With a causal model in hand, together with priors over parameters, we can assess
 ::::
 
 
+
 A critical decision for scholars employing mixed methods is to determine when and where to look deep and when to look wide. We address this question if two steps, first addressing the problem of case selection and second the question of qualitative/quantitative mixing.  
 
 ## Case selection strategies
@@ -20,17 +21,20 @@ A host of different strategies have been proposed for selecting cases for in-dep
 
 Which cases we should choose will likely depend on the purposes to which we want to put them. 
 
-A matching strategy for instance---selecting cases that are comparable on many features but that differ on $X$---replicates at a small scale the kind of inference done by matching estimators with large-$n$ data. The strategy draws leverage from $X,Y$ variation rather than from within-case information beyond what is available in the measurement of $X$ and $Y$. (FLAG: Citations needed.)
+A matching strategy for instance---selecting cases that are comparable on many features but that differ on $X$---replicates at a small scale the kind of inference done by matching estimators with large-$n$ data. The strategy draws leverage from $X,Y$ variation rather than from within-case information beyond what is available in the measurement of $X$ and $Y$. 
+<!-- (FLAG: Citations needed.) -->
 
-Other treatments seek to use qualitative information to check assumptions made in $X, Y$ analysis: for example, is the measurement of $X$ and $Y$ reliable in critical cases? (FLAG: Citations needed) For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the $X,Y$ inferences: for example influential cases that have unusually extreme values on $X$ and $Y$.^[Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.] Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.
+Other treatments seek to use qualitative information to check assumptions made in $X, Y$ analysis: for example, is the measurement of $X$ and $Y$ reliable in critical cases? 
+<!-- (FLAG: Citations needed)  -->
+For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the $X,Y$ inferences: for example influential cases that have unusually extreme values on $X$ and $Y$.^[Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.] Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.
 
 A third purpose is to use a case to generate alternative or richer theories of causal processes, as in Lieberman's "model-building" mode of "nested analysis" (@Lieberman2005nested). Here it may be cases off the regression line that are of interest.
 
-Weller and Barnes (CITE article) on case selection focus on (a) X/Y relations and (b) whether the cases are useful for hypothesis generation. 
+@weller2014finding focus on (a) X/Y relations and (b) whether the cases are useful for hypothesis generation. 
 
 In what follows, we focus on a simpler goal: given existing $X, Y$ data for a set of cases and a given clue (or set of clues) that we can go looking for in the intensive analysis of some subset of these cases, for which cases would process tracing yield the greatest learning about the population-level causal effect of $X$ on $Y$?
 
-The basic insight of this chapter is simple enough: *the optimal strategy for case selection for a model-based analysis are a function of the model we start with and the query we seek to address*, just as we saw for the optimal clue-selection strategy in Chapter \@ref(Clues). Using this strategy yields guidance that is consistent with some common advice but at odds with other advice. The main principles that emerge from the analysis can be summarized as:
+The basic insight of this chapter is simple enough: *the optimal strategy for case selection for a model-based analysis are a function of the model we start with and the query we seek to address*, just as we saw for the optimal clue-selection strategy in Chapter \@ref(clue). Using this strategy yields guidance that is consistent with some common advice but at odds with other advice. The main principles that emerge from the analysis can be summarized as:
 
 * go where the probative value is, and
 * sample from $X$ and $Y$ values in proportion to their occurrence in the population,
@@ -93,20 +97,20 @@ Suppose, now, that we were interested in a population estimand: the average effe
 
 At the same time, not all $X=1$ cases are equally informative. Should we choose an $X=1$ case in which $Y=1$ or one in which $Y=0$? In both types of case, $K$ is doubly decisive for the probability of causation in the case. However, the two kinds of cases are differentially informative about $K$'s prevalence in the population. For an $X=1, Y=1$ case, we think it moderately likely that $K=1$ (specifically, assuming a prior of $\Pr(K=1)$ we think $\Pr(K=1 | X=1, Y=1) = \frac{.9}{.9+.5}=.64$). For an  $X=1, Y=0$ case, we think $K=1$ is quite unlikely ($\Pr(K=1 | X=1, Y=0) = \frac{.1}{.5+.1}=.17$). In other words, we are much more uncertain about the value of $K$ in the $X=Y=1$ case than in the $X=1, Y=0$ case. In this setup, we would thus expect to learn more about the average treatment effect by choosing to observe $K$ in an on-the-diagonal case than in an off-the-diagonal case.
 
-FLAG: What does "assuming a prior of $\Pr(K=1)$" add to above paragraph?
+<!-- FLAG: What does "assuming a prior of $\Pr(K=1)$" add to above paragraph? -->
 
 Specifically, let $\kappa$ denote $\Pr(K=1)$. Suppose that we begin thinking it equally likely that $\kappa=\kappa^H = .5$ and $\kappa=\kappa^L=0$. Suppose, further, that the distribution of $X$ is such that, for any randomly drawn case, $\Pr(X=1) = .5$. We then observe one case with $X=1, Y=1$ and another with $X=1, Y=0$. From that information alone, we can update over $\kappa$. Specifically, conditioning on $X=1$, when we observe the data pattern, $D$, in which $Y=0$ in one case and $Y=1$ in the other, the posterior on $\kappa$ is:
 
 $$p(\kappa = \kappa^L|D) =  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kappa^L)}=\frac{.5}{.5 + .25\times(2\times.5\times.5 + 2\times.9\times.1 + 2\times(.9\times.5 +.1\times.5))}$$
 
-FLAG: Is the above expression not missing the prior?
+<!-- FLAG: Is the above expression not missing the prior? -->
 
-FLAG: I am not sure what we're trying to get out of this expression, so unsure how to tie this up.
+<!-- FLAG: I am not sure what we're trying to get out of this expression, so unsure how to tie this up. -->
 
 
 In summary, under the stipulated beliefs about the world, we can learn most about the population $ATE$ by selecting an $X=Y=1$ for study. We can also learn about the case-level effect in such a case as well as in an $X=1, Y=0$ case. If we are interested in the case level estimand for any $X=0$ case, then there are no gains from any case-selection strategy since we know $K$'s value based on $X$ and $Y$'s value.
 
-FLAG: AJ: Check my rewrite of last statement. 
+<!-- FLAG: AJ: Check my rewrite of last statement.  -->
 
 There is nothing preferable in general about an $X=1$ case. Under a different set of beliefs about the world, we would expect to learn more in an $X=Y=0$ than in an $X=Y=1$ case. Suppose, for instance, that we have a model in which: 
 
@@ -138,7 +142,7 @@ Say instead that you knew that:
 
 It may be better to select a case that is not "like" the cases you want to make inferences about.
 
-FLAG: Not getting the point here. How is this different from the setup two up from here?
+<!-- FLAG: Not getting the point here. How is this different from the setup two up from here? -->
 
 
 ## Specific case walk through
@@ -200,7 +204,7 @@ The next step is to grapple with the fact that not all of the possible data real
 
 Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table \@ref(tab:chselillustration), we can see the mean of the posterior distribution (for the $ATE$ of $X$ on $Y$) under each data pattern. What is of particular interest in assessing case-selection strategies is the *variance* of the posterior distribution, which represents our *uncertainty*. This posterior variance on the $ATE$, for each data pattern, is represented in the table's final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the *expected* reduction in posterior variance. 
 
-FLAG: Need to redo Table to conform to text: 2 strategies only.
+<!-- FLAG: Need to redo Table to conform to text: 2 strategies only. -->
 
 
 ```{r dtypes, echo = FALSE}
