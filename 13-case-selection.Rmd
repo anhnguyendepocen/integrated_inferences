@@ -81,7 +81,7 @@ However, if we had a case in which $X=Y=0$, then learning $K$ would be entirely 
 
 For the same reason, we can learn nothing from $K$ in an $X=0, Y=1$ case since we know that $K=0$ in such a case. On the other hand, if we chose an $X=1, Y=0$, then $K$ would again be doubly decisive, with $K=0$ implying that $X=1$ caused $Y=0$, and $K=1$ implying that $X=1$ did not cause $Y=0$.
 
-We have chosen extreme values for this illustration --- our beliefs could, of course, allow for gradations of informativeness, rather than all-or-nothing identification --- but the larger point is that beliefs about the way world work can have a powerful effect on the kind of case in which learning is possible. And note that in this example, there is nothing special about where a case lies relative to a (notional) regression line: informativeness in this setup happens to depend on $X$'s value entirely. But, again, this is a particular feature of this particular set of beliefs about the world.
+We have chosen extreme values for this illustration --- our beliefs could, of course, allow for gradations of informativeness, rather than all-or-nothing identification --- but the larger point is that beliefs about the way the world works can have a powerful effect on the kind of case in which learning is possible. And note that in this example, there is nothing special about where a case lies relative to a (notional) regression line: informativeness in this setup happens to depend on $X$'s value entirely. But, again, this is a particular feature of this particular set of beliefs about the world.
 
 ```{r, eval= FALSE, echo = FALSE}
 py_k0 = .5
@@ -93,9 +93,9 @@ py_k1 / (py_k0 + py_k1)
 
 ```
 
-Suppose, now, that we were interested in a population estimand: the average effect of $X$ on $Y$. We can see that this is equal to $\Pr(K=1)\times.9 + (1-\Pr(K-0))\times(-.5)) = 1.4\times Pr(K=1)-.5$. To estimate this estimand, we need only determine the prevalence of $K=1$ in the population. It might seem that this means that it is irrelevant what type of case we choose: why not use pure random sampling to determine $K$'s prevalence. As noted above, however, we have more information about the likely value of $K$ in some kinds of cases than in others. Thus, for this population-level estimand as well, selecting an $X=1$ case will be informative while selecting an $X=0$ case will not be informative.
+Suppose, now, that we were interested in a population query: the average effect of $X$ on $Y$. We can see that this is equal to $\Pr(K=1)\times.9 + (1-\Pr(K=0))\times(-.5)) = 1.4\times \Pr(K=1)-.5$. For this query, we need only determine the prevalence of $K=1$ in the population. It might seem that this means that it is irrelevant what type of case we choose: why not use pure random sampling to determine $K$'s prevalence. As noted above, however, we have more information about the likely value of $K$ in some kinds of cases than in others. Thus, for this population-level estimand as well, selecting an $X=1$ case will be informative while selecting an $X=0$ case will not be informative.
 
-At the same time, not all $X=1$ cases are equally informative. Should we choose an $X=1$ case in which $Y=1$ or one in which $Y=0$? In both types of case, $K$ is doubly decisive for the probability of causation in the case. However, the two kinds of cases are differentially informative about $K$'s prevalence in the population. For an $X=1, Y=1$ case, we think it moderately likely that $K=1$ (specifically, assuming a prior of $\Pr(K=1)$ we think $\Pr(K=1 | X=1, Y=1) = \frac{.9}{.9+.5}=.64$). For an  $X=1, Y=0$ case, we think $K=1$ is quite unlikely ($\Pr(K=1 | X=1, Y=0) = \frac{.1}{.5+.1}=.17$). In other words, we are much more uncertain about the value of $K$ in the $X=Y=1$ case than in the $X=1, Y=0$ case. In this setup, we would thus expect to learn more about the average treatment effect by choosing to observe $K$ in an on-the-diagonal case than in an off-the-diagonal case.
+At the same time, not all $X=1$ cases are equally informative. Should we choose an $X=1$ case in which $Y=1$ or one in which $Y=0$? In both types of case, $K$ is doubly decisive for the probability of causation in the case. However, the two kinds of cases are differentially informative about $K$'s prevalence in the population. For an $X=1, Y=1$ case, we think it moderately likely that $K=1$ (specifically, assuming a prior of $\Pr(K=1)=.5$ we think $\Pr(K=1 | X=1, Y=1) = \frac{.9 \times .25}{.9 \times  .25+.5 \times.25}=.64$). For an  $X=1, Y=0$ case, we think $K=1$ is quite unlikely ($\Pr(K=1 | X=1, Y=0) = \frac{.1}{.5+.1}=.17$). In other words, we are much more uncertain about the value of $K$ in the $X=Y=1$ case than in the $X=1, Y=0$ case. In this setup, we would thus expect to learn more about the average treatment effect by choosing to observe $K$ in an on-the-diagonal case than in an off-the-diagonal case.
 
 <!-- FLAG: What does "assuming a prior of $\Pr(K=1)$" add to above paragraph? -->
 
@@ -131,16 +131,18 @@ The two off-diagonal cases may also be different in the opportunities for learni
   * $\Pr(Y=1|X=1, K = 1) = .5$
 
 For an $X=1, Y=0$ case, if you observe $K=1$ you know that if $X$ were 0, $Y$ would have been 1; but if $K=0$, you know that if $X$ were 0, $Y$ would still have been 0. In that case $K$, would be doubly decisive for $X=1$ causing $Y=0$.  But in an $X=0, Y=1$, we already know $K=0$ before we go looking.   
-  
-Say instead that you knew that: 
 
-  * $X \rightarrow Y \leftarrow K$
-  * $\Pr(Y=1|X=0, K = 0) = .5$
-  * $\Pr(Y=1|X=1, K = 0) = 0$
-  * $\Pr(Y=1|X=0, K = 1) = .5$
-  * $\Pr(Y=1|X=1, K = 1) = 1$
+In summary: beware simple rules for case selection. Depending on the model, the query, and priors, any type of case may be optimal.
 
-It may be better to select a case that is not "like" the cases you want to make inferences about.
+<!-- Say instead that you knew that:  -->
+
+<!--   * $X \rightarrow Y \leftarrow K$ -->
+<!--   * $\Pr(Y=1|X=0, K = 0) = .5$ -->
+<!--   * $\Pr(Y=1|X=1, K = 0) = 0$ -->
+<!--   * $\Pr(Y=1|X=0, K = 1) = .5$ -->
+<!--   * $\Pr(Y=1|X=1, K = 1) = 1$ -->
+
+<!-- It may be better to select a case that is not "like" the cases you want to make inferences about. -->
 
 <!-- FLAG: Not getting the point here. How is this different from the setup two up from here? -->
 
