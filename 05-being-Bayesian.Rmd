@@ -69,11 +69,14 @@ The same logic goes through when things are not quite so black and white.
 
 Now consider two slightly trickier examples. 
 
-**Interpreting Your Test Results**. Say that you take a test to see whether you suffer from a disease that affects 1 in 100 people. The test is good in the sense that if you have the disease it will say you have it with a 99% probability. If you do not have it, then with a 99% probability, it will say that you do not have it. The test result says that you have the disease. What are the chances you have it? You might think the answer is 99%, but that would be to mix up the probability of the result given the disease with the probability of the disease given the result. In fact the right answer is 50%, which you can think of as the share of people that have the disease among all those that test positive. For example if there were 10,000 people, then 100 would have the disease and 99 of these would test positive. But 9,900 would not have the disease and 99 of these would test positive. So the people with the disease that test positive are half of the total number testing positive.
+**Interpreting Your Test Results**. Say that you take a test to see whether you suffer from a disease that affects 1 in 100 people. The test is good in the sense that if you have the disease it will say you have it with a 99% probability. If you do not have it, then with a 99% probability, it will say that you do not have it. The test result says that you have the disease. What are the chances you have it? You might think the answer is 99%, but that would be to mix up the probability of the result given the disease with the probability of the disease given the result. In fact the right answer is 50%, which you can think of as the share of people that have the disease among all those that test positive. The logic is most easily seen if you think through it using frequencies (see @hoffrage1998using for this problem and ways to address it). If there were 10,000 people, then 100 would have the disease and 99 of these would test positive. But 9,900 would not have the disease and 99 of these would test positive. So the people with the disease that test positive are half of the total number testing positive.
 
 As an equation this might be written:
 
-$$\text{Probability You have the Disease | Test} = \frac{\text{How many have the disease and test positive?}}{\text{How many test positive?}} $$
+\begin{eqnarray}
+\text{Probability You have the Disease | Test} &=& \frac{\text{How many have the disease and test positive?}}{\text{How many test positive?}}\\ 
+&=& \frac{99}{99 + 99}
+\end{eqnarray}
 
 **Two-Child Problem** Consider last an old puzzle found described @gardner1961second.  *Mr Smith has two children, $A$ and $B$. At least one of them is a boy. What are the chances they are both boys?* 
 To be explicit about the puzzle, we will assume that the information that one child is a boy is given as a truthful  answer to the question "is at least one of the children a boy?" Assuming that there is a 50% probability that a given child is a boy, people often assume the answer is 50%. But surprisingly the answer is 1 in 3. The information provided rules out the possibility that both children are girls and so the right answer is found by readjusting the probability that two children are boys based on this information. As an equation:
@@ -97,11 +100,11 @@ where $H$ represents a hypothesis and $\mathcal{D}$ represents a particular real
 
 Looking at the formula we see that the  posterior belief derives from three considerations. First, the likelihood: how likely are we to have observed these data if the hypothesis were true, $\Pr(\mathcal{D}|H$)? Second, how likely were we to have observed these data regardless of whether the hypothesis is true or false, $\Pr(\mathcal{D})$? These first two questions, then, capture how consistent the data are with our hypothesis and how specific the data are to our hypothesis. As shown in the equation above the second question can usefully be reposed as one about all the different ways (alternative Hypotheses, $H'$) that could give rise to the data. 
 
-Note, that contrary to some claims, the denominator does not require a listing of all possible hypotheses, just an exhaustive collection of hypotheses. For example we might have the notion of the probability that the accused's fingerprints would be on the door if she were or were guilty without having to decompose the "not guilty" into a set of hypotheses regarding who else might be guilty.
+Note, that contrary to some claims, the denominator does not require a listing of all possible hypotheses, just an exhaustive collection of hypotheses. For example we might have the notion of the probability that the accused's fingerprints would be on the door if she were or were guilty without having to decompose the "not guilty" into a set of hypotheses regarding who else might be guilty. More subtly it's worth noting that *while the hypotheses that enter the formula do have to be mutually exclusive*, that does not prevent you from drawing inferences  about hypotheses that are not mutually exclusive. For instance you might for posteriors over which of 100 people is guilty, but then use the posterior to ask what is the probability that a man is guilty, or that an old person is guilty. The fact that "man" and "old" are not mutually exclusive in no way means you cannot try to learn about these hypotheses.      
 
 Our posterior belief is further conditioned by the strength of our prior level of confidence in the hypothesis, $\Pr(H)$. The greater the prior likelihood that our hypothesis is true, the greater the chance that new data consistent with the hypothesis has *in fact* been generated by a state of the world implied by the hypothesis.
 
-### The Dirichlet family and Bayes' Rule for Continuous Parameters
+###  Bayes' Rule for Continuous Parameters and The Dirichlet family 
 
 This basic formula extends in a simple way to collections of continuous variables. For example, say we are interested in the value of some parameter vector $\theta$ (as a vector, $\theta$ can contain many quantities we are uncertain about), we can calculate this, given a prior probability distribution over possible values of $\theta$, $p$, and given data $D$ as:
 
@@ -112,7 +115,7 @@ Bayes rule requires the ability to express a prior distribution but it does not 
 
 In practice however when we are dealing with continuous parameters, it  can be useful to make use of "off the shelf" distributions. 
 
-In the context of the framework developed in this book, we will often be interested in forming beliefs about the share of units that are of a particular type. For this type of question we will make quite heavy use of "Dirichlet" distributions: a family of distributions that capture beliefs about shares. 
+For the framework developed in this book, we will often be interested in forming beliefs about the *share* of units that are of a particular type. For this type of question we will make quite heavy use of "Dirichlet" distributions: a family of distributions that capture beliefs about shares. 
 
 Consider, for example, the share of people in a population that voted; this is a quantity between 0 and 1. Two people might both believe that the turnout was around 50\% but may differ in how certain they are about this claim. One might claim to have no information and to believe that any turnout rate between 0 and 100% is equally likely, giving an expected turnout of 50%; another might be completely confident that the number is 50% and entertain no other possibilities.
 
