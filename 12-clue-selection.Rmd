@@ -71,7 +71,7 @@ We first spell out how this works using a hypothetical example and then explore 
 
 Consider a model of government survival in office in which retaining office depends on not being perceived as corrupt by the public, graphed in Figure \@ref(fig:running). We take two conditions as being exogenous in this model. First, a country may or may not have a free press ($X$). Second, the country's government may or may not be sensitive to public opinion ($S$).^[Government sensitivity here can be thought of as government sophistication (does it take the actions of others into account when making decisions?) or as a matter of preferences (does it have a dominant strategy to engage in corruption?).] In terms of causal relations, we then allow that the government's decision about whether to engage in corruption ($C=1$) may depend on whether the government is sensitive to public opinion and whether there is a free press (that might reveal that corruption). Moreover, we allow that whether the press will report on the corruption ($R=1$) may depend on whether there is government corruption and whether the press is free. Finally, whether the government will be removed from office ($Y=1$) may depend on whether it has acted corruptly and whether this gets reported in the press. 
 
-```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.", fig.align="center", warning = FALSE}
+```{r running, echo = FALSE, fig.width = 11, fig.height = 9, fig.align="center", out.width = "70%", fig.cap = "The figure shows a simple causal model. $S$ and $X$ are stochastic, $C$ and $R$ have only two possible nodal types each, $Y=1$ if and only if $C$ and $R$ are both 1.", fig.align="center", warning = FALSE}
 
 
 x = c(0,0, 1, 1, 2)
@@ -93,7 +93,7 @@ hj_dag(x =  x,
 
 To simplify the illustration we work with a highly restricted version of this model. At node $C$, we allow only two types: either corruption is always present ($\theta^C_{1111}$) or  corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$) ($\theta^C_{1110}$). At $R$, we allow only for $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption. Finally, at $Y$, we restrict to just one nodal type, $\theta^Y_{0001}$: the government will remain in office unless there is both corruption ($C=1$) and reporting on corruption ($R=1$).
 
-To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether or not corruption is always present; but if corruption is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it can only be because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press --- the only mechanism that can generate reporting on corruption --- is present. In turn, the presence of a free press can only matter for government survival if governments are *not* sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.
+To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether or not corruption is always present; but if corruption is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it can only be because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press---the only mechanism that can generate reporting on corruption---is present. In turn, the presence of a free press can only matter for government survival if governments are *not* sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.
 
 <!-- This model is formally defined in `CausalQueries` as follows: -->
 
@@ -116,25 +116,56 @@ plot(model)
 Suppose now that our query is whether $X$ has a positive effect on $Y$. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that $Y=0$. 
 
 ```{r cinfers, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
-possible_inferences <-  
-  
+if(do_diagnosis)
   conditional_inferences(model, 
                          query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                         given = "Y==0")
+                         given = "Y==0") %>%
+  write_rds("saved/ch12_condinf1.rds")
+
 
 ```
 
-Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $NA$ under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first 5 rows we are collecting data on all nodes. In the next three rows, we have sought data on all nodes except $S$.
+Application of the function `conditional_inferences`  produces a matrix with the results. We reproduce these as Table \@ref(tab:showstrats5xx). The first five columns of Table \@ref(tab:showstrats5xx) define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed $Y=0$. Note that since we can already infer that $R=0$ we omit strategies that seek data on $R$.  A "0" or "1" represents the observed value for a node that we have chosen to observe while "?"  indicates that a node is not observed under the given strategy. Thus, for instance, in the first 5 rows we are collecting data on all nodes. In the next three rows, we have sought data on all nodes except $S$.
 
-In the sixth column, we see the inference we would make from each data-realization: the posterior probability that $X$ has a positive effect on $Y$, given that $Y=0$. The final column indicates the probability of each data-realization, given the chosen strategy. (Note that, in calculating these probabilities, we are *not* conditioning on the prior observation, $Y=0$). 
+We also indicate the probability of each realization given the srtategy, the inference we would make from each data-realization---that is, the posterior probability that $X$ has a positive effect on $Y$, given that $Y=0$---and the posterior variance. 
 
-<!-- FLAG: AJ: Let's add posterior variance to Table \@ref(tab:showstrats5xx) -->
+The figures show   all combinations of possible realized values for all available clue strategies given that we have already observed $Y=0$. A "0" or "1" represents the observed value for a node that we have chosen to observe while $?$ under a node indicates that that node is not observed under the given strategy. 
 
 
 ```{r showstrats5xx, echo = FALSE, warning = FALSE}
 # colnames(possible_inferences)[1:2] <- c("Prior var", "Var given W")
 
+possible_inferences <- 
+  read_rds("saved/ch12_condinf1.rds") %>% # gather("node", "var", -posterior, -prob) %>% 
+  mutate_at(c("S", "X", "C", "R"), function(x) ifelse(is.na(x), "?", x)) %>%
+  mutate(
+    strategy = paste0(ifelse(S!="?", "S", ""),
+                      ifelse(X!="?", "X", ""),
+                      ifelse(C!="?", "C", "")),
+    strategy = ifelse(strategy == "", "Prior", strategy)) %>%
+  filter(R != "?") %>%
+  mutate(variance = posterior*(1-posterior)) %>%
+  select(strategy, S, X, C, R, Y, prob, posterior, variance) %>%
+  group_by(strategy) %>% mutate(prob = prob/sum(prob))
+
+
 kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns, with observations on some or all nodes.", row.names = FALSE, digits = 3)
+```
+
+Figures \@ref(fig:showstrats5xxa)  and \@ref(fig:showstrats5xxb) show the same information in graphs.
+
+```{r showstrats5xxa, echo = FALSE, warning = FALSE, fig.cap = "The probability of different data patterns under different data strategies and posterior beliefs in each case.", fig.width = 6, fig.height = 4}
+
+possible_inferences %>% 
+  ggplot(aes(C, S, color = posterior, size = prob)) + facet_grid(~X, labeller = label_both) + geom_point() + theme_bw()
+
+```
+
+```{r showstrats5xxb, echo = FALSE, warning = FALSE, fig.cap = "The probability of different data patterns under different data strategies and posterior variance in each case.", fig.width = 6, fig.height = 4}
+
+possible_inferences %>% 
+  ggplot(aes(C, S, color = variance, size = prob)) + facet_grid(~X, labeller = label_both) + geom_point() + theme_bw()
+  
 ```
 
 Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Thus, given the probability of each data-realization conditional on a given clue strategy, it is easy to assess the *expected* posterior variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of $Y$, in Table \@ref(tab:scxrylearning). 
@@ -143,6 +174,8 @@ Each inference, under each data-realization, also has an associated posterior va
 ```{r ch11ExpectedLearning, warning = FALSE, include = FALSE}
 
 strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
+
+strats <- list("X", "S", "C", "R", c("X", "S"), c("X", "C"),  c("C", "S"),  c("X", "C", "S"))
 
 learning <- sapply(strats,  function(strategy) {
 
@@ -185,7 +218,7 @@ Imagine that we have already observed $X$'s value. If $X=1$, then (given $Y=0$),
 
 Why, we might still ask, are there possible gains to observing $S$ even if we're going to observe $X$? $S$ is informative because it tells us something about whether $X$ can affect $Y$ by affecting $R$. The potential gains from observing $S$ with $X$ arise from the possibility that we may see $X=0$ (since $X=1$ woudl decide the matter by itself). If $X=0$, then we still need to know whether $Y$ *would* be 1 if we changed $X$ to 1. As discussed above, *that* depends on whether $C$ would be $1$ if $X$ were set to 1, and (as, again, explained above) $S$ is informative on that matter.
  
-* We see, further, in the table --- and it follows from the above logic --- that we cannot improve on an $X, S$ strategy by gathering more data. Thus, if the search for information is costly, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
+* We see, further, in the table---and it follows from the above logic---that we cannot improve on an $X, S$ strategy by gathering more data. Thus, if the search for information is costly, looking only for $X$ and $S$ dominates all 3- and 4-clue strategies.
 
 * Clues can be more informative jointly than separately, and the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing $C$ by itself is slightly *more* informative than observing $S$ by itself. However, if we are planning to observe $X$, then the gains flip, and it is only $S$ that offers additional useful information. As we have discussed, observing $X$ makes observing $C$ uninformative while $S$ remains informative as a moderator of $X$'s effect.
 
@@ -214,12 +247,14 @@ model <-
 
 
 ```{r cinfer2, echo = TRUE, message = FALSE, warning = FALSE, include = FALSE}
-possible_inferences <-  
-  
+
+if(do_diagnosis)
   conditional_inferences(model, 
                          query = list(COE = "(Y[X=1] > Y[X=0])"), 
-                         given = "Y==0")
+                         given = "Y==0") %>%
+  write_rds("saved/ch12_cond_inf2.rds")
 
+possible_inferences <- read_rds("saved/ch12_cond_inf2.rds")
 ```
 
 
@@ -227,14 +262,21 @@ possible_inferences <-
 
 strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
 
-learning <- sapply(strats,  function(strategy) {
+strats <- list("X", "S", "C", "R", c("X", "S"), c("X", "C"),  c("C", "S"),  c("X", "C", "S"))
+
+if(do_diagnosis)
+  
+  sapply(strats,  function(strategy) {
 
   expected_learning(model, 
                     query = list(COE = "(Y[X=1] > Y[X=0])"), 
                     strategy = strategy, 
                     given = "Y==0", 
                     parameters = NULL)
-  })
+  }) %>%
+  write_rds("saved/ch12_learning2.rds")
+
+learning <- read_rds("saved/ch12_learning2.rds")
 ```
 
 
@@ -292,7 +334,6 @@ possible_inferences <-
 
 ```{r ch11ExpectedLearning3, warning = FALSE, include = FALSE}
 
-strats <- list("X", "S", "C", "R", c("X", "R"), c("X", "S"), c("X", "C"), c("C", "R"), c("C", "S"), c("S", "R"), c("X", "C", "S"), c("X", "C", "R"), c("X", "S", "R"), c("C", "S", "R"), c("X", "C", "S", "R"))
 
 learning <- sapply(strats,  function(strategy) {
 
@@ -315,7 +356,7 @@ dfl <- t(learning) %>% data.frame() %>%
 kable(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), , caption = "Expected posterior variance from different clue selection strategies. (Stonger priors on S=1)")
 ```
 
-We see the results of this new set of diagnoses, with informative priors on $S$'s nodal types, in Table \@ref(tab:scxrylearning3). Comparing with Table \@ref(tab:scxrylearning), a number of features stand out. First is the much lower *prior* variance under the new model: having a strong prior belief about $S$'s value gives us stronger prior beliefs about whether $X$ could have caused $Y$ since such an effect *depends* on $S$'s value. A second striking difference is that searching for $S$ is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for $S$. We *could* be surprised, but we should not *expect* to be. In the original model, in contrast, we were maximally uncertain about $S$'s value --- believing it had a 0.5 chance of being 1 --- and so there was much more to be gained by looking. 
+We see the results of this new set of diagnoses, with informative priors on $S$'s nodal types, in Table \@ref(tab:scxrylearning3). Comparing with Table \@ref(tab:scxrylearning), a number of features stand out. First is the much lower *prior* variance under the new model: having a strong prior belief about $S$'s value gives us stronger prior beliefs about whether $X$ could have caused $Y$ since such an effect *depends* on $S$'s value. A second striking difference is that searching for $S$ is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for $S$. We *could* be surprised, but we should not *expect* to be. In the original model, in contrast, we were maximally uncertain about $S$'s value---believing it had a 0.5 chance of being 1---and so there was much more to be gained by looking. 
 
 While not shown here, we get essentially the same result if we flip our priors and put much greater weight on $S=0$, rather than on $S=1$. 
 
@@ -328,15 +369,18 @@ We start by specifying the democratization model, with negative effects ruled ou
 
 ```{r model2, echo = FALSE, message = FALSE}
 
-pimd <- make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
+make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
   
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
-           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))   #Exclude a set of negative-effect and positive-effect nodal types.
+           "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
+write_rds("saved/ch12_pimd.rds")
+
+pimd <- read_rds("saved/ch12_pimd.rds")
 
 ```
 
-Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables --- mobilization or international pressure --- we should collect data on: we could observe nothing further; observe $P$ only; observe $M$ only; or observe both $P$ and $M$. In Table \@ref(tab:possibleoutcomespimdi1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditioning on $I=D=1$.)
+Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables---mobilization or international pressure---we should collect data on: we could observe nothing further; observe $P$ only; observe $M$ only; or observe both $P$ and $M$. In Table \@ref(tab:possibleoutcomespimdi1), we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditioning on $I=D=1$.)
 
 ```{r possibleoutcomespimdi1, echo = FALSE}
 
@@ -382,7 +426,7 @@ We turn next to considering those cases with low inequality that democratized, a
 inferences2_pimd <-
   conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
 
-kable(inferences2_pimd, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3)
+kable(inferences2_pimd, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3, row.names = FALSE)
 
 ```
 
@@ -573,13 +617,17 @@ kable(inferences_priors_effect, caption = "Table shows possible data patterns fo
 ```
 
 ```{r pimdlearnpriorseffect, echo = FALSE, message = FALSE, warning = FALSE}
-ELpimd_priors_effect <-
+if(do_diagnosis)
   rbind(
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = NULL,       given = "I==0 & D==1"),
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "P",        given = "I==0 & D==1"),
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "M",        given = "I==0 & D==1"),
-    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = c("P","M"), given = "I==0 & D==1"))
+    expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = c("P","M"), given = "I==0 & D==1")) %>%
+write_rds("saved/ch12_ELpimd_priors_effect")
 
+# write_rds(ELpimd_priors_effect, "saved/ch12_ELpimd_priors_effect")
+
+ELpimd_priors_effect <- read_rds("saved/ch12_ELpimd_priors_effect")
 x_strategy <- c("None", "P", "M", "P and M")
 
 kable(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4, row.names = FALSE)
@@ -608,7 +656,7 @@ kable(inferences_pimdpath, caption = "Table shows possible data patterns for P a
 ```
 
 ```{r pimdlearnpath, echo = FALSE, message = FALSE, warning = FALSE}
-ELpimd_path <-
+if(do_diagnosis)
   rbind(
     expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
                      (D[M=M[I=0]] > D[M=M[I=1]]) & 
@@ -621,7 +669,11 @@ ELpimd_path <-
                      (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = "M",        given = "I==0 & D==1"),
     expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
                      (D[M=M[I=0]] > D[M=M[I=1]]) & 
-                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = c("P","M"), given = "I==0 & D==1"))
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = c("P","M"), given = "I==0 & D==1")) %>% write_rds("saved/ch12_ELpimd_path.rds")
+
+# write_rds(ELpimd_path, "saved/ch12_ELpimd_path.rds")
+
+ELpimd_path <- read_rds("saved/ch12_ELpimd_path.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 

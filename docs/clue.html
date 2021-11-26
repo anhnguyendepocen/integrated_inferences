@@ -135,7 +135,7 @@
 <ul>
 <li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
 <li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
-<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#the-dirichlet-family-and-bayes-rule-for-continuous-parameters"><i class="fa fa-check"></i><b>5.1.3</b> The Dirichlet family and Bayes’ Rule for Continuous Parameters</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-continuous-parameters-and-the-dirichlet-family"><i class="fa fa-check"></i><b>5.1.3</b> Bayes’ Rule for Continuous Parameters and The Dirichlet family</a></li>
 <li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
 <li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
 </ul></li>
@@ -198,7 +198,7 @@
 <li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
 <ul>
 <li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
-<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#from-sample-queries-to-general-processes"><i class="fa fa-check"></i><b>9.2</b> From sample queries to general processes</a>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#general-queries"><i class="fa fa-check"></i><b>9.2</b> General queries</a>
 <ul>
 <li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
 <li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
@@ -213,8 +213,6 @@
 <li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
 <li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
 <li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
-<li class="chapter" data-level="9.4.7" data-path="mixing.html"><a href="mixing.html#parameteric-models"><i class="fa fa-check"></i><b>9.4.7</b> Parameteric models</a></li>
-<li class="chapter" data-level="9.4.8" data-path="mixing.html"><a href="mixing.html#prior-databeliefs-channel-the-learning-from-new-data"><i class="fa fa-check"></i><b>9.4.8</b> Prior data/beliefs “channel” the learning from new data</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Integrated Inferences Application: Inequality and Democracy Revisited</a>
@@ -372,430 +370,291 @@
 <p>We first spell out how this works using a hypothetical example and then explore further using our democratization model.</p>
 <p>Consider a model of government survival in office in which retaining office depends on not being perceived as corrupt by the public, graphed in Figure <a href="clue.html#fig:running">12.1</a>. We take two conditions as being exogenous in this model. First, a country may or may not have a free press (<span class="math inline">\(X\)</span>). Second, the country’s government may or may not be sensitive to public opinion (<span class="math inline">\(S\)</span>).<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> In terms of causal relations, we then allow that the government’s decision about whether to engage in corruption (<span class="math inline">\(C=1\)</span>) may depend on whether the government is sensitive to public opinion and whether there is a free press (that might reveal that corruption). Moreover, we allow that whether the press will report on the corruption (<span class="math inline">\(R=1\)</span>) may depend on whether there is government corruption and whether the press is free. Finally, whether the government will be removed from office (<span class="math inline">\(Y=1\)</span>) may depend on whether it has acted corruptly and whether this gets reported in the press.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:running"></span>
-<img src="ii_files/figure-html/running-1.png" alt="The figure shows a simple causal model. $S$ and $X$ are stochastic, other nodes fully determined by their parents, as shown in bottom right panel." width="70%" />
+<img src="ii_files/figure-html/running-1.png" alt="The figure shows a simple causal model. $S$ and $X$ are stochastic, $C$ and $R$ have only two possible nodal types each, $Y=1$ if and only if $C$ and $R$ are both 1." width="70%" />
 <p class="caption">
-Figure 12.1: The figure shows a simple causal model. <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span> are stochastic, other nodes fully determined by their parents, as shown in bottom right panel.
+Figure 12.1: The figure shows a simple causal model. <span class="math inline">\(S\)</span> and <span class="math inline">\(X\)</span> are stochastic, <span class="math inline">\(C\)</span> and <span class="math inline">\(R\)</span> have only two possible nodal types each, <span class="math inline">\(Y=1\)</span> if and only if <span class="math inline">\(C\)</span> and <span class="math inline">\(R\)</span> are both 1.
 </p>
 </div>
 <p>To simplify the illustration we work with a highly restricted version of this model. At node <span class="math inline">\(C\)</span>, we allow only two types: either corruption is always present (<span class="math inline">\(\theta^C_{1111}\)</span>) or corruption is always present except when there is both a free press (<span class="math inline">\(X=1\)</span>) and sensitivity to public opinion (<span class="math inline">\(S=1\)</span>) (<span class="math inline">\(\theta^C_{1110}\)</span>). At <span class="math inline">\(R\)</span>, we allow only for <span class="math inline">\(\theta^R_{0001}\)</span> and <span class="math inline">\(\theta^R_{0000}\)</span>: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption. Finally, at <span class="math inline">\(Y\)</span>, we restrict to just one nodal type, <span class="math inline">\(\theta^Y_{0001}\)</span>: the government will remain in office unless there is both corruption (<span class="math inline">\(C=1\)</span>) and reporting on corruption (<span class="math inline">\(R=1\)</span>).</p>
-<p>To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether or not corruption is always present; but if corruption is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it can only be because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press — the only mechanism that can generate reporting on corruption — is present. In turn, the presence of a free press can only matter for government survival if governments are <em>not</em> sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.</p>
+<p>To summarize the intuition, then, governments will fall only if there is both corruption and reporting on corruption. We are uncertain whether or not corruption is always present; but if corruption is ever absent, it can only be because there exists both a free press and a government that cares about public opinion. We are also uncertain whether or not media reporting on corruption is always absent; but if it is ever present, it can only be because there is both corruption and a free press. One implication is that governments that are sensitive to public opinion will never fall because they will always eschew corruption when a free press—the only mechanism that can generate reporting on corruption—is present. In turn, the presence of a free press can only matter for government survival if governments are <em>not</em> sensitive and thus do not strategically adjust their behavior in response to the risk of reporting.</p>
 <!-- This model is formally defined in `CausalQueries` as follows: -->
 <p>Suppose now that our query is whether <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>. Using this model we can ask how likely different data realizations are and what we would infer about our query from each possible data realization, given existing data. We illustrate for a situation in which we already know that <span class="math inline">\(Y=0\)</span>.</p>
-<p>Application of the function <code>conditional_inferences</code> produces a matrix with the results. We reproduce these as Table <a href="clue.html#tab:showstrats5xx">12.1</a>. The first five columns of Table <a href="clue.html#tab:showstrats5xx">12.1</a> define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed <span class="math inline">\(Y=0\)</span>. A “0” or “1” represents the observed value for a node that we have chosen to observe while <span class="math inline">\(NA\)</span> under a node indicates that that node is not observed under the given strategy. Thus, for instance, in the first 5 rows we are collecting data on all nodes. In the next three rows, we have sought data on all nodes except <span class="math inline">\(S\)</span>.</p>
-<p>In the sixth column, we see the inference we would make from each data-realization: the posterior probability that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, given that <span class="math inline">\(Y=0\)</span>. The final column indicates the probability of each data-realization, given the chosen strategy. (Note that, in calculating these probabilities, we are <em>not</em> conditioning on the prior observation, <span class="math inline">\(Y=0\)</span>).</p>
-<!-- FLAG: AJ: Let's add posterior variance to Table \@ref(tab:showstrats5xx) -->
+<p>Application of the function <code>conditional_inferences</code> produces a matrix with the results. We reproduce these as Table <a href="clue.html#tab:showstrats5xx">12.1</a>. The first five columns of Table <a href="clue.html#tab:showstrats5xx">12.1</a> define the data realizations. The matrix includes all combinations of possible realized values for all available clue strategies given that we have already observed <span class="math inline">\(Y=0\)</span>. Note that since we can already infer that <span class="math inline">\(R=0\)</span> we omit strategies that seek data on <span class="math inline">\(R\)</span>. A “0” or “1” represents the observed value for a node that we have chosen to observe while “?” indicates that a node is not observed under the given strategy. Thus, for instance, in the first 5 rows we are collecting data on all nodes. In the next three rows, we have sought data on all nodes except <span class="math inline">\(S\)</span>.</p>
+<p>We also indicate the probability of each realization given the srtategy, the inference we would make from each data-realization—that is, the posterior probability that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, given that <span class="math inline">\(Y=0\)</span>—and the posterior variance.</p>
+<p>The figures show all combinations of possible realized values for all available clue strategies given that we have already observed <span class="math inline">\(Y=0\)</span>. A “0” or “1” represents the observed value for a node that we have chosen to observe while <span class="math inline">\(?\)</span> under a node indicates that that node is not observed under the given strategy.</p>
 <table>
 <caption><span id="tab:showstrats5xx">Table 12.1: </span>Inferences given different data patterns, with observations on some or all nodes.</caption>
 <thead>
 <tr class="header">
-<th align="right">S</th>
-<th align="right">X</th>
-<th align="right">C</th>
-<th align="right">R</th>
+<th align="left">strategy</th>
+<th align="left">S</th>
+<th align="left">X</th>
+<th align="left">C</th>
+<th align="left">R</th>
 <th align="right">Y</th>
-<th align="right">posterior</th>
 <th align="right">prob</th>
+<th align="right">posterior</th>
+<th align="right">variance</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="left">SXC</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.154</td>
 <td align="right">0.000</td>
-<td align="right">0.125</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
+<td align="left">SXC</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.308</td>
 <td align="right">0.500</td>
 <td align="right">0.250</td>
 </tr>
 <tr class="odd">
-<td align="right">1</td>
+<td align="left">SXC</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.308</td>
 <td align="right">0.250</td>
-<td align="right">0.250</td>
-</tr>
-<tr class="even">
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.062</td>
-</tr>
-<tr class="even">
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.500</td>
-</tr>
-<tr class="even">
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.188</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="even">
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.333</td>
-<td align="right">0.375</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.200</td>
-<td align="right">0.312</td>
-</tr>
-<tr class="even">
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.250</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.250</td>
-</tr>
-<tr class="even">
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
 <td align="right">0.188</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="left">SXC</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
+<td align="right">0.154</td>
 <td align="right">0.000</td>
-<td align="right">0.125</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="odd">
+<td align="left">SXC</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.250</td>
+<td align="right">0.077</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
-<td align="right">1</td>
+<td align="left">XC</td>
+<td align="left">?</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.250</td>
+<td align="right">0.154</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="odd">
+<td align="left">XC</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.062</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="even">
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.273</td>
-<td align="right">0.688</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
+<td align="right">0.615</td>
 <td align="right">0.375</td>
-<td align="right">0.500</td>
+<td align="right">0.234</td>
 </tr>
 <tr class="even">
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.312</td>
-</tr>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.333</td>
-<td align="right">0.375</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.143</td>
-<td align="right">0.438</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="even">
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.500</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.188</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.333</td>
-<td align="right">0.375</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.200</td>
-<td align="right">0.312</td>
-</tr>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.500</td>
-<td align="right">0.250</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.250</td>
-<td align="right">0.250</td>
-</tr>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.125</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.000</td>
-<td align="right">0.188</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
+<td align="left">XC</td>
+<td align="left">?</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
 <td align="right">0.231</td>
-<td align="right">0.812</td>
-</tr>
-<tr class="even">
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right">0</td>
 <td align="right">0.000</td>
-<td align="right">0.125</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="odd">
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right"></td>
+<td align="left">SC</td>
+<td align="left">1</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">0.273</td>
-<td align="right">0.688</td>
-</tr>
-<tr class="even">
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
-<td align="right">0.375</td>
-<td align="right">0.500</td>
-</tr>
-<tr class="odd">
-<td align="right"></td>
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
+<td align="right">0.154</td>
 <td align="right">0.000</td>
-<td align="right">0.312</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
+<td align="left">SC</td>
+<td align="left">0</td>
+<td align="left">?</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right">0</td>
+<td align="right">0.462</td>
 <td align="right">0.333</td>
-<td align="right">0.375</td>
+<td align="right">0.222</td>
 </tr>
 <tr class="odd">
-<td align="right">1</td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
+<td align="left">SC</td>
+<td align="left">1</td>
+<td align="left">?</td>
+<td align="left">1</td>
+<td align="left">0</td>
 <td align="right">0</td>
-<td align="right">0.143</td>
-<td align="right">0.438</td>
+<td align="right">0.385</td>
+<td align="right">0.200</td>
+<td align="right">0.160</td>
 </tr>
 <tr class="even">
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
-<td align="right"></td>
+<td align="left">SX</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.308</td>
+<td align="right">0.500</td>
+<td align="right">0.250</td>
+</tr>
+<tr class="odd">
+<td align="left">SX</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.308</td>
+<td align="right">0.250</td>
+<td align="right">0.188</td>
+</tr>
+<tr class="even">
+<td align="left">SX</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.154</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">SX</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">?</td>
+<td align="left">0</td>
 <td align="right">0</td>
 <td align="right">0.231</td>
-<td align="right">0.812</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">C</td>
+<td align="left">?</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.154</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">C</td>
+<td align="left">?</td>
+<td align="left">?</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.846</td>
+<td align="right">0.273</td>
+<td align="right">0.198</td>
+</tr>
+<tr class="even">
+<td align="left">X</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.615</td>
+<td align="right">0.375</td>
+<td align="right">0.234</td>
+</tr>
+<tr class="odd">
+<td align="left">X</td>
+<td align="left">?</td>
+<td align="left">1</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.385</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">S</td>
+<td align="left">0</td>
+<td align="left">?</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.462</td>
+<td align="right">0.333</td>
+<td align="right">0.222</td>
+</tr>
+<tr class="odd">
+<td align="left">S</td>
+<td align="left">1</td>
+<td align="left">?</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">0.538</td>
+<td align="right">0.143</td>
+<td align="right">0.122</td>
+</tr>
+<tr class="even">
+<td align="left">Prior</td>
+<td align="left">?</td>
+<td align="left">?</td>
+<td align="left">?</td>
+<td align="left">0</td>
+<td align="right">0</td>
+<td align="right">1.000</td>
+<td align="right">0.231</td>
+<td align="right">0.178</td>
 </tr>
 </tbody>
 </table>
+<p>Figures <a href="clue.html#fig:showstrats5xxa">12.2</a> and <a href="clue.html#fig:showstrats5xxb">12.3</a> show the same information in graphs.</p>
+<div class="figure"><span style="display:block;" id="fig:showstrats5xxa"></span>
+<img src="ii_files/figure-html/showstrats5xxa-1.png" alt="The probability of different data patterns under different data strategies and posterior beliefs in each case." width="576" />
+<p class="caption">
+Figure 12.2: The probability of different data patterns under different data strategies and posterior beliefs in each case.
+</p>
+</div>
+<div class="figure"><span style="display:block;" id="fig:showstrats5xxb"></span>
+<img src="ii_files/figure-html/showstrats5xxb-1.png" alt="The probability of different data patterns under different data strategies and posterior variance in each case." width="576" />
+<p class="caption">
+Figure 12.3: The probability of different data patterns under different data strategies and posterior variance in each case.
+</p>
+</div>
 <p>Each inference, under each data-realization, also has an associated posterior variance, or level of uncertainty. Thus, given the probability of each data-realization conditional on a given clue strategy, it is easy to assess the <em>expected</em> posterior variance from a given clue strategy. We present these expected posterior variances for all possible clue strategies, given the prior observation of <span class="math inline">\(Y\)</span>, in Table <a href="clue.html#tab:scxrylearning">12.2</a>.</p>
 <table>
 <caption><span id="tab:scxrylearning">Table 12.2: </span>Expected learning from different clue selection strategies. Each strategy is a group of nodes on which within case data is gathered.</caption>
@@ -838,32 +697,18 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.178</td>
 </tr>
 <tr class="odd">
-<td align="left">X, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.144</td>
-</tr>
-<tr class="even">
 <td align="left">X, S</td>
 <td align="left">Y==0</td>
 <td align="right">0.231</td>
 <td align="right">0.178</td>
 <td align="right">0.135</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">X, C</td>
 <td align="left">Y==0</td>
 <td align="right">0.231</td>
 <td align="right">0.178</td>
 <td align="right">0.144</td>
-</tr>
-<tr class="even">
-<td align="left">C, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.168</td>
 </tr>
 <tr class="odd">
 <td align="left">C, S</td>
@@ -873,42 +718,7 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.164</td>
 </tr>
 <tr class="even">
-<td align="left">S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.168</td>
-</tr>
-<tr class="odd">
 <td align="left">X, C, S</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.135</td>
-</tr>
-<tr class="even">
-<td align="left">X, C, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.144</td>
-</tr>
-<tr class="odd">
-<td align="left">X, S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.135</td>
-</tr>
-<tr class="even">
-<td align="left">C, S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.231</td>
-<td align="right">0.178</td>
-<td align="right">0.164</td>
-</tr>
-<tr class="odd">
-<td align="left">X, C, S, R</td>
 <td align="left">Y==0</td>
 <td align="right">0.231</td>
 <td align="right">0.178</td>
@@ -931,7 +741,7 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <p>Imagine that we have already observed <span class="math inline">\(X\)</span>’s value. If <span class="math inline">\(X=1\)</span>, then (given <span class="math inline">\(Y=0\)</span>), a positive effect is immediately ruled out with certainty, rendering any further observations of no value. If we observe <span class="math inline">\(X=0\)</span>, however, then (under this causal model) we know for certain that <span class="math inline">\(C=1\)</span>, simply because <span class="math inline">\(C=1\)</span> for both of <span class="math inline">\(C\)</span>’s permitted nodal types when <span class="math inline">\(X=0\)</span> (there is always corruption when there is no free press). Thus, there is nothing to be gained by observing <span class="math inline">\(C\)</span>. (We have already seen why there is nothing to be gained from observing <span class="math inline">\(R\)</span>.)</p>
 <p>Why, we might still ask, are there possible gains to observing <span class="math inline">\(S\)</span> even if we’re going to observe <span class="math inline">\(X\)</span>? <span class="math inline">\(S\)</span> is informative because it tells us something about whether <span class="math inline">\(X\)</span> can affect <span class="math inline">\(Y\)</span> by affecting <span class="math inline">\(R\)</span>. The potential gains from observing <span class="math inline">\(S\)</span> with <span class="math inline">\(X\)</span> arise from the possibility that we may see <span class="math inline">\(X=0\)</span> (since <span class="math inline">\(X=1\)</span> woudl decide the matter by itself). If <span class="math inline">\(X=0\)</span>, then we still need to know whether <span class="math inline">\(Y\)</span> <em>would</em> be 1 if we changed <span class="math inline">\(X\)</span> to 1. As discussed above, <em>that</em> depends on whether <span class="math inline">\(C\)</span> would be <span class="math inline">\(1\)</span> if <span class="math inline">\(X\)</span> were set to 1, and (as, again, explained above) <span class="math inline">\(S\)</span> is informative on that matter.</p>
 <ul>
-<li><p>We see, further, in the table — and it follows from the above logic — that we cannot improve on an <span class="math inline">\(X, S\)</span> strategy by gathering more data. Thus, if the search for information is costly, looking only for <span class="math inline">\(X\)</span> and <span class="math inline">\(S\)</span> dominates all 3- and 4-clue strategies.</p></li>
+<li><p>We see, further, in the table—and it follows from the above logic—that we cannot improve on an <span class="math inline">\(X, S\)</span> strategy by gathering more data. Thus, if the search for information is costly, looking only for <span class="math inline">\(X\)</span> and <span class="math inline">\(S\)</span> dominates all 3- and 4-clue strategies.</p></li>
 <li><p>Clues can be more informative jointly than separately, and the expected gains to observing one clue can depend on which other clues we plan to observe. To see this, notice that among the 1-clue strategies, observing <span class="math inline">\(C\)</span> by itself is slightly <em>more</em> informative than observing <span class="math inline">\(S\)</span> by itself. However, if we are planning to observe <span class="math inline">\(X\)</span>, then the gains flip, and it is only <span class="math inline">\(S\)</span> that offers additional useful information. As we have discussed, observing <span class="math inline">\(X\)</span> makes observing <span class="math inline">\(C\)</span> uninformative while <span class="math inline">\(S\)</span> remains informative as a moderator of <span class="math inline">\(X\)</span>’s effect.</p></li>
 </ul>
 <p>We would add that the pattern here forms part of a broader point that we wish to emphasize in this chapter: while process tracing often focuses on examining steps along causal pathways, it will often be the case that we learn more from <em>moderators</em>, like <span class="math inline">\(S\)</span> in this model, than from mediators, like <span class="math inline">\(C\)</span> and <span class="math inline">\(R\)</span>. We return to this point below.</p>
@@ -982,32 +792,18 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.160</td>
 </tr>
 <tr class="odd">
-<td align="left">X, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.133</td>
-</tr>
-<tr class="even">
 <td align="left">X, S</td>
 <td align="left">Y==0</td>
 <td align="right">0.2</td>
 <td align="right">0.16</td>
 <td align="right">0.117</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">X, C</td>
 <td align="left">Y==0</td>
 <td align="right">0.2</td>
 <td align="right">0.16</td>
 <td align="right">0.120</td>
-</tr>
-<tr class="even">
-<td align="left">C, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.143</td>
 </tr>
 <tr class="odd">
 <td align="left">C, S</td>
@@ -1017,42 +813,7 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.140</td>
 </tr>
 <tr class="even">
-<td align="left">S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.145</td>
-</tr>
-<tr class="odd">
 <td align="left">X, C, S</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.113</td>
-</tr>
-<tr class="even">
-<td align="left">X, C, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.120</td>
-</tr>
-<tr class="odd">
-<td align="left">X, S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.117</td>
-</tr>
-<tr class="even">
-<td align="left">C, S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.2</td>
-<td align="right">0.16</td>
-<td align="right">0.140</td>
-</tr>
-<tr class="odd">
-<td align="left">X, C, S, R</td>
 <td align="left">Y==0</td>
 <td align="right">0.2</td>
 <td align="right">0.16</td>
@@ -1110,32 +871,18 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.099</td>
 </tr>
 <tr class="odd">
-<td align="left">X, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.089</td>
-</tr>
-<tr class="even">
 <td align="left">X, S</td>
 <td align="left">Y==0</td>
 <td align="right">0.111</td>
 <td align="right">0.099</td>
 <td align="right">0.083</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">X, C</td>
 <td align="left">Y==0</td>
 <td align="right">0.111</td>
 <td align="right">0.099</td>
 <td align="right">0.079</td>
-</tr>
-<tr class="even">
-<td align="left">C, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.086</td>
 </tr>
 <tr class="odd">
 <td align="left">C, S</td>
@@ -1145,42 +892,7 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.085</td>
 </tr>
 <tr class="even">
-<td align="left">S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.094</td>
-</tr>
-<tr class="odd">
 <td align="left">X, C, S</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.076</td>
-</tr>
-<tr class="even">
-<td align="left">X, C, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.079</td>
-</tr>
-<tr class="odd">
-<td align="left">X, S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.083</td>
-</tr>
-<tr class="even">
-<td align="left">C, S, R</td>
-<td align="left">Y==0</td>
-<td align="right">0.111</td>
-<td align="right">0.099</td>
-<td align="right">0.085</td>
-</tr>
-<tr class="odd">
-<td align="left">X, C, S, R</td>
 <td align="left">Y==0</td>
 <td align="right">0.111</td>
 <td align="right">0.099</td>
@@ -1188,14 +900,14 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </tr>
 </tbody>
 </table>
-<p>We see the results of this new set of diagnoses, with informative priors on <span class="math inline">\(S\)</span>’s nodal types, in Table <a href="clue.html#tab:scxrylearning3">12.4</a>. Comparing with Table <a href="clue.html#tab:scxrylearning">12.2</a>, a number of features stand out. First is the much lower <em>prior</em> variance under the new model: having a strong prior belief about <span class="math inline">\(S\)</span>’s value gives us stronger prior beliefs about whether <span class="math inline">\(X\)</span> could have caused <span class="math inline">\(Y\)</span> since such an effect <em>depends</em> on <span class="math inline">\(S\)</span>’s value. A second striking difference is that searching for <span class="math inline">\(S\)</span> is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for <span class="math inline">\(S\)</span>. We <em>could</em> be surprised, but we should not <em>expect</em> to be. In the original model, in contrast, we were maximally uncertain about <span class="math inline">\(S\)</span>’s value — believing it had a 0.5 chance of being 1 — and so there was much more to be gained by looking.</p>
+<p>We see the results of this new set of diagnoses, with informative priors on <span class="math inline">\(S\)</span>’s nodal types, in Table <a href="clue.html#tab:scxrylearning3">12.4</a>. Comparing with Table <a href="clue.html#tab:scxrylearning">12.2</a>, a number of features stand out. First is the much lower <em>prior</em> variance under the new model: having a strong prior belief about <span class="math inline">\(S\)</span>’s value gives us stronger prior beliefs about whether <span class="math inline">\(X\)</span> could have caused <span class="math inline">\(Y\)</span> since such an effect <em>depends</em> on <span class="math inline">\(S\)</span>’s value. A second striking difference is that searching for <span class="math inline">\(S\)</span> is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for <span class="math inline">\(S\)</span>. We <em>could</em> be surprised, but we should not <em>expect</em> to be. In the original model, in contrast, we were maximally uncertain about <span class="math inline">\(S\)</span>’s value—believing it had a 0.5 chance of being 1—and so there was much more to be gained by looking.</p>
 <p>While not shown here, we get essentially the same result if we flip our priors and put much greater weight on <span class="math inline">\(S=0\)</span>, rather than on <span class="math inline">\(S=1\)</span>.</p>
 </div>
 <div id="clue-selection-for-the-democratization-model" class="section level3" number="12.1.3">
 <h3><span class="header-section-number">12.1.3</span> Clue selection for the democratization model</h3>
 <p>We now apply this approach to the model of democratization that we worked with in Chapters <a href="ptapp.html#ptapp">8</a> and <a href="mixingapp.html#mixingapp">10</a>.</p>
 <p>We start by specifying the democratization model, with negative effects ruled out for <span class="math inline">\(I \rightarrow M\)</span>, <span class="math inline">\(M \rightarrow D\)</span>, and <span class="math inline">\(P \rightarrow D\)</span> and a positive direct effect ruled out for <span class="math inline">\(I \rightarrow D\)</span>.</p>
-<p>Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables — mobilization or international pressure — we should collect data on: we could observe nothing further; observe <span class="math inline">\(P\)</span> only; observe <span class="math inline">\(M\)</span> only; or observe both <span class="math inline">\(P\)</span> and <span class="math inline">\(M\)</span>. In Table <a href="clue.html#tab:possibleoutcomespimdi1">12.5</a>, we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditioning on <span class="math inline">\(I=D=1\)</span>.)</p>
+<p>Now, let us assume that we have already observed high inequality and the outcome of democratization in a case, and we want to know whether high inequality caused democratization. The decision we confront is what combination of the other variables—mobilization or international pressure—we should collect data on: we could observe nothing further; observe <span class="math inline">\(P\)</span> only; observe <span class="math inline">\(M\)</span> only; or observe both <span class="math inline">\(P\)</span> and <span class="math inline">\(M\)</span>. In Table <a href="clue.html#tab:possibleoutcomespimdi1">12.5</a>, we show all possible data realizations from all possible clue-selection strategies, the inferences we would draw from each realization, and the probability of that realization (not conditioning on <span class="math inline">\(I=D=1\)</span>.)</p>
 <table>
 <caption><span id="tab:possibleoutcomespimdi1">Table 12.5: </span>Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a positive effect on <span class="math inline">\(D\)</span>) given that data realization.</caption>
 <thead>
@@ -1301,28 +1013,28 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="left">None</td>
 <td align="left">I==1 &amp; D==1</td>
 <td align="right">0.128</td>
-<td align="right">0.112</td>
-<td align="right">0.112</td>
+<td align="right">0.111</td>
+<td align="right">0.111</td>
 </tr>
 <tr class="even">
 <td align="left">P</td>
 <td align="left">I==1 &amp; D==1</td>
 <td align="right">0.128</td>
-<td align="right">0.112</td>
+<td align="right">0.111</td>
 <td align="right">0.107</td>
 </tr>
 <tr class="odd">
 <td align="left">M</td>
 <td align="left">I==1 &amp; D==1</td>
 <td align="right">0.128</td>
-<td align="right">0.112</td>
+<td align="right">0.111</td>
 <td align="right">0.109</td>
 </tr>
 <tr class="even">
 <td align="left">P and M</td>
 <td align="left">I==1 &amp; D==1</td>
 <td align="right">0.128</td>
-<td align="right">0.112</td>
+<td align="right">0.111</td>
 <td align="right">0.105</td>
 </tr>
 </tbody>
@@ -1332,7 +1044,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <caption><span id="tab:possibleoutcomespimdi0">Table 12.7: </span>Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does <span class="math inline">\(I\)</span> have a negative effect on <span class="math inline">\(D\)</span>) given that data realization.</caption>
 <thead>
 <tr class="header">
-<th align="left"></th>
 <th align="right">I</th>
 <th align="right">P</th>
 <th align="right">M</th>
@@ -1343,7 +1054,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">I0P0M0D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1352,7 +1062,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.050</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1M0D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -1361,7 +1070,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.117</td>
 </tr>
 <tr class="odd">
-<td align="left">I0P0M1D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">1</td>
@@ -1370,7 +1078,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.058</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1M1D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right">1</td>
@@ -1379,7 +1086,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.079</td>
 </tr>
 <tr class="odd">
-<td align="left">I0M0D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right">0</td>
@@ -1388,7 +1094,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.167</td>
 </tr>
 <tr class="even">
-<td align="left">I0M1D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right">1</td>
@@ -1397,7 +1102,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.138</td>
 </tr>
 <tr class="odd">
-<td align="left">I0P0D1</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right"></td>
@@ -1406,7 +1110,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.108</td>
 </tr>
 <tr class="even">
-<td align="left">I0P1D1</td>
 <td align="right">0</td>
 <td align="right">1</td>
 <td align="right"></td>
@@ -1415,7 +1118,6 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 <td align="right">0.196</td>
 </tr>
 <tr class="odd">
-<td align="left">I0D1</td>
 <td align="right">0</td>
 <td align="right"></td>
 <td align="right"></td>
@@ -1980,12 +1682,12 @@ Figure 12.1: The figure shows a simple causal model. <span class="math inline">\
 </tr>
 </tbody>
 </table>
-<p>We can, of course, also calculate the expected costs of different strategies while allowing different clues to come at different costs. Figure <a href="clue.html#fig:strategies">12.2</a> plots all 2-clue strategies, assuming <span class="math inline">\(Y=0\)</span> has already been observed, based on two criteria: expected variance-reduction for the query, “Did <em>S</em> cause <em>Y</em>?” and expected cost. For this exercise, we set differential clue prices such that <em>X</em> is the most costly clue to collect, followed by <em>C</em>, then <em>S</em>, then <em>Y</em>, then <em>R</em>. We have labeled the strategies that lie along the frontier of optimal strategies, with our choice dependent on how we want to trade off cost against learning. Among the notable points along this frontier, we see that the cheapest strategy among those that minimize variance involves gathering S and then gathering <em>C</em> if and only if we observe <em>S=1</em>. We can also see that the lowest-variance strategy that minimizes costs involves gathering <em>S</em> only and then stopping.</p>
+<p>We can, of course, also calculate the expected costs of different strategies while allowing different clues to come at different costs. Figure <a href="clue.html#fig:strategies">12.4</a> plots all 2-clue strategies, assuming <span class="math inline">\(Y=0\)</span> has already been observed, based on two criteria: expected variance-reduction for the query, “Did <em>S</em> cause <em>Y</em>?” and expected cost. For this exercise, we set differential clue prices such that <em>X</em> is the most costly clue to collect, followed by <em>C</em>, then <em>S</em>, then <em>Y</em>, then <em>R</em>. We have labeled the strategies that lie along the frontier of optimal strategies, with our choice dependent on how we want to trade off cost against learning. Among the notable points along this frontier, we see that the cheapest strategy among those that minimize variance involves gathering S and then gathering <em>C</em> if and only if we observe <em>S=1</em>. We can also see that the lowest-variance strategy that minimizes costs involves gathering <em>S</em> only and then stopping.</p>
 <p>Here we implement the same exercise for the basic democracy model. We illustrate for a situation in which we know there is high inequality and democratization has occurred, and we want to know if high inequality caused the democratization. We will assume here that mobilization is easy to observe (low-cost) but pressure is difficult (high-cost).</p>
 <div class="figure"><span style="display:block;" id="fig:strategies"></span>
 <img src="ii_files/figure-html/strategies-1.png" alt="All two clue strategies" width="672" />
 <p class="caption">
-Figure 12.2: All two clue strategies
+Figure 12.4: All two clue strategies
 </p>
 </div>
 <p>We can see here that four strategies are non-dominated by any alternative. These are, in order of increasing cost:</p>
