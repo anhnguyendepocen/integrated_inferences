@@ -3589,6 +3589,312 @@ Data & mean & sd\\
 \end{tabular}
 \end{table}
 
+\hypertarget{mixingapp}{%
+\chapter{Integrated Inferences Application: Inequality and Democracy Revisited}\label{mixingapp}}
+
+\hypertarget{a-trained-model}{%
+\section{A trained model}\label{a-trained-model}}
+
+Whereas in Chapter \ref{ptapp} we took the model as given and sought to draw inferences individual cases given data on those cases, the model now becomes an object that we both learn from and learn about. In essence we use the data on many cases to update our beliefs about the general model and then use this ``trained'' model to make inferences about cases.
+
+Instead of positing a belief over the nodal types for a given case, \(\theta\), we now need to posit a belief over the \emph{distribution} of nodal types---that is, over \(\lambda\). For instance, whereas in the simple process-tracing model we \emph{specified} the shares of nodal types for \(M\), we now specify a \emph{distribution} over the nodal type shares, using a Dirichlet distribution to ensure that the shares across types are always constrained to add up to 1. We do the same, of course, for all nodes. Because we set a prior distribution over nodal types (rather than fixed proportions), we can now update on these population-level distributions as the model confronts data.
+
+The same applies to beliefs about confounding. Recall that we allow for unobserved confounding by allowing \(\lambda\) to include beliefs about the \emph{joint} distributions of nodal types, and we set priors on these joint distributions as well. In the application below, we focus on potential confounding in the relationship between inequality and mobilization: the possibility that inequality may be more or less likely in places where inequality would induce mobilization. Here we do not express informed prior beliefs about the direction or magnitude of such confounding; we set up the parameter matrix to allow for the possibility of confounding and set a flat prior over its direction and magnitude. We can, in turn, learn about confounding from the data.
+
+We begin with the same basic model as we used in Chapter \ref{ptapp}, with inequality (\(I\)) potentially affecting democratization (\(D\)) both through a direct pathway and through an indirect pathway mediated by mobilization (\(M\)). International pressure (\(P\)) is also a ``parent'' of democratization.
+
+Further, we impose the same set of qualitative restrictions, ruling out a negative effect of inequality on mobilization, a direct positive effect of inequality on democratization, a negative effect of mobilization on democracy, and a negative effect of pressure on democratization. Note that this setup allows for inequality to have a positive (through mobilization) effect on democratization, a negative (direct) effect on democratization, or no effect at all.
+
+Finally, we allow for confounding. The theoretical intuition we want to instantiate in the model is that the level of inequality could be endogenous to inequality's effect on mobilization. In particular, in places where mobilization would pose a mobilizational threat, governments may work harder to reduce inequality. To allow for this possibility, we need to create distinct elements of \(\lambda\) representing the conditional distribution of \(I\)'s nodal types given \(M\)'s: one parameter for \(\theta^I\)'s distribution when \(M\)'s nodal type is \(\theta^M_{01}\), and another parameter for \(\theta^I\)'s distribution when \(M\)'s nodal type is something else.
+
+This model, with confounding, is represented graphically as in Figure \ref{fig:pimdgraph}. The possibility of confounding is represented with the bidirected edge, connecting \(I\) and \(M\).
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/pimdgraph-1.pdf}
+\caption{\label{fig:pimdgraph}Democracy and Inequality Model}
+\end{figure}
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+As in Chapter \ref{ptapp}, we will confront the model with data drawn from our coding of the case narratives in the Supplementary Material for \citet{haggard2012inequality}. However, rather than implementing the analysis case-by-case, we now derive leverage from the joint distribution of the data available across all cases.
+
+Table \ref{tab:data82} gives a snapshot of the data.
+
+\begin{table}
+
+\caption{\label{tab:data82}Data (snapshot) derived from Haggard and Kaufman (2012)}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+Case & P & I & M & D\\
+\hline
+Afghanistan &  & 1 &  & 0\\
+\hline
+Albania & 0 & 0 & 1 & 1\\
+\hline
+Algeria &  & 0 &  & 0\\
+\hline
+Angola &  & 1 &  & 0\\
+\hline
+Argentina & 0 & 0 & 1 & 1\\
+\hline
+Bangladesh & 0 & 0 & 0 & 1\\
+\hline
+\end{tabular}
+\end{table}
+
+Note that this is not a rectangular dataset in that Haggard and Kaufman's collection of clues was conditional on the outcome, \(D=1\): they gathered qualitative data on the presence of international pressure and the presence of mass-mobilization \emph{only} for those cases that democratized. This is not an uncommon case-selection principle. The analyst often reasons that more can be learned about how an outcome arises by focusing in on cases where the outcome of interest has in fact occurred. (We assess this case-selection intuition, in the context of model-based inferences, in Chapter \ref{caseselection}.)
+
+The raw correlations between variables is shown in Table \ref{tab:pimdcorr}. Some correlations are missing because, as mentioned, data on some variables were only gathered conditional on the values of others. For those quantities where we do see correlations, they are not especially strong. There is, in particular, a weak overall relationship between inequality and democratization --- though, of course, this is consistent with inequality having heterogeneous effects across the sample. The strongest correlation in the data is between \(P\) and \(M\), which are assumed to be uncorrelated in the model, though this correlation is also quite weak.
+
+\begin{table}
+
+\caption{\label{tab:pimdcorr}Pairwise correlated in the democracy-inequality (PIMD) data. P = Pressure, I = Inequality, M = Mobilization, D = Democratization}
+\centering
+\begin{tabular}[t]{l|r|r|r|r}
+\hline
+  & P & I & M & D\\
+\hline
+P & 1.000 & 0.157 & -0.177 & \\
+\hline
+I & 0.157 & 1.000 & 0.114 & -0.154\\
+\hline
+M & -0.177 & 0.114 & 1.000 & \\
+\hline
+D &  & -0.154 &  & 1.000\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{inference-1}{%
+\section{Inference}\label{inference-1}}
+
+With data and model in hand, we can now update our model to get posteriors on the distribution \(\lambda\) from which we can generate beliefs over all causal relations.
+
+What do we find?
+
+\hypertarget{did-inequality-cause-democratization}{%
+\subsection{\texorpdfstring{Did inequality \emph{cause} democratization?}{Did inequality cause democratization?}}\label{did-inequality-cause-democratization}}
+
+We have used the data to update on \(\lambda\): our beliefs about the distributions of nodal types, including about their joint distributions (i.e., confounding). We first use this to make claims about types, similar to what we did in Chapter 8 but now with a model that has been trained on data.
+
+In Table \ref{tab:HK10cases1} we first ask what we would now infer about cases given democratization and low inequality and different observations on mobilization and international pressure. This table is the analogue of Table REF in Chapter 8.
+
+\begin{table}
+
+\caption{\label{tab:HK10cases1}Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for four cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.}
+\centering
+\begin{tabular}[t]{l|l|l|l|l|l|l}
+\hline
+Case & M: Mobilization? & P: Pressure? & No clues & M only & P only & M and P\\
+\hline
+Mexico (2000) & 0 & 0 & 0.438 & 0.475 & 0.615 & 0.667\\
+\hline
+Taiwan (1996) & 0 & 1 & 0.438 & 0.475 & 0.34 & 0.393\\
+\hline
+Albania (1991) & 1 & 0 & 0.438 & 0.394 & 0.615 & 0.571\\
+\hline
+Nicaragua (1984) & 1 & 1 & 0.438 & 0.394 & 0.34 & 0.263\\
+\hline
+\end{tabular}
+\end{table}
+
+In Table \ref{tab:HK10cases1} we ask what we would now infer about cases given democratization and \emph{high} inequality and different observations on mobilization and international pressure. This table is the analogue of Table REF in Chapter 8.
+
+\begin{table}
+
+\caption{\label{tab:HK10cases2}Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).  Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.r}
+\centering
+\begin{tabular}[t]{l|l|l|l|l|l|l}
+\hline
+Case & M: Mobilization? & P: Pressure? & No clues & M only & P only & M and P\\
+\hline
+Mongolia (1990) & 0 & 0 & 0.128 & 0 & 0.231 & 0\\
+\hline
+Paraguay (1989) & 0 & 1 & 0.128 & 0 & 0.088 & 0\\
+\hline
+Sierra Leone (1996) & 1 & 0 & 0.128 & 0.15 & 0.231 & 0.25\\
+\hline
+Malawi (1994) & 1 & 1 & 0.128 & 0.15 & 0.088 & 0.107\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{did-inequality-prevent-democracy}{%
+\subsection{\texorpdfstring{Did inequality \emph{prevent} democracy?}{Did inequality prevent democracy?}}\label{did-inequality-prevent-democracy}}
+
+As before we can also ask questions about causes that have not democratized -- even though we have no additional data about these cases in particular.
+
+\begin{table}
+
+\caption{\label{tab:Tapp101}No inequality and No democratization: Was no inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.}
+\centering
+\begin{tabular}[t]{l|r|r|r}
+\hline
+  & P & M & posterior\\
+\hline
+I0P0M0D0 & 0 & 0 & 0.122\\
+\hline
+I0P1M0D0 & 1 & 0 & 0.259\\
+\hline
+I0P0M1D0 & 0 & 1 & 0.000\\
+\hline
+I0P1M1D0 & 1 & 1 & 0.000\\
+\hline
+I0M0D0 &  & 0 & 0.139\\
+\hline
+I0M1D0 &  & 1 & 0.000\\
+\hline
+I0P0D0 & 0 &  & 0.097\\
+\hline
+I0P1D0 & 1 &  & 0.233\\
+\hline
+I0D0 &  &  & 0.112\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:Tapp102}Inequality and No democratization: Was inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.}
+\centering
+\begin{tabular}[t]{l|r|r|r}
+\hline
+  & P & M & posterior\\
+\hline
+I1P0M0D0 & 0 & 0 & 0.247\\
+\hline
+I1P1M0D0 & 1 & 0 & 0.565\\
+\hline
+I1P0M1D0 & 0 & 1 & 0.393\\
+\hline
+I1P1M1D0 & 1 & 1 & 0.655\\
+\hline
+I1M0D0 &  & 0 & 0.309\\
+\hline
+I1M1D0 &  & 1 & 0.424\\
+\hline
+I1P0D0 & 0 &  & 0.313\\
+\hline
+I1P1D0 & 1 &  & 0.594\\
+\hline
+I1D0 &  &  & 0.359\\
+\hline
+\end{tabular}
+\end{table}
+
+\hypertarget{from-cases-to-population}{%
+\section{From cases to population}\label{from-cases-to-population}}
+
+One set of questions we can ask of the updated model is about the probability that high inequality causes democratization. We can pose this question at different levels of conditioning. For instance, we can ask:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{For all cases}. For what proportion of cases in the population does inequality have a positive effect on democratization?
+\item
+  \textbf{For all cases displaying a given causal state and outcome}. Looking specifically at those cases that in fact had high inequality and democratized, for what proportion was the high inequality a cause of democratization?
+\item
+  \textbf{For cases displaying a given causal state and outcome, and with additional clues present or absent.} What if we have also collected clues on mediating or moderating nodes? For instance, for what proportion of high-inequality, democratizing cases \emph{with} mobilization did inequality cause the outcome? For what proportion \emph{without} mobilization? Likewise for the presence or absence of international pressure? Importantly, comparing a given estimate with and without a given clue amounts to an assessment of the clue's probative value.
+\end{enumerate}
+
+We ask \texttt{CausalQueries} now to query \(\lambda\)'s posterior distribution to generate posterior distributions for each of these quantities. We can define our queries quite simply in terms of the causal types that correspond to the effect of interest and then take the conditional probability of these. We present the code and results of these operations below and in Figure \ref{fig:mixedhist}.
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-25}Probability that inequality increases chances of democratization given:}
+\centering
+\begin{tabular}[t]{l|r}
+\hline
+Given & mean\\
+\hline
+- & 0.04\\
+\hline
+D==1 \& I==1 & 0.11\\
+\hline
+D==1 \& I==1 \& M==1 & 0.16\\
+\hline
+D==1 \& I==1 \& M==0 & 0.00\\
+\hline
+D==1 \& I==1 \& M==1 \& P==1 & 0.09\\
+\hline
+D==1 \& I==1 \& M==1 \& P==0 & 0.20\\
+\hline
+\end{tabular}
+\end{table}
+
+In figure @\ref(fig:pimdqueries), we graph the priors for each of these queries next to the posteriors.
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 12 rows containing missing values
+## (geom_bar).
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/mixedhist-1.pdf}
+\caption{\label{fig:mixedhist}Posteriors on Causes of Democratization}
+\end{figure}
+
+We can see that the share of cases overall in which inequality causes democratization is estimated to be very low, with a good deal of confidence. The proportion is considerably higher for those cases that in fact experienced high inequality and democratization. The proportion of positive causal effects is believed to be even higher for those in which mobilization occurred. Moreover, the proportion of \(I=1, D=1\) cases with a positive effect of inequality on democratization is even higher when an alternative cause---international pressure---is absent, though our uncertainty about this share is also very high.
+
+We also see that the absence of mobilization tells us for certain that democratization was not caused by inequality. Interestingly, however, this result derives purely from the model restrictions, rather than from the data: under the restrictions we imposed, a positive effect of inequality can operate \emph{only} through mobilization.
+
+Turning now to the cases in which democratization did not occur, Figure \ref{fig:mixedhist2} asks for what proportion of cases overall inequality has a negative effect on democratization; for what proportion of \(I=1, D=0\) cases inequality prevented democratization; and this latter query conditional on different clue realizations.
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 12 rows containing missing values
+## (geom_bar).
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/mixedhist2-1.pdf}
+\caption{\label{fig:mixedhist2}Posteriors on Causes of Democratization}
+\end{figure}
+
+We see that inequality appears, overall, more commonly to prevent democratization than to cause it. We are, moreover, most confident that inequality played a preventive role in those cases in which there was mobilization and international pressure---both of which \emph{could} have generated democratization---but still no democratization occurred.
+
+\hypertarget{contribution-to-case-level-inference}{%
+\subsection{Contribution to case-level inference}\label{contribution-to-case-level-inference}}
+
+There are two ways of thinking about the learning we derive from the above estimates. On the one hand, we can think of our estimands in population-level terms. The results in Figures \ref{fig:mixedhist} and \ref{fig:mixedhist2} can be understood as our estimates of the \emph{share} of cases in the population, with a given set of characteristics, for which a particular causal effect holds.
+
+Yet these distributions, by the very same token, represent our beliefs about the probability that \(I\) had a positive or negative (depending on the query we are talking about) causal effect in an individual case for which we have seen a given data pattern. Thus, for instance, from Figure \ref{fig:mixedhist} we can see our posterior belief about the proportion of \(I=D=M=1\) cases in the population for which \(I=1\) caused \(D=1\). But this also tells us, for an individual case randomly selected from the population of \(I=D=M=1\) cases, the probability that high inequality caused democratization in the case. To put the point differently, suppose we want to know whether \(I=1\) was a cause of \(D=1\) in a randomly selected case, so we do process tracing and observe \(M=1\): this same estimate answers the case-level query, telling us the probability that \(I=1\) caused \(D=1\) in the case at hand.
+
+The key difference between case-level inference from mixed data and the pure process-tracing setup from Chapter \ref{ptapp} is that now our case-level inferences are informed by \emph{data} from the population, rather than merely by a set of prior beliefs about the population. Consider, for instance, the difference in posteriors on the probability of a negative effect for the query for \(I=1, D=0\) given \(M=0\) (mean of about 0.31) as compared to the query for \(I=1, D=0\) given \(M=1\) (about 0.42). That difference in what we believe depending on \(M\)'s value represents the probative value of the \(M\) clue given the model as \emph{updated} from the data. Of course, we have also made assumptions in building the model, including motonicity restrictions, and we speak to their role below. But the general point is that, in mixed-data inference, we can learn empirically about the probative value of any given node, rather than drawing probative value purely from theory.
+
+\hypertarget{how-much-do-we-get-from-the-model-vs.-the-data}{%
+\subsection{How much do we get from the model vs.~the data?}\label{how-much-do-we-get-from-the-model-vs.-the-data}}
+
+We might wonder, at the same time, how much we are in fact learning from the data, as compared to what we built into the model at the outset, including through the monotonicity restrictions that we imposed. To examine this, in Figures \ref{fig:dcaused} and \ref{fig:dprevented}, we plot the mean (and one-standard-deviation error bars) of our prior and our posterior on the same set of queries. We see that there is almost no shift in beliefs for the positive-effect queries, with a somewhat greater shift in means for the negative-effect queries. However, our uncertainty about negative effects shrinks some, though remains quite high.
+
+By comparing the prior and posterior estimates given \(M=1\) and given \(M=0\), we can also assess whether we have learned about \(M\)'s informativeness. We see that, in this example, we do not happen to learn anything from the data about \(M\)'s probative value: the difference in beliefs between each estimate given \(M=1\) and that estimate given \(M=0\) remains about the same in our posteriors as it was in our priors.
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/dcaused-1.pdf}
+\caption{\label{fig:dcaused}Priors and posteriors on the probability that inequality caused democratization (probability that I has a positive effect on D) given different kinds of observed case-level data. The error bars show plus or minus one standard deviation of the posterior variance.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/dprevented-1.pdf}
+\caption{\label{fig:dprevented}Priors and posteriors on the probability that inequality prevented democratization (probability that I has a negative effect on D) given different kinds of observed case-level data. The error bars show plus or minus one standard deviation of the respective distribution's variance.}
+\end{figure}
+
   \bibliography{bib.bib,packages.bib}
 
 \end{document}
