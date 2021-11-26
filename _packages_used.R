@@ -35,6 +35,7 @@ library(CausalQueries)
 library("pacman")
 pacman::p_load(
   DT,
+  ggtext,
   bookdown,
   # CausalQueries,
   DeclareDesign,

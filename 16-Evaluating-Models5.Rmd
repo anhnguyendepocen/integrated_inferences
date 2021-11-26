@@ -1,11 +1,12 @@
 # Evaluating models {#evaluation}
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 Model based inference takes the model seriously. But deep down we know that all of these models are wrong, in myriad ways. We examine strategies for figuring out whether a model is likely doing more harm than good.
 ::::
+-->
 <br>
 
 ```{r packagesused15b, include = FALSE}
@@ -290,7 +291,7 @@ A further class of model-validation methods involves cross-validation. Rather th
 
 One such approach is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one and then ask how well the model performs in predicting the left-out observation. We repeat this for every data point in the dataset to assess how well we can predict the entire dataset. 
 
-Often, the LOO approach is used to predict a particular outcome variable. In a \CausalQuery\ framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
+Often, the LOO approach is used to predict a particular outcome variable. In a `CausalQueries` framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
 
 <!-- AJ: Is the "predict all nodes" using a sledghammer here?Should we be setting this up in a more query-dependent way, I wonder? Could the same model be good for some kind of queries but not for others? Not quite sure how to think about that -- about *what* we'd be predicting conditional on what the query is, and maybe this isn't a coherent notion. -->
 
@@ -530,7 +531,7 @@ To test these assumptions, we in fact need to depart from the dataset drawn from
 
 * **Pressure**: We draw on the GIGA Sanctions Dataset to measure international pressure, $P$. Specifically, we code a country case as $P=1$ if and only if the country was the target of democratization-focused sanctions during the 1990-2000 period. 
 
-* **Democratization**: We use dichotomous democracy measures from @cheibub2010revisited, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
+* **Democratization**: We use dichotomous democracy measures from @cheibub2010democracy, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
 
 
 We check the model's assumptions in relation to conditional independencies through a set of simple regression models, displayed in Table \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in the first row that the data pattern is consistent with our assumption of unconditional independence of $I$ and $P$. However, we also see that there *is* an unconditional correlation between $I$ and $M$, something that is excluded by our model.
@@ -682,7 +683,7 @@ list(`restricted model` = loo_pimd,  `unrestricted model` = loo_pimdnegmed,  `fu
 
 Figures \@ref(fig:loo_pimdplots) shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure  \@ref(fig:loo_pimdloocomp), confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
 
-More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $\I rightarrow M$).
+More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $I \rightarrow M$).
 
 
 ### Sensitivity to priors
