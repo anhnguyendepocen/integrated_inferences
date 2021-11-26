@@ -8,12 +8,13 @@ source("_packages_used.R")
 do_diagnosis = FALSE
 ```
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 We draw out the implications of the causal model approach for clue-selection strategies. We demonstrate procedures for assessing which clues minimize expected variance and how to construct an optimal decision tree for determining a clue gathering strategy.
 ::::
+-->
 <br>
 
 
@@ -77,18 +78,18 @@ Consider a model of government survival in office in which retaining office depe
 x = c(0,0, 1, 1, 2)
 y = c(2,0, 2, 0, 1)
 
-names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
+names = c("S:\nSensitive\ngovernment", "X:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
 
-hj_dag(x =  x,
-       y = y,
-       names = c(names),
-       arcs = cbind( c(1,2,2, 3, 4, 3),
-                     c(3,3,4, 5, 5, 4)),
-       title = "Free Press and Government Survival",
-       add_functions = 0,
-       contraction = .15,
-       #add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
-       padding = .2)
+hj_ggdag(x =  x,
+         y = y,
+         names = c(names),
+         arcs = cbind( c(1,2,2, 3, 4, 3),
+                       c(3,3,4, 5, 5, 4)),
+         title = "Free Press and Government Survival",
+         labelparse = F,
+         labels = T,
+         #add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
+         padding = -0.15,direction = 'x')
 ```
 
 To simplify the illustration we work with a highly restricted version of this model. At node $C$, we allow only two types: either corruption is always present ($\theta^C_{1111}$) or  corruption is always present except when there is both a free press ($X=1$) and sensitivity to public opinion ($S=1$) ($\theta^C_{1110}$). At $R$, we allow only for $\theta^R_{0001}$ and $\theta^R_{0000}$: the possibility that there is reporting on corruption if and only if there is corruption and a free press, and the possibility that there is never reporting on corruption. Finally, at $Y$, we restrict to just one nodal type, $\theta^Y_{0001}$: the government will remain in office unless there is both corruption ($C=1$) and reporting on corruption ($R=1$).
