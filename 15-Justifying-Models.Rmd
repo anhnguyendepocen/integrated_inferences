@@ -1,8 +1,4 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
+
 # (PART) Models in Question  {-}
 
 
@@ -19,12 +15,13 @@ drop_sd <- function(tab, name = "Doubly decisive") {
   x
 }
 ```
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 Where do our model assumptions come from? Model assumptions matter most for single-case process tracing because single-case analysis does not permit updating the model itself on the basis of the data: it is the model assumptions that generate beliefs about the probative value of clues and thus our case-level inferences. In this chapter, we outline strategies for justifying our models on the basis of data and, in particular, for *empirically grounding* our beliefs about the probative value of clues.
 ::::
+-->
 <br>
 
 
@@ -68,7 +65,7 @@ The question we pursue in this chapter is whether and under what conditions we c
 agnostic_data <- make_model("X->M->Y") %>% 
   set_parameters(node = c("M", "Y"), parameters = list(c(.1, 0, .8, .1),
                                                        c(.1, 0, .8, .1))) %>%
-  simulate_data(n = 1000)
+  CausalQueries::simulate_data(n = 1000)
 
 if(do_diagnosis){
   
@@ -141,10 +138,11 @@ model_2 <-
 ```
 
 ```{r, echo = FALSE, fig.cap= "Two models. The model on the right might be justified if $X$ is known to be randomized."}
-par(mfrow = 1:2)
-plot(model_1)
+p1 <- hj_ggdag(model=model_1)
 # title(main = list("X not known to be randomized", cex = .5))
-plot(model_2)
+p2 <- hj_ggdag(model=model_2)
+
+plot_grid(plotlist = list(p1,p2),ncol=2)
 # title("X  known to be randomized")
 # text(0, -1.3, "X  known to be randomized")
 ```
@@ -589,7 +587,7 @@ This approach to thinking about process tracing tests is quite different to that
 
 <!-- ### Learning about probative value from process tracing -->
 
-<!-- <!-- FLAG: The below is imported from Chap on case selection. May want to resurrect. But would need to bring in part of the relevant table (commented out) with conditioning on M. --> -->
+<!-- <!-- FLAG: The below is imported from Chap on case selection. May want to resurrect. But would need to bring in part of the relevant table (commented out) with conditioning on M. --> 
 
 <!-- It is also easy to show how conducting process tracing on a set of cases can incrementally add probative value to a clue. Consider the setup we employed to assess case-selection strategies in Chapter \@ref(caseselection), where we began with positively correlated $X,Y$ data in 6 cases. We showed there that, if we start with Jeffreys priors for all  parameters in a chain model, nothing can be learned about the $ATE$ or the probability of causation from observing $M$ in a single case. However, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$.  -->
 
@@ -674,11 +672,8 @@ if(install_discovery_packages){
  install.packages("BiocManager")
  BiocManager::install("Rgraphviz")
  BiocManager::install(c("graph", "RBGL"))
- install.packages(pcalg)
+ install.packages('pcalg')
 }
-
-library(Rgraphviz)
-library(pcalg)
 
 recover_model <- function(model) {
     
@@ -728,14 +723,17 @@ model4 <- make_model("X -> Y <-> Z -> W") %>%
 
 
 ```{r plots, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "(Partially) DAGs from Data: True DAGs in upper row with partially directed graphs in lower row. Circles indicate uncertainty whether a aroow starts or ends at a given point.", fig.width = 8, fig.height = 8,results='hide',fig.keep='all', eval = TRUE, fig.align = "center", out.width = "80%"}
-par(mfrow = c(2,3))
 #par(mar = rep(3, 4))
-plot(model1); title("I", line = -2)
-plot(model2); title("II", line = -2)
-plot(model3); title("III", line = -2)
+p1 <- hj_ggdag(model=model1, title="I")
+p2 <- hj_ggdag(model=model2, title="II")
+p3 <- hj_ggdag(model=model3, title="III")
+plot_grid(plotlist = list(p1,p2,p3),ncol=3)
+par(mfrow = c(1,3))
 recover_model(model1)
 recover_model(model2)
 recover_model(model3)
+
+
 ```
 
 In the bottom row of Figure \@ref(fig:plots), we show the structures that we recover. In all situations, we correctly recover the skeleton: which nodes are connected to which nodes. Note that, for any link where we have an "o" on both ends of the link, we do not know in which direction causal effects flow. 

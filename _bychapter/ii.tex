@@ -5478,6 +5478,233 @@ However, which strategy is optimal will depend on the relative cost of collectin
 
 Then, for this model-query combination, the widest strategy is better than the deepest strategy if and only if \(1600 < 100 + 100d\), that is, when \(d > 15\). The mixed strategy is better than the maximally deep strategy if and only if \(400 + 50d < 100 + 100d\), that is when \(d > 6\). And the maximally wide strategy is better than the mixed strategy if and only if \(1600 < 400 + 50d\), or \(d > 24\). Thus, roughly speaking, if \(d < 6\), then our ordering is deepest \textgreater{} mixed \textgreater{} widest, if \(6 < d < 15\), our ordering is mixed \textgreater{} deepest \textgreater{} widest, if \(15 < d < 24\), our ordering is mixed \textgreater{} widest \textgreater{} deepest, and if \(d > 24\), our preference-ordering is widest \textgreater{} mixed \textgreater{} deepest. We can, thus, see that the mixed strategy is optimal across a broad range of \(d\), though for sufficiently cheap or expensive within case data gathering it may be optimal to go purely wide or purely deep.
 
+\hypertarget{part-models-in-question}{%
+\part{Models in Question}\label{part-models-in-question}}
+
+\hypertarget{justifying}{%
+\chapter{Justifying models}\label{justifying}}
+
+The approaches to inference that we have described always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters.
+
+We see two broad responses to this problem.
+
+One is to simply emphasize the model-contingent nature of claims. Some causal models might reasonably reflect actual beliefs about the world---for example, one might be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled. All of these beliefs may be unwise, of course. But if held, then simple models such as that represented by an \(X \rightarrow Y\) DAG is a representation of coarse beliefs about the world and less of a model of the world, in the sense of a simplified representation.\footnote{Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable involves a form of modeling.} Recognizing that we are generally dealing with models that are not true, results in a reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose \citep{clarke2012model}.
+
+A second approach is to seek justify a model empirically. In this chapter, we explore some of the constraints on and possibilities for empirical model-justification. We take up the problem in two steps. First, we focus on process tracing and ask whether and when, given a causal structure, can we empirically derive the probative value of clues. Second, we briefly summarize an approach to discovering causal structures, which are of course a critical input into both process tracing and mixed-method inference.
+
+\hypertarget{justifying-probative-value-for-process-tracing}{%
+\section{Justifying probative value for process-tracing}\label{justifying-probative-value-for-process-tracing}}
+
+The problem of justifying assumptions is most acute for case-level process-tracing inferences, for two reasons. First, the beliefs that come into play in generating probative value for our clues are beliefs over the distribution of \emph{individual-level} effects, not just beliefs over average effects. We need beliefs, for instance, about the probability of seeing some clue, \(K\), in a given case if \(X=1\) causes \(Y=1\) in the cases. This puts us up against the fundamental problem of causal inference \citep{holland1986statistics}. Second, in single-case inference, we do not have opportunities to learn about our model from the case at hand; so the beliefs we go in with are critical. Indeed for case-level queries, inferences might be little more than conditional applications of a model.
+
+The question we pursue in this chapter is whether and under what conditions we can empirically justify those beliefs that yield probative value for our clues.
+
+\hypertarget{nothing-from-nothing}{%
+\subsection{Nothing from nothing}\label{nothing-from-nothing}}
+
+We start with a fairly discouraging result. Many of the models we have looked at---especially for process tracing---include a good deal of structure, viz:
+
+\begin{itemize}
+\tightlist
+\item
+  conditional-independence assumptions
+\item
+  assumptions of no confounding
+\item
+  monotonicity assumptions or other restrictions
+\end{itemize}
+
+What happens if we make none of these assumptions? One way to think about this question is: can we start with a DAG that makes none of these assumptions and then use observational data---i.e., learn from those data---to render clues informative about causal effects?
+
+Suppose that we would like to be able to learn from a mediator node. We work through this problem under favorable conditions: a world in which in fact (though unknown \emph{ex ante} to the researcher):
+
+\begin{itemize}
+\tightlist
+\item
+  \(X\) causes \(Y\) through \(M\)
+\item
+  \(X\) is a necessary condition for \(M\), and \(M\) is a sufficient condition for \(Y\) -- and so \(Y\) is monotonic in \(X\) and
+\item
+  There is no confounding
+\end{itemize}
+
+We also assume that we have access to large amounts of observational data on \(X\), \(M\), and \(Y\).
+
+We work through inferences for two types of model in which \(X\) can have both indirect and direct effects on \(Y\). We impose no restrictions on nodal types in either model. Even though there are only three nodes, this model has 128 causal types (\(2\times 4 \times 16\)). In addition:
+
+\begin{itemize}
+\item
+  In \texttt{model\_1} we allow confounding between all pairs of nodes. This results in 127 free parameters.
+\item
+  In \texttt{model\_2} we assume that \(X\) is known to be randomized but allow for confounding between \(M\) and \(Y\). There are now only 64 free parameters.
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/unnamed-chunk-41-1.pdf}
+\caption{\label{fig:unnamed-chunk-41}Two models. The model on the right might be justified if \(X\) is known to be randomized.}
+\end{figure}
+
+After updating we query the models to see how inferences depend on \(M\) like this:
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-42}Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Posterior SD in parentheses.}
+\centering
+\begin{tabular}[t]{l|l|l|l|l}
+\hline
+Query & Given & Using & Model 1 & Model 2\\
+\hline
+Q 1 & X==1 \& Y==1 & posteriors & 0.499 & 0.811\\
+\hline
+ &  &  & (0.156) & (0.029)\\
+\hline
+Q 1 & X==1 \& M==1 \& Y==1 & posteriors & 0.499 & 0.828\\
+\hline
+ &  &  & (0.166) & (0.032)\\
+\hline
+Q 1 & X==1 \& M==0 \& Y==1 & posteriors & 0.5 & 0.525\\
+\hline
+ &  &  & (0.138) & (0.164)\\
+\hline
+\end{tabular}
+\end{table}
+
+We find that even with an auspicious monotonic data-generating process in which \(M\) is a total mediator, \(M\) gives no traction on causal inference under Model 1. In contrast, it gives considerable leverage under Model 2: \(M\) is informative, especially if \(M=0\) (in which case we downgrade confidence that \(X\) caused \(Y\)), when \(X\) is known to be randomized.
+
+This example nicely illustrates the \citet{cartwright1994nature}'s idea of ``no causes in, no causes out.'' It also poses, we think, a challenge to any process-tracing exercise that aspires to than model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems \emph{even when in reality} causal structures are simple.
+
+\hypertarget{justifying-the-classic-process-tracing-tests}{%
+\subsection{Justifying the classic process-tracing tests}\label{justifying-the-classic-process-tracing-tests}}
+
+Now, on a more encouraging note, we show the possibility of justification of each of the four classical ``qualitative tests'' described by \citet{collier2011understanding} and drawing on \citet{Van-Evera:1997}, at least when treatment assignment is randomized.
+
+Recall that the four tests are ``smoking gun'' tests, ``hoop'' tests, ``doubly-decisive'' tests, and ``straw-in-the-wind'' tests. A hoop test is one which, if failed, bodes especially badly for a claim; a smoking gun test is one that bodes especially well for a hypothesis if passed; a doubly decisive test is strongly conclusive no matter what is found; and a straw-in-the-wind test is suggestive, though not conclusive, either way. Of course, Bayesian inference involves continuous probabilities, not discrete test categories, but we speak to these categories for heuristic purposes. The more general point is that probative value can be derived from data in which randomization of a causal variable can be assumed.
+
+In some treatments of Bayesian process tracing (such as our own work in \citet{humphreys2015mixing}), formalization involves specifying (a) a prior that a hypothesis is true and, \emph{independently} of that (b) a set of beliefs about the probability of seeing a given data pattern if the hypothesis is true and if it is false. Updating then proceeds using Bayes' rule.
+
+This simple approach suffers from two related weaknesses however. First, there is no good reason to expect these probabilities to be independent. Our prior beliefs about the hypotheses constitute beliefs about \emph{how the world works}, and beliefs about how the world works should have implications for the conditions under which clues are likely to be observed. Second, there is nothing in the setup to indicate how beliefs about the probative value of clues should be established or justified.
+
+Both of these problems are resolvable in the context of inference from fully specified causal models. We illustrate first by using an idealized example to show that a case-level ``doubly decisive'' test can be justified by population-level data from factorial designs, then generalize to all four tests.
+
+Suppose that we have observed just \(X\) and \(Y\) across a large set of cases, allowing us to infer that \(\Pr(Y=1|X=1) = \Pr(Y=1|X=0) = .5\). Here we have an average treatment effect of 0. But suppose, further, that our query is whether \(X=1\) caused \(Y=1\) in a particular case with \(X=1, Y=1\). The marginal distributions we have observed so far are consistent with a world in which \(X\) never affects \(Y\); one in which \(X\) always affects \(Y\) (sometimes negatively, sometimes positively); and with many possibilities in between.
+
+Now, let's say that we have data on a third variable, \(K\), and find (a) that \(K=1\) arises with 50\% probability and (b) that the marginal distributions of \(Y\) given \(X\) and \(K\) are as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\Pr(Y=1|X=0, K = 0) = 1\)
+\item
+  \(\Pr(Y=1|X=1, K = 0) = .5\)
+\item
+  \(\Pr(Y=1|X=0, K = 1) = 0\)
+\item
+  \(\Pr(Y=1|X=1, K = 1) = .5\)
+\end{itemize}
+
+We thus see that, in cases in which \(K=1\), \(X=0\) is a necessary condition for \(Y=1\). So if \(K=1\), then \(X=1\) certainly caused \(Y=1\) (since, in that case, were \(X\) zero then \(Y\) would certainly be 0.) On the other hand, were \(K=0\), then \(X=0\) would be a sufficient condition for \(Y=1\), which means that in this case \(X=1\) most certainly did \emph{not} cause \(Y=1\). We have then that, if \(K=1\), then certainly \(X=1\) caused \(Y=1\) whereas if \(K=0\), then certainly \(X=1\) did not cause \(Y=1\)
+
+This example demonstrates that, with infinite data, it is in principle possible to justify a doubly decisive test on the basis of experimental data---provided that the case about which we seek to make inferences can be considered exchangeable with the cases in the experimental data.
+
+Table \ref{tab:tests15} shows how this logic generalizes to different types of tests. For each test we first show the data available to us (first 5 rows); we then show the inferences on whether \(X=1\) causes \(Y=1\) in cases where \(X=1\) and \(Y=1\) as a function of \(K\).
+
+\begin{table}
+
+\caption{\label{tab:tests15}Known probabilities from a model with  $X \rightarrow Y \leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.}
+\centering
+\begin{tabular}[t]{l|c|c|c|c}
+\hline
+ & Doubly decisive & Hoop & Smoking gun & Straw in the wind\\
+\hline
+\$\textbackslash{}Pr(K = 1)\$ & 0.5 & 0.9 & 0.1 & 0.5\\
+\hline
+\$\textbackslash{}Pr(Y=1 \textbackslash{}vert X=0, K = 0)\$ & 1 & 1 & 1/3 & 1/2\\
+\hline
+\$\textbackslash{}Pr(Y=1 \textbackslash{}vert X=1, K = 0)\$ & 1/2 & 1/2 & 2/3 & 3/4\\
+\hline
+\$\textbackslash{}Pr(Y=1 \textbackslash{}vert X=0, K = 1)\$ & 0 & 1/3 & 0 & 1/4\\
+\hline
+\$\textbackslash{}Pr(Y=1 \textbackslash{}vert X=1, K = 1)\$ & 1/2 & 2/3 & 1/2 & 3/4\\
+\hline
+\$\textbackslash{}Pr(X \textbackslash{}text\{  causes \}Y \textbackslash{}vert K=1)\$ & 1 & [1/2, 1] & 1 & [1/3,2/3]\\
+\hline
+\$\textbackslash{}Pr(X \textbackslash{}text\{  causes \}Y \textbackslash{}vert K=0)\$ & 0 & 0 & [.5, 1] & [2/3,1]\\
+\hline
+\end{tabular}
+\end{table}
+
+Note that some entries in Table \ref{tab:tests15} appear as ranges. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. However, despite not being identified, bounds can be placed on causal quantities. For instance, for the hoop test, when \(K=1\) the bounds are \([.5,1]\). The reason that the probability of causation here can not be \emph{less} than 0.5, is that we can see from the data when \(X=1, X=0\) that \emph{at most} one third of cases can by cases for which \(Y=1\) regardless of \(X\) (\(\theta^Y_{11}\)) meaning that at \emph{least} half of cases that produce \(Y=1\) when \(X=1\) and \(K=1\) are cases for which \(Y=1\) \emph{because} \(X=1\). In these examples the fact that queries are not point identified with infinite data does not detract from the fact that \(K\) is informative in the ways associated with the different types of tests.
+
+The procedures given in Chapter \ref{mixing} let us form posteriors over inferences with finite data. We briefly illustrate in Table \ref{testsfinite}. The results displayed here are drawn from simulations in which we start by making four different \(X \rightarrow Y \leftarrow K\) models. For each model, we set particular restrictions on \(Y\)'s nodal types and a particular value for \(Pr(\theta^K)\) such that \(K\) provides different kinds of probative value about \(X\)'s effect. (We have set these restrictions and assignment propensities for \(K\) such that the four resulting data-generating processes will, in the next steps, generate learning about \(K\) that turns our clue into one of the four classic tests.) We then simulate 1000 observations from each model and next update an agnostic \(X \rightarrow Y \leftarrow K\) model.
+
+In Table \ref{testsfinite}, we show the inferences we would now draw from observing \(K=1\) versus \(K=0\) in a single case, based on the \emph{updated} model. Each column---which we have labelled with the classic test names---represents our beliefs about \(K\)'s probative value as derived from a different simulated data pattern. Thus, for instance, in the ``hoop test'' column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing \(K=1\) in a case slightly boosts our confidence that \(X\) has a positive effect on \(Y\), while observing \(K=0\) dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing \(K=1\) in a case greatly boosts our confidence that \(X\) has a positive effect on \(Y\), while observing \(K=0\) slightly undermines our confidence in such an effect.
+
+We underline that we have here \emph{derived} the probative value of the clue from observed data and a model that was entirely agnostic about the clue's probative value (but which did assume \emph{some} priors on causal types). In particular, the model that we start with has no restrictions on \(Y\)'s nodal types, has flat beliefs over the distribution of \(K\), and imposes no assumption that \(K\) is informative for how \(Y\) responds to \(X\). It does, however, assume that \(X\) and \(K\) are exogenous, as might be the case if these were experimentally manipulated.
+
+\begin{table}
+
+\caption{\label{tab:testsfinite}Classic tests with probative value inferred from (simulated) data, for query, Does $X$ have a positive effect on $Y$ in this case?}
+\centering
+\begin{tabular}[t]{l|l|l|l|l|l|l}
+\hline
+Query & Given & Using & Doubly decisive & Hoop & Smoking gun & Straw in the Wind\\
+\hline
+Q 1 & - & posteriors & 0.489 & 0.451 & 0.536 & 0.469\\
+\hline
+ &  &  & (0.016) & (0.022) & (0.022) & (0.022)\\
+\hline
+Q 1 & K==0 & posteriors & 0.009 & 0.044 & 0.493 & 0.301\\
+\hline
+ &  &  & (0.005) & (0.028) & (0.024) & (0.029)\\
+\hline
+Q 1 & K==1 & posteriors & 0.976 & 0.494 & 0.9 & 0.637\\
+\hline
+ &  &  & (0.008) & (0.023) & (0.037) & (0.03)\\
+\hline
+\end{tabular}
+\end{table}
+
+For both of these examples we have focused on moderators as clues. For results on mediators as clues see \citet{dawid2019bounding} which establishes that mediators in chain models can produce hoop tests but are generally unable to generate smoking gun tests.
+
+This approach to thinking about process tracing tests is quite different to that described in existing (including Bayesian) treatments such as \citet{collier2011understanding}, \citet{BennettAppendix}, \citet{fairfield2017explicit}, or \citet{humphreys2015mixing}. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that embeds a clue in a network of possible causal effects. Critically, with this approach, the inferences made from observing clues can be justified by reference to a more fundamental, relatively agnostic model, that has been updated in light of data. The updated model yields a prior over the proposition, beliefs about probative values, and guidance for what conclusions to draw given knowledge of \(K\).
+
+\hypertarget{empirical-discovery-of-causal-structure}{%
+\section{Empirical discovery of causal structure}\label{empirical-discovery-of-causal-structure}}
+
+In the preceding discussion of learning about probative value for process tracing, we have taken causal structure---the DAG itself---as given. Moreover, even when we are engaged in mixed-data inference on multiple cases---where we can start with \emph{only} the DAG---we need to start with some causal structure. Where does knowledge of causal structure come from?
+
+The empirical discovery of causal structure is itself a very large field of inquiry and we cannot do it justice here. For a review see, for instance, \citet{glymour2019review}.
+
+Here we seek simply to illustrate the possibility of casual discovery. We demonstrate with three situations in which there is a true---but unknown model---relating \(X,M,\) and \(Y\) to each other. Critically, we assume that there are no unobserved confounding relations (this is a requirement for the ``PC'' algorithm but not for the ``Fast Causal Inference'' algorithm). In each situation, we show the true relationship and the ``skeleton'' of the model as discovered by a prominent technique that uses a ``constraint-based algorithm''---examining whether observed data correlations are consistent with one or another set of conditional-independence relations.
+
+In Figure \ref{fig:plots}, the top row of models represent the true models from which simulated data are generated. The objective is then to see how much of this true causal structure the discovery algorithm can recover from the data. In the first true model, \(X\) affects \(Y\) directly and indirectly through \(M\). In the second model, \(Y\) has two causes that do not influence each other. Finally, in the third model, \(X\) causes \(Y\) through \(M\) but not directly. When we simulate data from these models, we assume monotonicity but otherwise a flat distribution over nodal types. We also assume no confounding: there is nothing not represented on the graph that affects more than one node on the graph.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{ii_files/figure-latex/plots-1} 
+
+}
+
+\caption{(Partially) DAGs from Data: True DAGs in upper row with partially directed graphs in lower row. Circles indicate uncertainty whether a aroow starts or ends at a given point.}\label{fig:plots-1}
+\end{figure}
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{ii_files/figure-latex/plots-2} 
+
+}
+
+\caption{(Partially) DAGs from Data: True DAGs in upper row with partially directed graphs in lower row. Circles indicate uncertainty whether a aroow starts or ends at a given point.}\label{fig:plots-2}
+\end{figure}
+
+In the bottom row of Figure \ref{fig:plots}, we show the structures that we recover. In all situations, we correctly recover the skeleton: which nodes are connected to which nodes. Note that, for any link where we have an ``o'' on both ends of the link, we do not know in which direction causal effects flow.
+
+In the first situation, the skeleton is unrestricted: we have correctly \emph{not} excluded links between any two nodes, but we have not learned about the directions of effects. In the second situation, however, we have fully recovered the causal structure. Thus, the algorithm has figured out that \(X_1\) and \(X_2\) are not children of \(Y\). The algorithm sees, in essence, data patterns that are distinctively associated with colliders: \(X_1\), \(X_2\) correlated conditional on \(Y\) but not otherwise. In the last setup, we have not figured out the direction of the causal arrows, but the inference is still rather impressive. Although \(X\), \(M\) and \(Y\) are all correlated with each other, the algorithm has figured out that there should be no direct link between \(X\) and \(Y\)---by observing that \(X\) and \(M\) are not correlated with each other \emph{conditional} on \(M\).
+
+Note also that, in all three situations, if we have access to all relevant variables the true graph can be recovered with additional knowledge of the temporal ordering of the variables.
+
+The assumption that we have captured all nodes that might generate confounding is critical to these results. Yet these examples provide grounds for hope that causal models can be discovered and not simply assumed. If all relevant nodes are known and measured---a tall order for sure---causal structures can be identified from data.
+
   \bibliography{bib.bib,packages.bib}
 
 \end{document}
