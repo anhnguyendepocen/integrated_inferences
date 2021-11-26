@@ -4944,6 +4944,412 @@ Explicit statement of a causal model---including prior beliefs over roots---allo
 
 We are conscious that here we are pushing the basic logic to the limits. In practice, researchers will often find it difficult to describe a model in advance and to place beliefs on nodes. Moreover, the collection of new data could easily give rise to possibilities and logics that were not previously contemplated. Nothing here seeks to deny these facts. The claim here is a simpler one: insofar as one can specify a model before engaging in data gathering, the model provides a powerful tool to assess what data it will be most useful to gather.
 
+\hypertarget{caseselection}{%
+\chapter{Case selection for mixed methods inference}\label{caseselection}}
+
+A critical decision for scholars employing mixed methods is to determine when and where to look deep and when to look wide. We address this question if two steps, first addressing the problem of case selection and second the question of qualitative/quantitative mixing.
+
+\hypertarget{case-selection-strategies}{%
+\section{Case selection strategies}\label{case-selection-strategies}}
+
+A host of different strategies have been proposed for selecting cases for in-depth study based on the observed values of \(X\), \(Y\) data. Perhaps the most common strategy is to select cases in which \(X=1\) and \(Y=1\) and look to see whether in fact \(X\) caused \(Y\) in the case in question (using some more or less formal strategy for inferring causality from within-case evidence). But many other strategies have been proposed, including strategies to select cases ``on the regression line'' or, for some purposes, cases ``off the regression line'' (e.g., \citet{Lieberman2005nested}). Some scholars suggest ensuring variation in \(X\) (most prominently, \citet{king1994designing}), while others have proposed various kinds of matching strategies. Some have pointed to the advantages of random sampling of cases, either stratified or unstratified by values on \(X\) or \(Y\) (\citet{FL2008}, \citet{HerronQuinn}).
+
+Which cases we should choose will likely depend on the purposes to which we want to put them.
+
+A matching strategy for instance---selecting cases that are comparable on many features but that differ on \(X\)---replicates at a small scale the kind of inference done by matching estimators with large-\(n\) data. The strategy draws leverage from \(X,Y\) variation rather than from within-case information beyond what is available in the measurement of \(X\) and \(Y\).
+
+Other treatments seek to use qualitative information to check assumptions made in \(X, Y\) analysis: for example, is the measurement of \(X\) and \(Y\) reliable in critical cases?
+For such questions with limited resources, it might make sense to focus on cases for which validation plausibly makes a difference to the \(X,Y\) inferences: for example influential cases that have unusually extreme values on \(X\) and \(Y\).\footnote{Note: We can say more about why these would be good choices from a Bayesian perspective, based on the idea that measurement is more likely to be wrong in such cases and shifting them to more typical values would make a big difference.} Similar arguments are made for checking assumptions on selection processes, though we consider this a more complex desideratum since this requires making case level causal inferences and not simply measurement claims.
+
+A third purpose is to use a case to generate alternative or richer theories of causal processes, as in Lieberman's ``model-building'' mode of ``nested analysis'' (\citet{Lieberman2005nested}). Here it may be cases off the regression line that are of interest.
+
+\citet{weller2014finding} focus on (a) X/Y relations and (b) whether the cases are useful for hypothesis generation.
+
+In what follows, we focus on a simpler goal: given existing \(X, Y\) data for a set of cases and a given clue (or set of clues) that we can go looking for in the intensive analysis of some subset of these cases, for which cases would process tracing yield the greatest learning about the population-level causal effect of \(X\) on \(Y\)?
+
+The basic insight of this chapter is simple enough: \emph{the optimal strategy for case selection for a model-based analysis are a function of the model we start with and the query we seek to address}, just as we saw for the optimal clue-selection strategy in Chapter \ref{clue}. Using this strategy yields guidance that is consistent with some common advice but at odds with other advice. The main principles that emerge from the analysis can be summarized as:
+
+\begin{itemize}
+\tightlist
+\item
+  go where the probative value is, and
+\item
+  sample from \(X\) and \(Y\) values in proportion to their occurrence in the population,
+\item
+  invest in collections of cases that provide complementary learning.
+\end{itemize}
+
+Beyond these general principles, other patterns are more complex and thus more difficult to neatly summarize. The most general message of this chapter is about the general approach: that is, that we can use a causal model to tell us what kinds of cases are likely to yield the greatest learning, given the model and a strategy of inference. We provide a tool for researchers to undertake this analysis, at least for simple problems with \(X, Y, K\) data.
+
+Most closely related to our analysis in this chapter is the contribution of \citet{HerronQuinn}, who build on \citet{SeawrightGerring2008}. While Seawright and Gerring provide a taxonomy of approaches to case selection, they do not provide a strategy for assessing the relative merits of these different approaches. As we do, \citet{HerronQuinn} focus on a situation with binary \(X,Y\) data and assess the gains from learning about causal type in a set of cases (interestingly in their treatment causal type, \(Z_i\) is called a confounder rather than being an estimand of direct interest; in our setup, confounding as normally understood arises because of different probabilities of different causal types of being assigned to ``treatment'', or an \(X=1\) value). \citet{HerronQuinn} assume that in any given case selected for analysis a qualitative researcher is able to infer the causal type perfectly.
+
+Our setup differs from that in \citet{HerronQuinn} in a few ways. \citet{HerronQuinn} paramaterize differently, though this difference is not important.\footnote{\citet{HerronQuinn} have a parameter \(\theta\) that governs the distribution of data over \(X\) and \(Y\) and then, conditional on \(X,Y\) values, a set of parameters \(\psi_{xy}\) that describe the probability of a case's being of a given causal type. We take both \(\theta\) and \(\psi_{xy}\) to derive from the fundamental distribution of causal types and assignment probabilities. Thus, for example, \(\psi_{00}\) from \citet{HerronQuinn} corresponds to \(\frac{(1-\pi_b)\lambda_b}{(1-\pi_b)\lambda_b + (1-\pi_c)\lambda_c}\) in our notation. The difference in paramaterization does have implications for interpretations of the priors. For example flat priors over \(\theta\) and \(\psi\) implies a tighter distribution that a uniform prior over the causal types. In fact \citet{HerronQuinn} use priors with greater variance than uniform in any event.} Perhaps the most important difference between our analysis and that in \citet{HerronQuinn} is that we connect the inference strategy to process-tracing approaches. Whereas \citet{HerronQuinn} assume that causal types can be read directly, we assume that these are inferred \emph{imperfectly} from evidence and we endogenize the informativeness of the evidence to features of the inquiries. Moreover, not only can we have uncertainty about the probative value of clues, but researchers can learn about the probative value of clues by examining cases.
+
+Here we assume that the case selection decision is made after observing the \(XY\) distribution and we explore a range of different possible contingency tables. In \citet{HerronQuinn} the distribution from which the contingency tables are drawn is fixed, though set to exhibit an expected observed difference in means (though not necessarily a true treatment effect) of 0.2. They assume large \(XY\) data sets (with 10,000) units and case selection strategies ranging from 1 to 20 cases.
+
+Another important difference, is that in many of their analyses, \citet{HerronQuinn} take the perspective of an outside analyst who knows the true treatment effect; they then assess the expected bias generated by a research strategy over the possible data realizations. We, instead, take the perspective of a researcher who has \emph{beliefs} about the true treatment effect that correspond to their priors, and for whom there is therefore no \emph{expected} bias. This has consequences also for the assessment of expected posterior variance, as in our analyses the expectation of the variance is taken with respect to the researcher's beliefs about the world, rather than being made conditional on some specific world (ATE). We think that this setup is addressed to the question that a researcher must answer when deciding on a strategy: given what they know now, what will produce the greatest reduction in uncertainty (the lowest expected posterior variance)?
+
+Finally, we proceed somewhat differently in our identification of strategies from Herron and Quinn: rather than pre-specifying particular sets of strategies (operationalizations of those identified by \citet{SeawrightGerring2008}) and evaluating them, we define a strategy as the particular distribution over \(XY\) cells to be examined and proceed to examine \emph{every possible strategy} given a choice of a certain number of cases in which to conduct process tracing. We thus let the clusters of strategies---those strategies that perform similarly---emerge from the analysis rather than being privileged by past conceptualizations of case-selection strategies.
+
+Despite these various differences, our results will agree in key ways with those in \citet{HerronQuinn}.
+
+\hypertarget{no-general-rules}{%
+\section{No general rules}\label{no-general-rules}}
+
+Case selection is about choosing in which cases to make observations. We obviously want to look for evidence in cases where that evidence is likely to be most informative. And the informativeness of a case depends, in turn, on our model and our query.
+
+Although it might be tempting to seek general case-selection rules of the form ``examine cases in which \(X=1\) and \(Y=1\)'' or ``ignore cases in which \(X=0\) and \(Y=1\),'' it is easily demonstrated that which cases will be (in expectation) more informative depends on models and queries.
+
+Suppose we have observed \(X\) and \(Y\) values for a set of random draw of cases from a population. Suppose further that we know, for this population, that:
+
+\begin{itemize}
+\tightlist
+\item
+  \(X \rightarrow Y \leftarrow K\)
+\item
+  \(\Pr(Y=1|X=0, K = 0) = 1\)
+\item
+  \(\Pr(Y=1|X=1, K = 0) = .5\)
+\item
+  \(\Pr(Y=1|X=0, K = 1) = 0\)
+\item
+  \(\Pr(Y=1|X=1, K = 1) = .9\)
+\end{itemize}
+
+One way to read this set of statements is that \(X\)'s causal effect on \(Y\) varies with \(K\). We do not know, however how common \(K\) is. Thus we do not know either the average effect of \(X\) or the probability that \(X\) caused \(Y\) in a case with particular \(X, Y\) values.
+
+What do the above statements tell us about \(K\)'s \emph{informativeness}? The beliefs above imply that if, \(X=Y=1\), then \(K\) is a ``doubly decisive'' clue for assessing whether, in a given case, \(X\) causes \(Y\). In particular, we see that for an \(X=Y=1\) case, observing \(K=1\) implies that \(X\) caused \(Y\): this is because, otherwise, \(Y\) would have been 0. We also see that \(K=0\), in an \(X=1, Y=1\) case implies that \(X\) did not cause \(Y\) since \(Y\) would have still been 1 even if \(X\) were 0. So an \(X=Y=1\) case would be a highly informative place to go looking for \(K\).
+
+However, if we had a case in which \(X=Y=0\), then learning \(K\) would be entirely uninformative for the case. In particular, we already \emph{know} that \(K=1\) in this case as the statements above exclude the possibility of a case in which \(X=Y=0\) and \(K=0\). So there would be nothing gained by ``looking'' to see what \(K\)'s value is in the case. Moreover, this knowledge is not enough to tell us whether \(X=0\) caused \(Y=0\).
+
+For the same reason, we can learn nothing from \(K\) in an \(X=0, Y=1\) case since we know that \(K=0\) in such a case. On the other hand, if we chose an \(X=1, Y=0\), then \(K\) would again be doubly decisive, with \(K=0\) implying that \(X=1\) caused \(Y=0\), and \(K=1\) implying that \(X=1\) did not cause \(Y=0\).
+
+We have chosen extreme values for this illustration --- our beliefs could, of course, allow for gradations of informativeness, rather than all-or-nothing identification --- but the larger point is that beliefs about the way the world works can have a powerful effect on the kind of case in which learning is possible. And note that in this example, there is nothing special about where a case lies relative to a (notional) regression line: informativeness in this setup happens to depend on \(X\)'s value entirely. But, again, this is a particular feature of this particular set of beliefs about the world.
+
+Suppose, now, that we were interested in a population query: the average effect of \(X\) on \(Y\). We can see that this is equal to \(\Pr(K=1)\times.9 + (1-\Pr(K=0))\times(-.5)) = 1.4\times \Pr(K=1)-.5\). For this query, we need only determine the prevalence of \(K=1\) in the population. It might seem that this means that it is irrelevant what type of case we choose: why not use pure random sampling to determine \(K\)'s prevalence. As noted above, however, we have more information about the likely value of \(K\) in some kinds of cases than in others. Thus, for this population-level estimand as well, selecting an \(X=1\) case will be informative while selecting an \(X=0\) case will not be informative.
+
+At the same time, not all \(X=1\) cases are equally informative. Should we choose an \(X=1\) case in which \(Y=1\) or one in which \(Y=0\)? In both types of case, \(K\) is doubly decisive for the probability of causation in the case. However, the two kinds of cases are differentially informative about \(K\)'s prevalence in the population. For an \(X=1, Y=1\) case, we think it moderately likely that \(K=1\) (specifically, assuming a prior of \(\Pr(K=1)=.5\) we think \(\Pr(K=1 | X=1, Y=1) = \frac{.9 \times .25}{.9 \times .25+.5 \times.25}=.64\)). For an \(X=1, Y=0\) case, we think \(K=1\) is quite unlikely (\(\Pr(K=1 | X=1, Y=0) = \frac{.1}{.5+.1}=.17\)). In other words, we are much more uncertain about the value of \(K\) in the \(X=Y=1\) case than in the \(X=1, Y=0\) case. In this setup, we would thus expect to learn more about the average treatment effect by choosing to observe \(K\) in an on-the-diagonal case than in an off-the-diagonal case.
+
+Specifically, let \(\kappa\) denote \(\Pr(K=1)\). Suppose that we begin thinking it equally likely that \(\kappa=\kappa^H = .5\) and \(\kappa=\kappa^L=0\). Suppose, further, that the distribution of \(X\) is such that, for any randomly drawn case, \(\Pr(X=1) = .5\). We then observe one case with \(X=1, Y=1\) and another with \(X=1, Y=0\). From that information alone, we can update over \(\kappa\). Specifically, conditioning on \(X=1\), when we observe the data pattern, \(D\), in which \(Y=0\) in one case and \(Y=1\) in the other, the posterior on \(\kappa\) is:
+
+\[p(\kappa = \kappa^L|D) =  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kappa^L)}=\frac{.5}{.5 + .25\times(2\times.5\times.5 + 2\times.9\times.1 + 2\times(.9\times.5 +.1\times.5))}\]
+
+In summary, under the stipulated beliefs about the world, we can learn most about the population \(ATE\) by selecting an \(X=Y=1\) for study. We can also learn about the case-level effect in such a case as well as in an \(X=1, Y=0\) case. If we are interested in the case level estimand for any \(X=0\) case, then there are no gains from any case-selection strategy since we know \(K\)'s value based on \(X\) and \(Y\)'s value.
+
+There is nothing preferable in general about an \(X=1\) case. Under a different set of beliefs about the world, we would expect to learn more in an \(X=Y=0\) than in an \(X=Y=1\) case. Suppose, for instance, that we have a model in which:
+
+\begin{itemize}
+\tightlist
+\item
+  \(X \rightarrow Y \leftarrow K\)
+\item
+  \(\Pr(Y=1|X=0, K = 0) = .5\)
+\item
+  \(\Pr(Y=1|X=1, K = 0) = 0\)
+\item
+  \(\Pr(Y=1|X=0, K = 1) = .5\)
+\item
+  \(\Pr(Y=1|X=1, K = 1) = 1\)
+\end{itemize}
+
+In this world, we learn nothing from observing a case in which \(X=Y=1\)---since we already know that \(K=1\). In contrast, if \(X=Y=0\), then if we learn that \(K=1\), we know that, were \(X=1\), \(Y\) would have been 1; and if instead we observe \(K=0\), we know that \(Y\) would have (still) been 0 if \(X\) were 1. Now, \(K\) is doubly decisive for an \(X=Y=0\) case but unhelpful for an \(X=Y=1\) case.
+
+The two off-diagonal cases may also be different in the opportunities for learning that they present. Suppose that you knew that:
+
+\begin{itemize}
+\tightlist
+\item
+  \(X \rightarrow Y \leftarrow K\)
+\item
+  \(\Pr(Y=1|X=0, K = 0) = 0\)
+\item
+  \(\Pr(Y=1|X=1, K = 0) = .5\)
+\item
+  \(\Pr(Y=1|X=0, K = 1) = 1\)
+\item
+  \(\Pr(Y=1|X=1, K = 1) = .5\)
+\end{itemize}
+
+For an \(X=1, Y=0\) case, if you observe \(K=1\) you know that if \(X\) were 0, \(Y\) would have been 1; but if \(K=0\), you know that if \(X\) were 0, \(Y\) would still have been 0. In that case \(K\), would be doubly decisive for \(X=1\) causing \(Y=0\). But in an \(X=0, Y=1\), we already know \(K=0\) before we go looking.
+
+In summary: beware simple rules for case selection. Depending on the model, the query, and priors, any type of case may be optimal.
+
+\hypertarget{specific-case-walk-through}{%
+\section{Specific case walk through}\label{specific-case-walk-through}}
+
+We introduce a flexible model-based approach to comparing the prospective learning from alternative case-selection strategies. To help explore the intuition behind this strategy, we start by walking through a simplified setup.
+
+Consider a situation in which our model is \(X \rightarrow M \rightarrow Y\). Suppose, further, that we restrict the nodal types such that \(X\) cannot have a negative effect on \(M\), and \(M\) cannot have a negative effect on \(Y\), with flat priors over all remaining nodal types. Imagine then that we begin by collecting only \(X,Y\) data on six cases and obtain the following data pattern:
+
+\begin{tabular}{l|r}
+\hline
+event & count\\
+\hline
+X0Y0 & 2\\
+\hline
+X1Y0 & 1\\
+\hline
+X0Y1 & 1\\
+\hline
+X1Y1 & 2\\
+\hline
+\end{tabular}
+
+These \(X,Y\) data already give us some information about the causal effect of \(X\) on \(Y\). Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by colelcting data on \(M\) for two of these cases. Which cases should we select? We are considering two strategies, each conditional on \(X\) and \(Y\) values:
+
+\begin{itemize}
+\tightlist
+\item
+  Strategy \(A\) chooses two cases on the regression line, one randomly drawn from the \(X=Y=0\) cell and one randomly drawn from the \(X=Y=1\) cell
+\item
+  Strategy \(B\) chooses off the regression line, one randomly drawn from the \(X=1, Y=0\) cell and one randomly drawn from the \(X=0, Y=1\) cell
+\end{itemize}
+
+How can we evaluate these strategies prospectively?
+
+We start by recognizing that different strategies yield different \emph{possible} data patterns. For instance, Strategy \(A\) (on the line) could possibly give us a data pattern that includes the observation \(X=0, M=0, Y=0\). Yet Strategy \(A\) cannot possibly yield a data pattern that includes the observation \(X=1, M=0, Y=0\) --- because it does not involve the inspection of \(M\) in an \(X=1, Y=0\) case --- whereas Strategy \(B\) (off the line) \emph{can} yield a pattern that includes this observation. And neither strategy can possibly yield a pattern that includes both \(X=1, M=0, Y=0\) and \(X=0, M=1, Y=0\).
+
+In Table \ref{tab:chselillustration}, we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy \(A\) or \(B\) labeled \(A1, A2\), etc. or \(B1, B2\), etc., respectively. As we can see, there are four possible data patterns from each, representing the 4 different combinations of \(M\) values we might find across the two cases selected for deeper investigation. In the comparison presented here, none of the possible data patterns overlap across strategies.
+
+The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally \emph{likely} to emerge. We represent the data probabilities (calculated by CQTools) near the bottom of the table. How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure \(X,Y\) data. Note, for instance, that data pattern \(A3\) is much more likely to emerge than the other data patterns possible under Strategy \(A\). This is for two reasons. One is that \(A3\) involves \(M\) covarying with \(X\) and \(Y\), a pattern consistent with \(X\) having an effect on \(Y\) -- since, in this model, \(X\) can only affect \(Y\) if it affects \(M\) and if \(M\) effects \(Y\). Data patterns \(A1\) and \(A4\) have \(M\) constant between the two cases, even as \(X\) and \(Y\) vary; this is a pattern inconsistent with \(X\) having an effect on \(Y\). \(A3\), then, is more likely than \(A1\) or \(A4\) because the restrictions on the model plus the evidence from the \(X,Y\) data make us believe that \(X\) \emph{does} have an average effect on \(Y\). Second, we believe \(A3\) is more probable than \(A2\) because of the model's restrictions: the model allows positive effects of \(X\) on \(M\) and of \(M\) on \(Y\) (a way of generating \(A3\)), but rules out negative intermediate effects (a way of generating \(A2\)).
+
+Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table \ref{tab:chselillustration}, we can see the mean of the posterior distribution (for the \(ATE\) of \(X\) on \(Y\)) under each data pattern. What is of particular interest in assessing case-selection strategies is the \emph{variance} of the posterior distribution, which represents our \emph{uncertainty}. This posterior variance on the \(ATE\), for each data pattern, is represented in the table's final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the \emph{expected} reduction in posterior variance.
+
+\begin{table}
+
+\caption{\label{tab:chselillustration}Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.}
+\centering
+\begin{tabular}[t]{l|l|l|l|l|l|l|l|l|l|l|l}
+\hline
+event & A1 & A2 & A3 & A4 & B1 & B2 & B3 & B4 & C1 & C2 & C3\\
+\hline
+X0M0Y0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+\hline
+X0M0Y1 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0\\
+\hline
+X0M1Y0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+\hline
+X0M1Y1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0\\
+\hline
+X0Y0 & 1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 & 2 & 2 & 2\\
+\hline
+X0Y1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1\\
+\hline
+X1M0Y0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+\hline
+X1M0Y1 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 2 & 1 & 0\\
+\hline
+X1M1Y0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0\\
+\hline
+X1M1Y1 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 2\\
+\hline
+X1Y0 & 1 & 1 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 1\\
+\hline
+X1Y1 & 1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 & 0 & 0 & 0\\
+\hline
+Probability & 0.171 & 0.03 & 0.625 & 0.174 & 0.27 & 0.231 & 0.23 & 0.268 & 0.09 & 0.242 & 0.668\\
+\hline
+Posterior mean & 0.078 & 0.041 & 0.171 & 0.078 & 0.128 & 0.141 & 0.143 & 0.131 & 0.046 & 0.089 & 0.161\\
+\hline
+Posterior variance & 0.006 & 0.002 & 0.029 & 0.006 & 0.016 & 0.02 & 0.02 & 0.017 & 0.002 & 0.008 & 0.026\\
+\hline
+\end{tabular}
+\end{table}
+
+From the probability of each data type (given the model and the \(X,Y\) data seen so far) and the posterior variance given each data realization, the implied \emph{expected} variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table \ref{tab:exppostvar}:
+
+\begin{tabular}{l|r}
+\hline
+Strategy & Variance\\
+\hline
+Online & 0.015\\
+\hline
+Offline & 0.017\\
+\hline
+X=1, Y=1 & 0.015\\
+\hline
+\end{tabular}
+
+In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing our process-tracing efforts on the regression line than off the regression line. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below.
+
+The key takeaway here are the core elements of our model-based approach to assessing case-selection strategies:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Derive from the model the full set of possible data patterns under each case-selection strategy being assessed
+\item
+  Calculate the probability of each data pattern given the model (with any priors or restrictions), the prior \(X,Y\) data, and the strategy
+\item
+  Generate a posterior distribution on the query of interest for each data pattern
+\item
+  Use the probability of and posterior variance under each data pattern toalculate the expected posterior distribution on the query of interest for each strategy
+\end{enumerate}
+
+\hypertarget{case-selection-from-causal-models-a-simulation-based-approach}{%
+\section{Case selection from causal models: a simulation-based approach}\label{case-selection-from-causal-models-a-simulation-based-approach}}
+
+In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using \texttt{CausalQueries} together with \texttt{CQTools}.
+
+In all scenarios examined here, we imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming throughout that we are considering gathering additional observations in cases for which we already have \emph{some} data. In other words, we are deciding which subset of the cases --- among those we have already gathered some data on --- we should investigate more \emph{deeply}. (This is distinct from the question of ``wide vs.~deep'', where we might decide to observe cases we have not yet seen at all.)
+
+The general intuition of the case-selection approach that we develop here is that we can use our causal model and any previously observed data to estimate what observations we are more or less likely to make under a given case-selection strategy, and then figure out how far off from the (under the model) true estimand we can expect to be under the strategy, given whatever causal question we seek to answer.
+
+We proceed as follows:
+
+\textbf{DAG}. We start, as always, with a DAG representing our beliefs about which variables we believe to be direct causes of other variables. For the current illustrations, we consider two different DAGS: a simple mediation (or ``chain'') model, \(X \rightarrow M \rightarrow Y\), and a two-path model, \(X \rightarrow M \rightarrow Y \leftarrow X\).
+
+\textbf{Restrictions or priors}. As when conducting mixed-method inference, we can set qualitative restrictions and/or differential quantitative weights on the (possibly conditional) nodal types in the model. We can also indicate our uncertainty over the latter, by setting the \(\alpha\) parameters of the relevant Dirichlet distributions. For the current example, we start by setting flat priors over all nodal types and assume no unobserved confounding.
+
+\textbf{Given data.} If we have already made observations of any of the model's nodes in some set of cases, we can use this information to condition our strategy for searching for further information. For instance, if we have observed \(X\)'s and \(Y\)'s value in a set of cases, we might select cases for process tracing based on their values of \(X\) and/or \(Y\). And, importantly, what we have already observed in the cases will affect the inferences we will draw when we observe additional data, including how \emph{informative} a particular new observation is likely to be. For the present examples, we assume that we have already observed \(X\) and \(Y\) in a set of cases and found a positive correlation.
+
+\textbf{Query}. We define our query. This could, for instance, be \(X\)'s average effect on \(Y\) or it might be the probability that \(X\) has a negative effect on \(Y\) in an \(X=1, Y=0\) case. We can use the general procedure to identify case-selection strategies for any causal query that can be defined on a DAG. And, importantly, the optimal case-selection strategy may depend on the query. The best case-selection strategy for answering one query may not be the best case-selection strategy for another query.
+
+\textbf{Define one or more strategies}. A strategy is defined, generically, as the search for data on a given set of \emph{nodes}, in a given \emph{number} of cases that are randomly selected \emph{conditional} on some information we already have about potential cases. In the simulations below, our strategy will always involve uncovering \(M\)'s value in 1 or 2 cases. What we are wondering is how to choose these one or two cases for deeper analysis.
+
+\textbf{Possible data}. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the \(X,Y\) patterns we have already observed plus some pattern of \(M\) observations.
+
+\textbf{Probability of the data}. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed. In practice, we do this in \texttt{CQtools} via simulation. Starting with the model together with our priors, we update our beliefs about \(\lambda\) based on the previously observed data. This posterior now represents our \emph{prior} for the purposes of the process tracing. In the analyses below, we use the already-observed \(X,Y\) correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of \(\lambda\) values.
+
+Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each \(lambda\) draw the probability of each data possibility given that particular \(\lambda\) and the strategy. We then average across repeated \(\lambda\) draws. Since \(\lambda\)'s are being drawn from our prior, we are automatically weighting more heavily those \(\lambda\)'s that we believe to be most likely.
+
+\textbf{Posterior on estimate given the data}. For each data possibility, we can then use \texttt{CQtools} to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies.
+
+\textbf{Expected posterior variance under each strategy}. The quantity of ultimate interest is the posterior variance that we expect to end up with under each strategy. The expected posterior variance is simply an average of the posterior variances under each data possibility, weighted by the probability of each data possibility. We operationalize the expected learning under a strategy as the expected \emph{reduction} in posterior variance arising from that strategy.
+
+\hypertarget{models-queries-and-strategies}{%
+\subsection{Models, queries, and strategies}\label{models-queries-and-strategies}}
+
+Here we describe the dimensions along which we vary the features of the simulations.
+
+\emph{Models}
+
+We illustrate the approach using a set of relatively simply models with core structural features that we believe will be fairly common in applied settings. The four structures that we examine are:
+
+\begin{itemize}
+\tightlist
+\item
+  Chain model: an \(X \rightarrow M \rightarrow Y\) model, where \(M\) is a mediator
+\item
+  Confounded model: a model with \(X \rightarrow Y\) and with \(M\) as a confounder, pointing into both \(X\) and \(Y\)
+\item
+  Moderator model: an \(X \rightarrow Y \leftarrow M\), where \(M\) is a moderator
+\item
+  Two-path model: a model in which \(X \rightarrow M \rightarrow Y \leftarrow X\), meaning that \(X\) can affect \(Y\) both through a direct path and indirectly via \(M\)
+\end{itemize}
+
+For each of these causal structures, we consider both an unconstrained version (all nodal types permitted) and a monotonic version in which we use restrictions to exclude negative effects throughout the model.
+
+\emph{Queries}
+
+We also examine a range of queries under each model:
+
+\begin{itemize}
+\tightlist
+\item
+  \(ATE\): what is the average effect of \(X\) on \(Y\) for the population?
+\item
+  Probability of positive causation: what is the probability that \(Y=1\) because \(X=1\) for a case randomly drawn from the population of \(X=1, Y=1\) cases
+\item
+  Probability of negative causation: what is the probability that \(Y=1\) is due to \(X=0\) for a case randomly drawn from the population of \(X=0, Y=1\) cases
+\item
+  Probability of an indirect effect: defined only for the two-path models, we estimate the probability that the effect of \(X\) on \(Y\) operates through the indirect path. More precisely, we ask, for an \(X=1, Y=1\) case in which \(X=1\) caused \(Y=1\), what the probability is that that effect would have occurred if \(M\) were held fixed at the value it takes on when \(X=1\).\footnote{In code, this somewhat complicated query is expressed as \texttt{"Y{[}X=0,\ M=M{[}X=1{]}{]}==Y{[}X=1,\ M=M{[}X=1{]}{]}"}, \texttt{given\ "(X\ ==\ 1\ \&\ Y\ ==\ 1)\ \&\ (Y{[}X=1{]}\textgreater{}Y{[}X=0{]})"}.}
+\end{itemize}
+
+\emph{Strategies}
+
+Finally, for each model-query combination, we assess the contributions of 7 strategies for selecting cases for process tracing, with inferences from the \(X,Y\) data alone serving as our baseline. In the figures below, the strategies run along the \(X-\)axis of each graph and can be interpreted as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Prior}: beliefs are based on \(X,Y\) data only.
+\item
+  \textbf{1 off}: data on \(M\) is sought in one case in the \(X=1, Y=0\) cell
+\item
+  \textbf{1 on}: data on \(M\) is sought in one case in the \(X=1, Y=1\) cell
+\item
+  \textbf{2 off}: data on \(M\) is sought in one \(X=0, Y=1\) case and one \(X=1, Y=0\) case
+\item
+  \textbf{2 pos}: data on \(M\) is sought for two cases in the \(X=1, Y=1\) cell
+\item
+  \textbf{2 on}: data on \(M\) is sought in one \(X=1, Y=1\) case and one \(X=0, Y=0\) case
+\item
+  \textbf{fix \(X\)}: a strategy in which we seek \(M\) in two cases in which a causal condition was present, with \(X\) fixed at 1, one with \(Y=0\) and one with \(Y=1\)
+\item
+  \textbf{fix \(Y\)}: a strategy in which we seek \(M\) in two cases in which a positive outcome was observed, with \(Y\) fixed at 1, one with \(X=0\) and one with \(X=1\)
+\end{itemize}
+
+These are all ``pure'' strategies in the sense that the number of units for which data on \(M\) is sought in each cell is fixed. One could also imagine random strategies in which a researcher chooses at random in which cells to look. For example, if we choose one point at random, we are randomly choosing between a case on the regression line and a case off the line. The performance of a random strategy will be a weighted average of the pure strategies over which the random strategy is randomizing.
+
+For all simulations, we assume prior \(X,Y\) data of \(N=6\), with a weak positive relationship (2 \(X=1, Y=1\) cases, 2 \(X=0, Y=0\) cases, and 1 case in each off-diagonal cell). And it is \emph{from} these original 6 cases that we are selecting our cases for process tracing. In the experiments below, we do not examine how the prior data itself might affect the choice of case-selection strategies (as we do, for instance, with clue-selection in Chapter \ref{clue}), but we invite the reader to explore these relationships by adjusting the code we provide.
+
+\hypertarget{results-1}{%
+\subsection{Results}\label{results-1}}
+
+The main results are shown in Figure \ref{fig:caseselectionest} and Figure \ref{fig:caseselectionvar}. For each model-strategy-query combination, we figure out (a) all of the possible data realizations, (b) what inferences would be made on the query from each data realization, (c) how likely each data-realization is to arise given the strategy, the model, and the prior data, and (d) the resulting expected reduction in variance from each strategy. Result (d) is our measure of expected learning.
+
+The two figures take two different approaches to representing the value of alternative strategies. In Figure \ref{fig:caseselectionest}, we examine the informativeness of strategies by showing how much our inferences depend on what we observe within the cases. Generally, a larger spread across points (for a given model-query-strategy combination) represents a greater opportunity for learning from the data. However, as expected learning is also a function of how likely each data realization is, we represent the probability of each potential inference via shading of the points. In Figure \ref{fig:caseselectionvar} we directly plot expected learning, operationalized as the expected reduction in posterior variance.
+
+In the remainder of this section, we walk through the results and suggest, often tentatively, interpretations of some of the more striking patterns. We caution that reasoning one's way through expected learning for different model-query-strategy combinations, given a particular pattern in the prior data, can be tricky --- hence, our recommendation that researchers simulate their way to research-design guidance, rather than relying on intuition.
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/caseselectionest-1.pdf}
+\caption{\label{fig:caseselectionest}Inferences given observations}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ii_files/figure-latex/caseselectionvar-1.pdf}
+\caption{\label{fig:caseselectionvar}Reduction in variance on ATE and PC given strategies}
+\end{figure}
+
+\hypertarget{n1-strategies-unconstrained-models}{%
+\subsubsection{\texorpdfstring{\(N=1\) strategies, unconstrained models}{N=1 strategies, unconstrained models}}\label{n1-strategies-unconstrained-models}}
+
+Suppose that we can only conduct process tracing (observe \(M\)) for a single case drawn from our sample of 6 \(X,Y\) cases. Should we choose a case from on or off the regression line implied by the \(X,Y\) pattern? In Figure \ref{fig:caseselectionest}, we can see that for all unconstrained models, our inferences are completely unaffected by the observation of \(M\) in a single case, regardless of which case-selection strategy we choose and regardless of the query of interest. We see only 1 point plotted for the two \(N=1\) strategies for all unconstrained models and all queries because the inference is the same regardless of the realized value of \(M\). In Figure \ref{fig:caseselectionvar}, we see, in the same vein, that we expect 0 reduction in expected posterior variance from these \(N=1\) strategies: they cannot make us any less uncertain about our estimates because the observations we glean cannot affect our beliefs.
+
+To see why, let's first consider the on-the-line strategy. Not having observed \(M\) previously, we still have flat priors over the nodal types governing \(X\)'s effect on \(M\) and \(M\)'s effect on \(Y\). That is to say, we still have no idea whether \(X\)'s positive effect on \(Y\) (where present) more commonly operates through a chain of positive effects or a chain of negative effects. Thus, the observation of, say, \(M=1\) in an \(X=1, Y=1\) case is equally consistent with a positive \(X \rightarrow Y\) (to the extent that effect operates via linked positive effects) and with no \(X \rightarrow Y\) effect (to the extent positive effects operate through linked negative effects). Observing \(M=1\) in an \(X=1, Y=1\) case therefore tells us nothing about the causal effect in that case and, thus, nothing about the average effect either.
+
+Similarly, we have no idea whether \(X\)'s negative effect on \(Y\) (where present) operates through a positive-negative chain or a negative-positive chain, making \(M=1\) or \(M=0\) in an \(X=1, Y=0\) case both equally consistent with a negative or null \(X \rightarrow Y\) effect, yielding no information about causation in the case. By a similar logic, observing \(M=1\) in the \(X=1, Y=1\) case is uninformative about negative effects in an \(X=0, Y=1\) case, and observing \(M=1\) in an \(X=1, Y=0\) case tells us nothing about positive effects in an \(X=1, Y=1\) case.
+
+The same logic applies to drawing inferences from \(M\) as a moderator or to learning from \(M\) about indirect effects. In the absence of prior information about effects, one case is not enough.
+
+\hypertarget{n1-strategies-monotonic-models}{%
+\subsubsection{\texorpdfstring{\(N=1\) strategies, monotonic models}{N=1 strategies, monotonic models}}\label{n1-strategies-monotonic-models}}
+
+The situations changes, however, when we operate with models with montonicity restrictions. Now we can see that our inferences on the queries do generally depend on \(M\)'s realization in a single case and that we expect learning. For many model-query combinations, the two \(N=1\) strategies perform comparably, but there are situations in which we see substantial differences.
+
+Most notably, in a chain model with negative effects ruled out by assumption, we learn almost nothing from choosing an off-the-line case: this is because we already know from the model itself that there can be no \(X \rightarrow Y\) effect in such a case since such an effect would require a negative effect at one stage. The only learning that can occur in such a case is about the prevalence of positive effects (relative to null effects) at individual stages (\(X \rightarrow M\) and \(M \rightarrow Y\)), which in turn has implications for the prevalance of positive effects (relative to null effects) of \(X\) on \(Y\). Likely for similar reasons, in the monotonic two-path model, an on-the-line case is much more informative than an off-the-line case about the \(ATE\) and about the probability that the effect runs via the indirect path.
+
+Interestingly, however, the on-the-line strategy is not uniformly superior for an \(N=1\) process-tracing design. We appear to learn significantly more from an off-the-line case than an on-the-line case when estimating the share of positive effects in the population of \(X=1, Y=1\) cases and operating with a monotonic confounded or two-path model. At first, these results seem surprising: why would we not want to choose an \(X=1, Y=1\) case for learning about the population of \(X=1, Y=1\) cases? One possible reason is that, in the on-the-line case, one data realization is much more likely then the other, while we are more uncertain about what we will find in the off-the-line case. For instance, in the confounding model with montonicity, in an \(X=1, Y=1\) case we would learn about the prevalence of confounding from seeing \(M=0\) (where confounding cannot be operating since negative effects are excluded) as opposed to \(M=1\); but we do not expect to see \(M=0\) when both of its children (\(X\) and \(Y\)) take a value of 1 while negative effects are excluded. In an \(X=1, Y=0\) case, however, \(M=0\) and \(M=1\) are about equally likely to be observed, and we can learn about confounding from each realization. We can see these differences in relative data probabilities from the shadings in the graphs, where we have more even shading for the possible inferences from the one-off strategy than for the one-one strategy.
+
+The general point here is that we expect to learn more from seeking a clue the more uncertain we are about what we will find, and some case-selection strategies will give us better opportunities to resolve uncertainty than do others.
+
+\hypertarget{n2-strategies-unconstrained-models}{%
+\subsubsection{\texorpdfstring{\(N=2\) strategies, unconstrained models}{N=2 strategies, unconstrained models}}\label{n2-strategies-unconstrained-models}}
+
+Next, we consider the process tracing of \emph{two} of our cases 6 cases. Now, because we are observing \(M\) in two cases, we can learn from the variation in \(M\) across these cases---or, more specifically, from its covariation with \(X\) and with \(Y\). This should matter especially for unconstrained models, where we start out with no information about intermediate causal effects (e.g., whether they are more often positive or more often negative). Thus, when we only process trace one case, we cannot learn about causal effects in the cases we process-trace since we don't know how to interpret the clue. In contrast, if we observe \(M\) in two or more cases, we \emph{do} learn about causal effects for those cases because of the leverage provided by observing covariation between the process-tracing clue and other variables.
+
+We assess the expected gains from 5 \(N=2\) stragies: examine two off-the line cases, one \(X=1, Y=0\) case and one \(X=0, Y=1\) case; examine two on-the-line cases, an \(X=Y=0\) case and an \(X=Y=1\) case; examine two treated, positive outcome (\(X=Y=1\)) cases; select on \(X\) by examining two \(X=1\) cases with different \(Y\) values; and select on \(Y\) by examining two \(Y=1\) cases with different \(X\) values.
+
+A key message of these results is that, with 2 cases, the performance of each strategy depends quite heavily on the model we start with and what we want to learn. For instance, when estimating the \(ATE\), the on-the-line strategy in which we disperse the cases across cells (two-on) clearly outperforms both the dispersed off-the-line strategy (two-off) and an on-the-line strategy in which we concentrate on one cell (two-pos) \emph{if} we are working with an unconstrained chain model, and the off-the-line strategy is clearly the worst-performing of the three. The differences in learning about the \(ATE\) are more muted, however, for an unconstrained confounded model, and the two-pos strategy does \emph{better} than the other two for a two-path model.
+
+If we seek to learn about the probability of positive causation in an \(X=1, Y=1\) case, then there is little difference between two-off and two-pos, with two-on performing best. We also see that two-pos has lost its edge in an unconstrained two-path model, with no strategy offering leverage. When estimating the probability of a \emph{negative} effect for an \(X=0, Y=1\) case, we see that the two-off strategy performs best for the chain model, \emph{but} that the two-pos strategies offers the greatest leverage in a two-path model. Finally, when estimating the probability of an indirect positive effect in an unconstrained two-path model, we get the most from a two-on strategy, though the two-off strategy does moderately well.
+
+In general, selecting conditional on a fixed value of \(X\) or \(Y\) (while dispersing on the other variable) does not do particularly well in unconstrained models, and it does not usually matter much which variable we fix on. There are exceptions, however. Perhaps most strikingly, in a two-path unconstrained model, we do relatively well in estimating the probability of an indirect positive effect when we fix \(Y\) but stand to learn nothing if we fix \(X\). Interestingly, fixing \(Y\) fairly well dominates fixing \(X\) across all model-query combinations shown, given the prior data pattern we are working with.
+
+This pattern is particularly interesting in light of canonical advice in the qualitative methods literature. King, Keohane, and Verba \citeyearpar{king1994designing} advise selecting for variation on the explanatory variable and, as a second-best approach, on the dependent variable. And they warn sternly against selection for variation on both at the same time. But note what happens if we follow their advice. Suppose we start with an unconstrained chain model, with to learn about the \(ATE\) or probability of positive causation, and decide to select for variation on \(X\), ignoring \(Y\). We might get lucky and end up with a pair of highly informative on-the-line cases. But, depending on the joint \(X,Y\) distributon in the population, we might just as easily end up with a fairly uninformative off-the-line case or \(X=0, Y=1\), \(X=1, Y=1\) pair. We do better if we intentionally select on \emph{both} \(X\) and \(Y\) in this setup. This is equally true if we want to learn about the probability of negative effects in this model, in which case we want to choose an off-the-line case, or if we want to learn about positive indirect effects in a two-path model, where we want both \(X\) and \(Y\) to be 1. King, Keohane, and Verba's advice makes sense if all we are interested in is examining covariation between \(X\) and the \(Y\): then we can learn from forcing \(X\) to vary and letting \(Y\)'s values fall where they may. However, seeking leverage from observation of a third variable is a different affair. As our simulations indicate, the strategy from which we stand to learn the most will depend on how we think the world works and what we want to learn.
+
+\hypertarget{n2-strategies-monotonic-models}{%
+\subsubsection{\texorpdfstring{\(N=2\) strategies, monotonic models}{N=2 strategies, monotonic models}}\label{n2-strategies-monotonic-models}}
+
+Generally speaking, we get more leverage across strategies, models, and queries if we are willing to rule out negative effects by assumption. The most dramatic illustration of this is in a comparison of the unconstrained to monotonic moderator and two-path models, where we face bleak prospects of learning about the \(ATE\) and probability of positive effects in an unconstrained model, regardless of strategy. Imposing monotonicity assumptions on these two models makes for relatively similar \(ATE-\)learning opportunities across \(N=2\) strategies while boosting the relative performance of two-on (best) and two-off (second-best) strategies for learning about the probability of positive causation.
+
+Relative performance also flips in some places. For instance, whereas two-pos gives us the most leverage for estimating the \(ATE\) in an unconstrained two-path model, the two-on strategy is optimal once we impose monotonicity. And two-pos leapfrogs two-off for estimating positive indirect effects when we go from an unconstrained to a monotonic two-path model. The opposite seems to be true for estimating the \(ATE\) or the probability of positive causation in a confounded model, where two-off does relatively better when we introduce montonicity restrictions.
+
   \bibliography{bib.bib,packages.bib}
 
 \end{document}
