@@ -118,7 +118,6 @@ In a model without unobserved confounding, we set our beliefs about nodal type s
 ::::
 -->
 
-
 ### Inference
 
 Inference then works by figuring out the probability of the data given different possible parameter vectors, $\lambda$s, and then applying Bayes' rule. In practice we proceed as follows. 
@@ -367,6 +366,7 @@ While this kind of sampling can be handled relatively easily (it is implemented 
 
 <!-- With these transformed parameters in hand, the likelihood is exactly the same as that specified in the baseline model. -->
 
+
 #### Case inference following population updating
 
 We are often in situations in which we observe patterns in $n$ units and then seek to make an inference about one or more of the  $n$ cases  conditional on *both* the case level data and the broader patterns in the full data. 
@@ -465,6 +465,7 @@ The generalization is straightforward. Say that a strategy is a set of nodes on 
 
 $$L = \prod_s \text{multinomial}(m_s|n_s, w_s)$$
 <!-- Illustration -->
+
 
 ## Considerations 
 
@@ -659,9 +660,6 @@ We expect that, as measurement becomes more granular, researchers will want to m
 
 <!-- Asymptotically approaches linearity -->
 
-
-
-
 ### Measurement error
 
 One potential application of the approach we have described in this chapter to integrating differing forms of data is to addressing the problem of measurement error. The conceptual move to address measurement error in a causal model setup is quite simple: we incorporate the error-generating process into our model.
@@ -740,7 +738,8 @@ Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of uni
 <!-- The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$.  -->
 <!-- Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it. -->
 
-An alternative strategy might involve gathering multiple measures of $Y$, each with their own independent source of error. Consider the model, $X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}$. Assume again a true $ATE$ of $X$ on $Y$ of 0.6, that $Y$ has an average effect of 0.7 on both $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$, and no negative effects of true $Y$ on the measures.^[Importantly, this model assumes nodal types for $Y_\text{measured[1]$ and $Y_\text{measured[2]$ are independent of one another (no unobserved confounding), implying independent sources of measurement error in this setup.] In this setup, updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The results in Table \@ref(tab:measurementerror2) are based the same data as in the previous example but now augmented with the second noisy measure for $Y$. 
+An alternative strategy might involve gathering multiple measures of $Y$, each with their own independent source of error. Consider the model, $X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}$. Assume again a true $ATE$ of $X$ on $Y$ of 0.6, that $Y$ has an average effect of 0.7 on both $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$, and no negative effects of true $Y$ on the measures.^[Importantly, this model assumes nodal types for $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$ are independent of one another (no unobserved confounding), implying independent sources of measurement error in this setup.] In this setup, updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The results in Table \@ref(tab:measurementerror2) are based the same data as in the previous example but now augmented with the second noisy measure for $Y$. 
+
 
 ```{r, cache = TRUE, echo = FALSE}
 model <- make_model("X -> Y -> Yobs1; Y -> Yobs2") %>%
@@ -960,4 +959,5 @@ rbind(
 <!-- 8. It is difficult to get empirical leverage on very unlikely queries. And queries may be unlikelier than they appear. Suppose we start with the 2-path model, and want to know if X has a positive effect on Y that rests on a chain of positive effects via M. And suppose, importantly, that we begin with flat priors over all nodal types. Our intuitions likely tell us that this is exactly the kind of question for which an observation of M is the perfect empirical strategy. And that intuition is, in a sense, correct: we can indeed learn about the query by observing M. Seeing M=1 in an X=Y=1 case, for instance. would be evidence consistent with the query while M=0 would be inconsistent. Fine. ((But we will only learn a little from this observation. The reason is that the query itself has a very low prior probability. It may actually not be obvious at first glance just how unlikely our query is to be true. (After all, the model has two causal paths, and we’re asking if positive effects run through one of them, right? Not quite.) Seeing this requires us to think about the joint probabilities implied by the query. First, the query requires X to have a positive effect on M, which we think there’s only a 25% chance of. In addition, the query puts a very narrow constraint on Y’s possible nodal types:  Y has to have a nodal type in which M has a positive effect on Y when X does not change, and in which X does not have a positive effect on Y unless M changes from 0 to 1. This pair of conditions is met by only 2 of Y’s 16 nodal types, implying a 12.5% chance. The prior on the query is thus 0.25 x 0.125 = 0.03125. Thus, while observing M=0 takes the probability of the query down to 0%, we started out very close to 0%! And observing M=1 results in only a small uptick, to about 6% because there remain many type combinations consistent with M=1 but that do not fit through the needle-eye of this query. -->
 
 <!-- ADD REFERENCE TO TABLE 1 OF FOR MIXED DATA "Ability and Achievement" Otis Duncan -->
+
 
