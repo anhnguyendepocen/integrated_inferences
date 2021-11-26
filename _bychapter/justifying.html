@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 15 Justifying models | Integrated Inferences</title>
+  <meta name="description" content="Bayesian causal models for integrated inferences." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 15 Justifying models | Integrated Inferences" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
+  <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+  <meta property="og:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="github-repo" content="macartan/integrated_inferences" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 15 Justifying models | Integrated Inferences" />
+  
+  <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan M. Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="wideordeep.html"/>
+<link rel="next" href="evaluation.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="headers/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Integrated Inferences</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#key-contributions"><i class="fa fa-check"></i><b>1.2</b> Key contributions</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#counterfactualmodel"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#potential-outcomes"><i class="fa fa-check"></i><b>2.1.1</b> Potential outcomes</a></li>
+<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#generalization"><i class="fa fa-check"></i><b>2.1.2</b> Generalization</a></li>
+<li class="chapter" data-level="2.1.3" data-path="models.html"><a href="models.html#summaries-of-potential-outcomes"><i class="fa fa-check"></i><b>2.1.3</b> Summaries of potential outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#graphing-models-and-using-graphs"><i class="fa fa-check"></i><b>2.3</b> Graphing models and using graphs</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilistic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilistic relations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
+<li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.5.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.5.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.5.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.5.3" data-path="models.html"><a href="models.html#rules-for-moving-between-levels"><i class="fa fa-check"></i><b>2.5.3</b> Rules for moving between levels</a></li>
+<li class="chapter" data-level="2.5.4" data-path="models.html"><a href="models.html#reading-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.5.4</b> Reading conditional independence from a graph</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform</a></li>
+<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions"><i class="fa fa-check"></i><b>3.2</b> Military Interventions</a></li>
+<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Queries</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#actual-causes"><i class="fa fa-check"></i><b>4.3</b> Actual causes</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
+<li class="chapter" data-level="4.6" data-path="questions.html"><a href="questions.html#general-procedure"><i class="fa fa-check"></i><b>4.6</b> General procedure</a></li>
+<li class="chapter" data-level="4.7" data-path="questions.html"><a href="questions.html#chapter-appendix-1"><i class="fa fa-check"></i><b>4.7</b> Chapter Appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-continuous-parameters-and-the-dirichlet-family"><i class="fa fa-check"></i><b>5.1.3</b> Bayes’ Rule for Continuous Parameters and The Dirichlet family</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#features-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Features of Bayesian updating</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>6</b> Theories as causal models</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="theory.html"><a href="theory.html#models-as-theories-of"><i class="fa fa-check"></i><b>6.1</b> Models as <em>theories of</em></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="theory.html"><a href="theory.html#implications-of-structural-causal-models"><i class="fa fa-check"></i><b>6.1.1</b> Implications of structural causal models</a></li>
+<li class="chapter" data-level="6.1.2" data-path="theory.html"><a href="theory.html#probabilistic-causal-models"><i class="fa fa-check"></i><b>6.1.2</b> Probabilistic causal models</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="theory.html"><a href="theory.html#theorygains"><i class="fa fa-check"></i><b>6.2</b> Gains from theory</a></li>
+<li class="chapter" data-level="6.3" data-path="theory.html"><a href="theory.html#formal-theories-and-causal-models"><i class="fa fa-check"></i><b>6.3</b> Formal theories and causal models</a></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>7.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="7.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>7.1.2</b> A formalization of the general approach</a></li>
+<li class="chapter" data-level="7.1.3" data-path="pt.html"><a href="pt.html#priors"><i class="fa fa-check"></i><b>7.1.3</b> Priors</a></li>
+<li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
+<li class="chapter" data-level="7.4.2" data-path="pt.html"><a href="pt.html#learning-requires-uncertainty"><i class="fa fa-check"></i><b>7.4.2</b> Learning requires uncertainty</a></li>
+<li class="chapter" data-level="7.4.3" data-path="pt.html"><a href="pt.html#the-more-specific-the-query-the-more-difficult-it-is-to-gain-leverage"><i class="fa fa-check"></i><b>7.4.3</b> The more specific the query the more difficult it is to gain leverage</a></li>
+<li class="chapter" data-level="7.4.4" data-path="pt.html"><a href="pt.html#population-level-uncertainty-does-not-alter-case-level-causal-inference"><i class="fa fa-check"></i><b>7.4.4</b> Population-level uncertainty does not alter case-level causal inference</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Process Tracing Application</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>8.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>8.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>8.3</b> Results</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>8.3.1</b> Inferences for cases with observed democratization</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>8.3.2</b> Cases with incomplete data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#theory-dependence"><i class="fa fa-check"></i><b>8.4</b> Theory dependence</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#general-queries"><i class="fa fa-check"></i><b>9.2</b> General queries</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
+<li class="chapter" data-level="9.2.3" data-path="mixing.html"><a href="mixing.html#wrinkles"><i class="fa fa-check"></i><b>9.2.3</b> Wrinkles</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#mixed-methods"><i class="fa fa-check"></i><b>9.3</b> Mixed methods</a></li>
+<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.4</b> Considerations</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#probative-value-can-be-derived-from-a-causal-structure-plus-data"><i class="fa fa-check"></i><b>9.4.1</b> Probative value can be derived from a causal structure plus data</a></li>
+<li class="chapter" data-level="9.4.2" data-path="mixing.html"><a href="mixing.html#learning-without-identification"><i class="fa fa-check"></i><b>9.4.2</b> Learning without identification</a></li>
+<li class="chapter" data-level="9.4.3" data-path="mixing.html"><a href="mixing.html#beyond-binary-data"><i class="fa fa-check"></i><b>9.4.3</b> Beyond binary data</a></li>
+<li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
+<li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
+<li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Integrated Inferences Application</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>10.1</b> A trained model</a></li>
+<li class="chapter" data-level="10.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>10.2</b> Data</a></li>
+<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference-1"><i class="fa fa-check"></i><b>10.3</b> Inference</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democratization"><i class="fa fa-check"></i><b>10.3.1</b> Did inequality <em>cause</em> democratization?</a></li>
+<li class="chapter" data-level="10.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>10.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="mixingapp.html"><a href="mixingapp.html#from-cases-to-population"><i class="fa fa-check"></i><b>10.4</b> From cases to population</a>
+<ul>
+<li class="chapter" data-level="10.4.1" data-path="mixingapp.html"><a href="mixingapp.html#contribution-to-case-level-inference"><i class="fa fa-check"></i><b>10.4.1</b> Contribution to case-level inference</a></li>
+<li class="chapter" data-level="10.4.2" data-path="mixingapp.html"><a href="mixingapp.html#how-much-do-we-get-from-the-model-vs.-the-data"><i class="fa fa-check"></i><b>10.4.2</b> How much do we get from the model vs. the data?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="mm.html"><a href="mm.html#a-jigsaw-puzzle-integrating-across-a-model"><i class="fa fa-check"></i><b>11.1</b> A jigsaw puzzle: Integrating across a model</a></li>
+<li class="chapter" data-level="11.2" data-path="mm.html"><a href="mm.html#combining-observational-and-experimental-data"><i class="fa fa-check"></i><b>11.2</b> Combining observational and experimental data</a></li>
+<li class="chapter" data-level="11.3" data-path="mm.html"><a href="mm.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>11.3</b> Transportation of findings across contexts</a></li>
+<li class="chapter" data-level="11.4" data-path="mm.html"><a href="mm.html#multilevel-models-meta-analysis"><i class="fa fa-check"></i><b>11.4</b> Multilevel models, meta-analysis</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="12" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>12</b> Clue Selection as a Decision Problem</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="clue.html"><a href="clue.html#a-model-informed-approach-to-clue-selection"><i class="fa fa-check"></i><b>12.1</b> A model-informed approach to clue-selection</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>12.1.1</b> Clue selection with a simple example</a></li>
+<li class="chapter" data-level="12.1.2" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>12.1.2</b> Dependence on prior beliefs</a></li>
+<li class="chapter" data-level="12.1.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>12.1.3</b> Clue selection for the democratization model</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through"><i class="fa fa-check"></i><b>13.3</b> Specific case walk through</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#simulation-results"><i class="fa fa-check"></i><b>13.4</b> Simulation results</a>
+<ul>
+<li class="chapter" data-level="13.4.1" data-path="caseselection.html"><a href="caseselection.html#models-queries-and-strategies"><i class="fa fa-check"></i><b>13.4.1</b> Models, queries, and strategies</a></li>
+<li class="chapter" data-level="13.4.2" data-path="caseselection.html"><a href="caseselection.html#results-1"><i class="fa fa-check"></i><b>13.4.2</b> Results</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wideordeep.html"><a href="wideordeep.html"><i class="fa fa-check"></i><b>14</b> Going wide, going deep</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wideordeep.html"><a href="wideordeep.html#walk-through-of-a-simple-comparison"><i class="fa fa-check"></i><b>14.1</b> Walk-through of a simple comparison</a></li>
+<li class="chapter" data-level="14.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results-1"><i class="fa fa-check"></i><b>14.2</b> Simulation results</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="wideordeep.html"><a href="wideordeep.html#approach"><i class="fa fa-check"></i><b>14.2.1</b> Approach</a></li>
+<li class="chapter" data-level="14.2.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results-2"><i class="fa fa-check"></i><b>14.2.2</b> Simulation results</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="wideordeep.html"><a href="wideordeep.html#factoring-in-the-cost-of-data"><i class="fa fa-check"></i><b>14.3</b> Factoring in the cost of data</a></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="15" data-path="justifying.html"><a href="justifying.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="justifying.html"><a href="justifying.html#justifying-probative-value"><i class="fa fa-check"></i><b>15.1</b> Justifying probative value</a>
+<ul>
+<li class="chapter" data-level="15.1.1" data-path="justifying.html"><a href="justifying.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1.1</b> Nothing from nothing</a></li>
+<li class="chapter" data-level="15.1.2" data-path="justifying.html"><a href="justifying.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.1.2</b> Justifying the classic process-tracing tests</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="justifying.html"><a href="justifying.html#empirical-discovery-of-causal-structure"><i class="fa fa-check"></i><b>15.2</b> Empirical discovery of causal structure</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#four-strategies"><i class="fa fa-check"></i><b>16.1</b> Four Strategies</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independence"><i class="fa fa-check"></i><b>16.1.1</b> Check conditional independence</a></li>
+<li class="chapter" data-level="16.1.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value-are-the-data-unexpected-given-your-model"><i class="fa fa-check"></i><b>16.1.2</b> Bayesian <span class="math inline">\(p-\)</span>value: Are the data unexpected given your model?</a></li>
+<li class="chapter" data-level="16.1.3" data-path="evaluation.html"><a href="evaluation.html#leave-one-out-loo-cross-validation"><i class="fa fa-check"></i><b>16.1.3</b> Leave-one-out (LOO) cross-validation</a></li>
+<li class="chapter" data-level="16.1.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity"><i class="fa fa-check"></i><b>16.1.4</b> Sensitivity</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="evaluation.html"><a href="evaluation.html#check-assumptions-of-conditional-independence"><i class="fa fa-check"></i><b>16.2.1</b> Check assumptions of conditional independence</a></li>
+<li class="chapter" data-level="16.2.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value"><i class="fa fa-check"></i><b>16.2.2</b> Bayesian <span class="math inline">\(p\)</span>-value</a></li>
+<li class="chapter" data-level="16.2.3" data-path="evaluation.html"><a href="evaluation.html#loo-validation"><i class="fa fa-check"></i><b>16.2.3</b> LOO validation</a></li>
+<li class="chapter" data-level="16.2.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity-to-priors"><i class="fa fa-check"></i><b>16.2.4</b> Sensitivity to priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="conclusionchapter.html"><a href="conclusionchapter.html"><i class="fa fa-check"></i><b>17</b> Final Words</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-benefits"><i class="fa fa-check"></i><b>17.1</b> The benefits</a></li>
+<li class="chapter" data-level="17.2" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-worries"><i class="fa fa-check"></i><b>17.2</b> The worries</a></li>
+<li class="chapter" data-level="17.3" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-future"><i class="fa fa-check"></i><b>17.3</b> The future</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/CausalQueries/" target="blank">Uses CausalQueries</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Integrated Inferences</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="justifying" class="section level1" number="15">
+<h1><span class="header-section-number">Chapter 15</span> Justifying models</h1>
+<!--
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+Where do our model assumptions come from? Model assumptions matter most for single-case process tracing because single-case analysis does not permit updating the model itself on the basis of the data: it is the model assumptions that generate beliefs about the probative value of clues and thus our case-level inferences. In this chapter, we outline strategies for justifying our models on the basis of data and, in particular, for *empirically grounding* our beliefs about the probative value of clues.
+::::
+-->
+<p><br></p>
+<p>The approaches to inference that we have described always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters.</p>
+<p>We see two broad responses to this problem.</p>
+<p>One is to simply emphasize the model-contingent nature of claims. Some causal models might reasonably reflect actual beliefs about the world—for example, one might be convinced that a treatment was randomly assigned, that there is no interference, and that units are independently sampled. All of these beliefs may be unwise, of course. But if held, then simple models such as that represented by an <span class="math inline">\(X \rightarrow Y\)</span> DAG is a representation of coarse beliefs about the world and less of a model of the world, in the sense of a simplified representation.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Recognizing that we are generally dealing with models that are not true, results in a reposing of the question: the question becomes not whether the assumptions are correct but whether the model is useful for some purpose <span class="citation">(<a href="#ref-clarke2012model" role="doc-biblioref">Clarke and Primo 2012</a>)</span>.</p>
+<!-- For an even modestly more complex situation, it seems inevitable that the model being used really is a model and hard to think of as a faithful summary of beliefs.  -->
+<!-- That is the subject of Chapter \@ref(evaluation). -->
+<p>A second approach is to seek justify a model empirically. In this chapter, we explore some of the constraints on and possibilities for empirical model-justification. We take up the problem in two steps. First, we focus on process tracing and ask whether and when, given a causal structure, can we empirically derive the probative value of clues. Second, we briefly summarize an approach to discovering causal structures, which are of course a critical input into both process tracing and mixed-method inference.</p>
+<!-- by claiming exchangeability with units for which we have a lower-level  model. In a sense, this approach  pushes the question down a level, since the lower level model itself needs to be justified. There are two further responses to this concern. One is to justify the lower-level model with  data or a combination of data and theory. We discuss this approach here.  Another is to assess the importance of the structural assumptions made in our DAG, an approach that we address in Chapter \@ref(evaluation). -->
+<div id="justifying-probative-value" class="section level2" number="15.1">
+<h2><span class="header-section-number">15.1</span> Justifying probative value</h2>
+<p>The problem of justifying assumptions is most acute for case-level process-tracing inferences, for two reasons. First, the beliefs that come into play in generating probative value for our clues are beliefs over the distribution of <em>individual-level</em> effects, not just beliefs over average effects. We need beliefs, for instance, about the probability of seeing some clue, <span class="math inline">\(K\)</span>, in a given case if <span class="math inline">\(X=1\)</span> causes <span class="math inline">\(Y=1\)</span> in the cases. This puts us up against the fundamental problem of causal inference <span class="citation">(<a href="#ref-holland1986statistics" role="doc-biblioref">Holland 1986</a>)</span>. Second, in single-case inference, we do not have opportunities to learn about our model from the case at hand; so the beliefs we go in with are critical. Indeed for case-level queries, inferences might be little more than conditional applications of a model.</p>
+<p>The question we pursue in this chapter is whether and under what conditions we can empirically justify those beliefs that yield probative value for our clues.</p>
+<div id="nothing-from-nothing" class="section level3" number="15.1.1">
+<h3><span class="header-section-number">15.1.1</span> Nothing from nothing</h3>
+<p>We start with a fairly discouraging result. Many of the models we have looked at—especially for process tracing—include a good deal of structure, viz:</p>
+<ul>
+<li>conditional-independence assumptions</li>
+<li>assumptions of no confounding</li>
+<li>monotonicity assumptions or other restrictions</li>
+</ul>
+<p>What happens if we make none of these assumptions? One way to think about this question is: can we start with a DAG that makes none of these assumptions and then use observational data—i.e., learn from those data—to render clues informative about causal effects?</p>
+<p>Suppose that we would like to be able to learn from a mediator node. We work through this problem under favorable conditions: a world in which in fact (though unknown <em>ex ante</em> to the researcher):</p>
+<ul>
+<li><span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> through <span class="math inline">\(M\)</span></li>
+<li><span class="math inline">\(X\)</span> is a necessary condition for <span class="math inline">\(M\)</span>, and <span class="math inline">\(M\)</span> is a sufficient condition for <span class="math inline">\(Y\)</span> – and so <span class="math inline">\(Y\)</span> is monotonic in <span class="math inline">\(X\)</span> and</li>
+<li>There is no confounding</li>
+</ul>
+<p>We also assume that we have access to large amounts of observational data on <span class="math inline">\(X\)</span>, <span class="math inline">\(M\)</span>, and <span class="math inline">\(Y\)</span>.</p>
+<p>We work through inferences for two types of model in which <span class="math inline">\(X\)</span> can have both indirect and direct effects on <span class="math inline">\(Y\)</span>. We impose no restrictions on nodal types in either model. Even though there are only three nodes, this model has 128 causal types (<span class="math inline">\(2\times 4 \times 16\)</span>). In addition:</p>
+<ul>
+<li><p>In <code>model_1</code> we allow confounding between all pairs of nodes. This results in 127 free parameters.</p></li>
+<li><p>In <code>model_2</code> we assume that <span class="math inline">\(X\)</span> is known to be randomized but allow for confounding between <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span>. There are now only 64 free parameters.</p></li>
+</ul>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<img src="ii_files/figure-html/unnamed-chunk-3-1.png" alt="Two models. The model on the right might be justified if $X$ is known to be randomized." width="672" />
+<p class="caption">
+Figure 15.1: Two models. The model on the right might be justified if <span class="math inline">\(X\)</span> is known to be randomized.
+</p>
+</div>
+<p>After updating we query the models to see how inferences depend on <span class="math inline">\(M\)</span> like this:</p>
+<table>
+<caption><span id="tab:unnamed-chunk-4">Table 15.1: </span>Can observation of large N data render mediator <span class="math inline">\(M\)</span> informative for case level inference? Model 1: No knowledge of structure; Model 2: <span class="math inline">\(X\)</span> known to be randomized. Posterior SD in parentheses.</caption>
+<thead>
+<tr class="header">
+<th align="left">Query</th>
+<th align="left">Given</th>
+<th align="left">Using</th>
+<th align="left">Model 1</th>
+<th align="left">Model 2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; Y==1</td>
+<td align="left">posteriors</td>
+<td align="left">0.499</td>
+<td align="left">0.811</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">(0.156)</td>
+<td align="left">(0.029)</td>
+</tr>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; M==1 &amp; Y==1</td>
+<td align="left">posteriors</td>
+<td align="left">0.499</td>
+<td align="left">0.828</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">(0.166)</td>
+<td align="left">(0.032)</td>
+</tr>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">X==1 &amp; M==0 &amp; Y==1</td>
+<td align="left">posteriors</td>
+<td align="left">0.5</td>
+<td align="left">0.525</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">(0.138)</td>
+<td align="left">(0.164)</td>
+</tr>
+</tbody>
+</table>
+<p>We find that even with an auspicious monotonic data-generating process in which <span class="math inline">\(M\)</span> is a total mediator, <span class="math inline">\(M\)</span> gives no traction on causal inference under Model 1. In contrast, it gives considerable leverage under Model 2: <span class="math inline">\(M\)</span> is informative, especially if <span class="math inline">\(M=0\)</span> (in which case we downgrade confidence that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span>), when <span class="math inline">\(X\)</span> is known to be randomized.</p>
+<p>This example nicely illustrates the <span class="citation"><a href="#ref-cartwright1994nature" role="doc-biblioref">Cartwright and others</a> (<a href="#ref-cartwright1994nature" role="doc-biblioref">1994</a>)</span>’s idea of “no causes in, no causes out.” It also poses, we think, a challenge to any process-tracing exercise that aspires to than model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems <em>even when in reality</em> causal structures are simple.</p>
+</div>
+<div id="justifying-the-classic-process-tracing-tests" class="section level3" number="15.1.2">
+<h3><span class="header-section-number">15.1.2</span> Justifying the classic process-tracing tests</h3>
+<p>Now, on a more encouraging note, we show the possibility of justification of each of the four classical “qualitative tests” described by <span class="citation"><a href="#ref-collier2011understanding" role="doc-biblioref">Collier</a> (<a href="#ref-collier2011understanding" role="doc-biblioref">2011</a>)</span> and drawing on <span class="citation"><a href="#ref-Van-Evera:1997" role="doc-biblioref">Van Evera</a> (<a href="#ref-Van-Evera:1997" role="doc-biblioref">1997</a>)</span>, at least when treatment assignment is randomized.</p>
+<p>Recall that the four tests are “smoking gun” tests, “hoop” tests, “doubly-decisive” tests, and “straw-in-the-wind” tests. A hoop test is one which, if failed, bodes especially badly for a claim; a smoking gun test is one that bodes especially well for a hypothesis if passed; a doubly decisive test is strongly conclusive no matter what is found; and a straw-in-the-wind test is suggestive, though not conclusive, either way. Of course, Bayesian inference involves continuous probabilities, not discrete test categories, but we speak to these categories for heuristic purposes. The more general point is that probative value can be derived from data in which randomization of a causal variable can be assumed.</p>
+<p>In some treatments of Bayesian process tracing (such as our own work in <span class="citation"><a href="#ref-humphreys2015mixing" role="doc-biblioref">Humphreys and Jacobs</a> (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span>), formalization involves specifying (a) a prior that a hypothesis is true and, <em>independently</em> of that (b) a set of beliefs about the probability of seeing a given data pattern if the hypothesis is true and if it is false. Updating then proceeds using Bayes’ rule.</p>
+<p>This simple approach suffers from two related weaknesses however. First, there is no good reason to expect these probabilities to be independent. Our prior beliefs about the hypotheses constitute beliefs about <em>how the world works</em>, and beliefs about how the world works should have implications for the conditions under which clues are likely to be observed. Second, there is nothing in the setup to indicate how beliefs about the probative value of clues should be established or justified.</p>
+<p>Both of these problems are resolvable in the context of inference from fully specified causal models. We illustrate first by using an idealized example to show that a case-level “doubly decisive” test can be justified by population-level data from factorial designs, then generalize to all four tests.</p>
+<p>Suppose that we have observed just <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> across a large set of cases, allowing us to infer that <span class="math inline">\(\Pr(Y=1|X=1) = \Pr(Y=1|X=0) = .5\)</span>. Here we have an average treatment effect of 0. But suppose, further, that our query is whether <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span> in a particular case with <span class="math inline">\(X=1, Y=1\)</span>. The marginal distributions we have observed so far are consistent with a world in which <span class="math inline">\(X\)</span> never affects <span class="math inline">\(Y\)</span>; one in which <span class="math inline">\(X\)</span> always affects <span class="math inline">\(Y\)</span> (sometimes negatively, sometimes positively); and with many possibilities in between.</p>
+<p>Now, let’s say that we have data on a third variable, <span class="math inline">\(K\)</span>, and find (a) that <span class="math inline">\(K=1\)</span> arises with 50% probability and (b) that the marginal distributions of <span class="math inline">\(Y\)</span> given <span class="math inline">\(X\)</span> and <span class="math inline">\(K\)</span> are as follows:</p>
+<ul>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 0) = 1\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 0) = .5\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=0, K = 1) = 0\)</span></li>
+<li><span class="math inline">\(\Pr(Y=1|X=1, K = 1) = .5\)</span></li>
+</ul>
+<p>We thus see that, in cases in which <span class="math inline">\(K=1\)</span>, <span class="math inline">\(X=0\)</span> is a necessary condition for <span class="math inline">\(Y=1\)</span>. So if <span class="math inline">\(K=1\)</span>, then <span class="math inline">\(X=1\)</span> certainly caused <span class="math inline">\(Y=1\)</span> (since, in that case, were <span class="math inline">\(X\)</span> zero then <span class="math inline">\(Y\)</span> would certainly be 0.) On the other hand, were <span class="math inline">\(K=0\)</span>, then <span class="math inline">\(X=0\)</span> would be a sufficient condition for <span class="math inline">\(Y=1\)</span>, which means that in this case <span class="math inline">\(X=1\)</span> most certainly did <em>not</em> cause <span class="math inline">\(Y=1\)</span>. We have then that, if <span class="math inline">\(K=1\)</span>, then certainly <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span> whereas if <span class="math inline">\(K=0\)</span>, then certainly <span class="math inline">\(X=1\)</span> did not cause <span class="math inline">\(Y=1\)</span></p>
+<p>This example demonstrates that, with infinite data, it is in principle possible to justify a doubly decisive test on the basis of experimental data—provided that the case about which we seek to make inferences can be considered exchangeable with the cases in the experimental data.</p>
+<p>Table <a href="justifying.html#tab:tests15">15.2</a> shows how this logic generalizes to different types of tests. For each test we first show the data available to us (first 5 rows); we then show the inferences on whether <span class="math inline">\(X=1\)</span> causes <span class="math inline">\(Y=1\)</span> in cases where <span class="math inline">\(X=1\)</span> and <span class="math inline">\(Y=1\)</span> as a function of <span class="math inline">\(K\)</span>.</p>
+<table>
+<caption><span id="tab:tests15">Table 15.2: </span>Known probabilities from a model with <span class="math inline">\(X \rightarrow Y \leftarrow K\)</span> justifying classic test types for clue <span class="math inline">\(K\)</span> given <span class="math inline">\(X=Y=1\)</span>.</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="center">Doubly decisive</th>
+<th align="center">Hoop</th>
+<th align="center">Smoking gun</th>
+<th align="center">Straw in the wind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\Pr(K = 1)\)</span></td>
+<td align="center">0.5</td>
+<td align="center">0.9</td>
+<td align="center">0.1</td>
+<td align="center">0.5</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\Pr(Y=1 \vert X=0, K = 0)\)</span></td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1/3</td>
+<td align="center">1/2</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\Pr(Y=1 \vert X=1, K = 0)\)</span></td>
+<td align="center">1/2</td>
+<td align="center">1/2</td>
+<td align="center">2/3</td>
+<td align="center">3/4</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\Pr(Y=1 \vert X=0, K = 1)\)</span></td>
+<td align="center">0</td>
+<td align="center">1/3</td>
+<td align="center">0</td>
+<td align="center">1/4</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\Pr(Y=1 \vert X=1, K = 1)\)</span></td>
+<td align="center">1/2</td>
+<td align="center">2/3</td>
+<td align="center">1/2</td>
+<td align="center">3/4</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\Pr(X \text{  causes }Y \vert K=1)\)</span></td>
+<td align="center">1</td>
+<td align="center">[1/2, 1]</td>
+<td align="center">1</td>
+<td align="center">[1/3,2/3]</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\Pr(X \text{  causes }Y \vert K=0)\)</span></td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">[.5, 1]</td>
+<td align="center">[2/3,1]</td>
+</tr>
+</tbody>
+</table>
+<!-- ```{r tests15, echo = FALSE} -->
+<!-- data.frame(Value = c( -->
+<!-- "$\\Pr(K = 1)$",  -->
+<!-- "$\\Pr(Y=1 \\vert X=0, K = 0)$",  -->
+<!-- "$\\Pr(Y=1 \\vert X=1, K = 0)$", -->
+<!-- "$\\Pr(Y=1 \\vert X=0, K = 1)$",  -->
+<!-- "$\\Pr(Y=1 \\vert X=1, K = 1)$",  -->
+<!-- "$\\Pr(X \\text{  causes }Y \\vert K=1)$", -->
+<!-- "$\\Pr(X \\text{  causes }Y \\vert K=0)$"), -->
+<!-- DD =      c(.5, 1,     .5,   0,    .5,  1, 0), -->
+<!-- Hoop =    c(.9, 1,     .5, .44, "4/9", "", 0), -->
+<!-- Smoking = c( 1, "4/9", .5,   0, .5,     1, ""),  -->
+<!-- Straw =   c(.5,    .6, .5,  .4, .5,    "", "")  -->
+<!-- )  %>% kable(col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw in the wind"), -->
+<!--              caption = "Known probabilities from a model with  $X \\rightarrow Y \\leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.", align=c("l", rep('c', 4))) -->
+<!-- ``` -->
+<!-- <span style='color: orange;'>Flag!</span> Put bounds in empty cells. -->
+<p>Note that some entries in Table <a href="justifying.html#tab:tests15">15.2</a> appear as ranges. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. However, despite not being identified, bounds can be placed on causal quantities. For instance, for the hoop test, when <span class="math inline">\(K=1\)</span> the bounds are <span class="math inline">\([.5,1]\)</span>. The reason that the probability of causation here can not be <em>less</em> than 0.5, is that we can see from the data when <span class="math inline">\(X=1, X=0\)</span> that <em>at most</em> one third of cases can by cases for which <span class="math inline">\(Y=1\)</span> regardless of <span class="math inline">\(X\)</span> (<span class="math inline">\(\theta^Y_{11}\)</span>) meaning that at <em>least</em> half of cases that produce <span class="math inline">\(Y=1\)</span> when <span class="math inline">\(X=1\)</span> and <span class="math inline">\(K=1\)</span> are cases for which <span class="math inline">\(Y=1\)</span> <em>because</em> <span class="math inline">\(X=1\)</span>. In these examples the fact that queries are not point identified with infinite data does not detract from the fact that <span class="math inline">\(K\)</span> is informative in the ways associated with the different types of tests.</p>
+<p>The procedures given in Chapter <a href="mixing.html#mixing">9</a> let us form posteriors over inferences with finite data. We briefly illustrate in Table <a href="#testsfinite"><strong>??</strong></a>. The results displayed here are drawn from simulations in which we start by making four different <span class="math inline">\(X \rightarrow Y \leftarrow K\)</span> models. For each model, we set particular restrictions on <span class="math inline">\(Y\)</span>’s nodal types and a particular value for <span class="math inline">\(Pr(\theta^K)\)</span> such that <span class="math inline">\(K\)</span> provides different kinds of probative value about <span class="math inline">\(X\)</span>’s effect. (We have set these restrictions and assignment propensities for <span class="math inline">\(K\)</span> such that the four resulting data-generating processes will, in the next steps, generate learning about <span class="math inline">\(K\)</span> that turns our clue into one of the four classic tests.) We then simulate 1000 observations from each model and next update an agnostic <span class="math inline">\(X \rightarrow Y \leftarrow K\)</span> model.</p>
+<p>In Table <a href="#testsfinite"><strong>??</strong></a>, we show the inferences we would now draw from observing <span class="math inline">\(K=1\)</span> versus <span class="math inline">\(K=0\)</span> in a single case, based on the <em>updated</em> model. Each column—which we have labelled with the classic test names—represents our beliefs about <span class="math inline">\(K\)</span>’s probative value as derived from a different simulated data pattern. Thus, for instance, in the “hoop test” column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing <span class="math inline">\(K=1\)</span> in a case slightly boosts our confidence that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, while observing <span class="math inline">\(K=0\)</span> dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing <span class="math inline">\(K=1\)</span> in a case greatly boosts our confidence that <span class="math inline">\(X\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, while observing <span class="math inline">\(K=0\)</span> slightly undermines our confidence in such an effect.</p>
+<p>We underline that we have here <em>derived</em> the probative value of the clue from observed data and a model that was entirely agnostic about the clue’s probative value (but which did assume <em>some</em> priors on causal types). In particular, the model that we start with has no restrictions on <span class="math inline">\(Y\)</span>’s nodal types, has flat beliefs over the distribution of <span class="math inline">\(K\)</span>, and imposes no assumption that <span class="math inline">\(K\)</span> is informative for how <span class="math inline">\(Y\)</span> responds to <span class="math inline">\(X\)</span>. It does, however, assume that <span class="math inline">\(X\)</span> and <span class="math inline">\(K\)</span> are exogenous, as might be the case if these were experimentally manipulated.</p>
+<!-- ^[We retain the $Y$ types in which $X$ and only $X$ has a positive effect on $U$, only $K$ matters, or you have to have both.] -->
+<!-- We then use a function that draws inferences, given different values of a clue $K$, from a model that has been updated using available data.  -->
+<!-- We can now generate posterior beliefs, given $K$, for different types of tests where the tests are now justified by different types of data, coupled with a common prior causal model. -->
+<table>
+<caption><span id="tab:testsfinite">Table 15.3: </span>Classic tests with probative value inferred from (simulated) data, for query, Does <span class="math inline">\(X\)</span> have a positive effect on <span class="math inline">\(Y\)</span> in this case?</caption>
+<thead>
+<tr class="header">
+<th align="left">Query</th>
+<th align="left">Given</th>
+<th align="left">Using</th>
+<th align="left">Doubly decisive</th>
+<th align="left">Hoop</th>
+<th align="left">Smoking gun</th>
+<th align="left">Straw in the Wind</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">-</td>
+<td align="left">posteriors</td>
+<td align="left">0.489</td>
+<td align="left">0.451</td>
+<td align="left">0.536</td>
+<td align="left">0.469</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">(0.016)</td>
+<td align="left">(0.022)</td>
+<td align="left">(0.022)</td>
+<td align="left">(0.022)</td>
+</tr>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">K==0</td>
+<td align="left">posteriors</td>
+<td align="left">0.009</td>
+<td align="left">0.044</td>
+<td align="left">0.493</td>
+<td align="left">0.301</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">(0.005)</td>
+<td align="left">(0.028)</td>
+<td align="left">(0.024)</td>
+<td align="left">(0.029)</td>
+</tr>
+<tr class="odd">
+<td align="left">Q 1</td>
+<td align="left">K==1</td>
+<td align="left">posteriors</td>
+<td align="left">0.976</td>
+<td align="left">0.494</td>
+<td align="left">0.9</td>
+<td align="left">0.637</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">(0.008)</td>
+<td align="left">(0.023)</td>
+<td align="left">(0.037)</td>
+<td align="left">(0.03)</td>
+</tr>
+</tbody>
+</table>
+<p>For both of these examples we have focused on moderators as clues. For results on mediators as clues see <span class="citation"><a href="#ref-dawid2019bounding" role="doc-biblioref">Dawid, Humphreys, and Musio</a> (<a href="#ref-dawid2019bounding" role="doc-biblioref">2019</a>)</span> which establishes that mediators in chain models can produce hoop tests but are generally unable to generate smoking gun tests.</p>
+<p>This approach to thinking about process tracing tests is quite different to that described in existing (including Bayesian) treatments such as <span class="citation"><a href="#ref-collier2011understanding" role="doc-biblioref">Collier</a> (<a href="#ref-collier2011understanding" role="doc-biblioref">2011</a>)</span>, <span class="citation"><a href="#ref-BennettAppendix" role="doc-biblioref">Bennett</a> (<a href="#ref-BennettAppendix" role="doc-biblioref">2015</a>)</span>, <span class="citation"><a href="#ref-fairfield2017explicit" role="doc-biblioref">Fairfield and Charman</a> (<a href="#ref-fairfield2017explicit" role="doc-biblioref">2017</a>)</span>, or <span class="citation"><a href="#ref-humphreys2015mixing" role="doc-biblioref">Humphreys and Jacobs</a> (<a href="#ref-humphreys2015mixing" role="doc-biblioref">2015</a>)</span>. Rather than having a belief about the probative value of a clue, and a prior over a hypothesis, inferences are drawn directly from a causal model that embeds a clue in a network of possible causal effects. Critically, with this approach, the inferences made from observing clues can be justified by reference to a more fundamental, relatively agnostic model, that has been updated in light of data. The updated model yields a prior over the proposition, beliefs about probative values, and guidance for what conclusions to draw given knowledge of <span class="math inline">\(K\)</span>.</p>
+<!-- ## Bounds on probative value -->
+<!-- Classic treatments of process tracing make use of Causal Process Observations---observations that are taken to be indicative of a particular causal process in operation. We introduced in Chapter 5 (as well as in FLAG CITE humphreysjacobs)  quantities such as $\phi_{b}$---the probability that $K=1$ given $X$ caused $Y$ and $X=Y=1$, or $\phi_{d}$-----the probability that $K=1$ given $X$ did not cause $Y$ and $X=Y=1$.  -->
+<!-- These accounts do not guide much guidance however regarding where these quantities come from---given that causal types are unobservable how can one justify a belief about the probability of some observation *given* a causal type. Is it even possible to justify such beliefs? -->
+<!-- The grounded approach we described provides an answer to this puzzle. In short, knowledge of the structure of a causal model, together with data on exchangeable units, can be enough to place bounds on possible values of $\phi_{b}, \phi_{d}$.  -->
+<!-- We illustrate the basic idea and then review some results in this area. -->
+<!-- Imagine a fortunate situation in which (a) it is known that the true causal model has the form $X \rightarrow M \rightarrow Y$ and (b) we have a lot of experimental data on the conditional distribution of $M$ given $X$ and of $Y$ given $M$ for exchangeable units (meaning that we can treat our unit of interest as if it were a draw from this set).  -->
+<!-- Let us define: -->
+<!-- * $\tau_1 = \Pr(M=1 | X=1) - \Pr(M=1 | X=0)$ -->
+<!-- * $\rho_1 = \Pr(M=1 | X=1) - \Pr(M=0 | X=0)$ -->
+<!-- * $\tau_2 = \Pr(Y=1 | M=1) - \Pr(Y=1 | M=0)$ -->
+<!-- * $\rho_2 = \Pr(Y=1 | M=1) - \Pr(Y=0 | M=0)$ -->
+<!-- These are all quantities that can be calculated from the data. The $\tau$s are average treatment effects and the $\rho$s are indicators for how common the $Y=1$ outcome is. -->
+<!-- We are interested in the probability of observing $M=1$ given $X=Y=1$: -->
+<!-- $$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + \lambda_{a}^K\lambda_{a}^Y}$$ -->
+<!-- Noting that $\tau_j = \lambda_{b_j} - \lambda_{a_j}$: -->
+<!-- $$\phi_{b1} = \frac{\lambda_{b}^K\lambda_{b}^Y}{\lambda_{b}^K\lambda_{b}^Y + (\lambda_{b}^K-\tau_1)(\lambda_{b}^Y - \tau_2)}$$ -->
+<!-- which we can see is decreasing in $\lambda_{b}^j$ (this may seem counterintuitive, but the reason is that with $\tau^j$ fixed, lower $\lambda_{b}^j$ also means lower $\lambda_{a}^j$ which means less ambiguity about *how* $X$ affects $Y$ (i.e. through positive or negative effects on $K$). -->
+<!--  <!-- $$\phi_{1} = \frac{\lambda_{b}^Y}{2\lambda_{b}^Y -\tau_2 - \tau_1(\lambda_{b}^Y - \tau_2)/\lambda_{b}}^K$$ -->
+<!-- The lowest permissible value of  $\lambda_{b_j}$  is $\tau_j$, yielding $\phi_{b1} = 1$.  -->
+<!-- The highest value obtainable by $\lambda_{b_j}$ is when $\lambda_{a_j} = \frac{1-\tau_j+\rho_j}2$ and so $\lambda_{b_j} = \frac{1+\tau_j+\rho_j}2$.  -->
+<!-- In this case: -->
+<!-- $$\phi_{b1} = \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2) + (1-\tau_1+\rho_1)(1-\tau_2+\rho_2)}= \frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau}$$ -->
+<!-- And so: -->
+<!-- $$\frac{(1+\tau_1+\rho_1)(1+\tau_2+\rho_2)}{2(1+\rho_1)(1+\rho_2) + 2\tau_1\tau_2} \leq \phi_{b1} \leq 1$$ -->
+<!-- These are the bounds on $\phi_{b1}$. We can calculate bounds on $\phi_{d1}$ in a similar way (though of course the bounds on  $\phi_{b1}$ and $\phi_{d1}$ are not independent).  -->
+<!-- $$\phi_{d1} = \frac{\lambda_{b}^K\lambda_{d}^Y}{(\lambda_{a}^K + \lambda_{b}^K + \lambda_{c}^K)\lambda_{d}^Y+ \lambda_{c}^K\lambda_{a}^Y}$$ -->
+<!-- Figure \@ref(fig:probval1) illustrates how "smoking gun" and "hoop" tests might each be justified with knowledge of $\tau_j, \rho_j$.  -->
+<!-- ```{r phis85, echo = FALSE, include = FALSE} -->
+<!-- make_phis <- function(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5, .3, 0, .6, .1, .1, 0, .6, .3), -->
+<!--                         n = 60000){ -->
+<!--   data <- simulate_data(model,  -->
+<!--                         n = n, -->
+<!--                         parameters = par,  -->
+<!--                         using = "parameters")  -->
+<!--   m1 <- with(data, c(mean(M[X==0]), mean(M[X==1]))) -->
+<!--   m1[2] - m1[1]; m1[2] - 1 + m1[1] -->
+<!--   m2<- with(data, c(mean(Y[M==0]), mean(Y[M==1]))) -->
+<!--   m2[2] - m2[1]; m2[2] - 1 + m2[1] -->
+<!--   if(!exists("fit")) fit <- fitted_model() -->
+<!--   updated <- CausalQueries(model, data, stan_model = fit) -->
+<!--   # check <- rstan::extract(updated$posterior, pars= "lambdas")$lambdas -->
+<!--   phi_b_num <- query_distribution(updated, query = "(M==1) & (Y[X=0]==0)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_b_denom <- query_distribution(updated, query = "(Y[X=0]==0)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_b <- phi_b_num/phi_b_denom -->
+<!--   phi_d_num <- query_distribution(updated, query = "(M==1) & (Y[X=0]==1)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_d_denom <- query_distribution(updated, query = "(Y[X=0]==1)", subset = "X==1 & Y==1", using = "posteriors") -->
+<!--   phi_d <- phi_d_num/phi_d_denom -->
+<!--   out <- data.frame(phi_b, phi_d) -->
+<!--   out -->
+<!--   } -->
+<!-- plot_phi <- function(out, main = "bounds"){ -->
+<!--     plot(out$phi_d, out$phi_b, xlim = c(0,1), ylim = c(0,1), cex = .5, main = main,  -->
+<!--        xlab = expression(phi[d]), ylab = expression(phi[b])) -->
+<!--   abline(0,1) -->
+<!-- } -->
+<!-- ``` -->
+<!-- ```{r writephis, include = FALSE} -->
+<!-- if(do_diagnosis){ -->
+<!--   phis1  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5, .3, 0, .6, .1, .1, 0, .6, .3), -->
+<!--                         n = 80000) -->
+<!--   write_rds(phis1, "saved/phis_1.rds") -->
+<!--   phis2  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5,  -->
+<!--                                 .95, 0, 0, .05,  -->
+<!--                                 .95, 0, 0, .05), -->
+<!--                         n = 80000) -->
+<!--   write_rds(phis2, "saved/phis_2.rds") -->
+<!-- } -->
+<!-- ``` -->
+<!-- ```{r plotphis, echo = FALSE} -->
+<!-- phis1 <- read_rds("saved/phis_1.rds") -->
+<!-- phis2 <- read_rds("saved/phis_2.rds") -->
+<!-- par(mfrow = c(1,2)) -->
+<!-- plot_phi(phis1, -->
+<!--          main = expression(paste("Hoop: ", tau[1], "= .6, ", -->
+<!--                                            rho[1], "= -.2, ", -->
+<!--                                            tau[2], "= .6, ", -->
+<!--                                            rho[2], "= .2")) -->
+<!--          ) -->
+<!-- plot_phi(phis2, -->
+<!--           main = expression(paste("Smoking gun: ",  -->
+<!--                                   tau[1], "= 0, ", -->
+<!--                                   rho[1], "= -.9, ", -->
+<!--                                   tau[2], "= 0, ", -->
+<!--                                   rho[2], "= -.9")) -->
+<!--          ) -->
+<!-- ``` -->
+<!-- <!-- plot_bounds(.6, -.2, .6, .2, 20, main = expression(paste("Hoop: ", tau[1], "= .6, ", -->
+<!-- <!--                                                             rho[1], "= -.2, ", -->
+<!-- <!--                                                             tau[2], "= .6, ", -->
+<!-- <!--                                                             rho[2], "= .2"))) -->
+<!-- <!-- plot_bounds(0.0, -.9, .0, -.9, 100, main = expression(paste("Smoking gun: ", tau[1], "= 0, ", -->
+<!-- <!--                                                             rho[1], "= -.9, ", -->
+<!-- <!--                                                             tau[2], "= 0, ", -->
+<!-- <!--                                                             rho[2], "= -.9, "))) -->
+<!-- <!-- ``` -->
+<!-- <!-- ```{r, eval = FALSE, echo = FALSE} -->
+<!-- <!-- # An odd one! -->
+<!-- <!-- plot_bounds(.02, -.5, -.10, -.5,600) -->
+<!-- <!-- ``` -->
+<!-- For the smoking gun,  $\phi_{b1}$ is .5 because $\lambda_a^j = \lambda_b^j$ so half of the upper level $b$ types work through a positive effect on $M$ and half through a negative effect on $M$. $\phi_{d1}$, on the other hand, is low here $d$ types mostly arise because of $c$ types in the first step and $a$ types in the second, and hence most commonly with $M=1$.  -->
+<!-- Whether the bounds map into useful probative value depends in part on whether causal effects are better identified in the first or the second stage. We can see this in Figure \@ref(fig:probval2). -->
+<!-- The key difference between the panels is that $\phi_d$ is constrained to be low in the first panel but not in the second.  -->
+<!-- For intuition note that a higher level $d$ type will exhibit $M=1$ if it is formed via $db$, $bd$,or $dd$ and it will exhibit $M=0$ if it is formed via $ca$, $cd$, $ad$. The weak second stage makes it possible that there are no second stage d types, only a and b types. The stronger first stage makes it possible that there are no first stage $c$ types. In that case the higher level d types are formed uniquely of $db$ types -- which always exhibit $M=1$ if $X=1$. -->
+<!-- This is not possible however for the data assume in the first panel. In the first panel the the higher value on $\rho_2$ means that there must be at least .25 d types. And the weak first stage means that there must at least .5 a and c types combined. Thus there *must* be a set of cases in which $M$ is not observed even though we have an upper level d type. -->
+<!-- ```{r probval2, echo = FALSE, fig.width = 10, fig.cap = "Probative value with different first and second stage relations"} -->
+<!-- # par(mfrow = c(1,2)) -->
+<!-- #  -->
+<!-- # plot_bounds(0, 0, .25, .25, 20, main = expression(paste("Weak first stage: ", tau[1], "= 0, ", -->
+<!-- #                                                             rho[1], "= 0, ", -->
+<!-- #                                                             tau[2], "= .25 ", -->
+<!-- #                                                             rho[2], "= .25"))) -->
+<!-- #  -->
+<!-- # plot_bounds(.25, .25, 0, 0, 20, main = expression(paste("Weak second stage: ", tau[1], "= .25, ", -->
+<!-- #                                                             rho[1], "= .25, ", -->
+<!-- #                                                             tau[2], "= 0, ", -->
+<!-- #                                                            rho[2], "= 0"))) -->
+<!-- if(do_diagnosis){ -->
+<!--   phis3  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5,  -->
+<!--                                 .25, .25, .25, .25,  -->
+<!--                                 .25, 0, .25, .5), -->
+<!--                         n = 50000) -->
+<!--   write_rds(phis3, "saved/phis_3.rds") -->
+<!--   phis4  <- make_phis(model = make_model("X -> M -> Y"),  -->
+<!--                         par = c(.5, .5,  -->
+<!--                                 .25, 0, .25, .5, -->
+<!--                                 .25, .25, .25, .25), -->
+<!--                         n = 50000) -->
+<!--   write_rds(phis4, "saved/phis_4.rds") -->
+<!-- } -->
+<!-- phis3 <- read_rds("saved/phis_3.rds") -->
+<!-- phis4 <- read_rds("saved/phis_4.rds") -->
+<!-- par(mfrow = c(1,2)) -->
+<!-- plot_phi(phis3, -->
+<!--          main = expression(paste("Hoop: ", tau[1], "= 0, ", -->
+<!--                                                             rho[1], "= 0, ", -->
+<!--                                                             tau[2], "= .25, ", -->
+<!--                                                             rho[2], "= .25"))) -->
+<!-- plot_phi(phis4, -->
+<!--           main = expression(paste("Smoking gun: ",  -->
+<!--                                   tau[1], "= .25, ", -->
+<!--                                   rho[1], "= .25, ", -->
+<!--                                   tau[2], "= 0, ", -->
+<!--                                   rho[2], "= 0, "))) -->
+<!-- ``` -->
+<!-- In short we emphasize that difficult as it might seem at first it is possible to put relatively tight bounds on probative value for causal types with access to experimental data on exchangeable units.  -->
+<!-- ### Learning about probative value from process tracing -->
+<!-- <!-- FLAG: The below is imported from Chap on case selection. May want to resurrect. But would need to bring in part of the relevant table (commented out) with conditioning on M. -->
+<!-- It is also easy to show how conducting process tracing on a set of cases can incrementally add probative value to a clue. Consider the setup we employed to assess case-selection strategies in Chapter \@ref(caseselection), where we began with positively correlated $X,Y$ data in 6 cases. We showed there that, if we start with Jeffreys priors for all  parameters in a chain model, nothing can be learned about the $ATE$ or the probability of causation from observing $M$ in a single case. However, observing $M=1$ in a single case *can* tell us something about effects in *another* case in which $M=1$.  -->
+<!-- The $X,Y$ pattern in the initial 6 cases---a weak positive relationship---tells us that (with respect to the $X \rightarrow Y$ relationship) there are relatively more $b$'s than other types in the population. This means, in turn, that an $X=1, Y=1$ case is more likely to be a $b$ than a $d$. If we now observe $M=1$ in an $X=1, Y=1$---a case we think is probably a $b$---we now have reason to believe that positive $X \rightarrow Y$ effects operate through a positive $X \rightarrow M$ effect followed by a positive $M \rightarrow Y$ effect. (And had we seen $M=0$ in this case, we'd believe positive effects more likely operate through a negative effect followed by a positive effect.) Put differently, we now believe that seeing $M=1$ in an $X=1, Y=1$ case is a clue that that case is likely a $b$ type---and our belief about the causal effect in an $X=1, M=1, Y=1$ case shifts upward. -->
+<!-- Thus, while we do not learn about the overall population from an $N=1$ process-tracing exercise, process-tracing in that single case does make $M$ informative about *other* cases. We can see this by comparing our beliefs about an $X=1, M=1, Y=1$ case in the row in which we have only observed the $X,Y$ correlation to our beliefs about that same kind of case in the row in which we have process-traced in an on-the-line case. While in the first instance conditioning on $M=1$ has no impact on the estimated causal effect (because we haven't previously learned about $M$), it does have an impact in the latter instance. -->
+<!-- We also see that our belief about the causal effect in an $X=0, M=1, Y=1$ case shifts upward. Why? Updating toward the belief that positive effects---which we believe to be relatively common---more often operate via linked positive positive effects implies that $X$ more often has a positive than a negative effect on $M$. Yet for an $X=0, M=1, Y=1$ to be a case with a negative causal effect, $X$'s effect on $M$ would have to be negative. Thus, interestingly, evidence from *on* the regression line can inform inferences about cases *off* the regression line via information about mediating processes. -->
+<!-- <!-- FLAG: Haven't figured out why seeing M=1 in an X=1, Y=0 case reduces the estimated causal effect for an X=1, M=1, Y=1 case relative to just seeing the X,Y pattern. If we see M=1 in this off-line case, we have evidence in favor of X having a positive effect on M, and M having a negative effect on Y. So this should generally speak against positive effects in  X=1, M=1, Y=1 cases. But if we'd seen M=0, wouldn't this have the same effect? It would suggest negative X->M effects and positive M->Y effects, which would also speak against a positive effect in an  X=1, M=1, Y=1 case. So how does observing M help? -->
+<!-- We see even stronger learning about an off-the-line $X=0, M=1, Y=1$, however, if we process trace off-the-line. The observation of $M=1$ in an $X=1, Y=0$ case counts as evidence against the operation of *both* steps in the causal chain through which $X$ could have a negative effect on $Y$ in an $X=0, M=1, Y=1$ case: it suggests that $X$'s effect on $M$ is more likely positive than negative *and* that $M$'s effect on $Y$ is more likely negative---precisely the opposite of what would have to be true for a negative effect to emerge in this kind of case. Thus, we now think this kind of case is less likely to involve a causal effect. -->
+<!-- ## Justification from experimental designs -->
+<!-- idea: show inferences given for example parallel designs for mediation -->
+<!-- ### Mediator -->
+<!-- Say now that *in addition* we know from experimental data, that $K$ mediates the relationship between $X$ and $Y$; indeed we will assume that we have a case of complete mediation, such that, conditional on $K$, $Y$ does not depend on $X$.  -->
+<!-- Say the transition matrices from $X$ to $K$ and $K$ to $Y$ are: -->
+<!-- $$P^{xk}=\left( \begin{array}{cc} 1 & 0 \\ 1/2 & 1/2\end{array}\right), P^{ky}=\left( \begin{array}{cc} 1/2 & 1/2 \\ 0 & 1\end{array}\right)$$  -->
+<!-- Even without observing $K$, this information is sufficient to place a prior on PC of $p=\frac13$.  -->
+<!-- To see this, note that we can calculate: -->
+<!-- * $\lambda_a^K =0$, $\lambda_b^K = \frac{1}{2}$, $\lambda_c^K = \frac{1}{2}$, $\lambda_d^K = 0$ -->
+<!-- * $\lambda_a^Y =0$, $\lambda_b^Y=\frac{1}{2}$, $\lambda_c^Y=0$,  $\lambda_d^Y=\frac{1}{2}$ -->
+<!-- and so: -->
+<!-- * $\lambda_b^u = \lambda_b^K\lambda_b^Y = \frac{1}4$ -->
+<!-- * $\lambda_d^u = \lambda_d^Y$  -->
+<!-- * $p = \frac{\lambda_b^u}{\lambda_b^u + \lambda_d^u} = \frac{1}3$. -->
+<!-- whence: -->
+<!-- * $\phi_{b1} = 1$ -->
+<!-- * $\phi_{d1} = \lambda_d^K + \lambda_b^K = \frac{1}{2}$ -->
+<!-- More generally we can calculate the lower bound on the probability that $X$ caused $Y$ as the product of the lower bounds that $X$ caused $M$ and that $M$ caused $Y$, and similarly for the upper bound, using the same formula as before. Signing things so that $\tau^j\geq 0$, $j \in {1,2}$: -->
+<!-- $$\frac{2\tau_1}{1+\tau_1+\rho_1}\frac{2\tau_2}{1+\tau_2+\rho_2}  \leq PC \leq \frac{1+\tau_1-|\rho_1|}{1+\tau_1+\rho_1}\frac{1+\tau_2-|\rho_2|}{1+\tau_2+\rho_2} $$ -->
+<!-- We have undertaken essentially the same operations as above except that now we are placing bounds on a substantive estimand of interest rather than first placing bounds on probative value of a clue and then turning to Bayes rule to place bounds on the estimand. -->
+<!-- ### Moderator -->
+<!-- Consider now  a situation  in which our case is drawn from a set of cases for which $X$ and $K$ were each randomly assigned. Say then that the transition matrices, conditional on $K$ look as follows: -->
+<!-- $$P^{K=0}=\left( \begin{array}{cc} 0 & 1 \\ 0.5 & 0.5 \end{array}\right), P^{K=1}=\left( \begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)$$ -->
+<!-- In this case we can now identify PC, even before observing $K$. If $K=0$, PC is 0---there are no cases with positive effects in this condition. If $K=1$ PC = 1.  We have a prior  that $K=1$ of  .5 and after observing $X=Y=1$ we raise this to $2/3$. Thus our prior belief on $PC$---before seeing $K$--- is $2/3 * 1 + 1/3 * 0 = 2/3$.  -->
+<!-- How about $\phi_{b1}$ and $\phi_{d1}$? -->
+<!-- Here positive effects only arise when $K=1$ and so $\phi_{b1} = 1$. $Y=1$ without being cause by $X$ only if $K=0$ and so  $\phi_{b0} = 0$. Thus we have a double decisive clue. -->
+</div>
+</div>
+<div id="empirical-discovery-of-causal-structure" class="section level2" number="15.2">
+<h2><span class="header-section-number">15.2</span> Empirical discovery of causal structure</h2>
+<p>In the preceding discussion of learning about probative value for process tracing, we have taken causal structure—the DAG itself—as given. Moreover, even when we are engaged in mixed-data inference on multiple cases—where we can start with <em>only</em> the DAG—we need to start with some causal structure. Where does knowledge of causal structure come from?</p>
+<p>The empirical discovery of causal structure is itself a very large field of inquiry and we cannot do it justice here. For a review see, for instance, <span class="citation"><a href="#ref-glymour2019review" role="doc-biblioref">Glymour, Zhang, and Spirtes</a> (<a href="#ref-glymour2019review" role="doc-biblioref">2019</a>)</span>.</p>
+<p>Here we seek simply to illustrate the possibility of casual discovery. We demonstrate with three situations in which there is a true—but unknown model—relating <span class="math inline">\(X,M,\)</span> and <span class="math inline">\(Y\)</span> to each other. Critically, we assume that there are no unobserved confounding relations (this is a requirement for the “PC” algorithm but not for the “Fast Causal Inference” algorithm). In each situation, we show the true relationship and the “skeleton” of the model as discovered by a prominent technique that uses a “constraint-based algorithm”—examining whether observed data correlations are consistent with one or another set of conditional-independence relations.</p>
+<p>In Figure <a href="justifying.html#fig:disoveryplotsab">15.3</a>, we represent the true models from which simulated data are generated. The objective is then to see how much of this true causal structure the discovery algorithm can recover from the data. In the first true model, <span class="math inline">\(X\)</span> affects <span class="math inline">\(Y\)</span> directly and indirectly through <span class="math inline">\(M\)</span>. In the second model, <span class="math inline">\(Y\)</span> has two causes that do not influence each other. Finally, in the third model, <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> through <span class="math inline">\(M\)</span> but not directly. When we simulate data from these models, we assume monotonicity but otherwise a flat distribution over nodal types. We also assume no confounding: there is nothing not represented on the graph that affects more than one node on the graph.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:disoveryplotsa"></span>
+<img src="ii_files/figure-html/disoveryplotsa-1.png" alt="DAGs from three structural causal models." width="80%" />
+<p class="caption">
+Figure 15.2: DAGs from three structural causal models.
+</p>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:disoveryplotsab"></span>
+<img src="ii_files/figure-html/disoveryplotsab-1.png" alt="(Partially) Recovered DAGs from Data: Circles indicate uncertainty whether a aroow starts or ends at a given point." width="80%" />
+<p class="caption">
+Figure 15.3: (Partially) Recovered DAGs from Data: Circles indicate uncertainty whether a aroow starts or ends at a given point.
+</p>
+</div>
+<p>In Figure <a href="justifying.html#fig:disoveryplotsab">15.3</a>, we show the structures that we recover. In all situations, we correctly recover the skeleton: which nodes are connected to which nodes. Note that, for any link where we have an “o” on both ends of the link, we do not know in which direction causal effects flow.</p>
+<p>In the first situation, the skeleton is unrestricted: we have correctly <em>not</em> excluded links between any two nodes, but we have not learned about the directions of effects. In the second situation, however, we have fully recovered the causal structure. Thus, the algorithm has figured out that <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span> are not children of <span class="math inline">\(Y\)</span>. The algorithm sees, in essence, data patterns that are distinctively associated with colliders: <span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span> correlated conditional on <span class="math inline">\(Y\)</span> but not otherwise. In the last setup, we have not figured out the direction of the causal arrows, but the inference is still rather impressive. Although <span class="math inline">\(X\)</span>, <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span> are all correlated with each other, the algorithm has figured out that there should be no direct link between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>—by observing that <span class="math inline">\(X\)</span> and <span class="math inline">\(M\)</span> are not correlated with each other <em>conditional</em> on <span class="math inline">\(M\)</span>.</p>
+<p>Note also that, in all three situations, if we have access to all relevant variables the true graph can be recovered with additional knowledge of the temporal ordering of the variables.</p>
+<p>The assumption that we have captured all nodes that might generate confounding is critical to these results. Yet these examples provide grounds for hope that causal models can be discovered and not simply assumed. If all relevant nodes are known and measured—a tall order for sure—causal structures can be identified from data.</p>
+<!-- ### A model of models -->
+<!-- In the following mode there is an unknown, $Q$, which determines the relevant causal model.  -->
+<!-- If $Q=1$ then we have $A \rightarrow B \rightarrow C2$; if $Q=0$ then $A \rightarrow B \leftarrow C1$. In this case the temporal order of $C1$ and $C2$ is observable, so there is not confusion there; what is not clear however is which is the important node to include in the model.  -->
+<!-- ```{r ch14Qornot} -->
+<!-- model <- make_model("A -> B -> C2 <- C1 -> B <- Q -> C2") %>% -->
+<!--   # These restrictions capture the role of Q in turning parentage on or off  -->
+<!--   set_restrictions(c( -->
+<!--     "(B[C1=1, Q=1] != B[C1=0, Q=1])", -->
+<!--     "(C2[B=1, Q=0] != C2[B=0, Q=0])")) %>% -->
+<!--   # These restrictions are for simplification: monotonicity and complementarity  -->
+<!--   set_restrictions(c( -->
+<!--     "(C2[B=1] < C2[B=0])", -->
+<!--     "(C2[C1=1] < C2[C1=0])", -->
+<!--     "(B[A=1]  < B[A=0])", -->
+<!--     "(B[C1=1] < B[C1=0])", -->
+<!--     "((B[A=1, C1=1] - B[A=0, C1=1]) < (B[A=1, C1=0] - B[A=0, C1=0]))")) -->
+<!-- model -->
+<!-- plot(model) -->
+<!-- if(do_diagnosis){ -->
+<!--   model_Q0 <- set_parameters(model, node = "Q", alphas = c(1,0)) -->
+<!--   model_Q1 <- set_parameters(model, node = "Q", alphas = c(0,1)) -->
+<!--   data_0 <- make_data(model_Q0, 100, vars = c("A", "B", "C1", "C2")) -->
+<!--   data_1 <- make_data(model_Q1, 100, vars = c("A", "B", "C1", "C2")) -->
+<!--   model_Q0 <- update_model(model, data_0) -->
+<!--   model_Q1 <- update_model(model, data_1) -->
+<!-- Qu0 <- query_model(model_Q0, "Q==1", using = "posteriors") -->
+<!-- Qu1 <- query_model(model_Q1, "Q==1", using = "posteriors") -->
+<!--   write_rds(list(model_Q0, model_Q1, Qu0, Qu1), "saved/ch14_Qornot.rds") -->
+<!-- } -->
+<!-- Qornot <- read_rds("saved/ch14_Qornot.rds") -->
+<!-- kable(Qornot[[3]]) -->
+<!-- kable(Qornot[[4]]) -->
+<!-- ``` -->
+<!-- [Ideally here however $\lambda^Q$ is either 0 or 1---we want to know which world we are in] -->
+<!-- ## Exercise -->
+<!-- Imagine a model in which in fact $X \rightarrow Y \leftarrow K$ but in which the researcher knows only the temporal ordering of variables. Say in fact that on average $X$ and $K$ both have strong positive effects on $Y$ with positive interactions. Can access to observational data provide a justification for using $K$ as a clue for the effect of $X$ on $Y$ in an $X=Y=1$ case?   -->
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-BennettAppendix" class="csl-entry">
+Bennett, Andrew. 2015. <span>“Appendix.”</span> In <em>Process Tracing: From Metaphor to Analytic Tool</em>, edited by Andrew Bennett and Jeffrey Checkel. New York: Cambridge University Press.
+</div>
+<div id="ref-cartwright1994nature" class="csl-entry">
+Cartwright, Nancy, and others. 1994. <span>“Nature’s Capacities.”</span> <em>OUP Catalogue</em>.
+</div>
+<div id="ref-clarke2012model" class="csl-entry">
+Clarke, Kevin A, and David M Primo. 2012. <em>A Model Discipline: Political Science and the Logic of Representations</em>. New York: Oxford University Press.
+</div>
+<div id="ref-collier2011understanding" class="csl-entry">
+Collier, David. 2011. <span>“Understanding Process Tracing.”</span> <em>PS: Political Science &amp; Politics</em> 44 (04): 823–30.
+</div>
+<div id="ref-dawid2019bounding" class="csl-entry">
+Dawid, Philip, Macartan Humphreys, and Monica Musio. 2019. <span>“Bounding Causes of Effects with Mediators.”</span> <em>arXiv Preprint arXiv:1907.00399</em>.
+</div>
+<div id="ref-fairfield2017explicit" class="csl-entry">
+Fairfield, Tasha, and Andrew Charman. 2017. <span>“Explicit Bayesian Analysis for Process Tracing: Guidelines, Opportunities, and Caveats.”</span> <em>Political Analysis</em> 25 (3): 363–80.
+</div>
+<div id="ref-glymour2019review" class="csl-entry">
+Glymour, Clark, Kun Zhang, and Peter Spirtes. 2019. <span>“Review of Causal Discovery Methods Based on Graphical Models.”</span> <em>Frontiers in Genetics</em> 10: 524.
+</div>
+<div id="ref-holland1986statistics" class="csl-entry">
+Holland, Paul W. 1986. <span>“Statistics and Causal Inference.”</span> <em>Journal of the American Statistical Association</em> 81 (396): 945–60.
+</div>
+<div id="ref-humphreys2015mixing" class="csl-entry">
+Humphreys, Macartan, and Alan M Jacobs. 2015. <span>“Mixing Methods: A Bayesian Approach.”</span> <em>American Political Science Review</em> 109 (04): 653–73.
+</div>
+<div id="ref-Van-Evera:1997" class="csl-entry">
+Van Evera, Stephen. 1997. <em>Guide to Methods for Students of Political Science</em>. Ithaca, NY: Cornell University Press.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>Even in this simple case there are ways in which the representation is a model, not least the coding of events as a variable involves a form of modeling.<a href="justifying.html#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="wideordeep.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="evaluation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false,
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["ii.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
