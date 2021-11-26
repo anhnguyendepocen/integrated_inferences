@@ -4,12 +4,14 @@
 source("_packages_used.R")
 ```
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 In this short conceptual chapter we describe an approach in which theoretical claims are thought of as model justifications within a  hierarchy of causal models. Lower-level models serve as a theory for a higher level model if the higher level model can be deduced from the lower level model---possibly in combination with data. Consistency requirements determine what new theory emerges from the combination of prior theory and data, but also constrain what prior theories can be invoked to justify a given claim. 
 ::::
+-->
+
 <br>
 
 <!-- 6.1 Models imply models -->
@@ -78,7 +80,7 @@ Model $M^\prime$ differs by the addition of a node, $K$, in the causal chain bet
 
 Model $M^{\prime\prime}$ differs by the addition of a node, $C$, that moderates the effect of  $X$ on  $Y$. $M^{\prime\prime}$ justifies $M$ in the sense that if you believe  $M^{\prime\prime}$  you should believe  $M$. It provides an explanation of a kind also: if you believe model  $M^{\prime\prime}$ you likely believe that the relation between $X$ and $Y$ is what it is because of $C$. Had $C$ been different the causal relation between $X$ and $Y$ might have been also.  
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
@@ -90,6 +92,7 @@ Theories are “lower-level” causal models that explain or provide an account 
   * *Moderation*: A component of $\theta^Y$ can be extracted and specified as a substantive variable. This variable is now a substantively conceptualized moderator of the $X \rightarrow Y$ relationship. The moderation theory thus provides a fuller explanation of why $X$ has different effects on $Y$ in different contexts.
 
 ::::
+-->
 <br>
 
 
@@ -113,9 +116,7 @@ Consider next model $M^{\prime\prime}$ panel (c) in Figure \@ref(fig:Highlow), w
 
 ```{r Highlow, echo = FALSE, fig.width = 7, fig.height = 5,  fig.align="center", out.width='80%', fig.cap = "Here we represent the simple claim that one variable causes another, and two theories --- lower-level models --- that could explain this claim. Both model (b) and model (c) involve theorization via disaggregation of nodes."}
 
-par(mfrow = c(3,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,2,2),
+p1 <- hj_ggdag(x = c(1,2,2),
        y = c(1,1,2),
        names = c(
          expression(paste(X)),
@@ -124,12 +125,10 @@ hj_dag(x = c(1,2,2),
        arcs = cbind( c(1, 3),
                      c(2, 2)),
        title = "(a) A Higher-Level Model, M",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .1
 )
 
-hj_dag(x = c(1,2,2, 1.5, 1.5),
+p2 <- hj_ggdag(x = c(1,2,2, 1.5, 1.5),
        y = c(1,1,2, 1  , 2),
        names = c(
          expression(paste(X)),
@@ -141,12 +140,10 @@ hj_dag(x = c(1,2,2, 1.5, 1.5),
        arcs = cbind( c(1, 3, 5, 4),
                      c(4, 2, 4, 2)),
        title = "(b) Lower-Level Model, M': Disaggregating via Mediation",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .1
 )
 
-hj_dag(x = c(1,2, 2, 1.5),
+p3 <- hj_ggdag(x = c(1,2, 2, 1.5),
        y = c(1,1, 2, 2),
        names = c(
          expression(paste(X)),
@@ -157,10 +154,10 @@ hj_dag(x = c(1,2, 2, 1.5),
        arcs = cbind( c(1, 3, 5, 4),
                      c(2, 2, 4, 2)),
        title = "(c) Lower-Level Model M'': Disaggregating via Moderation",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .1
 )
+
+plot_grid(plotlist = list(p1,p2,p3),ncol = 1)
 
 ```
 
@@ -193,11 +190,8 @@ This is a key part of what it means for the lower-level model to *justify* the h
 
 ```{r Highlowreduce, echo = FALSE, fig.width = 7, fig.height = 5,  fig.align="center", out.width='80%', fig.cap = "Here we represent theorization via type-reduction. Though we show the removal of an arrow to help convey the idea, we would in fact reduce types by imposing restrictions on the nodal types at Y within the same DAG."}
 
-par(mfrow = c(2,1))
-par(mar=c(1,1,3,1))
-
-hj_dag(x = c(1,2,2, 1.5, 1.5),
-       y = c(1,1,2, 1.5  , 2.5),
+p1 <- hj_ggdag(x = c(1,2,2, 1.5, 1.5),
+       y = c(1,1,2, 1.5,2.5),
        names = c(
          expression(paste(Z)),
          expression(paste("Y")),  
@@ -208,13 +202,11 @@ hj_dag(x = c(1,2,2, 1.5, 1.5),
        arcs = cbind( c(1, 3, 5, 4, 1),
                      c(4, 2, 4, 2, 2)),
        title = "(a) A higher-Level Model, M_1",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .1)
        
        
-hj_dag(x = c(1,2,2, 1.5, 1.5),
-       y = c(1,1,2, 1.5  , 2.5),
+p2 <- hj_ggdag(x = c(1,2,2,1.5,1.5),
+       y = c(1,1,2,1.5,2.5),
        names = c(
          expression(paste(Z)),
          expression(paste("Y")),  
@@ -225,10 +217,10 @@ hj_dag(x = c(1,2,2, 1.5, 1.5),
        arcs = cbind( c(1, 3, 5, 4),
                      c(4, 2, 4, 2)),
        title = "(b) A lower-Level Model, M_0, with types reduced",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .1
 )
+
+plot_grid(plotlist = list(p1,p2),ncol=1)
 ```
 
 
@@ -872,14 +864,13 @@ To see this, we take advantage of the fact that $p(q,k) = p(k)p(q|k) = p(q)p(k|q
 <!-- \end{eqnarray} -->
 <!-- $$ -->
 
-$$
+
 \begin{eqnarray}
 ESE &=& \int_q\int_k \left({q}_k-q\right)^2p(q,k)dkdq \\
     &=& \int_k\int_q \left({q}_k-q\right)^2p(k)p(q|k)dq dk \\
     &=& \int_k\left[\int_q \left({q}_k-q\right)^2p(q|k)dq\right]p(k)dk \\
     &=& \int_k v_k p(k)dk  = EV
 \end{eqnarray}
-$$
 
 Note that the key move is in recognizing that $p(q |k)$ is in fact the posterior distribution on $q$ given $k$. In using this we assume that the same distribution is used for assessing error and for conducing analysis---that is we take the researcher's prior to be the relevant one for assessing error.
 
@@ -979,8 +970,7 @@ For two players, for instance, we might imagine a representation of a game as sh
 
 ```{r nfg, echo = FALSE, fig.width = 11, fig.height = 5, fig.align="center", out.width='80%', fig.cap = "Formal structure of a normal form game."}
 
-par(mar=c(1.5,1.5,3.5,1.5))
-hj_dag(x = c(1, 2,  2, 3),
+hj_ggdag(x = c(1, 2,  2, 3),
        y = c(1, 1.5,.5,1),
        names = c(
          expression(sigma[1]),
@@ -989,8 +979,6 @@ hj_dag(x = c(1, 2,  2, 3),
          expression(sigma[2])),
        arcs = cbind( c(1,1,4, 4),
                      c(2,3,3, 2)),
-       add_functions = 0,
-       contraction = .16,
        padding = .1
 )
 
@@ -1007,8 +995,7 @@ How might this theory be represented as a causal model? Figure \@ref(fig:nfg2) p
 
 ```{r nfg2, echo = FALSE, fig.width = 11, fig.height = 5, fig.align="center", out.width='80%', fig.cap = "Formal structure of a normal form game."}
 
-par(mar=c(1.5,1.5,3.5,1.5))
-hj_dag(x = c(3, 1, 2, 3, 3,   4, 5),
+hj_ggdag(x = c(3, 1, 2, 3, 3,   4, 5),
        y = c(0, 1, 1, .5,1.5, 1, 1),
        names = c(
          expression(Gamma),     #1:  3 
@@ -1021,8 +1008,6 @@ hj_dag(x = c(3, 1, 2, 3, 3,   4, 5),
          ),
        arcs = cbind( c(3, 3,  6, 6, 1, 1),
                      c(4, 5,  4, 5, 3, 6)),
-       add_functions = 0,
-       contraction = .16,
        padding = .1
 )
 
@@ -1038,8 +1023,7 @@ A lower level causal model might help. In Figure  \@ref(fig:nfg3)
 
 ```{r nfg3, echo = FALSE, fig.width = 11, fig.height = 5, fig.align="center", out.width='80%', fig.cap = "Formal structure of a normal form game."}
 
-par(mar=c(1.5,1.5,3.5,1.5))
-hj_dag(x = c(3, 1, 2, 3, 3,   4, 5),
+hj_ggdag(x = c(3, 1, 2, 3, 3,   4, 5),
        y = c(0, 1, 1, .5,1.5, 1, 1),
        names = c(
          expression(Gamma),     #1:  3 
@@ -1052,8 +1036,6 @@ hj_dag(x = c(3, 1, 2, 3, 3,   4, 5),
          ),
        arcs = cbind( c(1,1,2, 3, 3,  6, 6, 7, 1, 1),
                      c(2,7,3, 4, 5,  4, 5, 6, 3, 6)),
-       add_functions = 0,
-       contraction = .16,
        padding = .1
 )
 
@@ -1069,8 +1051,7 @@ One might step still further back and ask *why* would actors form these beliefs,
 
 ```{r nfg4, echo = FALSE, fig.width = 11, fig.height = 5, fig.align="center", out.width='80%', fig.cap = "Formal structure of a normal form game."}
 
-par(mar=c(1.5,1.5,3.5,1.5))
-hj_dag(x = c(3, 1, 2, 3, 3,   4, 5, 1.5, 4.5),
+hj_ggdag(x = c(3, 1, 2, 3, 3,   4, 5, 1.5, 4.5),
        y = c(0, 1, 1, .5,1.5, 1, 1, 1.5, 1.5),
        names = c(
          expression(Gamma),     #1:  3 
@@ -1086,8 +1067,6 @@ hj_dag(x = c(3, 1, 2, 3, 3,   4, 5, 1.5, 4.5),
          ),
        arcs = cbind( c(1,1,2, 3, 3,  6, 6, 7, 1, 1, 8, 8, 9, 9),
                      c(2,7,3, 4, 5,  4, 5, 6, 3, 6, 2, 3, 6, 7)),
-       add_functions = 0,
-       contraction = .16,
        padding = .1
 )
 
@@ -1103,8 +1082,7 @@ Nash's theory likely corresponds to position (ii). It can be captured by functio
 
 ```{r nfg5, echo = FALSE, fig.width = 11, fig.height = 5, fig.align="center", out.width='80%', fig.cap = "A normal form game with a representation of equilibrium selection norms."}
 
-par(mar=c(1.5,1.5,3.5,1.5))
-hj_dag(x = c(3, 1, 2, 3, 3,   4, 5, 1.5, 4.5, 3),
+hj_ggdag(x = c(3, 1, 2, 3, 3,   4, 5, 1.5, 4.5, 3),
        y = c(0, 1, 1, .5,1.5, 1, 1, 1.5, 1.5, 2),
        names = c(
          expression(Gamma),     #1:  3 
@@ -1120,8 +1098,6 @@ hj_dag(x = c(3, 1, 2, 3, 3,   4, 5, 1.5, 4.5, 3),
          ),
        arcs = cbind( c(1,1,2, 3, 3,  6, 6, 7, 1, 1, 8, 8, 9, 9, 10, 10),
                      c(2,7,3, 4, 5,  4, 5, 6, 3, 6, 2, 3, 6, 7, 2, 7)),
-       add_functions = 0,
-       contraction = .16,
        padding = .1
 )
 

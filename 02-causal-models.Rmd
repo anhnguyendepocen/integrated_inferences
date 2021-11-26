@@ -6,12 +6,13 @@
 ```{r packagesused02, include = FALSE}
 source("_packages_used.R")
 ```
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 We provide a lay-language primer on the logic of causal models.
 ::::
+-->
 
 <br>
 
@@ -152,7 +153,8 @@ tab <- cbind(type = paste0("$\\theta^Y_{", rownames(tab), "}$"), tab)
 kable(tab, 
       col.names = c("$\\theta^Y$", "if $X_1=0, X_2=0$",   "if $X_1=1,X_2=0$",  "if $X_1=0,X_2=1$",   "if $X_1=1, X_2=1$" ),
       row.names = FALSE, align=c(rep('c',ncol(tab))),
-      caption = "With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the other two variables.")
+      caption = "With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the other two variables.",
+      format = 'pandoc')
 ```
 
 
@@ -196,8 +198,7 @@ As we shift to talking about networks of causal relations between variables we w
 Return to our running democratization example, but suppose now that we have more fully specified beliefs about how the level of economic inequality can have an effect on whether a country democratizes. We might believe that inequality affects the likelihood of democratization by generating demands for redistribution, which in turn can cause the mobilization of lower-income citizens, which in turn can cause democratization. We might also believe that mobilization itself is not just a function of redistributive preferences but also of the degree of ethnic homogeneity, which shapes the capacities of lower-income citizens for collective action. In this model $R$ is a parent of $M$, $I$ is an ancestor of $M$ but not a parent. $R$ and $E$ are spouses and $M$ is their child. We can visualize this model as a Directed Acyclic Diagram (DAG) in Figure \@ref(fig:simpleDAG).
 
 ```{r simpleDAG, echo = FALSE, out.width='60%', fig.width = 7, fig.height = 4,  fig.align="center", out.width='80%', fig.cap = "A simple causal model in which high inequality ($I$) affects the democratization ($D$) via redistributive demands and mass mobilization ($M$), which is also a function of ethnic homogeneity ($E$). The arrows show relations of causal dependence between variables.  The graph does not capture the ranges of the variables and the functional relations between them."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
+hj_ggdag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
        y = c(2, 2, 2, 0, 2, 3, 3, 3, 3, -1),
        names = c(
          "I", 
@@ -214,7 +215,7 @@ hj_dag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
        arcs = cbind( c(1, 2, 4, 3, 6, 7, 8, 9, 10),
                      c(2, 3, 3, 5, 5, 3, 2, 1, 4)),
        title = "A Model of Inequality's Effect on Democratization",
-       padding = .2, contraction = .15) 
+       padding = .2)
 
 ```
 
@@ -277,7 +278,7 @@ Note that functions can be written to be quite specific or extremely general, de
 
 We begin by returning to the concept of types. Drawing on our original four types from earlier in this chapter, we know that we can fully specify causal relations between a binary $M$ and a binary $D$ by allowing the node $\theta_D$ to range across four possible values $\{\theta^D_{10}, \theta^D_{01}, \theta^D_{00}, \theta^D_{11}\}$. For instance, $\theta^D_{10}$ represents a negative causal effect of $M$ on $D$ while $\theta^D_{00}$ represents $D$ remaining at 0 regardless of $M$. Put differently, $\theta^D$ represents the non-parametric function that relates $M$ to $D$. We can formally specify $D$'s behavior as a function of $M$ and $\theta^D$ in the following way: 
 
-$$D(M, \theta^D_{ij}) = \left\{\begin{array}{ccx} i & \text{if} & M=0 \\ j & \text{if} & M=1 \end{array}\right.$$
+$$D(M, \theta^D_{ij}) = \left\{\begin{array}{ccc} i & \text{if} & M=0 \\ j & \text{if} & M=1 \end{array}\right.$$
 
 Note that $\theta^D$ ranges over *all possible* functional forms between these two binary variables. 
 
@@ -378,6 +379,7 @@ While this is not without loss of generality, it is not as constraining as it mi
 
 <!-- Thus, a probabilistic causal model is a structural causal model coupled with a probability distribution over the model's exogenous nodes. A corresponding probabilistic model, however, might support a stronger claim of the form: "Condition $C$ arises with frequency $\pi^C$, and so $X$ causes $Y$ with probability $\pi^C$." -->
 
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""  #markov}
 :::
@@ -398,6 +400,7 @@ P(v_1,v_2,\dots v_n) = \prod P(v_i|pa_i)
   The distribution $P$ on $\theta$ induces a joint probability distribution on $\mathcal{V}$ that captures not just information about how likely different states are to arise but also the relations of conditional independence between nodes that are implied by the underlying causal process. For example, if we thought that $X$ caused $Y$ via $R$ (and only via $R$), we would then hold that $P(Y | R) = P(Y | X, R)$: in other words if $X$ matters for $Y$ only via $R$ then, conditional on $R$, $X$ should not be informative about $Y$.   
   In this way, a probability distribution $P$ over a set of nodes can be consistent with some causal models but not others. This does not, however, mean that a specific causal model can be extracted from $P$. To demonstrate with a simple example for two nodes, any probability distribution on $(X,Y)$ with $P(x)\neq P(x|y)$ is consistent both with a model in which $X$ is a parent of $Y$ and with a model in which $Y$ is a parent of $X$.
 ::::
+-->
 
 <br>
 
@@ -439,7 +442,7 @@ Of particular interest in Figure \@ref(fig:simpleDAG) is the implied independenc
 **Representing unobserved confounding.**  It may be however that there are common causes for nodes that we simply do not understand. We might believe that some unknown factor (partially) determines both $I$ and $D$, which is the same as saying that $\theta^I$ and $\theta^D$ are not independently distributed. If we were to represent the $\theta$ terms on the graph we might then want to represent a single term $(\theta^I, \theta^D)$ that points into both $I$ and $D$. Usually however the $\theta$ terms are omitted from graphs and in this case we would  represent the unobserved confounding by adding a dotted line, or a two headed arrow, connecting nodes whose unknown components are not independent. Figure \@ref(fig:simpleDAGb) illustrates. We address this kind of unobserved confounding later in the book and show how we can seek to learn about the joint distribution of nodal types in such situations. 
 
 ```{r simpleDAGb, echo = FALSE, fig.cap="A DAG with unobserved confounding", out.width = "60%", fig.height = 4, fig.width = 6, fig.align="center"}
-make_model("I -> D; I <-> D") %>% plot
+hj_ggdag(model=make_model("I -> D; I <-> D"))
 ```
 
 
@@ -465,8 +468,7 @@ To take up another example, suppose that war is a cause of both military casualt
 
 
 ```{r warDAG, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width = "60%", fig.cap = "This graph represents a simple causal model in which war ($W$) affects both military casualties ($C$) and price inflation ($P$)."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 1),
+hj_ggdag(x = c(0, 1, 1),
        y = c(1, 2, 0),
        names = c(
          "W", 
@@ -476,7 +478,7 @@ hj_dag(x = c(0, 1, 1),
        arcs = cbind( c(1, 1),
                      c(2, 3)),
        title = "A Model of War's Effect on Casualties and Prices",
-       padding = .2, contraction = .15) 
+       padding = .2) 
 
 ```
 
@@ -505,20 +507,20 @@ To see more systematically how a DAG can reveal conditional independencies, it i
 
 
 ```{r pathsexp, echo = FALSE, fig.width = 6, fig.height = 4,  fig.align="center", out.width='70%', fig.cap = "\\label{fig:CI} Three elemental relations of conditional independence."}
-par(mfrow = c(3,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
+p1 <- hj_ggdag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(1, 2),
                      c(2, 3)),
-       title = "(a) A path of arrows pointing in the same direction", padding = .2, contraction = .15) 
-hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
+       title = "(a) A path of arrows pointing in the same direction", padding = .2)
+p2 <- hj_ggdag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(2, 2),
                      c(1, 3)),
-       title = "(b) A forked path", padding = .2, contraction = .15) 
-hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
+       title = "(b) A forked path", padding = .2) 
+p3 <- hj_ggdag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(1, 3),
                      c(2, 2)),
-       title = "(c) An inverted fork (collision)", padding = .2, contraction = .15) 
+       title = "(c) An inverted fork (collision)", padding = .2)
+
+plot_grid(plotlist = list(p1,p2,p3),ncol=1)
 
 ```
 
@@ -572,11 +574,7 @@ More intuitively, when we simplify away a mediator, we need to make sure that we
 What about eliminating exogenous nodes---nodes with no parents? For the most part, exogenous nodes cannot be eliminated, but must either be replaced by or incorporated into $U$ (or $\theta$) terms. The reason is that we need preserve any dependencies or variation generated by the exogenous node.  Figure \@ref(fig:elimrules) walks through four different situations in which we might want to simplify away the exogenous node, $X$. (Here we use the more generic $U$ notation, though the same principles apply if these are type-receptacles $\theta$.)
 
 ```{r elimrules, echo = FALSE, fig.width = 10, fig.height = 10,  fig.align="center", out.width='.5\\textwidth', fig.cap = "Here we represent the basic principles for eliminating exogenous nodes."}
-
-
-par(mfrow = c(4,2))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,2,2),
+p1 <- hj_ggdag(x = c(1,2,2),
        y = c(2,3,1),
        names = c(
          expression(paste(X)),
@@ -585,13 +583,10 @@ hj_dag(x = c(1,2,2),
          ),  
        arcs = cbind( c(1, 1),
                      c(3, 2)),
-       title = "(a1) Original model: X has two children",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(1,2,2),
+p2 <- hj_ggdag(x = c(1,2,2),
        y = c(2,3,1),
        names = c(
          expression(paste(theta^{WY})),
@@ -600,14 +595,11 @@ hj_dag(x = c(1,2,2),
        ),
        arcs = cbind( c(1, 1),
                      c(3, 2)),
-       title = "(a2) Simplification: Dependency between W and Y must be preserved",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
 
-hj_dag(x = c(1,1,2),
+p3 <- hj_ggdag(x = c(1,1,2),
        y = c(3,1,2),
        names = c(
          expression(paste(X)),
@@ -616,14 +608,11 @@ hj_dag(x = c(1,1,2),
        ),
        arcs = cbind( c(1, 2),
                      c(3, 3)),
-       title = "(b1) Original model: X has a substantive spouse",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
 
-hj_dag(x = c(1,1,2),
+p4 <- hj_ggdag(x = c(1,1,2),
        y = c(3,1,2),
        names = c(
          expression(paste(theta^Y)),
@@ -632,13 +621,10 @@ hj_dag(x = c(1,1,2),
        ),
        arcs = cbind( c(1, 2),
                      c(3, 3)),
-       title = "(b2) Simplification: X must be replaced with U term",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(1,1,2),
+p5 <- hj_ggdag(x = c(1,1,2),
        y = c(3,1,2),
        names = c(
          expression(paste(X)),
@@ -647,13 +633,10 @@ hj_dag(x = c(1,1,2),
        ),
        arcs = cbind( c(1, 2),
                      c(3, 3)),
-       title = "(c1) Original model: X has a random spouse",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(1,2),
+p6 <- hj_ggdag(x = c(1,2),
        y = c(1,1),
        names = c(
          expression(paste(theta^Y[mod])),
@@ -661,14 +644,11 @@ hj_dag(x = c(1,2),
        ),
        arcs = cbind( c(1),
                      c(2)),
-       title = "(c2) Simplification: X absorbed into $\theta$ term",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
 
-hj_dag(x = c(1,3,2),
+p7 <- hj_ggdag(x = c(1,3,2),
        y = c(1,1,1),
        names = c(
          expression(paste(X)),
@@ -677,13 +657,10 @@ hj_dag(x = c(1,3,2),
        ),
        arcs = cbind( c(1, 3),
                      c(3, 2)),
-       title = "(d1) Original model: X has one child and no spouse",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(3,2),
+p8 <- hj_ggdag(x = c(3,2),
        y = c(1,1),
        names = c(
          expression(paste(W)),
@@ -691,11 +668,21 @@ hj_dag(x = c(3,2),
        ),
        arcs = cbind( c(2),
                      c(1)),
-       title = "(d2) Simplification: X can be safely removed",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
+
+titles =c("(a1) Original model: X has two children",
+          "(a2) Simplification: Dependency between \nW and Y must be preserved",
+          "(b1) Original model: X has a substantive spouse",
+          "(b2) Simplification: X must be replaced with U term",
+          "(c1) Original model: X has a random spouse",
+          "(c2) Simplification: X absorbed into \U03B8 term",
+          "(d1) Original model: X has one child and no spouse",
+          "(d2) Simplification: X can be safely removed")
+
+plot_grid(plotlist = list(p1,p2,p3,p4,p5,p6,p7,p8),
+          labels = titles,
+          ncol=2,label_size = 10,hjust=0)
 
 
 ```
@@ -717,26 +704,23 @@ One interesting effect of eliminating a substantive exogenous node can be to ren
 x = c(0,0, 1, 1, 2)
 y = c(2,0, 2, 0, 1)
 
-# names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
-
 names = c(
-         expression(paste("I: Inequality")),
-         expression(paste("E: Ethnic\nhomogeneity")),
-         expression(paste("R: Redistributive\npreferences")),
-         expression(paste("M: Mobilization")),
-         expression(paste("D: Democratization"))
+         "I: Inequality",
+         "E: Ethnic\nhomogeneity",
+         "R: Redistributive\npreferences",
+         "M: Mobilization",
+         "D: Democratization"
          )
 
-hj_dag(x =  x,
-       y = y,
-       names = c(names),
-       arcs = cbind( c(1,2,2, 3, 4, 3),
-                     c(3,3,4, 5, 5, 4)),
-       title = "A Model of Inequality and Ethnic Homogeneity's Effects on Democratization",
-       add_functions = 0,
-       contraction = .15,
-       add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
-       padding = .2)
+set.seed(1)
+hj_ggdag(x =  x,
+         y = y,
+         names = c(names),
+         arcs = cbind( c(1,2,2,3,4,3),
+                       c(3,3,4,5,5,4)),
+         title = "A Model of Inequality and Ethnic Homogeneity's Effects on Democratization",
+         padding = -0.1,
+         labels = T,direction='x')
 
 # hj_dag(x =  c(x, 0, 0),
 #        y = c(y, 0.25, 1.75),
@@ -779,8 +763,6 @@ hj_dag(x =  x,
 
 ```{r runningsubs, echo = FALSE, fig.width = 12, fig.height = 13.5, fig.cap = "Simplifications of the model of Figure X. Nodes that are eliminated are marked in grey; circles denote exogenous nodes that are replaced in subgraphs by unidentified variables. (A circled node pointing into two other nodes could equivalently be indicated as an undirected edge connecting the two.)"}
 
-par(mfrow = c(5,5))
-par(mar=c(1,1,3.5,1))
 x = c(0,0, 1, 1, 2)
 y = c(2,0, 2, 0, 1)
 # names = c("S", "X", "C", "R", "Y")
@@ -791,6 +773,9 @@ M[1, c(3)] <-1
 M[2, c(3,4)] <-1
 M[3, c(4,5)] <-1
 M[4, 5] <-1
+
+colnames(M)<-names
+rownames(M)<-names
 
 matrix_remove <- function(M, remove = NULL){
   M2 <- M
@@ -805,21 +790,51 @@ M2
 removes <- perm_bb(c(2,2,2,2,2))[-1,]
 removes <- removes[rowSums(removes)<=3,]
 removes <- removes==1
-removes <- removes[order(rowSums(removes) - (1:nrow(removes))/100),]
+removes <- removes[order(rowSums(removes) - (1:nrow(removes))/100),] # for each of the graphs, which arrows to remove?
+
+plist <- list()
+
 for(j in 1:nrow(removes)){
-GO <- (1:5)[removes[j,]]
-    hj_dag(
+  GO <- (1:5)[removes[j,]]
+  arcs <- which(matrix_remove(M, GO)==1, arr.ind = TRUE)
+  ind1 <- rownames(M)[arcs[,1]]
+  ind2 <- colnames(M)[arcs[,2]]
+
+  from <- names[!names %in% c(ind1,ind2)]
+  to <- 1:length(from)
+  if (length(from)!=0){
+    for (k in 1:length(from)){
+      to[k] <- sample(names[!names %in% from[k]],1)
+}
+    arcs <- rbind(arcs,
+                  cbind(match(from,names),
+                        match(to,names)))
+    obscure <- paste(from,to,sep='->')
+    } else {
+      obscure <- NULL
+      }
+  nodecol = rep('white',5)
+  textcol = rep('black',5)
+  textcol[GO] <- 'grey'
+  for(i in 1:ncol(M)) if((sum(M[,i])==0) & (i%in% GO)) nodecol[i] <- 'grey'
+  
+  plist[j] <- hj_ggdag(
        x = x,
        y = y,
        names = names,
-       arcs = which(matrix_remove(M, GO)==1, arr.ind = TRUE),
+       arcs = arcs,
        add_points = FALSE,
-       solids = c(mysolids[[j]]),
-       )
-text(x[GO],y[GO],names[GO], col = "grey")
-title(j, adj=0)
-for(i in 1:ncol(M)) if((sum(M[,i])==0) & (i%in% GO)) points(x[i], y[i], cex = 3, col = "grey")
+       obscure = obscure,
+       shape = 21,
+       textcol = textcol,
+       nodecol = nodecol,
+       textsize = 4,
+       nodesize = 12
+       ) %>% list()
 }
+
+cowplot::plot_grid(plotlist=plist,ncol=5,labels=1:nrow(removes),
+                   label_size = 10)
 ```
 
 
@@ -922,7 +937,7 @@ In this chapter, we have shown how we can inscribe causal beliefs, rooted in the
 ## Chapter Appendix
 
 ### Steps for constructing causal models
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""  #markov}
 :::
@@ -951,6 +966,7 @@ In this chapter, we have shown how we can inscribe causal beliefs, rooted in the
   * How common or likely to do we think different values of the exogenous nodes are?
   * Are they independently distributed? If in step 2 you drew an undirected edge between nodes then you believe that the connected nodes are not independently distributed.
 ::::
+-->
 
 
 ### Model construction in code
@@ -975,7 +991,7 @@ model <- set_priors(model, distribution = "jeffreys")
 
 # We now have a model defined as an R object. 
 # You might plot it like this:
-plot(model)
+hj_ggdag(model=model)
 
 # Later we will ask questions of this model and update it using data.
 
@@ -1067,7 +1083,7 @@ These steps are enough to fully describe a binary causal model. Later in this bo
 
 
 ### Rules for moving between levels
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""  #markov}
 :::
@@ -1088,6 +1104,7 @@ We can move up levels by eliminating an exogenous node, eliminating an endogenou
 3. Since conditioning on a node “blocks” the path through which it connects its children, we can simply eliminate the node and the arrows between it and its children.
 4. An exogenous node with no spouse and only one child can be simply eliminated.
 ::::
+-->
 
 
 ### Reading conditional independence from a graph
@@ -1095,12 +1112,10 @@ We can move up levels by eliminating an exogenous node, eliminating an endogenou
 We illustrate how to  identify the relations of conditional independence between $A$ and $D$ in Figure \ref{fig:exercise}. 
 
 ```{r exercise, echo = FALSE, fig.width = 5, fig.height = 2,  fig.align="center", out.width='80%', fig.cap = "\\label{fig:CItest} An exercise: $A$ and $D$ are conditionally independent, given which other node(s)?"}
-par(mfrow = c(1,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = 1:4, y = c(1, 1,1,1), names = c( "A", "B", "C", "D" ),
+hj_ggdag(x = 1:4, y = c(1, 1,1,1), names = c( "A", "B", "C", "D" ),
        arcs = cbind( c(1, 3, 3),
                      c(2, 2, 4)),
-       title = " ", padding = .2, contraction = .15) 
+       title = " ", padding = .2) 
 
 ```
 
