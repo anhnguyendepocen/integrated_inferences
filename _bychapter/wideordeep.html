@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 14 Going wide, going deep | Integrated Inferences</title>
+  <meta name="description" content="Bayesian causal models for integrated inferences." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 14 Going wide, going deep | Integrated Inferences" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
+  <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+  <meta property="og:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="github-repo" content="macartan/integrated_inferences" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 14 Going wide, going deep | Integrated Inferences" />
+  
+  <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
+  <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
+
+<meta name="author" content="Macartan Humphreys and Alan M. Jacobs" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="caseselection.html"/>
+<link rel="next" href="justifying.html"/>
+<script src="libs/header-attrs/header-attrs.js"></script>
+<script src="libs/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="headers/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Integrated Inferences</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#the-case-for-causal-models"><i class="fa fa-check"></i><b>1.1</b> The Case for Causal Models</a>
+<ul>
+<li class="chapter" data-level="1.1.1" data-path="intro.html"><a href="intro.html#the-limits-to-design-based-inference"><i class="fa fa-check"></i><b>1.1.1</b> The limits to design-based inference</a></li>
+<li class="chapter" data-level="1.1.2" data-path="intro.html"><a href="intro.html#qualitative-and-mixed-method-inference"><i class="fa fa-check"></i><b>1.1.2</b> Qualitative and mixed-method inference</a></li>
+<li class="chapter" data-level="1.1.3" data-path="intro.html"><a href="intro.html#connecting-theory-and-empirics"><i class="fa fa-check"></i><b>1.1.3</b> Connecting theory and empirics</a></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#key-contributions"><i class="fa fa-check"></i><b>1.2</b> Key contributions</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#the-road-ahead"><i class="fa fa-check"></i><b>1.3</b> The Road Ahead</a></li>
+</ul></li>
+<li class="part"><span><b>I Foundations</b></span></li>
+<li class="chapter" data-level="2" data-path="models.html"><a href="models.html"><i class="fa fa-check"></i><b>2</b> Causal Models</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="models.html"><a href="models.html#counterfactualmodel"><i class="fa fa-check"></i><b>2.1</b> The counterfactual model</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="models.html"><a href="models.html#potential-outcomes"><i class="fa fa-check"></i><b>2.1.1</b> Potential outcomes</a></li>
+<li class="chapter" data-level="2.1.2" data-path="models.html"><a href="models.html#generalization"><i class="fa fa-check"></i><b>2.1.2</b> Generalization</a></li>
+<li class="chapter" data-level="2.1.3" data-path="models.html"><a href="models.html#summaries-of-potential-outcomes"><i class="fa fa-check"></i><b>2.1.3</b> Summaries of potential outcomes</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="models.html"><a href="models.html#causal-models-and-directed-acyclic-graphs"><i class="fa fa-check"></i><b>2.2</b> Causal Models and Directed Acyclic Graphs</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="models.html"><a href="models.html#components-of-a-causal-model"><i class="fa fa-check"></i><b>2.2.1</b> Components of a Causal Model</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="models.html"><a href="models.html#graphing-models-and-using-graphs"><i class="fa fa-check"></i><b>2.3</b> Graphing models and using graphs</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="models.html"><a href="models.html#graphing"><i class="fa fa-check"></i><b>2.3.1</b> Rules for graphing causal models</a></li>
+<li class="chapter" data-level="2.3.2" data-path="models.html"><a href="models.html#conditional-independence-from-dags"><i class="fa fa-check"></i><b>2.3.2</b> Conditional independence from DAGs</a></li>
+<li class="chapter" data-level="2.3.3" data-path="models.html"><a href="models.html#simplifying-models"><i class="fa fa-check"></i><b>2.3.3</b> Simplifying models</a></li>
+<li class="chapter" data-level="2.3.4" data-path="models.html"><a href="models.html#retaining-probabilistic-relations"><i class="fa fa-check"></i><b>2.3.4</b> Retaining probabilistic relations</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="models.html"><a href="models.html#conc2"><i class="fa fa-check"></i><b>2.4</b> Conclusion</a></li>
+<li class="chapter" data-level="2.5" data-path="models.html"><a href="models.html#chapter-appendix"><i class="fa fa-check"></i><b>2.5</b> Chapter Appendix</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="models.html"><a href="models.html#steps-for-constructing-causal-models"><i class="fa fa-check"></i><b>2.5.1</b> Steps for constructing causal models</a></li>
+<li class="chapter" data-level="2.5.2" data-path="models.html"><a href="models.html#model-construction-in-code"><i class="fa fa-check"></i><b>2.5.2</b> Model construction in code</a></li>
+<li class="chapter" data-level="2.5.3" data-path="models.html"><a href="models.html#rules-for-moving-between-levels"><i class="fa fa-check"></i><b>2.5.3</b> Rules for moving between levels</a></li>
+<li class="chapter" data-level="2.5.4" data-path="models.html"><a href="models.html#reading-conditional-independence-from-a-graph"><i class="fa fa-check"></i><b>2.5.4</b> Reading conditional independence from a graph</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="illustratemodels.html"><a href="illustratemodels.html"><i class="fa fa-check"></i><b>3</b> Illustrating Causal Models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="illustratemodels.html"><a href="illustratemodels.html#welfare-state-reform"><i class="fa fa-check"></i><b>3.1</b> Welfare state reform</a></li>
+<li class="chapter" data-level="3.2" data-path="illustratemodels.html"><a href="illustratemodels.html#military-interventions"><i class="fa fa-check"></i><b>3.2</b> Military Interventions</a></li>
+<li class="chapter" data-level="3.3" data-path="illustratemodels.html"><a href="illustratemodels.html#development-and-democratization"><i class="fa fa-check"></i><b>3.3</b> Development and Democratization</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="questions.html"><a href="questions.html"><i class="fa fa-check"></i><b>4</b> Causal Queries</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="questions.html"><a href="questions.html#case-level-causal-effects"><i class="fa fa-check"></i><b>4.1</b> Case-level causal effects</a></li>
+<li class="chapter" data-level="4.2" data-path="questions.html"><a href="questions.html#case-level-causal-attribution"><i class="fa fa-check"></i><b>4.2</b> Case-level causal attribution</a></li>
+<li class="chapter" data-level="4.3" data-path="questions.html"><a href="questions.html#actual-causes"><i class="fa fa-check"></i><b>4.3</b> Actual causes</a></li>
+<li class="chapter" data-level="4.4" data-path="questions.html"><a href="questions.html#average-causal-effects"><i class="fa fa-check"></i><b>4.4</b> Average causal effects</a></li>
+<li class="chapter" data-level="4.5" data-path="questions.html"><a href="questions.html#causal-paths"><i class="fa fa-check"></i><b>4.5</b> Causal Paths</a></li>
+<li class="chapter" data-level="4.6" data-path="questions.html"><a href="questions.html#general-procedure"><i class="fa fa-check"></i><b>4.6</b> General procedure</a></li>
+<li class="chapter" data-level="4.7" data-path="questions.html"><a href="questions.html#chapter-appendix-1"><i class="fa fa-check"></i><b>4.7</b> Chapter Appendix</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="bayeschapter.html"><a href="bayeschapter.html"><i class="fa fa-check"></i><b>5</b> Bayesian Answers</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-basics"><i class="fa fa-check"></i><b>5.1</b> Bayes Basics</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-instances"><i class="fa fa-check"></i><b>5.1.1</b> Simple instances</a></li>
+<li class="chapter" data-level="5.1.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-discrete-hypotheses"><i class="fa fa-check"></i><b>5.1.2</b> Bayes’ Rule for Discrete Hypotheses</a></li>
+<li class="chapter" data-level="5.1.3" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-rule-for-continuous-parameters-and-the-dirichlet-family"><i class="fa fa-check"></i><b>5.1.3</b> Bayes’ Rule for Continuous Parameters and The Dirichlet family</a></li>
+<li class="chapter" data-level="5.1.4" data-path="bayeschapter.html"><a href="bayeschapter.html#moments"><i class="fa fa-check"></i><b>5.1.4</b> Moments</a></li>
+<li class="chapter" data-level="5.1.5" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-estimation-in-practice"><i class="fa fa-check"></i><b>5.1.5</b> Bayes estimation in practice</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="bayeschapter.html"><a href="bayeschapter.html#bayes-applied"><i class="fa fa-check"></i><b>5.2</b> Bayes applied</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="bayeschapter.html"><a href="bayeschapter.html#simple-bayesian-process-tracing"><i class="fa fa-check"></i><b>5.2.1</b> Simple Bayesian Process Tracing</a></li>
+<li class="chapter" data-level="5.2.2" data-path="bayeschapter.html"><a href="bayeschapter.html#a-generalization-bayesian-inference-on-queries"><i class="fa fa-check"></i><b>5.2.2</b> A Generalization: Bayesian Inference on Queries</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="bayeschapter.html"><a href="bayeschapter.html#features-of-bayesian-updating"><i class="fa fa-check"></i><b>5.3</b> Features of Bayesian updating</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="bayeschapter.html"><a href="bayeschapter.html#AppPriors"><i class="fa fa-check"></i><b>5.3.1</b> Priors matter</a></li>
+<li class="chapter" data-level="5.3.2" data-path="bayeschapter.html"><a href="bayeschapter.html#simultaneous-joint-updating"><i class="fa fa-check"></i><b>5.3.2</b> Simultaneous, joint updating</a></li>
+<li class="chapter" data-level="5.3.3" data-path="bayeschapter.html"><a href="bayeschapter.html#posteriors-are-independent-of-the-ordering-of-data"><i class="fa fa-check"></i><b>5.3.3</b> Posteriors are independent of the ordering of data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="theory.html"><a href="theory.html"><i class="fa fa-check"></i><b>6</b> Theories as causal models</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="theory.html"><a href="theory.html#models-as-theories-of"><i class="fa fa-check"></i><b>6.1</b> Models as <em>theories of</em></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="theory.html"><a href="theory.html#implications-of-structural-causal-models"><i class="fa fa-check"></i><b>6.1.1</b> Implications of structural causal models</a></li>
+<li class="chapter" data-level="6.1.2" data-path="theory.html"><a href="theory.html#probabilistic-causal-models"><i class="fa fa-check"></i><b>6.1.2</b> Probabilistic causal models</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="theory.html"><a href="theory.html#theorygains"><i class="fa fa-check"></i><b>6.2</b> Gains from theory</a></li>
+<li class="chapter" data-level="6.3" data-path="theory.html"><a href="theory.html#formal-theories-and-causal-models"><i class="fa fa-check"></i><b>6.3</b> Formal theories and causal models</a></li>
+</ul></li>
+<li class="part"><span><b>II Model-Based Causal Inference</b></span></li>
+<li class="chapter" data-level="7" data-path="pt.html"><a href="pt.html"><i class="fa fa-check"></i><b>7</b> Process Tracing with Causal Models</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="pt.html"><a href="pt.html#process-tracing-and-causal-models"><i class="fa fa-check"></i><b>7.1</b> Process tracing and causal models</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="pt.html"><a href="pt.html#the-intuition"><i class="fa fa-check"></i><b>7.1.1</b> The intuition</a></li>
+<li class="chapter" data-level="7.1.2" data-path="pt.html"><a href="pt.html#a-formalization-of-the-general-approach"><i class="fa fa-check"></i><b>7.1.2</b> A formalization of the general approach</a></li>
+<li class="chapter" data-level="7.1.3" data-path="pt.html"><a href="pt.html#priors"><i class="fa fa-check"></i><b>7.1.3</b> Priors</a></li>
+<li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
+<li class="chapter" data-level="7.4.2" data-path="pt.html"><a href="pt.html#learning-requires-uncertainty"><i class="fa fa-check"></i><b>7.4.2</b> Learning requires uncertainty</a></li>
+<li class="chapter" data-level="7.4.3" data-path="pt.html"><a href="pt.html#the-more-specific-the-query-the-more-difficult-it-is-to-gain-leverage"><i class="fa fa-check"></i><b>7.4.3</b> The more specific the query the more difficult it is to gain leverage</a></li>
+<li class="chapter" data-level="7.4.4" data-path="pt.html"><a href="pt.html#population-level-uncertainty-does-not-alter-case-level-causal-inference"><i class="fa fa-check"></i><b>7.4.4</b> Population-level uncertainty does not alter case-level causal inference</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="ptapp.html"><a href="ptapp.html"><i class="fa fa-check"></i><b>8</b> Process Tracing Application</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="ptapp.html"><a href="ptapp.html#inequality-and-democratization-the-debate"><i class="fa fa-check"></i><b>8.1</b> Inequality and Democratization: The Debate</a></li>
+<li class="chapter" data-level="8.2" data-path="ptapp.html"><a href="ptapp.html#a-structural-causal-model"><i class="fa fa-check"></i><b>8.2</b> A Structural Causal Model</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="ptapp.html"><a href="ptapp.html#forming-priors"><i class="fa fa-check"></i><b>8.2.1</b> Forming Priors</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="ptapp.html"><a href="ptapp.html#results"><i class="fa fa-check"></i><b>8.3</b> Results</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="ptapp.html"><a href="ptapp.html#inferences-for-cases-with-observed-democratization"><i class="fa fa-check"></i><b>8.3.1</b> Inferences for cases with observed democratization</a></li>
+<li class="chapter" data-level="8.3.2" data-path="ptapp.html"><a href="ptapp.html#cases-with-incomplete-data"><i class="fa fa-check"></i><b>8.3.2</b> Cases with incomplete data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="ptapp.html"><a href="ptapp.html#theory-dependence"><i class="fa fa-check"></i><b>8.4</b> Theory dependence</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="mixing.html"><a href="mixing.html"><i class="fa fa-check"></i><b>9</b> Integrated inferences</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="mixing.html"><a href="mixing.html#sample-inference"><i class="fa fa-check"></i><b>9.1</b> Sample inference</a></li>
+<li class="chapter" data-level="9.2" data-path="mixing.html"><a href="mixing.html#general-queries"><i class="fa fa-check"></i><b>9.2</b> General queries</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="mixing.html"><a href="mixing.html#set-up"><i class="fa fa-check"></i><b>9.2.1</b> Set up</a></li>
+<li class="chapter" data-level="9.2.2" data-path="mixing.html"><a href="mixing.html#inference"><i class="fa fa-check"></i><b>9.2.2</b> Inference</a></li>
+<li class="chapter" data-level="9.2.3" data-path="mixing.html"><a href="mixing.html#wrinkles"><i class="fa fa-check"></i><b>9.2.3</b> Wrinkles</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="mixing.html"><a href="mixing.html#mixed-methods"><i class="fa fa-check"></i><b>9.3</b> Mixed methods</a></li>
+<li class="chapter" data-level="9.4" data-path="mixing.html"><a href="mixing.html#considerations"><i class="fa fa-check"></i><b>9.4</b> Considerations</a>
+<ul>
+<li class="chapter" data-level="9.4.1" data-path="mixing.html"><a href="mixing.html#probative-value-can-be-derived-from-a-causal-structure-plus-data"><i class="fa fa-check"></i><b>9.4.1</b> Probative value can be derived from a causal structure plus data</a></li>
+<li class="chapter" data-level="9.4.2" data-path="mixing.html"><a href="mixing.html#learning-without-identification"><i class="fa fa-check"></i><b>9.4.2</b> Learning without identification</a></li>
+<li class="chapter" data-level="9.4.3" data-path="mixing.html"><a href="mixing.html#beyond-binary-data"><i class="fa fa-check"></i><b>9.4.3</b> Beyond binary data</a></li>
+<li class="chapter" data-level="9.4.4" data-path="mixing.html"><a href="mixing.html#measurement-error"><i class="fa fa-check"></i><b>9.4.4</b> Measurement error</a></li>
+<li class="chapter" data-level="9.4.5" data-path="mixing.html"><a href="mixing.html#spillovers"><i class="fa fa-check"></i><b>9.4.5</b> Spillovers</a></li>
+<li class="chapter" data-level="9.4.6" data-path="mixing.html"><a href="mixing.html#clustering"><i class="fa fa-check"></i><b>9.4.6</b> Clustering</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="mixingapp.html"><a href="mixingapp.html"><i class="fa fa-check"></i><b>10</b> Integrated Inferences Application</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="mixingapp.html"><a href="mixingapp.html#a-trained-model"><i class="fa fa-check"></i><b>10.1</b> A trained model</a></li>
+<li class="chapter" data-level="10.2" data-path="mixingapp.html"><a href="mixingapp.html#data"><i class="fa fa-check"></i><b>10.2</b> Data</a></li>
+<li class="chapter" data-level="10.3" data-path="mixingapp.html"><a href="mixingapp.html#inference-1"><i class="fa fa-check"></i><b>10.3</b> Inference</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-cause-democratization"><i class="fa fa-check"></i><b>10.3.1</b> Did inequality <em>cause</em> democratization?</a></li>
+<li class="chapter" data-level="10.3.2" data-path="mixingapp.html"><a href="mixingapp.html#did-inequality-prevent-democracy"><i class="fa fa-check"></i><b>10.3.2</b> Did inequality <em>prevent</em> democracy?</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="mixingapp.html"><a href="mixingapp.html#from-cases-to-population"><i class="fa fa-check"></i><b>10.4</b> From cases to population</a>
+<ul>
+<li class="chapter" data-level="10.4.1" data-path="mixingapp.html"><a href="mixingapp.html#contribution-to-case-level-inference"><i class="fa fa-check"></i><b>10.4.1</b> Contribution to case-level inference</a></li>
+<li class="chapter" data-level="10.4.2" data-path="mixingapp.html"><a href="mixingapp.html#how-much-do-we-get-from-the-model-vs.-the-data"><i class="fa fa-check"></i><b>10.4.2</b> How much do we get from the model vs. the data?</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="mm.html"><a href="mm.html"><i class="fa fa-check"></i><b>11</b> Mixing models</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="mm.html"><a href="mm.html#a-jigsaw-puzzle-integrating-across-a-model"><i class="fa fa-check"></i><b>11.1</b> A jigsaw puzzle: Integrating across a model</a></li>
+<li class="chapter" data-level="11.2" data-path="mm.html"><a href="mm.html#combining-observational-and-experimental-data"><i class="fa fa-check"></i><b>11.2</b> Combining observational and experimental data</a></li>
+<li class="chapter" data-level="11.3" data-path="mm.html"><a href="mm.html#transportation-of-findings-across-contexts"><i class="fa fa-check"></i><b>11.3</b> Transportation of findings across contexts</a></li>
+<li class="chapter" data-level="11.4" data-path="mm.html"><a href="mm.html#multilevel-models-meta-analysis"><i class="fa fa-check"></i><b>11.4</b> Multilevel models, meta-analysis</a></li>
+</ul></li>
+<li class="part"><span><b>III Design Choices</b></span></li>
+<li class="chapter" data-level="12" data-path="clue.html"><a href="clue.html"><i class="fa fa-check"></i><b>12</b> Clue Selection as a Decision Problem</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="clue.html"><a href="clue.html#a-model-informed-approach-to-clue-selection"><i class="fa fa-check"></i><b>12.1</b> A model-informed approach to clue-selection</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="clue.html"><a href="clue.html#clue-selection-with-a-simple-example"><i class="fa fa-check"></i><b>12.1.1</b> Clue selection with a simple example</a></li>
+<li class="chapter" data-level="12.1.2" data-path="clue.html"><a href="clue.html#dependence-on-prior-beliefs"><i class="fa fa-check"></i><b>12.1.2</b> Dependence on prior beliefs</a></li>
+<li class="chapter" data-level="12.1.3" data-path="clue.html"><a href="clue.html#clue-selection-for-the-democratization-model"><i class="fa fa-check"></i><b>12.1.3</b> Clue selection for the democratization model</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
+<li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
+<li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
+<li class="chapter" data-level="13.3" data-path="caseselection.html"><a href="caseselection.html#specific-case-walk-through"><i class="fa fa-check"></i><b>13.3</b> Specific case walk through</a></li>
+<li class="chapter" data-level="13.4" data-path="caseselection.html"><a href="caseselection.html#simulation-results"><i class="fa fa-check"></i><b>13.4</b> Simulation results</a>
+<ul>
+<li class="chapter" data-level="13.4.1" data-path="caseselection.html"><a href="caseselection.html#models-queries-and-strategies"><i class="fa fa-check"></i><b>13.4.1</b> Models, queries, and strategies</a></li>
+<li class="chapter" data-level="13.4.2" data-path="caseselection.html"><a href="caseselection.html#results-1"><i class="fa fa-check"></i><b>13.4.2</b> Results</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="wideordeep.html"><a href="wideordeep.html"><i class="fa fa-check"></i><b>14</b> Going wide, going deep</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="wideordeep.html"><a href="wideordeep.html#walk-through-of-a-simple-comparison"><i class="fa fa-check"></i><b>14.1</b> Walk-through of a simple comparison</a></li>
+<li class="chapter" data-level="14.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results-1"><i class="fa fa-check"></i><b>14.2</b> Simulation results</a>
+<ul>
+<li class="chapter" data-level="14.2.1" data-path="wideordeep.html"><a href="wideordeep.html#approach"><i class="fa fa-check"></i><b>14.2.1</b> Approach</a></li>
+<li class="chapter" data-level="14.2.2" data-path="wideordeep.html"><a href="wideordeep.html#simulation-results-2"><i class="fa fa-check"></i><b>14.2.2</b> Simulation results</a></li>
+</ul></li>
+<li class="chapter" data-level="14.3" data-path="wideordeep.html"><a href="wideordeep.html#factoring-in-the-cost-of-data"><i class="fa fa-check"></i><b>14.3</b> Factoring in the cost of data</a></li>
+</ul></li>
+<li class="part"><span><b>IV Models in Question</b></span></li>
+<li class="chapter" data-level="15" data-path="justifying.html"><a href="justifying.html"><i class="fa fa-check"></i><b>15</b> Justifying models</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="justifying.html"><a href="justifying.html#justifying-probative-value"><i class="fa fa-check"></i><b>15.1</b> Justifying probative value</a>
+<ul>
+<li class="chapter" data-level="15.1.1" data-path="justifying.html"><a href="justifying.html#nothing-from-nothing"><i class="fa fa-check"></i><b>15.1.1</b> Nothing from nothing</a></li>
+<li class="chapter" data-level="15.1.2" data-path="justifying.html"><a href="justifying.html#justifying-the-classic-process-tracing-tests"><i class="fa fa-check"></i><b>15.1.2</b> Justifying the classic process-tracing tests</a></li>
+</ul></li>
+<li class="chapter" data-level="15.2" data-path="justifying.html"><a href="justifying.html#empirical-discovery-of-causal-structure"><i class="fa fa-check"></i><b>15.2</b> Empirical discovery of causal structure</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="evaluation.html"><a href="evaluation.html"><i class="fa fa-check"></i><b>16</b> Evaluating models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="evaluation.html"><a href="evaluation.html#four-strategies"><i class="fa fa-check"></i><b>16.1</b> Four Strategies</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="evaluation.html"><a href="evaluation.html#check-conditional-independence"><i class="fa fa-check"></i><b>16.1.1</b> Check conditional independence</a></li>
+<li class="chapter" data-level="16.1.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value-are-the-data-unexpected-given-your-model"><i class="fa fa-check"></i><b>16.1.2</b> Bayesian <span class="math inline">\(p-\)</span>value: Are the data unexpected given your model?</a></li>
+<li class="chapter" data-level="16.1.3" data-path="evaluation.html"><a href="evaluation.html#leave-one-out-loo-cross-validation"><i class="fa fa-check"></i><b>16.1.3</b> Leave-one-out (LOO) cross-validation</a></li>
+<li class="chapter" data-level="16.1.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity"><i class="fa fa-check"></i><b>16.1.4</b> Sensitivity</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="evaluation.html"><a href="evaluation.html#evaluating-the-democracy-inequality-model"><i class="fa fa-check"></i><b>16.2</b> Evaluating the Democracy-Inequality model</a>
+<ul>
+<li class="chapter" data-level="16.2.1" data-path="evaluation.html"><a href="evaluation.html#check-assumptions-of-conditional-independence"><i class="fa fa-check"></i><b>16.2.1</b> Check assumptions of conditional independence</a></li>
+<li class="chapter" data-level="16.2.2" data-path="evaluation.html"><a href="evaluation.html#bayesian-p-value"><i class="fa fa-check"></i><b>16.2.2</b> Bayesian <span class="math inline">\(p\)</span>-value</a></li>
+<li class="chapter" data-level="16.2.3" data-path="evaluation.html"><a href="evaluation.html#loo-validation"><i class="fa fa-check"></i><b>16.2.3</b> LOO validation</a></li>
+<li class="chapter" data-level="16.2.4" data-path="evaluation.html"><a href="evaluation.html#sensitivity-to-priors"><i class="fa fa-check"></i><b>16.2.4</b> Sensitivity to priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="conclusionchapter.html"><a href="conclusionchapter.html"><i class="fa fa-check"></i><b>17</b> Final Words</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-benefits"><i class="fa fa-check"></i><b>17.1</b> The benefits</a></li>
+<li class="chapter" data-level="17.2" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-worries"><i class="fa fa-check"></i><b>17.2</b> The worries</a></li>
+<li class="chapter" data-level="17.3" data-path="conclusionchapter.html"><a href="conclusionchapter.html#the-future"><i class="fa fa-check"></i><b>17.3</b> The future</a></li>
+</ul></li>
+<li class="part"><span><b>V Appendices</b></span></li>
+<li class="chapter" data-level="18" data-path="examplesappendix.html"><a href="examplesappendix.html"><i class="fa fa-check"></i><b>18</b> <code>CausalQueries</code></a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/macartan/CausalQueries/" target="blank">Uses CausalQueries</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Integrated Inferences</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="wideordeep" class="section level1" number="14">
+<h1><span class="header-section-number">Chapter 14</span> Going wide, going deep</h1>
+<!--
+:::: {.headerbox data-latex=""}
+::: {.center data-latex=""}
+:::
+As we have argued, we can use a causal model, together with priors over parameters, to estimate the expected learning from different empirical strategies. We have so far demonstrated this approach to research design for clue-selection and case-selection. In this chapter, we turn to the problem of choosing between going "wide" and going "deep." We discuss the tradeoffs and communicate an intuition that clue data, even on a small number of cases, can be informative even when there is $X, Y$ data on a very large number of cases, but only if it provides information that cannot be gathered from $X,Y$ data, such as selection into treatment. Simulations suggest that going deep is especially valuable for observational research, situations with homogeneous treatment effects, and, of course, when clues have strong probative value.
+::::
+-->
+<p>We continue exploring how we can leverage causal models in making research-design choices by thinking about the tradeoff between intensive (deep) and extensive (wide) analysis. Suppose that we have identified those clues that will be most informative and those cases in which it would be most valuable to conduct process tracing, given our beliefs about the world. A further question that we face is the quintessential dilemma of <em>mixing</em> methods: what mixture of quantitative and qualitative evidence is optimal? We argued in Chapter <a href="mixing.html#mixing">9</a> that the distinction between quantitative and qualitative inference is, in a causal-model framework, without much of a difference. But here we frame a more precise question: given finite resources, how should we trade off between studying a larger number of cases at a given level of intensiveness, on the one hand, and drilling down to learn more intensively about some subset of the cases in our sample? How should we decide between going “wide” and going “deep?”</p>
+<p>Just as with the selection of clues and cases, examined Chapters <a href="clue.html#clue">12</a> and <a href="caseselection.html#caseselection">13</a>, how much we should expect to learn from going wide versus going deep will depend on how we think the world works, as expressed in the causal model with which we start and as shaped by the data that we have seen at the point of making the wide-versus-deep decision.</p>
+<p>We examine here queries commonly associated with large-<span class="math inline">\(N\)</span>, quantitative strategies of analysis (such as average treatment effects) as well as queries commonly associated with more case-oriented, qualitative approaches (queries about causal pathways and about causal effects at the case level). The analysis in this chapter makes clear the opportunities for integration across these lines of inquiry. We show that investing in-depth process tracing will sometimes make sense even when one aims to learn about average effects in a population. Likewise, collecting <span class="math inline">\(X, Y\)</span> data can sometimes help us draw inferences that will aid in case-level explanation. Particular kinds of case-level information can teach us about populations, and understanding population-level patterns can help us get individual cases right.</p>
+<div id="walk-through-of-a-simple-comparison" class="section level2" number="14.1">
+<h2><span class="header-section-number">14.1</span> Walk-through of a simple comparison</h2>
+<p>To build up our intuitions about how the optimal mix of strategies might depend on how the world works, let us explore a simple comparison of wide and deep strategies. We focus here on the question of how much we can learn from drilling deeper, given an initial set of <span class="math inline">\(X,Y\)</span> data and beliefs about the world.</p>
+<p>Imagine a world in which we have a large amount of data on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> (2000 observations), and we see that <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are perfectly correlated. We might be tempted to infer that <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span>. And, if <span class="math inline">\(X\)</span> were randomly assigned, then we might be able to justify that inference. Suppose, however, that our data is observational and, in particular, we were aware of an observed confound, <span class="math inline">\(M\)</span>, that might determine both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. In that situation, the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is not identified. As shown by <span class="citation"><a href="#ref-manski1995identification" role="doc-biblioref">Manski</a> (<a href="#ref-manski1995identification" role="doc-biblioref">1995</a>)</span>, different priors could support beliefs about that effect lying anywhere between 0 and 1. From <span class="citation"><a href="#ref-pearl2009causality" role="doc-biblioref">Pearl</a> (<a href="#ref-pearl2009causality" role="doc-biblioref">2009</a>)</span>’s backdoor criterion, we also know that if the right causal model is <span class="math inline">\(X \rightarrow Y \leftarrow M \rightarrow X\)</span>, then data on <span class="math inline">\(M\)</span> would allow the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> to be identified. We could estimate the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> for <span class="math inline">\(M=0\)</span> and for <span class="math inline">\(M=1\)</span> and take the average.</p>
+<p>Suppose now that we aim to collect additional data, but that data on <span class="math inline">\(M\)</span> for a single unit is far more costly than data on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> for a single unit. We thus face a choice between gathering <em>a lot</em> more data on <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> (say, for 2000 more cases) or gathering a <em>little</em> data on <span class="math inline">\(M\)</span> for a subset of cases—just 20 in this illustration. Which should we do? Is 20 cases enough to probe the causal model to see whether the correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> is spurious or not?</p>
+<p>We get an intuition for the answer by imagining the inferences we might draw in 3 extreme cases and compare these to the base case. Figure <a href="wideordeep.html#fig:widedeepXYMX">14.1</a> illustrates. The figures are generated by forming a model with <span class="math inline">\(X\rightarrow Y \leftarrow M \rightarrow X\)</span>, strong priors that <span class="math inline">\(\Pr(M=1)=0.5\)</span>, and flat priors on all other nodal types. In other words, in our priors we think that <span class="math inline">\(M\)</span> is equally likely to be a 0 or 1 but do not make assumptions about how it is related to <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. We first update the model with the <span class="math inline">\(X,Y\)</span> data — and then choose between going wider and going deeper.</p>
+<div class="figure"><span style="display:block;" id="fig:widedeepXYMX"></span>
+<img src="ii_files/figure-html/widedeepXYMX-1.png" alt="Posteriors on the ATE given different wide or deep data patterns." width="960" />
+<p class="caption">
+Figure 14.1: Posteriors on the ATE given different wide or deep data patterns.
+</p>
+</div>
+<p>Panel 1 in Figure <a href="wideordeep.html#fig:widedeepXYMX">14.1</a> shows our posterior distribution over the average causal effect from observation of the base data: 2000 cases with <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> perfectly correlated. The distribution is quite wide, despite the strong correlation, because the posterior includes our uncertainty over the nature of confounding. Our estimate for the <span class="math inline">\(ATE\)</span> is 0.86 but with a posterior standard deviation of 0.1519. There is positive weight on all positive value of the <span class="math inline">\(ATE\)</span>.</p>
+<p>How can we improve on this estimate?</p>
+<p>One possibility would be to go wide and collect <span class="math inline">\(X,Y\)</span> data on an additional 2000 cases. Panel 2 displays our posterior on the average causal effect with the addition of these 2000 cases. We assume that the new data also display a perfect <span class="math inline">\(X,Y\)</span> correlation, like the first set of data. Again, we could not imagine data that more strongly confirms a positive relation, and now we have twice as much of it. What we see, however, is that investing in gathering data on 2000 additional cases does not help us very much. The mean of our posterior on the <span class="math inline">\(ATE\)</span> is now 0.88, with a standard deviation of 0.1497. So the updating is very slight.</p>
+<p>Suppose that, for the cost of gathering <span class="math inline">\(X,Y\)</span> data on an additional 2000 cases, we could drill down on a random subset of 20 of the original 2000 cases and observe <span class="math inline">\(M\)</span> in those cases. What might we learn?</p>
+<p>Because we start out with a flat prior on how <span class="math inline">\(M\)</span> will relate to <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, we display inferences for two possible realizations of that pattern. In Panel 3, we show the updating if <span class="math inline">\(M\)</span> turns out to be uncorrelated with both <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. The mean of our posterior on the <span class="math inline">\(ATE\)</span> now rises to 0.98, and the posterior standard deviation shrinks dramatically, to 0.004. Greater depth in a relatively small number of cases is enough to convince us that the <span class="math inline">\(X,Y\)</span> relationship is not spurious.</p>
+<p>Panel 4 shows inferences from the same “going deep” strategy but where <span class="math inline">\(M\)</span> turns out to be perfectly correlated with <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>. Now our estimate for the <span class="math inline">\(ATE\)</span> shifts downward to 0.79, with a posterior standard deviation of 0.1632.</p>
+<p>In other words, in this setup, what we observe from our “going deep” strategy can have a big impact on our inferences. One reason we stand to learn so much from process-tracing so few cases is that the process-tracing speaks to relationships about which we start out knowing so little: <span class="math inline">\(M\)</span>’s effect on <span class="math inline">\(X\)</span> and <span class="math inline">\(M\)</span>’s effect on <span class="math inline">\(Y\)</span>, effects on which the <span class="math inline">\(X,Y\)</span> data themselves shed no light.</p>
+<p>It is also interesting to note that we cannot learn as much by updating <em>only</em> using information from the 20 cases for which we have full <span class="math inline">\(X\)</span>, <span class="math inline">\(M\)</span>, <span class="math inline">\(Y\)</span> data. Were we to use only the subset with this complete data — ignoring the other 1880 cases — and observe <span class="math inline">\(M\)</span> to be uncorrelated with <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, the mean of our posterior on the <span class="math inline">\(ATE\)</span> would be 0.26 with a posterior standard deviation of 0.1218 (not graphed). The breadth provided by those 1880 <span class="math inline">\(X,Y\)</span>-only cases thus adds a great deal. While observing an uncorrelated <span class="math inline">\(M\)</span> in 20 cases allows us to largely rule out <span class="math inline">\(M\)</span> as a cause of any <span class="math inline">\(X,Y\)</span> correlation, observing a strong <span class="math inline">\(X,Y\)</span> correlation over a large number of cases provides evidence that <span class="math inline">\(X\)</span> in fact affects <span class="math inline">\(Y\)</span>.</p>
+<p>We use this example to illustrate a simple but stark point: there will be situations in which the expected gains from collecting more data on the same cases and from collecting the same data on more cases will be different, sometimes very different. The model and the prior data shape the tradeoff. In this particular setup, it is the confounding together with the large number of prior <span class="math inline">\(X,Y\)</span> observations that makes depth the better strategy. Once we have learned from 2000 <span class="math inline">\(X,Y\)</span> observations, data of the same form from more cases will not change beliefs. Yet going deep—even if only in a few cases—provides information on parameters we know nothing about, helping us interpret the <span class="math inline">\(X,Y\)</span> correlation in causal terms.</p>
+</div>
+<div id="simulation-results-1" class="section level2" number="14.2">
+<h2><span class="header-section-number">14.2</span> Simulation results</h2>
+<p>While the results in the last section are striking, they depend upon particular realizations of the data under each strategy. When selecting strategies we, of course, do not know how the data will turn out. Our problem becomes, as in the case-selection analyses, one of figuring out the <em>expected posterior variance</em> from different strategies.</p>
+<!-- ```{r morn1, fig.width = 6, fig.height = 5, echo = FALSE, message = FALSE, fig.cap = "Distributions of posterior variances from many simulated datasets"} -->
+<!-- path = "rep/wide_deep_2" -->
+<!-- results <-  -->
+<!--   list( -->
+<!--     Chain = read_rds(paste0(path, "/chain.rds")), -->
+<!--     Confounded = read_rds(paste0(path, "/confounded.rds")), -->
+<!--     Confounded_large_n = read_rds(paste0(path, "/confounded_large.rds")), -->
+<!--     Restricted = read_rds(paste0(path, "/restricted.rds")), -->
+<!--     Base = read_rds(paste0(path, "/base.rds")), -->
+<!--     Chain_homogeneous = read_rds(paste0(path, "/chain_homog.rds")), -->
+<!--     Chain_with_priors = read_rds(paste0(path, "/chain_with_prior.rds")) -->
+<!-- ) %>% bind_rows(.id = "Model") %>% -->
+<!--     mutate(Model = ifelse(Model == "Confounded_large_n", "Confounded", Model)) -->
+<!-- r2 <- results %>% filter(Model == "Confounded" & wide_n %in% c(800, 1600) & deep_n %in% c(0, 100) & Case.estimand == "FALSE" & Given == "-") -->
+<!-- r2 %>% -->
+<!--   ggplot(aes(sd^2)) + -->
+<!--   geom_histogram() +  -->
+<!--   facet_grid(deep_n ~ wide_n, labeller = label_both) + xlab("Posterior variance on the ATE") -->
+<!-- ``` -->
+<!-- ```{r morn2, echo = FALSE, message = FALSE} -->
+<!-- r2 %>% group_by(wide_n, deep_n) %>% summarize(expected = mean(sd^2))  %>% kable(caption = "Expected posterior variance on the ATE", digits = 4) -->
+<!-- ``` -->
+<div id="approach" class="section level3" number="14.2.1">
+<h3><span class="header-section-number">14.2.1</span> Approach</h3>
+<p>The more general, simulation-based approach that we introduce here is parallel to the approach for case-selection. The steps of this procedure are:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Model</strong>. We posit a causal model, with any priors or restrictions.</li>
+<li><strong>Prior data</strong>. We specify the data that we already have in hand. For the simulations below, we assume no prior data.</li>
+<li><strong>Strategies</strong>. We then specify a set of mixing strategies to assess. A strategy, in this context, is defined as any combination of collecting data on the same nodes for a given number of additional cases (randomly drawn from the population) and collecting data on new nodes for a random sample of the original set of cases.</li>
+<li><strong>Data possibilities.</strong> For each strategy, we define the set of possible data-realizations. Whereas for case-selection the structure of the possible data-realizations will be the same for all strategies of a given <span class="math inline">\(N\)</span>, possible data patterns in wide-versus-deep analyses involve much greater complexity and will vary in structure across strategies. This is because the number of cases itself varies across strategies. Also, whereas we fix the <span class="math inline">\(X,Y\)</span> pattern for the purposes of case-selection, here we allow the <span class="math inline">\(X,Y\)</span> patterns we discover to vary across each simulation draw.</li>
+<li><strong>Data probabilities</strong>. As for case-selection, we use the model and prior data to calculate the probability of each data possibility under each strategy.</li>
+<li><strong>Inference.</strong> Again, as for case-selection, we update the model using each possible data pattern to derive a posterior distribution.</li>
+<li><strong>Expected posterior variance.</strong> We then average the posterior distributions across the possible data patterns under a given strategy, weighted by the probability of each data pattern.</li>
+</ol>
+<!-- We illustrate the last two steps in Figure \@ref(fig:morn1), using a similar setup to the one above. We again posit the same $X \rightarrow Y \leftarrow M \rightarrow X$. We assume that we have started with $X,Y$ observations for 800 cases. We then choose among drawing another 800 cases for $X,Y$ analysis, going deeper in 100 of our cases, or both. What Figure \@ref(fig:morn1) shows is the distribution of *posterior variances* that we obtain from many possible data draws under each strategy.  In the top row, we are comparing two levels of breadth, with no depth. Moving to the bottom row, we introduce depth in 100 cases, for each level of breadth. We see here a distinct shift in the distributon to the left --- meaning, a reduction in the expected posterior variance -- when we drill down to gather data on $M$. In contrast, we see no such shift in the expected posterior variance when we increase the number of cases for which we gather data on $X$ and $Y$. For greater precision, we report the expected value for each distribution of posterior variances in Table \@ref(tab:morn2). The pattern here is consistent with the analysis above, although here we have averaged across all *possible* data patterns arising from the strategies, rather than focusing on just a couple of data possibilities.  -->
+<!-- This approach can be applied to *any* model, with *any* query, and *any* prior set of data.  -->
+</div>
+<div id="simulation-results-2" class="section level3" number="14.2.2">
+<h3><span class="header-section-number">14.2.2</span> Simulation results</h3>
+<p>We now explore alternative mixes of going wide and going deep for a range of models and queries, the same set that we examined for case-selection in Chapter <a href="caseselection.html#caseselection">13</a>. We present the results in compact form in Figure <a href="wideordeep.html#fig:morn3">14.2</a>. The structure of the panels is the same as those in the figure in Chapter <a href="caseselection.html#caseselection">13</a>, with models being crossed with queries. Within each panel, each line represents going wide to a differing degree: collecting <span class="math inline">\(X,Y\)</span> data for <span class="math inline">\(N=100\)</span>, for <span class="math inline">\(N=400\)</span>, and for <span class="math inline">\(N=1600\)</span>. As we move rightward along each line, we are adding depth: we show results for a strategy with no process-tracing, for process tracing 50 of the <span class="math inline">\(X,Y\)</span> cases, and for process-tracing 100 of the <span class="math inline">\(X,Y\)</span> cases. On the <span class="math inline">\(y-\)</span>axis of each graph, we plot the expected posterior variance from each wide-deep combination.<a href="#fn72" class="footnote-ref" id="fnref72"><sup>72</sup></a></p>
+<p>Looking at the figure as a whole, one pattern that leaps out is that there are, for almost all model-query combinations, gains from going wider. We can also see, unsurprisingly, that the marginal gains to going wide are diminishing. It is also interesting to note where going wider appears to add little or nothing: when we want to estimate the probability that a positive effect runs through the indirect path, we learn nothing from observing <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> for a larger set of cases.</p>
+<p>Focusing just on the gains to depth, we see that these are much more concentrated in specific model-query combinations. Going deep to learn about the <span class="math inline">\(ATE\)</span> or the probability of positive or negative causation appears at best marginally advantageous — at least up to <span class="math inline">\(N=100\)</span> — for the unconstrained confounded and moderator models and for both unconstrained and monotonic two-path models. Notably, we <em>do</em> learn from going deep in both the unconstrained and monotonic chain models. As for going wide, the marginal gains from going deep are also diminishing, with the biggest gains arising from the first 50 cases in which we observe <span class="math inline">\(M\)</span>.</p>
+<p>Part of what is likely going on here is that unconstrained models are ones in which we start out with no information about <span class="math inline">\(M\)</span>’s probative value. We can <em>learn</em> about <span class="math inline">\(M\)</span>’s effects from observing <span class="math inline">\(M\)</span> (as discussed in Chapters <a href="mixing.html#mixing">9</a> and <a href="mixingapp.html#mixingapp">10</a>); this is why we can learn from process tracing in even the unconstrained version of the chain model. However, that learning gets much harder in unconstrained models with confounding or in models with two paths. In a confounded model, for instance, suppose we see <span class="math inline">\(M\)</span> positively correlated with <span class="math inline">\(X\)</span> and negatively correlated with <span class="math inline">\(Y\)</span>, with <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> themselves negatively correlated. This pattern is consistent with <span class="math inline">\(M\)</span> having a positive effect on <span class="math inline">\(X\)</span> and a negative effect on <span class="math inline">\(Y\)</span>, and thus a high degree of confounding. But it is equally consistent with <span class="math inline">\(M\)</span> having only a positive effect on <span class="math inline">\(X\)</span> and <span class="math inline">\(X\)</span> having a negative effect on <span class="math inline">\(Y\)</span>, with no <span class="math inline">\(M \rightarrow Y\)</span> effect and thus no confounding. A monotonicity assumption makes <span class="math inline">\(M\)</span> <em>a priori</em> informative: for instance, when we see <span class="math inline">\(X=1, Y=1\)</span>, confounding is only a possibility if we also see <span class="math inline">\(M=1\)</span>; confounding is ruled out if we observe <span class="math inline">\(M=0\)</span>.</p>
+<p>In a two-path model, observing <span class="math inline">\(M\)</span> correlated with <span class="math inline">\(X\)</span> and with <span class="math inline">\(Y\)</span> across a set of cases should allow us to learn about <span class="math inline">\(M\)</span>’s informativeness about the operation of an <em>indirect</em> effect, just as we can learn about <span class="math inline">\(M\)</span>’s probative value in a chain model. The problem is that knowing about the indirect effect in a two-path model contributes only marginally to the first three queries in the figure since these are about total effects. Thus, even adding monotonicity restrictions, which makes <span class="math inline">\(M\)</span> <em>a priori</em> informative, does not significantly improve learning from <span class="math inline">\(M\)</span> about total effects.</p>
+<p>The important exception, when it comes to learning about the two-path model, is when it is the <em>pathway itself</em> that we seek to learn about. As we can see in the figure, we can learn a great deal about whether effects operate via <span class="math inline">\(M\)</span> by observing <span class="math inline">\(M\)</span>, even in an unconstrained two-path model. Interestingly, the gains from depth for causal-effect queries in an unconstrained chain model closely resemble the gains from depth for the indirect-effect query in the unconstrained two-path model. This similarity suggests that both kinds of model-query combinations allow for learning <em>about</em> <span class="math inline">\(M\)</span> that, in turn, permits learning <em>from</em> <span class="math inline">\(M\)</span>.</p>
+<p>We also see that the context in which depth delivers the steepest gains of all is when we seek to learn about the probability of an indirect-effect in a monotonic two-path model. Part of the reason is likely that <span class="math inline">\(M\)</span> is <em>a priori</em> informative about the operation of the mediated pathway (as it is about the operation of effects in the monotonic chain model). Additionally, however, it appears that we start out with relatively high uncertainty about the pathway query because the model itself is quite uninformative about it. Thus, for instance, we learn much more from depth here than we do for a total effect query in a monotonic chain model: the monotonicity assumptions themselves already tell us a great deal about total effects, whereas they imply nothing about the path through which effects unfold. There is simply more to be learned from <span class="math inline">\(M\)</span> about pathways than about total effects.</p>
+<p>Most interesting perhaps is using the graphs to examine different wide versus deep tradeoffs we might face. Suppose, for instance, that we wish to learn about the probability of negative causation in an unconstrained chain model for <span class="math inline">\(X=0, Y=1\)</span> cases. We start out with <span class="math inline">\(X,Y\)</span> data for 100 cases and have additional resources with which to collect more data. Let us further assume that the cost of collecting <span class="math inline">\(X,Y\)</span> data for an additional 300 cases is equal to the cost of collecting <span class="math inline">\(M\)</span> on 50 of the original 100 cases. Where whould we invest?</p>
+<p>We can read a fairly clear answer off of the graph. As we can see in the relevant graph, we can expect to do better from adding depth than by adding breadth. In fact, even expanding our <span class="math inline">\(X,Y\)</span> sample to 1600 cases only gets us about as much leverage as get from process-tracing 50 cases.</p>
+<p>We can also see how the optimal choice depends on what data-collection we have already committed to. Consider the probability of positive causation query for a monotonic confounded model. If we start with <span class="math inline">\(X,Y\)</span> data for 100 cases, we expect to gain more from going deep in 50 of these cases than from going wide to an additional 300. However, once we have decided to process-trace 50 cases, if we have additional resources, we then expect do be much better by investing in an expansion to 300 <span class="math inline">\(X,Y\)</span> cases than by process-tracing the other 50 $X,Y cases.</p>
+<p>A further question we can ask is: where is mixing methods advantageous? And where are maximally wide or maximally deep strategies best? We can examine this question by comparing a strategy with maximal breadth and no process tracing; a strategy with maximal process-tracing and minimal breadth; and a strategy in which we invest in a mixture of new data, by examining <span class="math inline">\(X,Y\)</span> in 400 cases while process-tracing 50 cases.</p>
+<p>We see some places where we are best off going as wide as possible, at least for the ranges we explore in these simulations. For instance, if we wish to estimate the <span class="math inline">\(ATE\)</span> in a chain model (unconstrained or monotonic), a pure “going wide” strategy is optimal. At the other extreme, when we seek to learn about the probability of an indirect effect from an unconstrained two-path model, we are best off process-tracing our original 100 cases and gain nothing by expanding our sample.</p>
+<p>In many contexts, however, it is the mixed strategy that performs best. The advantage of mixing appears starkest for the confounded monotonic model: examining <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> for 400 cases and process-tracing 50 of these delivers much greater gains, for estimation of the <span class="math inline">\(ATE\)</span> and probability of positive causation, than either expanding the sample to 1600 <span class="math inline">\(X,Y\)</span> cases or than going deeper into the original 100 cases.</p>
+<!-- Interestingly, it does not appear to be generically the case that depth is of greater value for some estimands than for others, at least for the models explored here. The gains to depth for a given query depend on the model. However, going wide *does* generally seem more advantageous for learning about the $ATE$ than for learning about other estimands, even for the models with confounding.  -->
+<!-- For the purposes of this illustration, we focus on the $ATE$ and the probability of positive causation as queries, and the results of the exercise would likely differ for different queries. On each graph, we plot 3 lines, each representing a different number of "wide" ($X,Y$-data only) cases, ranging from 100 to 1600. Each line then shows how the expected posterior variance changes as we add "depth," going from observing $M$ in 0 cases to observing it in 50 and then 100 cases. -->
+<!-- Starting with the chain model ($X \rightarrow Y$), we see that there are gains to be reaped from both breadth and depth, for both queries. We can also get a sense of the nature of the tradeoffs. One thing we observe is that, for the $ATE$, the gains to breadth are greater the less depth we have. Once we have process-traced 100 cases, the difference in the posterior variance we expect between having $X,Y$ data only on those 100 cases and having $X,Y$ data on an additional 300 cases is very modest compared to the situation in which we have done no process tracing. Likewise, the gains to depth diminish with breadth: the slope of the depth line flattens as we add $X,Y$ cases. Further, there appear to be diminishing returns to each strategy on its own terms: note, for instance, how the move from 50 to 100 process-tracing cases deliver less expected learning than does the move from 0 to 50. -->
+<!-- We can also how the tradeoff varies by estimand. For the $ATE$, the gains to going deep in an additional 50 cases look roughly equivalent to those of expanding the dataset by 100 cases. However, for the probability of positive causation, the scales tip quite dramatically in favor of depth: The gains to depth in 50 cases are more than double the gains of broadening by as many as 300 cases.  -->
+<div class="figure"><span style="display:block;" id="fig:morn3"></span>
+<img src="ii_files/figure-html/morn3-1.png" alt="Expected posterior variance over multiple models with multiple data strategies." width="960" />
+<p class="caption">
+Figure 14.2: Expected posterior variance over multiple models with multiple data strategies.
+</p>
+</div>
+</div>
+</div>
+<div id="factoring-in-the-cost-of-data" class="section level2" number="14.3">
+<h2><span class="header-section-number">14.3</span> Factoring in the cost of data</h2>
+<p>We can also use these results to think through optimal allocations of resources with varying prices of breadth and depth. To illustrate, consider the unconstrained chain model, where we see similar expected posterior variance for the probability of positive causation query from the following three combinations of wide and deep (first column, third row in Figure <a href="wideordeep.html#fig:morn3">14.2</a>):</p>
+<ol style="list-style-type: decimal">
+<li>Maximally wide: 1600 wide + 0 deep</li>
+<li>Maximally deep: 100 wide + 100 deep</li>
+<li>Mixed: 400 wide + 50 deep</li>
+</ol>
+<p>However, which strategy is optimal will depend on the relative cost of collecting <span class="math inline">\(X,Y\)</span> data for a new case (which we normalize to a cost of 1) and collecting <span class="math inline">\(M\)</span> for an existing case (at cost <span class="math inline">\(d\)</span> per observation).</p>
+<p>Then, for this model-query combination, the widest strategy is better than the deepest strategy if and only if <span class="math inline">\(1600 &lt; 100 + 100d\)</span>, that is, when <span class="math inline">\(d &gt; 15\)</span>. The mixed strategy is better than the maximally deep strategy if and only if <span class="math inline">\(400 + 50d &lt; 100 + 100d\)</span>, that is when <span class="math inline">\(d &gt; 6\)</span>. And the maximally wide strategy is better than the mixed strategy if and only if <span class="math inline">\(1600 &lt; 400 + 50d\)</span>, or <span class="math inline">\(d &gt; 24\)</span>. Thus, roughly speaking, if <span class="math inline">\(d &lt; 6\)</span>, then our ordering is deepest &gt; mixed &gt; widest, if <span class="math inline">\(6 &lt; d &lt; 15\)</span>, our ordering is mixed &gt; deepest &gt; widest, if <span class="math inline">\(15 &lt; d &lt; 24\)</span>, our ordering is mixed &gt; widest &gt; deepest, and if <span class="math inline">\(d &gt; 24\)</span>, our preference-ordering is widest &gt; mixed &gt; deepest. We can, thus, see that the mixed strategy is optimal across a broad range of <span class="math inline">\(d\)</span>, though for sufficiently cheap or expensive within case data gathering it may be optimal to go purely wide or purely deep.</p>
+<!-- For difference prices of $m$ and $d$ any of these may be best. In particular if the cost of w is $1:  -->
+<!-- * strategy 2, mixed is better if deep costs between $2 and $4 -->
+<!-- * if deep costs more than $4 then go all wide -->
+<!-- * If deep costs < $2 then go all deep -->
+<!-- Common set -->
+<!-- * Chain -->
+<!-- * Chain monotonic -->
+<!-- * Moderator -->
+<!-- * Moderator monotonic -->
+<!-- * Two path -->
+<!-- * Two path monotonic -->
+<!-- * Confounded -->
+<!-- * Confounded monotonic -->
+<!-- Mediation estimand for two path models -->
+<!-- ## Principles -->
+<!-- *  Qualitative and quantitative data can act as partial substitutes for assessing causal effects. -->
+<!-- *  The *relative* marginal gains from going wider and going deeper vary with the study design.  -->
+<!-- * Optimal strategies might involve going deep in a subsample of cases only. -->
+
+</div>
+</div>
+
+
+
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-manski1995identification" class="csl-entry">
+Manski, Charles F. 1995. <em>Identification Problems in the Social Sciences</em>. Harvard University Press.
+</div>
+<div id="ref-pearl2009causality" class="csl-entry">
+———. 2009. <em>Causality</em>. Cambridge university press.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="72">
+<li id="fn72"><p>Note that the expected posterior variance is always <span class="math inline">\(0\)</span> for queries that are already answered with certainty by the model itself, such as the probability of a negative effect in a model with negative effects excluded.<a href="wideordeep.html#fnref72" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="caseselection.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="justifying.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook/js/app.min.js"></script>
+<script src="libs/gitbook/js/clipboard.min.js"></script>
+<script src="libs/gitbook/js/plugin-search.js"></script>
+<script src="libs/gitbook/js/plugin-sharing.js"></script>
+<script src="libs/gitbook/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook/js/jquery.highlight.js"></script>
+<script src="libs/gitbook/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": false,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": false,
+"google": false,
+"instapper": false
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+},
+"toolbar": {
+"position": "static"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
