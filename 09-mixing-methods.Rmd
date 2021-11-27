@@ -775,25 +775,12 @@ The main point here is that measurement error matters for inference and can be t
 
 A common threat to causal inference is the possibility of spillovers: a given unit's outcome being affected by the treatment status of another (e.g., possibly neighboring) unit. We can readily set up a causal model to allow for estimation of various quantities related to spillovers. 
 
-Consider, for instance, the causal model represented in Figure \@ref(fig:spillover). We consider here a cluster of 3 units across which spillovers might occur. We might imagine, for instance, a cluster of geographically proximate villages separated from other clusters such that spillovers might occur between villages within a cluster, but can be ruled out across clusters. Here $X_i$ and $Y_i$ represent village $i$'s treatment status and outcome, respectively. The pattern of directed edges indicates that each village's outcome might be affected both by its own and by its neighbors' treatment status.
+Consider, for instance, the causal model represented in Figure \@ref(fig:spillover). We consider here groupings of pairs  of unit across which spillovers might occur. We might imagine, for instance, a geographically proximate villages separated from other groups such that spillovers might occur between neighoring villages, but can be ruled out across more distal villages. Here $X_i$ and $Y_i$ represent village $i$'s treatment status and outcome, respectively. The pattern of directed edges indicates that each village's outcome might be affected both by its own and by its neighbors' treatment status.
 
 We now simulate data that allow for spillovers. Specifically, while independently assigning $X_1$ and $X_2$ to treatment $50 \%$ of the time, we (a) set $Y_1$ equal to $X_1$, meaning that Unit 1 is affected only by its own treatment status and (b) set $Y_2$ equal to $X_1 \times X_2$, meaning that Unit 2 is equally affected by its own treatment status and that of its neighbor, such that $Y_2 = 1$ only if both Unit 2 and its neighbor are assigned to treatment. 
 
 We simulate 100 observations from this data-generating process and then update a model (with flat priors over all nodal types).
 
-Now we can extract a number of spillover-relevant causal quantities from the updated model. First we ask: what is the average effect of exposing a unit *directly* to treatment ("only_self_treated") when the neighboring unit is untreated? Under the data-generating process that we have posited, we know that this effect will be $1$ for Unit 1 (which always has a positive treatment effect) and $0$ for Unit 2 (which sees a positive effect of $X_2$ only when $X_1 = 1$), yielding an average across the two units of $0.5$. We see that we update, given our 100 observations, from a prior of 0 to a posterior mean of 0.371, approaching the right answer.
-
-A second question we can ask is about the spillover by itself: what is the average treatment effect for a unit of its neighbor being assigned to treatment when the unit itself is not assigned to treatment ("only_other_treated")? We know that the correct answer is $0$ since Unit 1 responds only to its own treatment status, and Unit 2 requires that both units be assigned to treatment to see an effect. Our posterior estimate of this effect is right on target, at 0.
-
-We can then ask about the average effect of *any* one unit being treated, as compared to no units being treated ("one_treated"). This is a more complex quantity. To estimate it, we have to consider what happens to the outcome in Unit 1 when only $X_1$ shifts from control to treatment, with $X_2$ at control (true effect is $1$); what happens to Unit 1 when only $X_2$ shifts from control to treatment, with $X_1$ at control (true effect is $0$); and the same two effects for Unit 2 (both true effects are $0$). We then average across both the treatment conditions and units. We arrive at a posterior mean of $0.186$, not far from the true value of $0.25$.
-
-Finally, we can ask about the average effect of both treatments going from control to treatment ("both_treated"). The true value of this effect is $1$ for both units, and the posterior has shifted quite far in the direction of this value.
-
-Obviously, more complex setups are possible. We can also model the process in a way that allows for more learning (pooling) across units. In the present model, learning about effects for Unit 1 in a cluster tells us nothing about effects for Unit 2 in a cluster because they are set up to have completely independent nodal types. We could instead treat all units as drawn from the same population: we could represent this, for instance, in a graph with just one $Y$ and two treatment nodes pointing into it, one for the unit's own treatment status and one for its neighbor's treatment status.
-
-<!-- AJ: Can we substitute some other word for "cluster" above to avoid confusion with the concept of clusters as we discuss them in the next subsection? -->
-
-<!-- The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES? -->
 
 ```{r spilloverx, cache = TRUE, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes.", include = FALSE}
 hj_ggdag(x = c(0, 0, 0, 1, 1, 1),
@@ -831,10 +818,28 @@ spillover_queries <- list(
         (Y2[X1=1, X2=1] - Y2[X1=0, X2=0]))/2")
 ```
 
-```{r spillover, cache = TRUE, echo = FALSE, fig.cap = "Model with spillovers: the treatment status of two units each affect the outcomes for both."}
+```{r spillover, cache = TRUE, echo = FALSE, fig.cap = "Model with spillovers: the treatment status of two units each affect the outcomes for both.", out.width = "50%"}
 
 hj_ggdag(model=model)
 
+```
+
+
+Now we can extract a number of spillover-relevant causal quantities from the updated model. First we ask: what is the average effect of exposing a unit *directly* to treatment ("only_self_treated") when the neighboring unit is untreated? Under the data-generating process that we have posited, we know that this effect will be $1$ for Unit 1 (which always has a positive treatment effect) and $0$ for Unit 2 (which sees a positive effect of $X_2$ only when $X_1 = 1$), yielding an average across the two units of $0.5$. We see that we update, given our 100 observations, from a prior of 0 to a posterior mean of 0.371, approaching the right answer.
+
+A second question we can ask is about the spillover by itself: what is the average treatment effect for a unit of its neighbor being assigned to treatment when the unit itself is not assigned to treatment ("only_other_treated")? We know that the correct answer is $0$ since Unit 1 responds only to its own treatment status, and Unit 2 requires that both units be assigned to treatment to see an effect. Our posterior estimate of this effect is right on target, at 0.
+
+We can then ask about the average effect of *any* one unit being treated, as compared to no units being treated ("one_treated"). This is a more complex quantity. To estimate it, we have to consider what happens to the outcome in Unit 1 when only $X_1$ shifts from control to treatment, with $X_2$ at control (true effect is $1$); what happens to Unit 1 when only $X_2$ shifts from control to treatment, with $X_1$ at control (true effect is $0$); and the same two effects for Unit 2 (both true effects are $0$). We then average across both the treatment conditions and units. We arrive at a posterior mean of $0.186$, not far from the true value of $0.25$.
+
+Finally, we can ask about the average effect of both treatments going from control to treatment ("both_treated"). The true value of this effect is $1$ for both units, and the posterior has shifted quite far in the direction of this value.
+
+Obviously, more complex setups are possible. We can also model the process in a way that allows for more learning (pooling) across units. In the present model, learning about effects for Unit 1 in a pair tells us nothing about effects for Unit 2 in a pair because they are set up to have completely independent nodal types. We could instead treat all units as drawn from the same population. We could represent this, for instance, in a graph with just one $Y$ and two treatment nodes pointing into it, one for the unit's own treatment status and one for its neighbor's treatment status.
+
+<!-- AJ: Can we substitute some other word for "cluster" above to avoid confusion with the concept of clusters as we discuss them in the next subsection? -->
+
+<!-- The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES? -->
+
+```{r, echo = FALSE}
 data <- fabricatr::fabricate(N = 100, 
                   X1 = rbinom(N,1,.5), 
                   X2 = rbinom(N,1,.5), 
