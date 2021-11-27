@@ -9,12 +9,13 @@ source("_packages_used.R")
 
 
 # Illustrating Causal Models {#illustratemodels}
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 We use three  arguments from published political science research to illustrate how to represent theoretical ideas as structural causal models.
 ::::
+-->
 
 <br>
 
@@ -59,26 +60,23 @@ The argument in Pierson's 1994 book  *Dismantling the Welfare State?* challenged
 
 ```{r pierson, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "A graphical representation of Pierson (1994).", warning = FALSE, message = FALSE}
 
-par(mfrow = c(1,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,2,3,1,1,2),
-       y = c(1,1,2,3,2,2),
-       names = c(
-         expression(paste("P:\nProgram\nstructure")),
-         expression(paste("B:\nBlame-avoidance\nopportunity")),  
-         expression(paste("R:\nRetrenchment")),
-         expression(paste("C:\nConservative\ngovt")),
-         expression(paste("S:\nSocioeconomic\npressures")),
-         expression(paste("A:\nOn Agenda"))
+set.seed(1)
+hj_ggdag(x = c(1,2,3,1,1,2),
+         y = c(1,1,2,3,2,2),
+         names = c(
+             "P: Program\nstructure",
+             "B: Blame-avoidance\nopportunity",  
+             "R: Retrenchment",
+             "C: Conservative\ngovt",
+             "S: Socioeconomic\npressures",
+             "A: On Agenda"
          ),
-       arcs = cbind( c(1,2, 4,5,6),
-                     c(2,3, 6,6,3)),
-       title = "Welfare-State Rentrenchment (Pierson, 1994)",
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
+         arcs = cbind( c(1,2, 4,5,6),
+                       c(2,3, 6,6,3)),
+         title = "Welfare-State Rentrenchment (Pierson, 1994)",
+         padding = -0.1,
+         labels = T, labelparse = FALSE
 )
-
 
 ```
 
@@ -157,27 +155,27 @@ Figure \ref{fig:DAGSaunders} depicts the causal dependencies in Saunders' argume
 
 ```{r saunders, echo = FALSE, fig.width = 12, fig.height = 7, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:DAGSaunders} A graphical representation of Saunders' (2011) argument.", warning = FALSE, message = FALSE}
 
-par(mfrow = c(1,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,2,2,1, 3, 3,3),
-       y = c(1,0,2,2, 2, 1,0),
-       names = c(
-         expression(paste("F: Internal focus")),
-         expression(paste("T: Invest in\ntransformation\ncapablities")),  
-         expression(paste("B:\nExpected benefits\nfrom transformation")),  
-         expression(paste("D: Dispute\ncharacteristics")),
-         expression(paste("A: Audience pressures")),
-         expression(paste("I: Intervene")),
-         expression(paste("S: Transformative strategy")) 
+set.seed(4)
+hj_ggdag(x = c(1,2,2,1, 3, 3,3),
+         y = c(1,0,2,2, 2, 1,0),
+         names = c(
+             "F: Internal focus",
+             "T: Invest in\ntransformation\ncapablities",  
+             "B: Expected benefits\nfrom transformation",  
+             "D: Dispute\ncharacteristics",
+             "A: Audience pressures",
+             "I: Intervene",
+             "S: Transformative strategy" 
          ),
-       arcs = cbind( c(1,1, 2,1, 4, 3, 3,5,6),
-                     c(2,3, 3,6, 3, 6, 7,6,7)),
-       title = "Military intervention strategies (Saunders, 2011)",
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
+         arcs = cbind( c(1,1, 2,1, 4, 3, 3,5,6),
+                       c(2,3, 3,6, 3, 6, 7,6,7)),
+         title = "(b) Military intervention strategies (Saunders, 2011)",
+         labelparse = F,
+         padding = -0.008,
+         labels = T,
+         force_pull=-.06,
+         force = 0, direction='y'
 )
-
 
 ```
 
@@ -208,21 +206,22 @@ We represent Przeworski and Limongi's argument in the DAG in Figure \@ref(fig:DA
 
 ```{r DAGPL, echo = FALSE, fig.width = 10, fig.height = 6, fig.align="center", out.width='.7\\textwidth', fig.cap = "A graphical representation of Przeworski and Limongi's argument, where $D_{t-1}$=democracy in the previous period; $GDP_t$=per capita GDP in the current period; $D_t$=democracy in the current period.", warning = FALSE, message = FALSE}
 
-par(mfrow = c(1,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,1,2),
-       y = c(2,0,1),
-       names = c(
-         expression(paste(D[t-1]: "Democracy,\nlast period")),
-         expression(paste(Y[t]: "GDP per capita,\nthis period")),  
-         expression(paste(D[t]: "Democracy,\nthis period"))
+set.seed(6)
+hj_ggdag(x = c(1,1,2),
+         y = c(2,0,1),
+         names = c(
+             expression(paste(D[t-1]: "Democracy, last period")),
+             expression(paste(Y[t]: "GDP per capita, this period")),  
+             expression(paste(D[t]: "Democracy, this period"))
          ),
-       arcs = cbind( c(1,2),
-                     c(3,3)),
-       title = "Democratization (Przeworski and Limongi, 1997)",
-       add_functions = 0, 
-       contraction = .16, 
-       padding = .2
+         arcs = cbind( c(1,2),
+                       c(3,3)),
+         title = "(c) Democratization (Przeworski and Limongi, 1997)",
+         padding = 0,
+         labels = T,
+         force_pull=-.01,
+         force = 9,
+         direction = 'y'
 )
 
 

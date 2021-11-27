@@ -1,4 +1,4 @@
-# Integrated Inferences Application: Inequality and Democracy Revisited {#mixingapp}
+# Integrated Inferences Application {#mixingapp}
 
 
 ```{r packagesused09, include = FALSE}
@@ -6,12 +6,13 @@ source("_packages_used.R")
 do_diagnosis = FALSE
 # options(mc.cores = parallel::detectCores())
 ```
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 We extend the analysis of Chapter \@ref(ptapp) using a model that lets us update about causal processes from data on inequality and democratization from many cases and data on causal processes---mobilization and pressures---from a subset of cases.  We then use the updated model to draw both population-level and case-level inferences.
 ::::
+-->
 <br>
 
 
@@ -50,7 +51,7 @@ This model, with confounding, is represented graphically as in Figure \@ref(fig:
 
 
 ```{r pimdgraph, echo = FALSE, fig.cap="Democracy and Inequality Model"}
-plot(model)
+hj_ggdag(model=model)
 ```
 
 
@@ -70,7 +71,7 @@ data <- CausalQueries::democracy_data
 #  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
 #  rename(P = P2, I = I2, M= M2, D = D2)
 
-kable(head(data), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)")
+kable(head(data), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)", booktabs = TRUE)
 
 ```
 
@@ -100,7 +101,7 @@ model <- read_rds("saved/PIMD_updated_2.rds")
 
 ```
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
@@ -133,6 +134,7 @@ dim(param_mat)
 ```
 
 ::::
+-->
 <br>
 
 What do we find?
@@ -249,9 +251,9 @@ pimd_queries_2 %>% select(Given, mean) %>% kable(digits = 2, caption = "Probabil
 
 ```
 
-In figure @\ref(fig:pimdqueries), we graph the priors for each of these queries next to the posteriors.
+In figure \@ref(fig:mixedhist), we graph the priors for each of these queries next to the posteriors.
 
-```{r pimdqueries, include = FALSE, echo = FALSE}
+```{r pimdqueries, include = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
 
 if(do_diagnosis){
 pimd_queries <- list(
@@ -311,7 +313,7 @@ pimd_queries <- read_rds("saved/09_qimdqueries_2.rds")
 ```
 
 
-```{r mixedhist, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization"}
+```{r mixedhist, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization", warning = FALSE}
 
 x <- lapply(pimd_queries, function(a) data.frame(p = as.vector(a))) %>%
   bind_rows(.id = "Q") %>%
@@ -374,7 +376,7 @@ write_rds(pimdneg_queries, "saved/09_pimdnegqueries.rds")
 
 ```
 
-```{r mixedhist2, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization"}
+```{r mixedhist2, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization", warning = FALSE}
 
 read_rds("saved/09_pimdnegqueries.rds") %>%
   

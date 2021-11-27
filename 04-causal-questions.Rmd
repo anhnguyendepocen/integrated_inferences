@@ -5,12 +5,13 @@ output:
 ---
 # Causal Queries {#questions}
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 Although a lot of empirical work focuses on identifying average causal effects, there is a rich array of other well defined causal questions that can be asked about how variables relate to each other causally. We describe major families of questions and illustrate how these can all be described as queries about the values of nodes in a causal model.
 ::::
+-->
 <br>
 
 
@@ -78,8 +79,7 @@ We can easily represent this kind of query in the context of a causal model. We 
 <!-- We then need to specify the values that $Q$ can take on, $Q$'s range. With a binary causal variable of interest, we can write down a value of $Q$ as $q_{ij}$. The pair of subscripts simply conveys the type's potential outcomes: $i$ represents the value that $Y$ takes on if $X=0$ while $j$ represents the value that $Y$ takes on if  $X=1$. Thus, in a binary framework, $Q$ can take on four values, corresponding to our original four types: $q_{00}$ (a $c$ type), $q_{10}$ (an $a$ type), $q_{01}$ (a $b$ type) and $q_{11}$ (a $d$ type). This setup also allows us to write down a simple, closed-form functional equation for å$Y$ in terms of its parents, $X$ and $Q$: $Y(x,q_{ij}) =  i(1-x) + jx$.^[To generate this closed-form function, we decompose $q_{ij}$ into its component parts, $i$ and $j$. Note that there is no loss of generality in the functional form linking $X$ and $Q$ to $Y$. In a causal model framework, the structural equations, such as those linking $X$ and $Y$ conditional on another node, can be entirely non-parametric.] -->
 
 ```{r casequery, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:casequery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\\theta^Y$. With a single binary causal variable of interest, we let $\\theta^Y$ take on values $\\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\\theta^Y$ ranges over the four values: $\\theta^Y_{00}$, $\\theta^Y_{10}$, $\\theta^Y_{01}$ and $\\theta^Y_{11}$."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 1),
+hj_ggdag(x = c(0, 1, 1),
        y = c(1, 1, 2),
        names = c(
                 expression(paste(X)),
@@ -88,7 +88,7 @@ hj_dag(x = c(0, 1, 1),
        arcs = cbind( c(1, 3),
                      c(2, 2)),
        title = "A DAG Capturing a Case-Level Causal Effect",
-       padding = .2, contraction = .15)
+       padding = .2)
 
 ```
 
@@ -129,8 +129,7 @@ Consider, for instance, the general setup in Figure \@ref(fig:attribquery). Here
 
 
 ```{r attribquery, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:attribquery} This DAG is a graphical representation of the simple causal setup in which $Y$ depends on two variables $X1$ and $X2$. How $Y$ responds to X1 and X2 depnds on $\\theta^Y$, the DAG itself does not provide information on whether or how X1 and X2 interact with each other."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 0, 1, 1),
+hj_ggdag(x = c(0, 0, 1, 1),
        y = c(2, 0, 1, 2),
        names = c(
                 expression(paste(X[1])),
@@ -140,7 +139,7 @@ hj_dag(x = c(0, 0, 1, 1),
        arcs = cbind( c(1, 4, 2),
                      c(3, 3, 3)),
        title = "What caused Y = 1?",
-       padding = .2, contraction = .15)
+       padding = .2)
 
 ```
 
@@ -243,8 +242,7 @@ Likewise, if want to ask *how often* Sally's throw is an actual cause, in a popu
 
 
 ```{r actualquery, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\\theta^Y$."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 0, 1, 1, 1, 1, 3, 3),
+hj_ggdag(x = c(0, 0, 1, 1, 1, 1, 3, 3),
        y = c(2, 0, 2, 3, 0, -1, 1, 2),
        names = c(
                 expression(paste(S)),
@@ -258,7 +256,7 @@ hj_dag(x = c(0, 0, 1, 1, 1, 1, 3, 3),
        arcs = cbind( c(1, 2, 4, 6, 3, 5, 3, 8),
                      c(3, 5, 3, 5, 7, 7, 5, 7)),
        title = "A DAG Capturing an Actual Cause",
-       padding = .2, contraction = .15)
+       padding = .2)
 
 ```
 
@@ -335,14 +333,13 @@ In this model, our causal query---about $X$'s average causal effect---is thus de
 
 
 ```{r DAGace, echo = FALSE, fig.width = 8, fig.height = 5,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:DAGace} This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\\lambda$ is a vector representing the multinomial distribution of nodal types in the population while $U^\\theta$ is a random variable representing the draw of each case from the distribution defined by $\\lambda$. A case's nodal type, $\\theta^Y$, is thus a joint function of $\\lambda^Y$ and $U^{\\theta^Y}$."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 2, 2, 1, 3),
+hj_ggdag(x = c(0, 2, 2, 1, 3),
        y = c(1, 1, 2, 3, 3),
        names = c("X", "Y", expression(paste(theta^Y)), expression(paste(lambda^Y)), expression(paste(U^theta[Y]))),
        arcs = cbind( c(1, 3, 4, 5),
                      c(2, 2, 3, 3)),
        title = "A DAG with Nodal Type Drawn from a Population-level Distribution of Nodal Types",
-       padding = .2, contraction = .15) 
+       padding = .2) 
 
 ```
 
@@ -362,14 +359,13 @@ Rather, the question of whether the mediated (via $M$) causal path is operative 
 
 
 ```{r DAGpaths, echo = FALSE, fig.width = 7, fig.height = 5,  fig.align="center", out.width='60%', fig.cap = "\\label{fig:DAGpaths} Here $X$ has effects on $Y$ both indirectly through $M$ and directly."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 2, 1, 2),
+hj_ggdag(x = c(0, 1, 2, 1, 2),
        y = c(2, 3, 2, 4, 3),
        names = c("X", "M", "Y", expression(paste(theta^M)), expression(paste(theta^Y))),
        arcs = cbind( c(1, 2, 1, 4, 5),
                      c(2, 3, 3, 2, 3)),
        title = "A DAG with Two Causal Paths",
-       padding = .2, contraction = .15) 
+       padding = .2) 
 
 ```
 
@@ -534,9 +530,9 @@ The primitives of a query are questions about the values of outcomes, $V$, given
 
 Queries are summaries of simple queries.  For instance, for nodes $X$ and $Y$:
 
-* Query $Q_1:1(Y(X=1)=1))$ asks whether $Y=1$ when $X$ is set to 1. This requires evaluating one simple query.
-* Query $Q_2:1(Y(X=1)=1) \& 1(Y(X=0)=0))$ is composed of two simple queries: the first returns true if $Y$ is 1 when $X$ is set to 1, the second returns true if $Y$ is 0 when $X$ is set to 0; both conditions holding corresponds to a positive effect on a unit.
-* Query $Q_3:E((1(Y(X=1)=1) \& (Y(X=0)=0)) - (1(Y(X=1)=0) \& 1(Y(X=0)=1))$ asks for the average treatment effect, represented here using four simple queries:  the expected difference between positive and negative effects. This query involves weighting by the probability of the causal types.
+* Query $Q_1:\mathbb{1}(Y(X=1)=1))$ asks whether $Y=1$ when $X$ is set to 1. This requires evaluating one simple query.
+* Query $Q_2:\mathbb{1}(Y(X=1)=1) \& \mathbb{1}(Y(X=0)=0))$ is composed of two simple queries: the first returns true if $Y$ is 1 when $X$ is set to 1, the second returns true if $Y$ is 0 when $X$ is set to 0; both conditions holding corresponds to a positive effect on a unit.
+* Query $Q_3:E((\mathbb{1}(Y(X=1)=1) \& (Y(X=0)=0)) - (\mathbb{1}(Y(X=1)=0) \& \mathbb{1}(Y(X=0)=1))$ asks for the average treatment effect, represented here using four simple queries:  the expected difference between positive and negative effects. This query involves weighting by the probability of the causal types.
 
 
 Then to calculate $V(x, \theta_t)$:
@@ -550,7 +546,7 @@ A last note on conditional queries. Say we are interested in an attribution quer
 
 <!-- FLAG: Alan read -->
 
-## Appendix
+## Chapter Appendix
 
 We demonstrate how queries are calculated using the `CausalQueries` package for a chain model of the form  $X \rightarrow M \rightarrow Y$. We imagine a model of this form in which we assume no negative effects of $M$ on $X$ or $M$ on $Y$. We will also suppose that in fact $X=1$, always. Doing this keeps the parameter space a little smaller for this demonstration but also serves to demonstrate that a causal model can make use of the counterfactual possibility that a node takes on a particular value even if it never does in fact. 
 
@@ -580,7 +576,7 @@ df <- data.frame(
 
 
 ```{r, echo = FALSE}
-kable(df, caption = "Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.")
+kable(df, caption = "Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.", booktabs = TRUE)
 ```
 
 The answer to the overall queries are then (1) the expected value of (the answers to) $q_1$ and weights $p$and  (2) the expected value of (the answers to) $q_1$ given $q_0$ and weights $p$:
@@ -590,9 +586,9 @@ df %>% summarize(POS = weighted.mean(a1, p),
                  POC = weighted.mean(a1[a2], p[a2]))
 ```
 
-```{r, echo = FALSE}
+```{r ch4pospoc, echo = FALSE}
 df %>% summarize(POS = weighted.mean(a1, p),
-                 POC = weighted.mean(a1[a2], p[a2])) %>% kable(caption = "Calculated answers to two queries.")
+                 POC = weighted.mean(a1[a2], p[a2])) %>% kable(caption = "Calculated answers to two queries.", booktabs = TRUE)
 ```
 
 Given the equal weighting on causal types, these answers reflect the fact that for 5 of 9 causal types we expect to see $X=1$ and $Y=1$ but that; the causal effect is present for only 1 of 9 causal types and for 1 of the 5 causal types that exhibit  $X=1$ and $Y=1$.

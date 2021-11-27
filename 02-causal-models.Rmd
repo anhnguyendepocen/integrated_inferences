@@ -6,16 +6,17 @@
 ```{r packagesused02, include = FALSE}
 source("_packages_used.R")
 ```
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 We provide a lay-language primer on the logic of causal models.
 ::::
+-->
 
 <br>
 
-Causal claims are everywhere. Causal knowledge is often the end goal of  empirical social science. It is also a key *input* into causal inference.^[As nicely put by @cartwright1994nature, no causes in, no causes out, a point we return to more formally later.] 
+Causal claims are everywhere. Causal knowledge is often the end goal of  empirical social science. It is also a key *input* into causal inference.^[As nicely put by @cartwright1994nature: no causes in, no causes out. We return to the  point  more formally later.] 
  Causal assumptions are also hidden in seemingly descriptive statements: claims that someone is guilty, or exploited, or powerful, or weak, involve beliefs about how things would be were conditions different. Even when scholars carefully try to avoid causal claim-making, causal verbs---depends, drives, produces, influences---tend to surface.     
 
 But while causal claims are commonplace, it is not always clear (1) what exactly is meant by a causal relation and (2) how causal knowledge about one thing can be marshaled to justify causal claims about another. For our purposes, the counterfactual view of causality addresses the first question. Causal models address the second.
@@ -38,7 +39,7 @@ Consider a simple example.  Students with teacher A perform well without studyin
 
 When we say that one of teacher B's students did well *because* they studied, we are comparing the outcome that they experienced to the outcome they would have experienced if they had had teacher B (as they did) but (counterfactually) had not studied. Notably, we are *not* comparing their realized outcome to the outcome they would have experienced if they had been among the people that in fact didn't study (i.e., if they had had teacher A). 
 
-A second example. Consider the claim that Switzerland democratized ($D=1$) because it had a relatively low level of economic inequality ($I=0$) (drawing on the logic of @boix2003democracy). In the counterfactual view, this is equivalent to saying that, had Switzerland *not* had a high level of equality, the country would not have democratized. High economic equality made a difference. The comparison for the causal statement is with the outcome Switzerland would have experienced under an intervention that boosted its historical level of economic inequality --- *not* with how Switzerland would have performed if it had been one of the countries that *in fact* had higher levels of inequality, cases that likely differ from Switzerland in other causally relevant ways. 
+A second example. Consider the claim that Switzerland democratized ($D=1$) because it had a relatively low level of economic inequality ($I=0$) (drawing on the logic of @boix2003democracy). In the counterfactual view, this is equivalent to saying that, had Switzerland *not* had a high level of equality, the country would not have democratized. High economic equality made a difference. The comparison for the causal statement is with the outcome Switzerland would have experienced under an intervention that boosted its historical level of economic inequality---*not* with how Switzerland would have performed if it had been one of the countries that *in fact* had higher levels of inequality, cases that likely differ from Switzerland in other causally relevant ways. 
 
 <!-- AJ: see Slack thread about whether we're expressing the controlled change right. https://gbiqq.slack.com/archives/C02C1DHUJ1M/p1629990240000600 -->
 <!-- MH: OK -->
@@ -152,7 +153,8 @@ tab <- cbind(type = paste0("$\\theta^Y_{", rownames(tab), "}$"), tab)
 kable(tab, 
       col.names = c("$\\theta^Y$", "if $X_1=0, X_2=0$",   "if $X_1=1,X_2=0$",  "if $X_1=0,X_2=1$",   "if $X_1=1, X_2=1$" ),
       row.names = FALSE, align=c(rep('c',ncol(tab))),
-      caption = "With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the other two variables.")
+      caption = "With two binary causal variables, there are 16 causal types: 16 ways in which $Y$ might respond to changes in the other two variables.",
+      format = 'pandoc')
 ```
 
 
@@ -187,7 +189,7 @@ So far, we have focused on causal relations at the level of an individual case. 
 
 ## Causal Models and Directed Acyclic Graphs
 
-So far we have discussed how a single outcome is affected by one or more possible causes. However, these same ideas can be used to describe more complex relations between collections of variables --- for example, with one variable affecting another directly as well as indirectly via its impact on some mediating variable.
+So far we have discussed how a single outcome is affected by one or more possible causes. However, these same ideas can be used to describe more complex relations between collections of variables---for example, with one variable affecting another directly as well as indirectly via its impact on some mediating variable.
 
 Potential outcomes tables can be used to describe such complex relations. However, as causal structures become more complex---especially, as the number of variables in a domain increases---a causal model can be a powerful organizing tool. In this section, we show how causal models and their visual counterparts, directed acyclic graphs (DAGs), can represent substantive beliefs about counterfactual causal relationships in the world. The key ideas in this section can be found in many texts (see, e.g., @halpern2005causesa and @galles1998axiomatic), and we introduce here a set of basic principles that readers will need to keep in mind in order to follow the argumentation in this book. 
 
@@ -196,8 +198,7 @@ As we shift to talking about networks of causal relations between variables we w
 Return to our running democratization example, but suppose now that we have more fully specified beliefs about how the level of economic inequality can have an effect on whether a country democratizes. We might believe that inequality affects the likelihood of democratization by generating demands for redistribution, which in turn can cause the mobilization of lower-income citizens, which in turn can cause democratization. We might also believe that mobilization itself is not just a function of redistributive preferences but also of the degree of ethnic homogeneity, which shapes the capacities of lower-income citizens for collective action. In this model $R$ is a parent of $M$, $I$ is an ancestor of $M$ but not a parent. $R$ and $E$ are spouses and $M$ is their child. We can visualize this model as a Directed Acyclic Diagram (DAG) in Figure \@ref(fig:simpleDAG).
 
 ```{r simpleDAG, echo = FALSE, out.width='60%', fig.width = 7, fig.height = 4,  fig.align="center", out.width='80%', fig.cap = "A simple causal model in which high inequality ($I$) affects the democratization ($D$) via redistributive demands and mass mobilization ($M$), which is also a function of ethnic homogeneity ($E$). The arrows show relations of causal dependence between variables.  The graph does not capture the ranges of the variables and the functional relations between them."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
+hj_ggdag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
        y = c(2, 2, 2, 0, 2, 3, 3, 3, 3, -1),
        names = c(
          "I", 
@@ -214,7 +215,7 @@ hj_dag(x = c(0, 1, 2, 1, 3, 3, 2, 1, 0, 1),
        arcs = cbind( c(1, 2, 4, 3, 6, 7, 8, 9, 10),
                      c(2, 3, 3, 5, 5, 3, 2, 1, 4)),
        title = "A Model of Inequality's Effect on Democratization",
-       padding = .2, contraction = .15) 
+       padding = .2)
 
 ```
 
@@ -236,7 +237,7 @@ Other nodes have arrows pointing out of them but no arrows pointing into them: $
 
 The $\theta$ terms require a little more explanation since they do not describe substantive nodes. In our discussion above, we introduced $\theta$ notation for representing types. Generally we can think of  $\theta$ terms on a causal graph as unobservable and unspecified features of a causal domain that affect outcomes. These might include random processes (noise) or contextual features that we are unable to identify or do not understand. We imagine them pointing into everynode, whether indicated or not. In all cases the work they do is to characterize what the value of a node will be, given the value of its parents.
 
-We note that our notation for representing these unobservable, unspecified influences differs from that commonly found in the literature on causal models. In many treatments, these components are themselves referred to as "exogenous" variables, and often labelled as sets $\mathcal U$, to be distinguished from the endogenous---named--variables often labelled as $\mathcal V$. We will generally use $\theta$ to denote these unobserved, unspecified influences to emphasize their particular role, as direct objects of interest in causal inquiry. As we will show, we can think of $\theta$ nodes as capturing the functional relations between endogeneous variables and as being quantities of direct interest for causal inquiry. We more fully develop this point --- returning to the notion of $\theta$ terms as receptacles for causal effects --- below.
+We note that our notation for representing these unobservable, unspecified influences differs from that commonly found in the literature on causal models. In many treatments, these components are themselves referred to as "exogenous" variables, and often labelled as sets $\mathcal U$, to be distinguished from the endogenous---named--variables often labelled as $\mathcal V$. We will generally use $\theta$ to denote these unobserved, unspecified influences to emphasize their particular role, as direct objects of interest in causal inquiry. As we will show, we can think of $\theta$ nodes as capturing the functional relations between endogeneous variables and as being quantities of direct interest for causal inquiry. We more fully develop this point---returning to the notion of $\theta$ terms as receptacles for causal effects---below.
 
 <!-- For instance, here $\theta^D$ captures *how* and *whether* $D$'s parent produces $D$. In the present example, we believe democratization to be potentially affected by mobilization, and two of $\theta^D$'s possible values allow for such an effect: $\theta^D_{01}$ and $\theta^D_{10}$. We also know that democratization is affected by other things, even if we do not know what they are and have not represented them explicitly in the model. The values $\theta^D_{00}$ (no democratization regardless of mobilization) and $\theta^D_{11}$ (always democratization regardless of mobilization) capture all "other" factors---factors other than mobilization---that may affect democratization.  -->
 
@@ -277,11 +278,11 @@ Note that functions can be written to be quite specific or extremely general, de
 
 We begin by returning to the concept of types. Drawing on our original four types from earlier in this chapter, we know that we can fully specify causal relations between a binary $M$ and a binary $D$ by allowing the node $\theta_D$ to range across four possible values $\{\theta^D_{10}, \theta^D_{01}, \theta^D_{00}, \theta^D_{11}\}$. For instance, $\theta^D_{10}$ represents a negative causal effect of $M$ on $D$ while $\theta^D_{00}$ represents $D$ remaining at 0 regardless of $M$. Put differently, $\theta^D$ represents the non-parametric function that relates $M$ to $D$. We can formally specify $D$'s behavior as a function of $M$ and $\theta^D$ in the following way: 
 
-$$D(M, \theta^D_{ij}) = \left\{\begin{array}{ccx} i & \text{if} & M=0 \\ j & \text{if} & M=1 \end{array}\right.$$
+$$D(M, \theta^D_{ij}) = \left\{\begin{array}{ccc} i & \text{if} & M=0 \\ j & \text{if} & M=1 \end{array}\right.$$
 
 Note that $\theta^D$ ranges over *all possible* functional forms between these two binary variables. 
 
-How should we think about what kind of *thing* $\theta^D$ is, in a more substantive sense? It is probably most helpful to think of $\theta^D$ as an unknown and possibly random factor that conditions the effect of mobilization on democratization, determining whether $M$ has a negative effect, a positive effect, no effect with democratization never occurring, or no effect with democratization bound to occur regardless of mobilization.  Importantly, however, while we might think of $\theta^D$ as an unknown or random quantity, in this formulation $\theta^D$ should not be thought of as a nuisance --- as "noise" that we would like to get rid of --- but as *the quantity that we want to learn about*: we want to know whether $M$ likely had a positive, negative, or no effect on $D$. We elaborate on this point at much greater length in Chapter \@ref(questions).
+How should we think about what kind of *thing* $\theta^D$ is, in a more substantive sense? It is probably most helpful to think of $\theta^D$ as an unknown and possibly random factor that conditions the effect of mobilization on democratization, determining whether $M$ has a negative effect, a positive effect, no effect with democratization never occurring, or no effect with democratization bound to occur regardless of mobilization.  Importantly, however, while we might think of $\theta^D$ as an unknown or random quantity, in this formulation $\theta^D$ should not be thought of as a nuisance---as "noise" that we would like to get rid of---but as *the quantity that we want to learn about*: we want to know whether $M$ likely had a positive, negative, or no effect on $D$. We elaborate on this point at much greater length in Chapter \@ref(questions).
 
 We can similarly use $\theta$ terms to capture causal relations involving any number of parent nodes. Every substantively defined node, $J$, in a graph can be thought of as having a $\theta^J$ term pointing into it, and the (unobservable) value of $\theta^J$ represents the mapping from $J$'s parents (if it has any) to the value of $J$. 
 
@@ -378,6 +379,7 @@ While this is not without loss of generality, it is not as constraining as it mi
 
 <!-- Thus, a probabilistic causal model is a structural causal model coupled with a probability distribution over the model's exogenous nodes. A corresponding probabilistic model, however, might support a stronger claim of the form: "Condition $C$ arises with frequency $\pi^C$, and so $X$ causes $Y$ with probability $\pi^C$." -->
 
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""  #markov}
 :::
@@ -398,6 +400,7 @@ P(v_1,v_2,\dots v_n) = \prod P(v_i|pa_i)
   The distribution $P$ on $\theta$ induces a joint probability distribution on $\mathcal{V}$ that captures not just information about how likely different states are to arise but also the relations of conditional independence between nodes that are implied by the underlying causal process. For example, if we thought that $X$ caused $Y$ via $R$ (and only via $R$), we would then hold that $P(Y | R) = P(Y | X, R)$: in other words if $X$ matters for $Y$ only via $R$ then, conditional on $R$, $X$ should not be informative about $Y$.   
   In this way, a probability distribution $P$ over a set of nodes can be consistent with some causal models but not others. This does not, however, mean that a specific causal model can be extracted from $P$. To demonstrate with a simple example for two nodes, any probability distribution on $(X,Y)$ with $P(x)\neq P(x|y)$ is consistent both with a model in which $X$ is a parent of $Y$ and with a model in which $Y$ is a parent of $X$.
 ::::
+-->
 
 <br>
 
@@ -439,7 +442,7 @@ Of particular interest in Figure \@ref(fig:simpleDAG) is the implied independenc
 **Representing unobserved confounding.**  It may be however that there are common causes for nodes that we simply do not understand. We might believe that some unknown factor (partially) determines both $I$ and $D$, which is the same as saying that $\theta^I$ and $\theta^D$ are not independently distributed. If we were to represent the $\theta$ terms on the graph we might then want to represent a single term $(\theta^I, \theta^D)$ that points into both $I$ and $D$. Usually however the $\theta$ terms are omitted from graphs and in this case we would  represent the unobserved confounding by adding a dotted line, or a two headed arrow, connecting nodes whose unknown components are not independent. Figure \@ref(fig:simpleDAGb) illustrates. We address this kind of unobserved confounding later in the book and show how we can seek to learn about the joint distribution of nodal types in such situations. 
 
 ```{r simpleDAGb, echo = FALSE, fig.cap="A DAG with unobserved confounding", out.width = "60%", fig.height = 4, fig.width = 6, fig.align="center"}
-make_model("I -> D; I <-> D") %>% plot
+hj_ggdag(model=make_model("I -> D; I <-> D"))
 ```
 
 
@@ -465,8 +468,7 @@ To take up another example, suppose that war is a cause of both military casualt
 
 
 ```{r warDAG, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width = "60%", fig.cap = "This graph represents a simple causal model in which war ($W$) affects both military casualties ($C$) and price inflation ($P$)."}
-par(mar=c(1,1,3,1))
-hj_dag(x = c(0, 1, 1),
+hj_ggdag(x = c(0, 1, 1),
        y = c(1, 2, 0),
        names = c(
          "W", 
@@ -476,7 +478,7 @@ hj_dag(x = c(0, 1, 1),
        arcs = cbind( c(1, 1),
                      c(2, 3)),
        title = "A Model of War's Effect on Casualties and Prices",
-       padding = .2, contraction = .15) 
+       padding = .2) 
 
 ```
 
@@ -504,26 +506,26 @@ As we will explore, however, relations of conditional independence are also of m
 To see more systematically how a DAG can reveal conditional independencies, it is useful spell out three elemental structures according to which which information can flow across a causal graph:
 
 
-```{r pathsexp, echo = FALSE, fig.width = 6, fig.height = 4,  fig.align="center", out.width='70%', fig.cap = "\\label{fig:CI} Three elemental relations of conditional independence."}
-par(mfrow = c(3,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
+```{r pathsexp, echo = FALSE, fig.width = 6, fig.height = 4,  fig.align="center", out.width='70%', fig.cap = "Three elemental relations of conditional independence."}
+p1 <- hj_ggdag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(1, 2),
                      c(2, 3)),
-       title = "(a) A path of arrows pointing in the same direction", padding = .2, contraction = .15) 
-hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
+       title = "(a) A path of arrows pointing in the same direction", padding = .2)
+p2 <- hj_ggdag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(2, 2),
                      c(1, 3)),
-       title = "(b) A forked path", padding = .2, contraction = .15) 
-hj_dag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
+       title = "(b) A forked path", padding = .2) 
+p3 <- hj_ggdag(x = c(-1, 0, 1), y = c(1,1,1), names = c( "A", "B", "C" ),
        arcs = cbind( c(1, 3),
                      c(2, 2)),
-       title = "(c) An inverted fork (collision)", padding = .2, contraction = .15) 
+       title = "(c) An inverted fork (collision)", padding = .2)
+
+plot_grid(plotlist = list(p1,p2,p3),ncol=1)
 
 ```
 
 
-(1a) Information can flow unconditionally along a path of arrows pointing in the same direction. In Panel 1 of Figure \@ref(fig:CI), information flows across all three nodes. Learning about any one will tell us something about the other two. 
+(1a) Information can flow unconditionally along a path of arrows pointing in the same direction. In Panel 1 of Figure \@ref(fig:pathsexp), information flows across all three nodes. Learning about any one will tell us something about the other two. 
 
 (1b) Learning the value of a node along a path of arrows pointing in the same direction *blocks* flows of information across that node. Knowing the value of $B$ in Panel 1 renders $A$ no longer informative about $C$, and vice versa: anything that $A$ might tell us about $C$ is already captured by the information about $B$.
 
@@ -571,13 +573,10 @@ More intuitively, when we simplify away a mediator, we need to make sure that we
 
 What about eliminating exogenous nodes---nodes with no parents? For the most part, exogenous nodes cannot be eliminated, but must either be replaced by or incorporated into $U$ (or $\theta$) terms. The reason is that we need preserve any dependencies or variation generated by the exogenous node.  Figure \@ref(fig:elimrules) walks through four different situations in which we might want to simplify away the exogenous node, $X$. (Here we use the more generic $U$ notation, though the same principles apply if these are type-receptacles $\theta$.)
 
-```{r elimrules, echo = FALSE, fig.width = 10, fig.height = 10,  fig.align="center", out.width='.5\\textwidth', fig.cap = "Here we represent the basic principles for eliminating exogenous nodes."}
-
-
-par(mfrow = c(4,2))
-par(mar=c(1,1,3,1))
-hj_dag(x = c(1,2,2),
-       y = c(2,3,1),
+```{r elimrules, echo = FALSE, fig.width = 10, fig.height = 13,  fig.align="center", out.width='.5\\textwidth', fig.cap = "Here we represent the basic principles for eliminating exogenous nodes."}
+p1 <- hj_ggdag(
+  x = c(1,2,2),
+  y = c(2,3,1),
        names = c(
          expression(paste(X)),
          expression(paste(W)),
@@ -585,13 +584,10 @@ hj_dag(x = c(1,2,2),
          ),  
        arcs = cbind( c(1, 1),
                      c(3, 2)),
-       title = "(a1) Original model: X has two children",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(1,2,2),
+p2 <- hj_ggdag(x = c(1,2,2),
        y = c(2,3,1),
        names = c(
          expression(paste(theta^{WY})),
@@ -600,14 +596,11 @@ hj_dag(x = c(1,2,2),
        ),
        arcs = cbind( c(1, 1),
                      c(3, 2)),
-       title = "(a2) Simplification: Dependency between W and Y must be preserved",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
 
-hj_dag(x = c(1,1,2),
+p3 <- hj_ggdag(x = c(1,1,2),
        y = c(3,1,2),
        names = c(
          expression(paste(X)),
@@ -616,14 +609,11 @@ hj_dag(x = c(1,1,2),
        ),
        arcs = cbind( c(1, 2),
                      c(3, 3)),
-       title = "(b1) Original model: X has a substantive spouse",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
 
-hj_dag(x = c(1,1,2),
+p4 <- hj_ggdag(x = c(1,1,2),
        y = c(3,1,2),
        names = c(
          expression(paste(theta^Y)),
@@ -632,13 +622,10 @@ hj_dag(x = c(1,1,2),
        ),
        arcs = cbind( c(1, 2),
                      c(3, 3)),
-       title = "(b2) Simplification: X must be replaced with U term",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(1,1,2),
+p5 <- hj_ggdag(x = c(1,1,2),
        y = c(3,1,2),
        names = c(
          expression(paste(X)),
@@ -647,13 +634,10 @@ hj_dag(x = c(1,1,2),
        ),
        arcs = cbind( c(1, 2),
                      c(3, 3)),
-       title = "(c1) Original model: X has a random spouse",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(1,2),
+p6 <- hj_ggdag(x = c(1,2),
        y = c(1,1),
        names = c(
          expression(paste(theta^Y[mod])),
@@ -661,14 +645,11 @@ hj_dag(x = c(1,2),
        ),
        arcs = cbind( c(1),
                      c(2)),
-       title = "(c2) Simplification: X absorbed into $\theta$ term",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
 
-hj_dag(x = c(1,3,2),
+p7 <- hj_ggdag(x = c(1,3,2),
        y = c(1,1,1),
        names = c(
          expression(paste(X)),
@@ -677,13 +658,10 @@ hj_dag(x = c(1,3,2),
        ),
        arcs = cbind( c(1, 3),
                      c(3, 2)),
-       title = "(d1) Original model: X has one child and no spouse",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
 
-hj_dag(x = c(3,2),
+p8 <- hj_ggdag(x = c(3,2),
        y = c(1,1),
        names = c(
          expression(paste(W)),
@@ -691,11 +669,21 @@ hj_dag(x = c(3,2),
        ),
        arcs = cbind( c(2),
                      c(1)),
-       title = "(d2) Simplification: X can be safely removed",
-       add_functions = 0, 
-       contraction = .16, 
        padding = .2
 )
+
+titles =c("(a1) Original model: X has two children",
+          "(a2) Simplification: Dependency between \nW and Y must be preserved",
+          "(b1) Original model: X has a substantive spouse",
+          "(b2) Simplification: X must be replaced with U term",
+          "(c1) Original model: X has a random spouse",
+          "(c2) Simplification: X absorbed into error term",
+          "(d1) Original model: X has one child and no spouse",
+          "(d2) Simplification: X can be safely removed")
+
+plot_grid(plotlist = list(p1,p2,p3,p4,p5,p6,p7,p8),
+          labels = titles,
+          ncol=2,label_size = 10,hjust=0)
 
 
 ```
@@ -717,26 +705,23 @@ One interesting effect of eliminating a substantive exogenous node can be to ren
 x = c(0,0, 1, 1, 2)
 y = c(2,0, 2, 0, 1)
 
-# names = c("S:\nSensitive\ngovernment\n\n", "\nX:\nFree Press", "C:\n Corruption", "R:\n Media report", "Y:\nGovernment\nreplaced")
-
 names = c(
-         expression(paste("I: Inequality")),
-         expression(paste("E: Ethnic\nhomogeneity")),
-         expression(paste("R: Redistributive\npreferences")),
-         expression(paste("M: Mobilization")),
-         expression(paste("D: Democratization"))
+         "I: Inequality",
+         "E: Ethnic\nhomogeneity",
+         "R: Redistributive\npreferences",
+         "M: Mobilization",
+         "D: Democratization"
          )
 
-hj_dag(x =  x,
-       y = y,
-       names = c(names),
-       arcs = cbind( c(1,2,2, 3, 4, 3),
-                     c(3,3,4, 5, 5, 4)),
-       title = "A Model of Inequality and Ethnic Homogeneity's Effects on Democratization",
-       add_functions = 0,
-       contraction = .15,
-       add_functions_text = "Structural Equations: Y = CR, R = CX, C = 1-XS",
-       padding = .2)
+set.seed(1)
+hj_ggdag(x =  x,
+         y = y,
+         names = c(names),
+         arcs = cbind( c(1,2,2,3,4,3),
+                       c(3,3,4,5,5,4)),
+         title = "A Model of Inequality and Ethnic Homogeneity's Effects on Democratization",
+         padding = -0.1,
+         labels = T,direction='x')
 
 # hj_dag(x =  c(x, 0, 0),
 #        y = c(y, 0.25, 1.75),
@@ -779,8 +764,6 @@ hj_dag(x =  x,
 
 ```{r runningsubs, echo = FALSE, fig.width = 12, fig.height = 13.5, fig.cap = "Simplifications of the model of Figure X. Nodes that are eliminated are marked in grey; circles denote exogenous nodes that are replaced in subgraphs by unidentified variables. (A circled node pointing into two other nodes could equivalently be indicated as an undirected edge connecting the two.)"}
 
-par(mfrow = c(5,5))
-par(mar=c(1,1,3.5,1))
 x = c(0,0, 1, 1, 2)
 y = c(2,0, 2, 0, 1)
 # names = c("S", "X", "C", "R", "Y")
@@ -791,6 +774,9 @@ M[1, c(3)] <-1
 M[2, c(3,4)] <-1
 M[3, c(4,5)] <-1
 M[4, 5] <-1
+
+colnames(M)<-names
+rownames(M)<-names
 
 matrix_remove <- function(M, remove = NULL){
   M2 <- M
@@ -805,21 +791,51 @@ M2
 removes <- perm_bb(c(2,2,2,2,2))[-1,]
 removes <- removes[rowSums(removes)<=3,]
 removes <- removes==1
-removes <- removes[order(rowSums(removes) - (1:nrow(removes))/100),]
+removes <- removes[order(rowSums(removes) - (1:nrow(removes))/100),] # for each of the graphs, which arrows to remove?
+
+plist <- list()
+
 for(j in 1:nrow(removes)){
-GO <- (1:5)[removes[j,]]
-    hj_dag(
+  GO <- (1:5)[removes[j,]]
+  arcs <- which(matrix_remove(M, GO)==1, arr.ind = TRUE)
+  ind1 <- rownames(M)[arcs[,1]]
+  ind2 <- colnames(M)[arcs[,2]]
+
+  from <- names[!names %in% c(ind1,ind2)]
+  to <- 1:length(from)
+  if (length(from)!=0){
+    for (k in 1:length(from)){
+      to[k] <- sample(names[!names %in% from[k]],1)
+}
+    arcs <- rbind(arcs,
+                  cbind(match(from,names),
+                        match(to,names)))
+    obscure <- paste(from,to,sep='->')
+    } else {
+      obscure <- NULL
+      }
+  nodecol = rep('white',5)
+  textcol = rep('black',5)
+  textcol[GO] <- 'grey'
+  for(i in 1:ncol(M)) if((sum(M[,i])==0) & (i%in% GO)) nodecol[i] <- 'grey'
+  
+  plist[j] <- hj_ggdag(
        x = x,
        y = y,
        names = names,
-       arcs = which(matrix_remove(M, GO)==1, arr.ind = TRUE),
+       arcs = arcs,
        add_points = FALSE,
-       solids = c(mysolids[[j]]),
-       )
-text(x[GO],y[GO],names[GO], col = "grey")
-title(j, adj=0)
-for(i in 1:ncol(M)) if((sum(M[,i])==0) & (i%in% GO)) points(x[i], y[i], cex = 3, col = "grey")
+       obscure = obscure,
+       shape = 21,
+       textcol = textcol,
+       nodecol = nodecol,
+       textsize = 4,
+       nodesize = 12
+       ) %>% list()
 }
+
+cowplot::plot_grid(plotlist=plist,ncol=5,labels=1:nrow(removes),
+                   label_size = 10)
 ```
 
 
@@ -917,12 +933,12 @@ In this chapter, we have shown how we can inscribe causal beliefs, rooted in the
 <!-- In later chapters we will develop this model and use it to illustrate different estimands and different strategies for case level inference. -->
 
 
-
+\newpage
 
 ## Chapter Appendix
 
 ### Steps for constructing causal models
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""  #markov}
 :::
@@ -951,6 +967,7 @@ In this chapter, we have shown how we can inscribe causal beliefs, rooted in the
   * How common or likely to do we think different values of the exogenous nodes are?
   * Are they independently distributed? If in step 2 you drew an undirected edge between nodes then you believe that the connected nodes are not independently distributed.
 ::::
+-->
 
 
 ### Model construction in code
@@ -960,11 +977,12 @@ Our `gbiqq` package provides a set of functions to implement all of these steps 
 ```{r modelconstr, message = FALSE, eval = FALSE}
 
 # Steps 1 and 2 
-# We define a model with three binary nodes and specified edges between them:
+# We define a model with three binary nodes and 
+# specified edges between them:
 model <- make_model("X -> M -> Y")
 
-# Unrestricted functional forms are allowed by default, though these can 
-# also be reduced. Here we impose monotonicity at each step 
+# Unrestricted functional forms are allowed by default, though these 
+# can also be reduced. Here we impose monotonicity at each step 
 # by removing one type for M and one for Y
 model <- set_restrictions(model, labels = list(M = "10", Y="10"))
 
@@ -975,7 +993,7 @@ model <- set_priors(model, distribution = "jeffreys")
 
 # We now have a model defined as an R object. 
 # You might plot it like this:
-plot(model)
+hj_ggdag(model=model)
 
 # Later we will ask questions of this model and update it using data.
 
@@ -1067,7 +1085,7 @@ These steps are enough to fully describe a binary causal model. Later in this bo
 
 
 ### Rules for moving between levels
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""  #markov}
 :::
@@ -1088,6 +1106,7 @@ We can move up levels by eliminating an exogenous node, eliminating an endogenou
 3. Since conditioning on a node “blocks” the path through which it connects its children, we can simply eliminate the node and the arrows between it and its children.
 4. An exogenous node with no spouse and only one child can be simply eliminated.
 ::::
+-->
 
 
 ### Reading conditional independence from a graph
@@ -1095,12 +1114,10 @@ We can move up levels by eliminating an exogenous node, eliminating an endogenou
 We illustrate how to  identify the relations of conditional independence between $A$ and $D$ in Figure \ref{fig:exercise}. 
 
 ```{r exercise, echo = FALSE, fig.width = 5, fig.height = 2,  fig.align="center", out.width='80%', fig.cap = "\\label{fig:CItest} An exercise: $A$ and $D$ are conditionally independent, given which other node(s)?"}
-par(mfrow = c(1,1))
-par(mar=c(1,1,3,1))
-hj_dag(x = 1:4, y = c(1, 1,1,1), names = c( "A", "B", "C", "D" ),
+hj_ggdag(x = 1:4, y = c(1, 1,1,1), names = c( "A", "B", "C", "D" ),
        arcs = cbind( c(1, 3, 3),
                      c(2, 2, 4)),
-       title = " ", padding = .2, contraction = .15) 
+       title = " ", padding = .2) 
 
 ```
 

@@ -8,6 +8,9 @@
 # library(devtools)
 # devtools::install_github("tidyverse/dplyr")
 library(tidyverse)
+library(ggh4x)
+library(Rgraphviz)
+
 
 # if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 # BiocManager::install("Rgraphviz")
@@ -32,6 +35,7 @@ library(CausalQueries)
 library("pacman")
 pacman::p_load(
   DT,
+  ggtext,
   bookdown,
   # CausalQueries,
   DeclareDesign,
@@ -251,39 +255,111 @@ gt_tree = function(
 
 #####
   # Draw DAG
+library(latex2exp)
+library(dagitty)
+library(ggdag)
+library(repr)
+library(cowplot)
 
-hj_dag <- function(x,
-                   y,
-                   names,
-                   arcs = cbind(0,0),
-                   add_points = FALSE,
-                   solids = rep(1, length(x)),
-                   title = "",
-                   contraction = .1,
-                   add_functions = 0,
-                   add_functions_text = NULL,
-                   text_shift = .2*add_points,
-                   padding = .5,
-                   length = 0.2,
-                   cex = 1,
-                   adj = .5,
-                   box = TRUE) {
-  if(add_points)  plot(x, y, pch=ifelse(solids == 1, 19, 1), cex = 2, axes = FALSE, xlab = "", ylab = "",
-                       xlim = c(min(x)-padding, max(x)+padding),
-                       ylim = c(min(y)-padding-add_functions, max(y)+padding),
-                       main = title)
-  if(!add_points)  plot(x, y, type = "n", cex = 2, axes = FALSE, xlab = "", ylab = "",
-                        xlim = c(min(x)-padding, max(x)+padding),
-                        ylim = c(min(y)-padding-add_functions, max(y)+padding),
-                        main = title)
+hj_ggdag <- function(x = NULL,
+                     y = NULL,
+                     names = NULL,
+                     arcs = NULL,
+                     statement = NULL,
+                     model = NULL, #accepts causal model objects and returns ggdag
+                     title = "",
+                     padding = 0, # padding around box if labels = T
+                     labels = FALSE,
+                     textcol = 'white', # text colour (not label)
+                     textsize = 3.88, #text size (not label)
+                     force = 0, #repelling force between labels
+                     obscure=NULL, # obscure arrows of the form X->Y
+                     shape = 16,
+                     nodecol = 'black',
+                     nodesize = 16,
+                     labelsize = 3.88,
+                     labelparse = TRUE,
+                     ...) { # other arguments passed to ggdag and geom_dag_label_repel, e.g. force_pull, node = T/F
 
-  arrows(x[arcs[,1]]*(1-contraction) + x[arcs[,2]]*contraction,
-         y[arcs[,1]]*(1-contraction) + y[arcs[,2]]*contraction,
-         x[arcs[,2]]*(1-contraction) + x[arcs[,1]]*contraction,
-         y[arcs[,2]]*(1-contraction) + y[arcs[,1]]*contraction, length = length)
-  text(x, y + text_shift, names, cex = cex, adj = adj)
-  if(!is.null(add_functions_text)) text(((min(x)+max(x))/2), min(y)-1, add_functions_text)
-  if(box) box()
+  # Checks
+  if(is.null(model) & is.null(names))
+    stop("Names should be provided directly or via model argument")
+  if(is.null(statement) & is.null(model) & is.null(arcs))
+    stop("Model statement should be provided directly or via model or arcs argument")
+
+  # Get names
+  nodes <- if (is.null(names)) model$nodes else LETTERS[1:length(names)]
+
+  # Get statement
+  if(!is.null(model)) statement <- model$statement
+  if(!is.null(arcs))
+    statement <-  paste(nodes[arcs[,1]], " -> ", nodes[arcs[,2]], collapse = "; ")
+  dagitty_statement <-  paste("dag{", statement, "}") %>% dagitty
+
+
+  # Add coordinates if provided (otherwise generated)
+
+  if(!is.null(x)){
+    names(x) <- nodes
+    names(y) <- nodes
+
+    coordinates(dagitty_statement) <-
+      list(x = x , y = y) %>%
+      coords2df() %>% coords2list()
+  }
+
+  # Make the df
+  df <- dagitty_statement %>% tidy_dagitty()
+  df$data <- df$data %>% mutate(
+    label = if(is.null(names)) name else
+      names %>% as.character %>% .[match(df$data$name,LETTERS)],
+    end = if(is.null(names)) to else
+      names %>% as.character %>% .[match(df$data$to,LETTERS)],
+    update=paste0(label,end),
+    pos=match(label,names)) %>%
+    arrange(-desc(pos))
+
+  #matching bit is necessary because the dataframe doesn't always list all names in the order you first specify
+
+  # remove any arrows to be obscured
+  if (!is.null(obscure)) {obscoords<-data.frame(update = lapply(obscure %>%
+                                                                  str_split('->'),paste,collapse='') %>%
+                                                  unlist())
+  df$data$direction[match(obscoords$update,df$data$update)]<-NA}
+
+
+  # Step 2: Format and export
+  p <- df %>%
+    ggplot(aes(x=x,y=y,xend=xend,yend=yend)) +
+    geom_dag_point(colour=nodecol,shape=shape,
+                   size=nodesize) +theme_dag() +
+    labs(title = TeX(repr_text(title) %>% str_remove_all('\\"')))
+  if (labels==TRUE){
+    parse <- ifelse(class(names)=='expression',TRUE,FALSE)
+    p +
+      geom_dag_label_repel(aes_string(label = 'label'),
+                           show.legend = FALSE,
+                           parse = labelparse,
+                           box.padding = padding,
+                           hjust = 0,
+                           segment.color = 'grey',
+                           segment.size = 0.5,
+                           min.segment.length=0.5,
+                           size = labelsize,
+                           ...) +
+      geom_dag_edges()
+
+  } else {
+    p +
+      geom_dag_text_repel(aes_string(label = 'label'),
+                          show.legend = FALSE,
+                          parse = TRUE,
+                          color=textcol,
+                          size=textsize,
+                          box.padding = 0,
+                          force = 0
+      ) + geom_dag_edges()
+  }
 }
 
 perm_bb <- function(v) {

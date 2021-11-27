@@ -1,11 +1,12 @@
 # Evaluating models {#evaluation}
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 Model based inference takes the model seriously. But deep down we know that all of these models are wrong, in myriad ways. We examine strategies for figuring out whether a model is likely doing more harm than good.
 ::::
+-->
 <br>
 
 ```{r packagesused15b, include = FALSE}
@@ -108,7 +109,7 @@ ates %>% gather("var", "val") %>%
 
 ### Check conditional independence
 
-First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter 2:  that every node is *conditionally independent* of its non-descendants, given its parents. In this case, if the stronger model is right, then given $M$, $Y$ should be independent of $X$. 
+First, even before engaging in updating, we can look to see whether the data pattern is consistent with our causal model. In particular, we can check whether there are inconsistencies with the Markov condition that we introduced in Chapter \@ref(models):  that every node is *conditionally independent* of its non-descendants, given its parents. In this case, if the stronger model is right, then given $M$, $Y$ should be independent of $X$. 
 
 Is it? 
 
@@ -290,7 +291,7 @@ A further class of model-validation methods involves cross-validation. Rather th
 
 One such approach is the "leave-one-out" (LOO) algorithm. In a LOO approach, we update the model using all data points except for one and then ask how well the model performs in predicting the left-out observation. We repeat this for every data point in the dataset to assess how well we can predict the entire dataset. 
 
-Often, the LOO approach is used to predict a particular outcome variable. In a \CausalQuery\ framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
+Often, the LOO approach is used to predict a particular outcome variable. In a `CausalQueries` framework, however, we are interested in predictions over the joint realization of all nodes, not just a single "outcome." Thus, we calculate the posterior probability of each data point, using the model updated with all of the other observations. 
 
 <!-- AJ: Is the "predict all nodes" using a sledghammer here?Should we be setting this up in a more query-dependent way, I wonder? Could the same model be good for some kind of queries but not for others? Not quite sure how to think about that -- about *what* we'd be predicting conditional on what the query is, and maybe this isn't a coherent notion. -->
 
@@ -298,7 +299,7 @@ Often, the LOO approach is used to predict a particular outcome variable. In a \
 
 
 
-```{r loolik1, echo = FALSE}
+```{r loolik1, echo = FALSE, fig.cap = "LOO likelihoods for different models"}
 #Leave one out
 
 
@@ -322,7 +323,7 @@ data.frame(restricted = loo_restricted$case_likelihood %>% unlist,
 
 ```
 
-```{r loolik2, echo = FALSE}
+```{r loolik2, echo = FALSE, fig.cap = "LOO likelihoods and data counts"}
 plot_loo <- function(models)
   
   lapply(models, function(m)
@@ -387,7 +388,7 @@ list(restricted = loo_restricted_2, unrestricted  = loo_unrestricted_2) %>% plot
 
 <!-- FLAG: BETTER: PLOT CASES ON BOTTOM AND TWO LIKELIHOODS AS POINTS; HAVE TYPES AS LABELS X AI IF POSSIBLE -->
 
-While it is difficult to see this in Figure XXXX, the stronger model still performs better here than the weaker model. The likelihood of the data under the stronger model is now `r  formatC(loo_restricted_2$loo_likelihood, format = "e", digits = 2)`, compared to 
+While it is difficult to see this in Figure \@ref(fig:loostronger), the stronger model still performs better here than the weaker model. The likelihood of the data under the stronger model is now `r  formatC(loo_restricted_2$loo_likelihood, format = "e", digits = 2)`, compared to 
 the likelihood of  `r  formatC(loo_unrestricted_2$loo_likelihood, format = "e", digits = 2)` under the weaker model. Thus, the weaker model represents an estimated loss to out-of-sample prediction on the order of   `r  formatC(loo_unrestricted_2$loo_likelihood/loo_restricted_2$loo_likelihood, format = "e", digits = 2)`. This is not surprising insofar as the stronger model *precisely* models the data-generating process while the extra parameters in the weaker model allow for "learning" from chance features of the data.
 
 These examples display features of estimation of out-of-sample prediction accuracy familiar from a regression context. In a regression framework, adding parameters to a model may improve fit to sample---generating gains to out-of-sample prediction accuracy when the new parameters pick up systematic features of the data-generating process---but run a risk of over-fitting to chance pattenrs in the data. Similarly, in a structural-causal-model framework, for a model with weaker assumptions and more parameters. We saw that the weaker model performed much better when the true process involved direct effects since the extra parameters, allowing for direct effects, captured something "real" going on. But the same model performed slightly worse than the stronger model when there were no direct effects to pick up, such that the extra parameter could only model noise.
@@ -406,14 +407,14 @@ Suppose, for instance, that we begin with an $X \rightarrow M \rightarrow Y$ mod
 
 How much does our inference on $X$'s effect on $Y$---when we see $M=0$ or $M=1$---depend on this second stage assumption about the probability of a negative $M \rightarrow Y$ effect?
 
-We answer the question by looking at posterior beliefs for a range of possible values for the relevant parameter, $\lambda^Y_{10}$. In Table  REF, we examine a range of values for $\lambda^Y_{10}$, from 0 to 0.25 (full parity with other types). For each parameter value, we first show the resulting prior belief about the probability that $X=1$ caused $Y=1$. We can see that, before we observe $M$, we think that a positive $X \rightarrow Y$ effect is more likely as a negative $M \rightarrow Y$ effect is more likely. This stands to reason since a negative second-stage effect is one possible process in which a positive $X \rightarrow Y$ effect might occur. And higher values for $\lambda^Y_{10}$ come disproportionately at the expense of types under which $X$ cannot affect $Y$.^[Increasing weight on $\lambda^Y_{10}$ is drawn equally from $\lambda^Y_{00}$, $\lambda^Y_{11}$, and $\lambda^Y_{10}$, with the first two of these three representing null effects.]
+We answer the question by looking at posterior beliefs for a range of possible values for the relevant parameter, $\lambda^Y_{10}$. In Table  \@ref(tab:ch15ranges), we examine a range of values for $\lambda^Y_{10}$, from 0 to 0.25 (full parity with other types). For each parameter value, we first show the resulting prior belief about the probability that $X=1$ caused $Y=1$. We can see that, before we observe $M$, we think that a positive $X \rightarrow Y$ effect is more likely as a negative $M \rightarrow Y$ effect is more likely. This stands to reason since a negative second-stage effect is one possible process in which a positive $X \rightarrow Y$ effect might occur. And higher values for $\lambda^Y_{10}$ come disproportionately at the expense of types under which $X$ cannot affect $Y$.^[Increasing weight on $\lambda^Y_{10}$ is drawn equally from $\lambda^Y_{00}$, $\lambda^Y_{11}$, and $\lambda^Y_{10}$, with the first two of these three representing null effects.]
 
 In the next two columns, we show the posterior belief we arrive at when we observe $M=0$ and then $M=1$, for each $\lambda^Y_{10}$ assumption. Looking at the last column first, we see that our inference from $M=1$ does *not* depend at all on our beliefs about adverse $M \rightarrow Y$ effects. The reason is that, if we see $M=1$, we already know that $M$ did not have a negative effect on $Y$, given that we also know $Y=1$. Our beliefs are purely a function of the probability that there are positive effects at both stages as compared to the probability of other causal types that could yield $X=M=Y=1$, a comparison unaffected by the probability of a negative $M \rightarrow Y$ effect.  
 
 Our inferences when $M=0$, on the other hand, do depend on $\lambda^Y_{10}$: when we see $M=0$, our belief about a positive $X \rightarrow Y$ effect depends on the likelihood of *negative* effects at both stages. We see, then, that the likelier we think negative effects are at the second stage, the higher our posterior confidence in a positive $X \rightarrow Y$ effect when we see $M=0$. 
 
 
-```{r, fig.cap = "Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1", echo = FALSE}
+```{r ch15ranges, fig.cap = "Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1", echo = FALSE}
 
 model <- make_model("X -> M -> Y") %>%
     set_parameters(
@@ -438,7 +439,10 @@ out2 <- t(out)  %>% data.frame
 names(out2) <- c("No data", "M0", "M1")
 out2 <- arrange(out2,M0, M1)
 
-kable(cbind(adverse2, out2), col.names = c("$\\lambda^Y_{10}$", "Prior", "$M=0$", "$M=1$"), caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^Y_{10}$")
+cbind(adverse2, out2) %>% data.frame() %>%
+  kable(
+    col.names = c("$\\lambda^Y_{10}$", "Prior", "$M=0$", "$M=1$"), digits = 3,
+    caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^Y_{10}$")
 
 ```
 
@@ -530,7 +534,7 @@ To test these assumptions, we in fact need to depart from the dataset drawn from
 
 * **Pressure**: We draw on the GIGA Sanctions Dataset to measure international pressure, $P$. Specifically, we code a country case as $P=1$ if and only if the country was the target of democratization-focused sanctions during the 1990-2000 period. 
 
-* **Democratization**: We use dichotomous democracy measures from @cheibub2010revisited, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
+* **Democratization**: We use dichotomous democracy measures from @cheibub2010democracy, in two ways. First, we filter countries such that our sample includes only those that were not democracies in 1990 ($N=77$). We then use the democracy measure for the year 2000 to determine which countries democratized, coding as $D=1$ those and only those cases that Cheibub and Vreeland code as democracies in that year.
 
 
 We check the model's assumptions in relation to conditional independencies through a set of simple regression models, displayed in Table \@ref(tab:ch15cipimd). In the first two rows, we examine the simple correlation between $P$ and $I$ and between $P$ and $M$, respectively. We can see from the estimates in the first row that the data pattern is consistent with our assumption of unconditional independence of $I$ and $P$. However, we also see that there *is* an unconditional correlation between $I$ and $M$, something that is excluded by our model.
@@ -682,14 +686,14 @@ list(`restricted model` = loo_pimd,  `unrestricted model` = loo_pimdnegmed,  `fu
 
 Figures \@ref(fig:loo_pimdplots) shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure  \@ref(fig:loo_pimdloocomp), confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
 
-More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $\I rightarrow M$).
+More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $I \rightarrow M$).
 
 
 ### Sensitivity to priors
 
 In our base model we assume a set of monotonicity relations among nodes. How much do conclusions depend on these restrictions?  We answer the question by comparing our conclusion with these restrictions to what we would conclude without this assumption. As above, we compare the fully restricted model ($M1$) to a model that is unrestricted at $M$ ($M2$) and a model that is fully unrestricted ($M3$). 
 
-We first show results for population inference from a mixed methods analysis. As seen in Table \@ref(tab:15pimdgraphs), our inferences regarding the overall effect of $I$ on $D$ are not very sensitive to the monotonicity assumption at $M$. However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around $-0.25$ to $0$ when we remove all restrictions.  Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with $I=0, D=1$ we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
+We first show results for population inference from a mixed methods analysis. As seen in Table \@ref(tab:ch16pimdgraphs), our inferences regarding the overall effect of $I$ on $D$ are not very sensitive to the monotonicity assumption at $M$. However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around $-0.25$ to $0$ when we remove all restrictions.  Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with $I=0, D=1$ we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of $M=0$. 
 
 <!-- FLAG: AJ: Check intuition here! -->
 
@@ -698,7 +702,7 @@ In the non-monotonic model we entertain the possibility that low inequality matt
 In all, we judge the conditional inferences as very sensitive to the monotonicity assumptions we put in place.
 
 
-```{r pimdgraphs215, echo = FALSE, fig.cap = "ATE of I on D."}
+```{r ch16pimdgraphs, echo = FALSE, fig.cap = "ATE of I on D."}
 
 if(do_diagnosis)
   list(pimd = pimd, pimd_negmed = pimd_negmed, pimd_nonmon = pimd_nonmon) %>% 
@@ -760,7 +764,8 @@ q_01 <- select(q_01_1, Given) %>%
 q_01 %>%
   mutate(Example = c(" ", "Mexico (2000)", "Taiwan (1996)", 
                   "Albania (1991)", "Nicaragua (1984)")) %>%
-kable(caption = "\\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).")
+kable(caption = "\\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).",
+      digits = 3)
 
 
 
@@ -788,7 +793,8 @@ q_11 <- select(q_11_1, Given) %>%
     Unrestricted  = q_11_2$mean)
 q_11 %>%
   mutate(Example = c(" ", "Mongolia (1990)", "Paraguay (1989)", "Sierra Leone (1996)", "Malawi (1994)")) %>%
-  kable(caption = "\\label{tab:HK8cases2} Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).")
+  kable(caption = "\\label{tab:HK8cases2} Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).",
+      digits = 3)
 
 ```
 

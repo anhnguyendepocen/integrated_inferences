@@ -1,4 +1,4 @@
-# Process Tracing Application: Inequality and Democracy {#ptapp}
+# Process Tracing Application {#ptapp}
 
 
 ```{r packagesused07, include = FALSE}
@@ -6,12 +6,13 @@ source("_packages_used.R")
 ```
 
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
 We apply the causal-model-based approach to process tracing to a major substantive issue in comparative politics: the relationship between inequality and democratization.  Drawing on case level data, we use qualitative restrictions on causal types together with flat priors to draw inferences about the probability with which inequality facilitated or hindered democratization.
 ::::
+-->
 <br>
 
 
@@ -49,21 +50,22 @@ Now, observing just $I$ and $D$ alone will always leave two nodal types in conte
 
 ```{r dagdemochigh, echo = FALSE, fig.width = 6, fig.height = 4, fig.align="center", fig.cap = "Simple democracy, inequality model"}
 
-hj_dag(x = c(1,2,2),
-       y = c(1,1,2),
-       names = c(
-         "Inequality (I)",
-         "Democ'n (D)",  
-         expression(paste(theta^D))
+set.seed(1)
+hj_ggdag(x = c(1,2,2),
+         y = c(1,1,2),
+         names = c(
+             "Inequality~(I)",
+             "Democratization~(D)",  
+             expression(paste(theta[D]))
          ),
-       arcs = cbind( c(1,3),
-                     c(2,2)),
-       title = "A high-level model of democratization",
-       add_functions = 0, 
-       contraction = .28, 
-       padding = .2
+         arcs = cbind( c(1,3),
+                       c(2,2)),
+         title = "A high-level model of democratization",
+         padding = .2,
+         labels = TRUE,
+         force = 0, force_pull=1,
+         direction = 'y'
 )
-
 ```
 
 
@@ -80,22 +82,23 @@ We represent in Figure \ref{fig:lowdem} one possible lower-level model consisten
 
 ```{r lowdem, echo = FALSE, fig.width = 8, fig.height = 5, fig.align="center", out.width='.7\\textwidth', fig.cap = "\\label{fig:lowdem} A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type."}
 
-hj_dag(x = c(1,1.5,3,3, 1.5, 2.2),
-       y = c(1,2,2,3, 3, 3),
-       names = c(
-         "Inequality (I)",
-        "Mobilization (M)",  
-         "Democratization (D)",  
-         expression(paste(theta^{D[lower]})),
-        expression(paste(theta^M)),
-         "Int'l pressure (P)"
+set.seed(10)
+hj_ggdag(x = c(1,1.5,3,3, 1.5, 2.2),
+         y = c(1,2,2,3, 3, 3),
+         names = c(
+             "Inequality~(I)",
+             "Mobilization~(M)",  
+             "Democratization~(D)",  
+             expression(paste(theta^{D[lower]})),
+             expression(paste(theta^M)),
+             "International-pressure~(P)"
          ),
-       arcs = cbind( c(1,2, 4, 6, 5, 1),
-                     c(2,3, 3, 3, 2, 3)),
-       title = "A lower-level model of democratization",
-       add_functions = 0, 
-       contraction = .2, 
-       padding = .2
+         arcs = cbind( c(1,2, 4, 6, 5, 1),
+                       c(2,3, 3, 3, 2, 3)),
+         title = "A lower-level model of democratization",
+         padding = 0.5,
+         labels = TRUE,
+         force = 0, force_pull = -.03, direction='y'
 )
 
 
@@ -323,7 +326,7 @@ However, $M$ provides some information because it, like $P$, acts as *moderator*
 
 The net effect, assuming that we have not observed $P$, is a small upward effect in our confidence that inequality mattered if we see no mobilization, and a small downward effect if we see mobilization. Interestingly, if we *do* observe $P$, the effect of observing $M$ reverses: observing mobilization increases our confidence in inequality's effect, while observing no mobilization reduces it. 
 
-
+<!--
 :::: {.headerbox data-latex=""}
 ::: {.center data-latex=""}
 :::
@@ -350,6 +353,7 @@ query_model(
 ```
 
 ::::
+-->
 <br>
 
 
