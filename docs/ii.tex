@@ -117,13 +117,12 @@
 
 \usepackage{framed}
 \setlength{\fboxsep}{.8em}
-%
-% \newenvironment{blackbox}{
-%   \definecolor{shadecolor}{rgb}{0, 0, 0}  % black
-%   \color{white}
-%   \begin{shaded}}
-%  {\end{shaded}}
-%
+
+\newenvironment{blackbox}{
+  \definecolor{shadecolor}{rgb}{0, 0, 0}  % black
+  \color{white}
+  \begin{shaded}}{\end{shaded}}
+
 % \usepackage{tcolorbox}
 %
 % \newtcolorbox{blackbox}{
@@ -175,6 +174,16 @@ We have developed an \texttt{R} package---\texttt{CausalQueries}---to accompany 
 
 \hypertarget{intro}{%
 \chapter{Introduction}\label{intro}}
+
+\begin{blackbox}
+
+\begin{center}
+\textbf{NOTICE!}
+x
+
+\end{center}
+
+\end{blackbox}
 
 Here is the key idea of this book.
 
@@ -1132,7 +1141,7 @@ We can easily represent this kind of query in the context of a causal model. We 
 
 }
 
-\caption{\label{fig:casequery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\theta^Y$. With a single binary causal variable of interest, we let $\theta^Y$ take on values $\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\theta^Y$ ranges over the four values: $\theta^Y_{00}$, $\theta^Y_{10}$, $\theta^Y_{01}$ and $\theta^Y_{11}$.}\label{fig:casequery}
+\caption{This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\theta^Y$. With a single binary causal variable of interest, we let $\theta^Y$ take on values $\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\theta^Y$ ranges over the four values: $\theta^Y_{00}$, $\theta^Y_{10}$, $\theta^Y_{01}$ and $\theta^Y_{11}$.}\label{fig:casequery}
 \end{figure}
 
 In this model, then, the query, ``What is \(X\)'s causal effect in this case?'' simply becomes \emph{a question about the value of the nodal type \(\theta^Y\)}.
@@ -1161,7 +1170,7 @@ Consider, for instance, the general setup in Figure \ref{fig:attribquery}. Here,
 
 }
 
-\caption{\label{fig:attribquery} This DAG is a graphical representation of the simple causal setup in which $Y$ depends on two variables $X1$ and $X2$. How $Y$ responds to X1 and X2 depnds on $\theta^Y$, the DAG itself does not provide information on whether or how X1 and X2 interact with each other.}\label{fig:attribquery}
+\caption{This DAG is a graphical representation of the simple causal setup in which $Y$ depends on two variables $X1$ and $X2$. How $Y$ responds to X1 and X2 depnds on $\theta^Y$, the DAG itself does not provide information on whether or how X1 and X2 interact with each other.}\label{fig:attribquery}
 \end{figure}
 
 We examined the set of nodal types for a set up like this in Chapter 2 (see Table \ref{tab:PO16}). In the table, there are four column headings representing the four possible combinations of \(X_1\) and \(X_2\) values. Each row represents one possible pattern of \(Y\) values as \(X1\) and \(X2\) move through their four combinations.
@@ -1226,7 +1235,7 @@ Likewise, if want to ask \emph{how often} Sally's throw is an actual cause, in a
 
 }
 
-\caption{\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\theta^Y$.}\label{fig:actualquery}
+\caption{This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\theta^Y$.}\label{fig:actualquery}
 \end{figure}
 
 Actual causes are conceptually useful whenever there are two sufficient causes for an outcome, but one preempts the operation of the other. For instance, we might posit that both the United States' development of the atomic bomb was a sufficient condition for U.S. victory over Japan in World War II, and that U.S. conventional military superiority was also a sufficient condition and would have operated via a land invasion of Japan. Neither condition was a counterfactual cause of the outcome because both were present. However, holding constant the \emph{absence} of a land invasion, the atomic bomb was a difference-maker, rendering it an actual cause. The concept of actual cause thus helps capture the sense in which the atomic bomb distinctively contributed to the outcome, even if it was not a counterfactual cause.
@@ -1256,7 +1265,7 @@ In this model, our causal query---about \(X\)'s average causal effect---is thus 
 
 }
 
-\caption{\label{fig:DAGace} This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\lambda$ is a vector representing the multinomial distribution of nodal types in the population while $U^\theta$ is a random variable representing the draw of each case from the distribution defined by $\lambda$. A case's nodal type, $\theta^Y$, is thus a joint function of $\lambda^Y$ and $U^{\theta^Y}$.}\label{fig:DAGace}
+\caption{This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\lambda$ is a vector representing the multinomial distribution of nodal types in the population while $U^\theta$ is a random variable representing the draw of each case from the distribution defined by $\lambda$. A case's nodal type, $\theta^Y$, is thus a joint function of $\lambda^Y$ and $U^{\theta^Y}$.}\label{fig:DAGace}
 \end{figure}
 
 We can, of course, likewise pose queries about other population-level causal quantities. For instance, we could ask for what proportion of cases in the population \(X\) has a positive effect: this would be equivalent to asking the value of \(\lambda^Y_{01}\), one element of the \(\lambda^Y\) vector. Or we could ask about the proportion of cases in which \(X\) has no effect, which would be asking about \(\lambda^Y_{00} + \lambda^Y_{11}\).
@@ -1277,7 +1286,7 @@ Rather, the question of whether the mediated (via \(M\)) causal path is operativ
 
 }
 
-\caption{\label{fig:DAGpaths} Here $X$ has effects on $Y$ both indirectly through $M$ and directly.}\label{fig:DAGpaths}
+\caption{Here $X$ has effects on $Y$ both indirectly through $M$ and directly.}\label{fig:DAGpaths}
 \end{figure}
 
 As we can show, we can define this causal-path query as a question about specific nodes on a causal graph. In particular, a causal path can be defined in terms of the values of \(\theta\) nodes: specifically, in the present example, in terms of \(\theta^M\) and \(\theta^Y\). To see why, let us first note that there are two combinations of effects that would allow \(X\)'s positive effect on \(Y\) to operate via \(M\): (1) \(X\) has a positive effect on \(M\), which in turn has a positive effect on \(Y\); or (2) \(X\) has a negative effect on \(M\), which has a negative effect on \(Y\).
@@ -1723,7 +1732,7 @@ Suppose that we then look for the clue in the case and observe it. This observat
 
 }
 
-\caption{\label{fig:correlation} Joint posteriors distribution on whether a case is a $b$ or $d$ and on the probability of seeing a clue for a $b$ type ($\phi_b$).}\label{fig:correlation}
+\caption{Joint posteriors distribution on whether a case is a $b$ or $d$ and on the probability of seeing a clue for a $b$ type ($\phi_b$).}\label{fig:correlation}
 \end{figure}
 
 Figure \ref{fig:ch5joint} provides a second example, this time showing the joint distribution for the belief that \(X\) causes \(Y\) in cases in which \(X=1, Y=1\) and the relative likelihood that \(K=1\) when \(X\) causes \(Y\) (and \(X=1, Y=1\)) relative to the likelihood that \(K=1\) when \(X\) does not cause \(Y\) (and \(X=1, Y=1\)). In this case the joint posterior is derived from a model in which probative value of \(K\) is inferred from data, rather than assumed by researchers. We develop more models of this form in later chapters but for now highlight only that in simple setups the distribution of beliefs over queries and over the informativeness of clues are likely not independent of each other.
@@ -2465,7 +2474,7 @@ We begin with a causal graph and a set of nodes on the graph (\(W\)) that we hav
 
 Let us examine Proposition 1 in practice. We begin with the simplest case possible, and then move on to more complex models.
 
-The very simplest probabilistic causal graph, shown in Figure \ref{fig:d-sepsimple}, has \(X\) influencing \(Y\), with \(X\) determined by a coin flip. If we want to know \(X\)'s effect on \(Y\), this query is defined solely in terms of \(Y\)'s nodal type, \(\theta^Y\). To help us conceptualize the more general point about informativeness for queries, we relabel \(\theta^Y\) as \(Q\) to emphasize the fact that this node represents our query.
+The very simplest probabilistic causal graph, shown in Figure \ref{fig:sepsimple}, has \(X\) influencing \(Y\), with \(X\) determined by a coin flip. If we want to know \(X\)'s effect on \(Y\), this query is defined solely in terms of \(Y\)'s nodal type, \(\theta^Y\). To help us conceptualize the more general point about informativeness for queries, we relabel \(\theta^Y\) as \(Q\) to emphasize the fact that this node represents our query.
 
 \begin{figure}
 
@@ -2473,7 +2482,7 @@ The very simplest probabilistic causal graph, shown in Figure \ref{fig:d-sepsimp
 
 }
 
-\caption{\label{fig:d-sepsimple} A simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's response type for $Y$.}\label{fig:sepsimple}
+\caption{A simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's response type for $Y$.}\label{fig:sepsimple}
 \end{figure}
 
 Let us assume that we have observed nothing yet in this case and then ask what clue(s) might be informative about \(Q\), the node of interest. The other two nodes in the graph are \(X\) and \(Y\): these are thus the possible clues that we might go looking for in our effort to learn about \(Q\) (i.e., they are the possible members of \(\mathcal K\)).
@@ -2493,7 +2502,7 @@ We put Proposition 1 to work in a slightly more complex set of models in Figure 
 \begin{figure}
 \centering
 \includegraphics{ii_files/figure-latex/34graphs-1.pdf}
-\caption{\label{fig:34graphs}\label{fig:34graphs} All connected directed acyclic graphs over \(X,Y,K,Q\), in which \(Q\) is an exogenous variable that directly causes \(Y\), and \(X\) is a direct or indirect cause of \(Y\). The title of each graph indicates the conditions under which \(K\) can be informative about (i.e., is not \(d\)-separated from) \(Q\), given the prior observation of \(X\), \(Y\), both, or neither (\ldots).}
+\caption{\label{fig:34graphs}All connected directed acyclic graphs over \(X,Y,K,Q\), in which \(Q\) is an exogenous variable that directly causes \(Y\), and \(X\) is a direct or indirect cause of \(Y\). The title of each graph indicates the conditions under which \(K\) can be informative about (i.e., is not \(d\)-separated from) \(Q\), given the prior observation of \(X\), \(Y\), both, or neither (\ldots).}
 \end{figure}
 
 The results show us not just what kinds of variables can be informative about a case's response-type but also what combinations of observations yield leverage on case-level causal effects. A number of features of the graphs are worth highlighting:
@@ -2692,7 +2701,7 @@ We represent in Figure \ref{fig:lowdem} one possible lower-level model consisten
 
 }
 
-\caption{\label{fig:lowdem} A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type.}\label{fig:lowdem}
+\caption{A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type.}\label{fig:lowdem}
 \end{figure}
 
 In representing the causal dependencies in this graph, we allow for inequality to have (in the language of mediation analysis) both an ``indirect'' effect on democratization via mobilization and a ``direct'' effect. The arrow running directly from \(I\) to \(D\) allows for effects of inequality on democratization beyond any effects running via mobilization of the poor, including effects that might run in the opposite direction. (For instance, it is possible that inequality has a positive effect on democratization via mobilization but a negative effect via any number of processes that are not explicitly specified in the model.) The graph also implies that there is no confounding: since there is no arrow running from another variable in the graph to \(I\), \(I\) is modeled as exogenous.
@@ -5918,7 +5927,7 @@ More formally, we calculate the LOO likelihood for each model as 1.02e-73 for th
 
 In our base model we assume a set of monotonicity relations among nodes. How much do conclusions depend on these restrictions? We answer the question by comparing our conclusion with these restrictions to what we would conclude without this assumption. As above, we compare the fully restricted model (\(M1\)) to a model that is unrestricted at \(M\) (\(M2\)) and a model that is fully unrestricted (\(M3\)).
 
-We first show results for population inference from a mixed methods analysis. As seen in Table \ref{tab:ch16pimdgraphs}, our inferences regarding the overall effect of \(I\) on \(D\) are not very sensitive to the monotonicity assumption at \(M\). However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around \(-0.25\) to \(0\) when we remove all restrictions. Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with \(I=0, D=1\) we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of \(M=0\).
+We first show results for population inference from a mixed methods analysis. As seen in Figure \ref{fig:ch16pimdgraphs}, our inferences regarding the overall effect of \(I\) on \(D\) are not very sensitive to the monotonicity assumption at \(M\). However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around \(-0.25\) to \(0\) when we remove all restrictions. Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with \(I=0, D=1\) we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of \(M=0\).
 
 In the non-monotonic model we entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produced by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is \emph{not} due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel.
 
@@ -5936,7 +5945,7 @@ In Tables \ref{tab:HK8cases1quant} and \ref{tab:HK8cases2quant}, we simply call 
 
 \begin{table}
 
-\caption{\label{tab:HK8cases1quant}\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
+\caption{\label{tab:HK8cases1quant}Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
 \centering
 \begin{tabular}[t]{l|r|r|l}
 \hline
@@ -5957,7 +5966,7 @@ I == 0  \& D ==  1 \& M == 1 \& P == 1 & 0.263 & 0.368 & Nicaragua (1984)\\
 
 \begin{table}
 
-\caption{\label{tab:HK8cases2quant}\label{tab:HK8cases2} Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
+\caption{\label{tab:HK8cases2quant}Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
 \centering
 \begin{tabular}[t]{l|r|r|l}
 \hline
