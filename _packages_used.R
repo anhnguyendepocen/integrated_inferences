@@ -78,6 +78,7 @@ rstan_options(auto_write = TRUE)
 
 do_diagnosis = FALSE
 
+knitr::opts_chunk$set(fig.align = "center")
 
 #######
 

@@ -643,7 +643,7 @@ As we can see both visually and from the $p-$values, the model performs well her
 
 Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
-```{r loo_pimdplots, echo = FALSE, fig.cap = "C"}
+```{r loopimdplots1, echo = FALSE, fig.cap = "Leave one out likelihoods for restricted and unrestricted democracy and inequality models"}
 # Leave one out
 
 
@@ -675,13 +675,14 @@ data.frame(restricted = loo_pimd$case_likelihood %>% unlist,
 ```
 
 
-```{r pimdloocomp, echo = FALSE, caption = "LOO data predictions for three PIMD models"}
+```{r pimdloocomp, echo = FALSE, fig.cap = "LOO data predictions for three PIMD models"}
 
-list(`restricted model` = loo_pimd,  `unrestricted model` = loo_pimdnegmed,  `fully unrestricted model` =  loo_pimdnonmon ) %>% plot_loo()
+list(`restricted model` = loo_pimd,  `unrestricted model` = loo_pimdnegmed,  `fully unrestricted model` =  loo_pimdnonmon ) %>% 
+  plot_loo()
 
 ```
 
-Figures \@ref(fig:loo_pimdplots) shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure  \@ref(fig:loo_pimdloocomp), confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
+Figures \@ref(fig:loopimdplots1) shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure  \@ref(fig:pimdloocomp), confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
 
 More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $I \rightarrow M$).
 
