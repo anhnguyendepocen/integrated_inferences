@@ -117,13 +117,17 @@
 
 \usepackage{framed}
 \setlength{\fboxsep}{.8em}
-%
-% \newenvironment{blackbox}{
-%   \definecolor{shadecolor}{rgb}{0, 0, 0}  % black
-%   \color{white}
-%   \begin{shaded}}
-%  {\end{shaded}}
-%
+
+\newenvironment{blackbox}{
+  \definecolor{shadecolor}{rgb}{0, 0, 0}  % black
+  \color{white}
+  \begin{shaded}}{\end{shaded}}
+
+\newenvironment{headerbox}{
+  \definecolor{shadecolor}{rgb}{0.8, 0.8, 0.8}  % black
+  \color{black}
+  \begin{shaded}}{\end{shaded}}
+
 % \usepackage{tcolorbox}
 %
 % \newtcolorbox{blackbox}{
@@ -175,6 +179,11 @@ We have developed an \texttt{R} package---\texttt{CausalQueries}---to accompany 
 
 \hypertarget{intro}{%
 \chapter{Introduction}\label{intro}}
+
+\begin{headerbox}
+We describe the book's general approach, preview our argument for the utility of causal models as a framework for choosing research strategies and drawing causal inferences, and provide a roadmap for the rest of the book.
+
+\end{headerbox}
 
 Here is the key idea of this book.
 
@@ -334,6 +343,11 @@ Here we go.
 
 \hypertarget{models}{%
 \chapter{Causal Models}\label{models}}
+
+\begin{headerbox}
+We provide a lay-language primer on the logic of causal models.
+
+\end{headerbox}
 
 Causal claims are everywhere. Causal knowledge is often the end goal of empirical social science. It is also a key \emph{input} into causal inference.\footnote{As nicely put by \citet{cartwright1994nature}: no causes in, no causes out. We return to the point more formally later.}
 Causal assumptions are also hidden in seemingly descriptive statements: claims that someone is guilty, or exploited, or powerful, or weak, involve beliefs about how things would be were conditions different. Even when scholars carefully try to avoid causal claim-making, causal verbs---depends, drives, produces, influences---tend to surface.
@@ -932,6 +946,11 @@ Analyzing a causal graph for relations of independence represents one payoff to 
 \hypertarget{illustratemodels}{%
 \chapter{Illustrating Causal Models}\label{illustratemodels}}
 
+\begin{headerbox}
+We use three arguments from published political science research to illustrate how to represent theoretical ideas as structural causal models.
+
+\end{headerbox}
+
 In this short chapter, we provide more of a sense of how we can encode prior knowledge in a causal model by asking how we might construct models in light of extant scholarly works. We undertake this exercise by drawing on three well-known publications in comparative politics and international relations: Paul Pierson's seminal book on welfare-state retrenchment \citep{pierson1994dismantling}; Elizabeth Saunders' research on leaders' choice of military intervention strategies \citep{saunders2011leaders}; and Przeworski and Limongi's work on democratic survival \citep{przeworski1997modernization}, an instructive counterpoint to Boix's \citep{boix2003democracy} argument about a related dependent variable. For each, we represent the causal knowledge that we might plausibly think we take away from the work in question in the form of a causal model.
 
 Readers might represent these knowledge bases differently; our aim here is only to illustrate how causal models are constructed, rather than to defend a particular representation (much less the works in question) as accurate.
@@ -1096,6 +1115,11 @@ In this approach there are no parameters \(p\) or \(q\) to be estimated. Rather 
 \hypertarget{questions}{%
 \chapter{Causal Queries}\label{questions}}
 
+\begin{headerbox}
+Although a lot of empirical work focuses on identifying average causal effects, there is a rich array of other well defined causal questions that can be asked about how variables relate to each other causally. We describe major families of questions and illustrate how these can all be described as queries about the values of nodes in a causal model.
+
+\end{headerbox}
+
 Although scholars share a broad common interest in causality there is tremendous heterogeneity in the kinds of causal questions that scholars ask. Consider the relationship between inequality and democratization. We might seek, for instance, to know inequality's average impact on democratization across some set of cases. Alternatively, we might be interested in a particular case---say, Mongolia in 1995---and want to know whether inequality would have an effect \emph{here}. That is a question about causal effects at the case level. Alternatively we might wonder whether the level of democracy in Mongolia in 1995 is \emph{due} to the level of inequality in that case---this is quite a distinct question (in the same way that establishing that poison would make you sick does not imply that you are sick because of poison). Or we may be interested in \emph{how} causal effects unfold, inquiring about the pathway or mechanism through which inequality affects democratization---a question we can also ask at two levels. We can ask whether inequality affected democratization in Mongolia through mobilization of the masses; or we can ask how commonly inequality affects democratization through mobilization across a broad set of cases. Pushing further we might ask a counterfactual question of the form: would inequality have produced democratization had mobilization been prevented from occurring.
 
 Distinct methodological literatures have been devoted to the study of average causal effects, the analysis of case-level causal effects and explanations, and the identification of causal pathways. Fortunately each of these questions can be readily captured as specific queries asked of (and answerable from) a causal model. As described by \citet{judea2010introduction}, the goal is to deploy an ``\emph{algorithm} that receives a model \emph{M} as an input and delivers the desired quantity \emph{Q(M)} as the output.'' More specifically, we demonstrate how, given the structure we described in Chapter \ref{models}, causal queries can be represented as question about one or more \emph{nodes} on a causal graph. When we assimilate our causal questions into a causal model, we are placing what we want to know in formal relation to both what we \emph{already} know and what we can potentially \emph{observe}. As we will see in later chapters, this move allows us then to deploy the model to generate strategies of inference: to determine which observations, if we made them, would be likely to yield the greatest leverage on our query, given our prior knowledge about the way the world works. And by the same logic, once we see the evidence, this integration allows us to ``update'' on our query---figure out in systematic fashion what we \emph{have} learned---in a manner that takes background knowledge into account.
@@ -1132,7 +1156,7 @@ We can easily represent this kind of query in the context of a causal model. We 
 
 }
 
-\caption{\label{fig:casequery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\theta^Y$. With a single binary causal variable of interest, we let $\theta^Y$ take on values $\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\theta^Y$ ranges over the four values: $\theta^Y_{00}$, $\theta^Y_{10}$, $\theta^Y_{01}$ and $\theta^Y_{11}$.}\label{fig:casequery}
+\caption{This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type, represented by $\theta^Y$. With a single binary causal variable of interest, we let $\theta^Y$ take on values $\theta^Y_{ij}$, with $i$ representing the value $Y$ takes on if $X=0$ and $j$ representing the value $Y$ takes on if $X=1$. With a binary framework outcome, $\theta^Y$ ranges over the four values: $\theta^Y_{00}$, $\theta^Y_{10}$, $\theta^Y_{01}$ and $\theta^Y_{11}$.}\label{fig:casequery}
 \end{figure}
 
 In this model, then, the query, ``What is \(X\)'s causal effect in this case?'' simply becomes \emph{a question about the value of the nodal type \(\theta^Y\)}.
@@ -1161,7 +1185,7 @@ Consider, for instance, the general setup in Figure \ref{fig:attribquery}. Here,
 
 }
 
-\caption{\label{fig:attribquery} This DAG is a graphical representation of the simple causal setup in which $Y$ depends on two variables $X1$ and $X2$. How $Y$ responds to X1 and X2 depnds on $\theta^Y$, the DAG itself does not provide information on whether or how X1 and X2 interact with each other.}\label{fig:attribquery}
+\caption{This DAG is a graphical representation of the simple causal setup in which $Y$ depends on two variables $X1$ and $X2$. How $Y$ responds to X1 and X2 depnds on $\theta^Y$, the DAG itself does not provide information on whether or how X1 and X2 interact with each other.}\label{fig:attribquery}
 \end{figure}
 
 We examined the set of nodal types for a set up like this in Chapter 2 (see Table \ref{tab:PO16}). In the table, there are four column headings representing the four possible combinations of \(X_1\) and \(X_2\) values. Each row represents one possible pattern of \(Y\) values as \(X1\) and \(X2\) move through their four combinations.
@@ -1226,7 +1250,7 @@ Likewise, if want to ask \emph{how often} Sally's throw is an actual cause, in a
 
 }
 
-\caption{\label{fig:actualquery} This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\theta^Y$.}\label{fig:actualquery}
+\caption{This DAG is a graphical representation of the simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's nodal type for $Y$, represented by $\theta^Y$.}\label{fig:actualquery}
 \end{figure}
 
 Actual causes are conceptually useful whenever there are two sufficient causes for an outcome, but one preempts the operation of the other. For instance, we might posit that both the United States' development of the atomic bomb was a sufficient condition for U.S. victory over Japan in World War II, and that U.S. conventional military superiority was also a sufficient condition and would have operated via a land invasion of Japan. Neither condition was a counterfactual cause of the outcome because both were present. However, holding constant the \emph{absence} of a land invasion, the atomic bomb was a difference-maker, rendering it an actual cause. The concept of actual cause thus helps capture the sense in which the atomic bomb distinctively contributed to the outcome, even if it was not a counterfactual cause.
@@ -1256,7 +1280,7 @@ In this model, our causal query---about \(X\)'s average causal effect---is thus 
 
 }
 
-\caption{\label{fig:DAGace} This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\lambda$ is a vector representing the multinomial distribution of nodal types in the population while $U^\theta$ is a random variable representing the draw of each case from the distribution defined by $\lambda$. A case's nodal type, $\theta^Y$, is thus a joint function of $\lambda^Y$ and $U^{\theta^Y}$.}\label{fig:DAGace}
+\caption{This DAG is a graphical representation of a causal setup in which cases are drawn from a population composed of different nodal types. As before, $X$'s effect on $Y$ is a function of a causal-type variable, $\theta^Y$. Yet here we explicitly model the process through which the case's type is drawn from a distribution of types in a population. The variable $\lambda$ is a vector representing the multinomial distribution of nodal types in the population while $U^\theta$ is a random variable representing the draw of each case from the distribution defined by $\lambda$. A case's nodal type, $\theta^Y$, is thus a joint function of $\lambda^Y$ and $U^{\theta^Y}$.}\label{fig:DAGace}
 \end{figure}
 
 We can, of course, likewise pose queries about other population-level causal quantities. For instance, we could ask for what proportion of cases in the population \(X\) has a positive effect: this would be equivalent to asking the value of \(\lambda^Y_{01}\), one element of the \(\lambda^Y\) vector. Or we could ask about the proportion of cases in which \(X\) has no effect, which would be asking about \(\lambda^Y_{00} + \lambda^Y_{11}\).
@@ -1277,7 +1301,7 @@ Rather, the question of whether the mediated (via \(M\)) causal path is operativ
 
 }
 
-\caption{\label{fig:DAGpaths} Here $X$ has effects on $Y$ both indirectly through $M$ and directly.}\label{fig:DAGpaths}
+\caption{Here $X$ has effects on $Y$ both indirectly through $M$ and directly.}\label{fig:DAGpaths}
 \end{figure}
 
 As we can show, we can define this causal-path query as a question about specific nodes on a causal graph. In particular, a causal path can be defined in terms of the values of \(\theta\) nodes: specifically, in the present example, in terms of \(\theta^M\) and \(\theta^Y\). To see why, let us first note that there are two combinations of effects that would allow \(X\)'s positive effect on \(Y\) to operate via \(M\): (1) \(X\) has a positive effect on \(M\), which in turn has a positive effect on \(Y\); or (2) \(X\) has a negative effect on \(M\), which has a negative effect on \(Y\).
@@ -1454,6 +1478,11 @@ Given the equal weighting on causal types, these answers reflect the fact that f
 
 \hypertarget{bayeschapter}{%
 \chapter{Bayesian Answers}\label{bayeschapter}}
+
+\begin{headerbox}
+We run through the logic of Bayesian updating and show how it is used for answering causal queries. We illustrate with applications to correlational and process tracing inferences.
+
+\end{headerbox}
 
 Bayesian methods are just sets of procedures to figure out how to update beliefs in light of new information.
 
@@ -1723,7 +1752,7 @@ Suppose that we then look for the clue in the case and observe it. This observat
 
 }
 
-\caption{\label{fig:correlation} Joint posteriors distribution on whether a case is a $b$ or $d$ and on the probability of seeing a clue for a $b$ type ($\phi_b$).}\label{fig:correlation}
+\caption{Joint posteriors distribution on whether a case is a $b$ or $d$ and on the probability of seeing a clue for a $b$ type ($\phi_b$).}\label{fig:correlation}
 \end{figure}
 
 Figure \ref{fig:ch5joint} provides a second example, this time showing the joint distribution for the belief that \(X\) causes \(Y\) in cases in which \(X=1, Y=1\) and the relative likelihood that \(K=1\) when \(X\) causes \(Y\) (and \(X=1, Y=1\)) relative to the likelihood that \(K=1\) when \(X\) does not cause \(Y\) (and \(X=1, Y=1\)). In this case the joint posterior is derived from a model in which probative value of \(K\) is inferred from data, rather than assumed by researchers. We develop more models of this form in later chapters but for now highlight only that in simple setups the distribution of beliefs over queries and over the informativeness of clues are likely not independent of each other.
@@ -1755,6 +1784,11 @@ This fact will be useful in applications. In practice we might assume that we ha
 
 \hypertarget{theory}{%
 \chapter{Theories as causal models}\label{theory}}
+
+\begin{headerbox}
+In this short conceptual chapter we describe an approach in which theoretical claims are thought of as model justifications within a hierarchy of causal models. Lower-level models serve as a theory for a higher level model if the higher level model can be deduced from the lower level model---possibly in combination with data. Consistency requirements determine what new theory emerges from the combination of prior theory and data, but also constrain what prior theories can be invoked to justify a given claim.
+
+\end{headerbox}
 
 In Chapter \ref{illustratemodels}, we described a set of theories and represented them as causal models. But so far we haven't been very explicit in what we mean by a theory or how theory maps onto a causal-model framework.
 
@@ -2040,6 +2074,11 @@ Finally, we can then apply the ideas of section \ref{theorygains} to applied for
 
 \hypertarget{pt}{%
 \chapter{Process Tracing with Causal Models}\label{pt}}
+
+\begin{headerbox}
+We connect the literature on causal models to qualitative inference strategies used in process tracing and describe a procedure for inference on case level queries from causal models. We show how a key result from the causal models literature provides a condition for when clues may be (or certainly will not be) informative and extract a set of implications for process tracing.
+
+\end{headerbox}
 
 \hypertarget{process-tracing-and-causal-models}{%
 \section{Process tracing and causal models}\label{process-tracing-and-causal-models}}
@@ -2465,7 +2504,7 @@ We begin with a causal graph and a set of nodes on the graph (\(W\)) that we hav
 
 Let us examine Proposition 1 in practice. We begin with the simplest case possible, and then move on to more complex models.
 
-The very simplest probabilistic causal graph, shown in Figure \ref{fig:d-sepsimple}, has \(X\) influencing \(Y\), with \(X\) determined by a coin flip. If we want to know \(X\)'s effect on \(Y\), this query is defined solely in terms of \(Y\)'s nodal type, \(\theta^Y\). To help us conceptualize the more general point about informativeness for queries, we relabel \(\theta^Y\) as \(Q\) to emphasize the fact that this node represents our query.
+The very simplest probabilistic causal graph, shown in Figure \ref{fig:sepsimple}, has \(X\) influencing \(Y\), with \(X\) determined by a coin flip. If we want to know \(X\)'s effect on \(Y\), this query is defined solely in terms of \(Y\)'s nodal type, \(\theta^Y\). To help us conceptualize the more general point about informativeness for queries, we relabel \(\theta^Y\) as \(Q\) to emphasize the fact that this node represents our query.
 
 \begin{figure}
 
@@ -2473,7 +2512,7 @@ The very simplest probabilistic causal graph, shown in Figure \ref{fig:d-sepsimp
 
 }
 
-\caption{\label{fig:d-sepsimple} A simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's response type for $Y$.}\label{fig:sepsimple}
+\caption{A simple causal setup in which the effect of $X$ on $Y$ in a given case depends on the case's response type for $Y$.}\label{fig:sepsimple}
 \end{figure}
 
 Let us assume that we have observed nothing yet in this case and then ask what clue(s) might be informative about \(Q\), the node of interest. The other two nodes in the graph are \(X\) and \(Y\): these are thus the possible clues that we might go looking for in our effort to learn about \(Q\) (i.e., they are the possible members of \(\mathcal K\)).
@@ -2493,7 +2532,7 @@ We put Proposition 1 to work in a slightly more complex set of models in Figure 
 \begin{figure}
 \centering
 \includegraphics{ii_files/figure-latex/34graphs-1.pdf}
-\caption{\label{fig:34graphs}\label{fig:34graphs} All connected directed acyclic graphs over \(X,Y,K,Q\), in which \(Q\) is an exogenous variable that directly causes \(Y\), and \(X\) is a direct or indirect cause of \(Y\). The title of each graph indicates the conditions under which \(K\) can be informative about (i.e., is not \(d\)-separated from) \(Q\), given the prior observation of \(X\), \(Y\), both, or neither (\ldots).}
+\caption{\label{fig:34graphs}All connected directed acyclic graphs over \(X,Y,K,Q\), in which \(Q\) is an exogenous variable that directly causes \(Y\), and \(X\) is a direct or indirect cause of \(Y\). The title of each graph indicates the conditions under which \(K\) can be informative about (i.e., is not \(d\)-separated from) \(Q\), given the prior observation of \(X\), \(Y\), both, or neither (\ldots).}
 \end{figure}
 
 The results show us not just what kinds of variables can be informative about a case's response-type but also what combinations of observations yield leverage on case-level causal effects. A number of features of the graphs are worth highlighting:
@@ -2624,6 +2663,11 @@ For instance in an \(X \rightarrow Y\) model, if we observe \(X=Y=1\) then \(D\)
 \hypertarget{ptapp}{%
 \chapter{Process Tracing Application}\label{ptapp}}
 
+\begin{headerbox}
+We apply the causal-model-based approach to process tracing to a major substantive issue in comparative politics: the relationship between inequality and democratization. Drawing on case level data, we use qualitative restrictions on causal types together with flat priors to draw inferences about the probability with which inequality facilitated or hindered democratization.
+
+\end{headerbox}
+
 In this chapter, we demonstrate how causal-model-based process-tracing works using real data. We undertake this illustration on a substantive issue that has been of central interest to students of comparative politics for decades: the causes of democratization. As the literature and range of arguments about democratization are vast, we focus on just a piece of the debate---specifically on causal claims about the relationship between economic inequality and democratization, with particular attention to the work of \citet{boix2003democracy}, \citet{acemoglu2005economic}, and \citet{haggard2012inequality}. In this chapter, we demonstrate process tracing with causal models, while in a later chapter we demonstrate the integration of process-tracing with correlational analysis. Our focus in this chapter is on using process tracing to assess \emph{the case-level causal effect of inequality on democracy.}
 
 \hypertarget{inequality-and-democratization-the-debate}{%
@@ -2692,7 +2736,7 @@ We represent in Figure \ref{fig:lowdem} one possible lower-level model consisten
 
 }
 
-\caption{\label{fig:lowdem} A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type.}\label{fig:lowdem}
+\caption{A lower-level model of democratization in which inequality may affect regime type both directly and through mobilization of the lower classes, and international pressure may also affect regime type.}\label{fig:lowdem}
 \end{figure}
 
 In representing the causal dependencies in this graph, we allow for inequality to have (in the language of mediation analysis) both an ``indirect'' effect on democratization via mobilization and a ``direct'' effect. The arrow running directly from \(I\) to \(D\) allows for effects of inequality on democratization beyond any effects running via mobilization of the poor, including effects that might run in the opposite direction. (For instance, it is possible that inequality has a positive effect on democratization via mobilization but a negative effect via any number of processes that are not explicitly specified in the model.) The graph also implies that there is no confounding: since there is no arrow running from another variable in the graph to \(I\), \(I\) is modeled as exogenous.
@@ -2958,6 +3002,11 @@ Finally we emphasize that all of the inference in this chapter depends on a mode
 
 \hypertarget{mixing}{%
 \chapter{Integrated inferences}\label{mixing}}
+
+\begin{headerbox}
+We extend the analysis of Chapter \ref{pt} to settings in which we can simultaneously learn from data on treatments and outcomes in many cases and causal process data for a subset of cases. In doing so we update our theory from cases and \emph{use} our updated theory to draw case-level inferences. While our process tracing was entirely theory-informed, mixed-data inference is also \emph{data}-informed.
+
+\end{headerbox}
 
 In this chapter we generalize the model developed in Chapter \ref{pt} to research situations in which we have data on multiple cases.
 
@@ -3564,6 +3613,11 @@ Data & mean & sd\\
 \hypertarget{mixingapp}{%
 \chapter{Integrated Inferences Application}\label{mixingapp}}
 
+\begin{headerbox}
+We extend the analysis of Chapter \ref{ptapp} using a model that lets us update about causal processes from data on inequality and democratization from many cases and data on causal processes---mobilization and pressures---from a subset of cases. We then use the updated model to draw both population-level and case-level inferences.
+
+\end{headerbox}
+
 \hypertarget{a-trained-model}{%
 \section{A trained model}\label{a-trained-model}}
 
@@ -3855,6 +3909,11 @@ By comparing the prior and posterior estimates given \(M=1\) and given \(M=0\), 
 
 \hypertarget{mm}{%
 \chapter{Mixing models}\label{mm}}
+
+\begin{headerbox}
+We provide four examples of situations in which, by combining models, researchers learn more than they could from any single model.
+
+\end{headerbox}
 
 In the previous two chapters, we described one form of integration that structural causal models can enable: the systematic combination of (what we typically think of as) qualitative and quantitative evidence for the purposes of drawing population- and case-level causal inferences. One feature of the analyses we have been considering so far is that the integration is essentially ``nested.'' We are, for instance, integrating quantitative evidence for a large set of cases with qualitative evidence for a \emph{subset} of those cases. We are, moreover, drawing inferences from the set of cases we observe to a population \emph{within which} that sample of cases is situated.
 
@@ -4262,6 +4321,11 @@ In Figure \ref{fig:metaplot} we turn to the causal query of interest and show a 
 
 \hypertarget{clue}{%
 \chapter{Clue Selection as a Decision Problem}\label{clue}}
+
+\begin{headerbox}
+We draw out the implications of the causal model approach for clue-selection strategies. We demonstrate procedures for assessing which clues minimize expected variance and how to construct an optimal decision tree for determining a clue gathering strategy.
+
+\end{headerbox}
 
 We now mobilize the causal models framework for the purposes of making research-design choices. We start with the problem of clue-selection: determining which qualitative data to gather on a case. Evidently it makes sense to gather clues that have large probative value, but whether or not a given clue will have probative value depends on the model we are working with and the question we are asking. As we will also see, a clue's informativeness can depend on what other clues have already been collected. Finding out that the butler had no motive may be informative for the claim that he is innocent, but it may not be useful if we already know that he had no opportunity.
 
@@ -4905,6 +4969,11 @@ We are conscious that here we are pushing the basic logic to the limits. In prac
 \hypertarget{caseselection}{%
 \chapter{Case selection for mixed methods inference}\label{caseselection}}
 
+\begin{headerbox}
+With a causal model in hand we can assess in advance what conclusions we will draw from different observations. We apply the logic the problem of case-selection: given a set of cases on which we already have \(X,Y\) data, which cases will it be most advantageous to choose for more in-depth investigation? We show the optimal case-selection strategy depends jointly on the model we start with and the causal question we seek to answer.
+
+\end{headerbox}
+
 A critical decision for scholars employing mixed methods is to determine when and where to look deep and when to look wide. We address this question if two steps, first addressing the problem of case selection and second the question of qualitative/quantitative mixing.
 
 \hypertarget{case-selection-strategies}{%
@@ -5317,6 +5386,11 @@ Relative performance also flips in some places. For instance, whereas two-pos gi
 \hypertarget{wideordeep}{%
 \chapter{Going wide, going deep}\label{wideordeep}}
 
+\begin{headerbox}
+We turn to the problem of choosing between going ``wide'' and going ``deep.'' We illustrate gains from going deep for problems with large \(N\) but self selection into treatment. Simulations suggest that going deep is especially valuable for observational research, situations with homogeneous treatment effects, and, of course, when clues have strong probative value.
+
+\end{headerbox}
+
 We continue exploring how we can leverage causal models in making research-design choices by thinking about the tradeoff between intensive (deep) and extensive (wide) analysis. Suppose that we have identified those clues that will be most informative and those cases in which it would be most valuable to conduct process tracing, given our beliefs about the world. A further question that we face is the quintessential dilemma of \emph{mixing} methods: what mixture of quantitative and qualitative evidence is optimal? We argued in Chapter \ref{mixing} that the distinction between quantitative and qualitative inference is, in a causal-model framework, without much of a difference. But here we frame a more precise question: given finite resources, how should we trade off between studying a larger number of cases at a given level of intensiveness, on the one hand, and drilling down to learn more intensively about some subset of the cases in our sample? How should we decide between going ``wide'' and going ``deep''?
 
 Just as with the selection of clues and cases, examined Chapters \ref{clue} and \ref{caseselection}, how much we should expect to learn from going wide versus going deep will depend on how we think the world works, as expressed in the causal model with which we start and as shaped by the data that we have seen at the point of making the wide-versus-deep decision.
@@ -5447,6 +5521,11 @@ Then, for this model-query combination, the widest strategy is better than the d
 
 \hypertarget{justifying}{%
 \chapter{Justifying models}\label{justifying}}
+
+\begin{headerbox}
+We outline strategies for justifying models on the basis of prior data and so empirically grounding beliefs about the probative value of clues.
+
+\end{headerbox}
 
 The approaches to inference that we have described always involve updating beliefs given data. But to get off the ground researchers need to be able to state priors on all parameters.
 
@@ -5668,6 +5747,11 @@ The assumption that we have captured all nodes that might generate confounding i
 
 \hypertarget{evaluation}{%
 \chapter{Evaluating models}\label{evaluation}}
+
+\begin{headerbox}
+Model based inference takes the model seriously. But deep down we know that all of these models are wrong, in myriad ways. We examine strategies for figuring out whether a model is likely doing more harm than good.
+
+\end{headerbox}
 
 Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly wrong. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense. How can we evaluate the usefulness of our models?
 
@@ -5918,7 +6002,7 @@ More formally, we calculate the LOO likelihood for each model as 1.02e-73 for th
 
 In our base model we assume a set of monotonicity relations among nodes. How much do conclusions depend on these restrictions? We answer the question by comparing our conclusion with these restrictions to what we would conclude without this assumption. As above, we compare the fully restricted model (\(M1\)) to a model that is unrestricted at \(M\) (\(M2\)) and a model that is fully unrestricted (\(M3\)).
 
-We first show results for population inference from a mixed methods analysis. As seen in Table \ref{tab:ch16pimdgraphs}, our inferences regarding the overall effect of \(I\) on \(D\) are not very sensitive to the monotonicity assumption at \(M\). However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around \(-0.25\) to \(0\) when we remove all restrictions. Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with \(I=0, D=1\) we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of \(M=0\).
+We first show results for population inference from a mixed methods analysis. As seen in Figure \ref{fig:ch16pimdgraphs}, our inferences regarding the overall effect of \(I\) on \(D\) are not very sensitive to the monotonicity assumption at \(M\). However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around \(-0.25\) to \(0\) when we remove all restrictions. Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with \(I=0, D=1\) we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of \(M=0\).
 
 In the non-monotonic model we entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produced by low inequality via demonstrations---but nevertheless entertain the possibility of mobilization that is \emph{not} due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel.
 
@@ -5936,7 +6020,7 @@ In Tables \ref{tab:HK8cases1quant} and \ref{tab:HK8cases2quant}, we simply call 
 
 \begin{table}
 
-\caption{\label{tab:HK8cases1quant}\label{tab:HK8cases1quant} Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
+\caption{\label{tab:HK8cases1quant}Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
 \centering
 \begin{tabular}[t]{l|r|r|l}
 \hline
@@ -5957,7 +6041,7 @@ I == 0  \& D ==  1 \& M == 1 \& P == 1 & 0.263 & 0.368 & Nicaragua (1984)\\
 
 \begin{table}
 
-\caption{\label{tab:HK8cases2quant}\label{tab:HK8cases2} Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
+\caption{\label{tab:HK8cases2quant}Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).}
 \centering
 \begin{tabular}[t]{l|r|r|l}
 \hline
