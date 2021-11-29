@@ -84,7 +84,7 @@ To be explicit about the puzzle, we will assume that the information that one ch
 
 
 \begin{eqnarray}
-\text{Probability both are boys | Not both girls} &=& \frac{\text{Probability  both boys}}{\text{Probability they are not both girls}} \\ 
+\text{Probability both are boys | Not both girls} &=& \frac{\text{Probability  both boys}}{\text{Probability not both girls}} \\ 
 &=& \frac{\text{1 in 4}}{\text{3 in 4}}
 \end{eqnarray}
 
@@ -113,7 +113,7 @@ Third,  the probability of the data---the denominator. How likely are we to have
 
 The last two quantities capture how consistent the data are with our hypothesis and how specific the data are to our hypothesis. As shown in the equation above, the third quantity can usefully be written in terms of the different ways (alternative Hypotheses, $H'$) that the data could come about. 
 
-Note that answering the third question requires putting probabilities on an exclusive and exhaustive set of hypotheses. However, it does not require a listing of all possible hypotheses, just some exhaustive collection of hypotheses. For example we might have the notion of the probability that the accused's fingerprints would be on the door if she were or were not guilty without having to decompose the "not guilty" into a set of hypotheses regarding who else might be guilty. Also, while the hypotheses that enter the formula do have to be mutually exclusive, that does not prevent you from drawing inferences  about hypotheses that are not mutually exclusive. For instance you might form posteriors over which of 100 people is guilty, but then use the posterior to ask what is the probability that a man is guilty, or that an old person is guilty. The fact that "man" and "old" are not mutually exclusive in no way means you cannot try to learn about both of these hypotheses.      
+Note that answering the third question requires putting prior probabilities on an exclusive and exhaustive set of hypotheses. However, it does not require a listing of all possible hypotheses, just some exhaustive collection of hypotheses. For example we might have the notion of the probability that the accused's fingerprints would be on the door if she were or were not guilty without having to decompose the "not guilty" into a set of hypotheses regarding who else might be guilty. Also, while the hypotheses that enter the formula do have to be mutually exclusive, that does not prevent you from drawing inferences  about hypotheses that are not mutually exclusive. For instance you might form posteriors over which of 100 people is guilty, but then use the posterior to ask what is the probability that a man is guilty, or that an old person is guilty. The fact that "man" and "old" are not mutually exclusive in no way means you cannot try to learn about both of these hypotheses.      
 
 
 ###  Bayes' Rule for Continuous Parameters and The Dirichlet family 
@@ -131,7 +131,7 @@ For the framework developed in this book, we will often be interested in forming
 
 Consider, for example, the share of people in a population that voted; this is a quantity between 0 and 1. Two people might both believe that the turnout was around 50\% but may differ in how certain they are about this claim. One might claim to have no information and to believe that any turnout rate between 0 and 100% is equally likely, giving an expected turnout of 50%; another might be completely confident that the number is 50% and entertain no other possibilities.
 
-We can capture such beliefs quite well by using the Beta distribution---a special case of the Dirichlet. The Beta is a distribution over the $[0,1]$ that is governed by two parameters , $\alpha$ and $\beta$. In the case in which both $\alpha$ and $\beta$ are 1, the distribution is uniform---all values are seen as equally likely. As $\alpha$ rises large outcomes are seen as more likely and as $\beta$ rises, lower outcomes are seen as more likely. If both rise proportionately the expected outcome does not change but the distribution becomes tighter. 
+We can capture such beliefs quite well by using the Beta distribution---a special case of the Dirichlet. The Beta is a distribution over the $[0,1]$ that is governed by two parameters , $\alpha$ and $\beta$. In the case in which both $\alpha$ and $\beta$ are 1, the distribution is uniform---all values are considered equally likely. As $\alpha$ rises large outcomes are seen as more likely and as $\beta$ rises, lower outcomes are considered more likely. If both rise proportionately the expected outcome does not change but the distribution becomes tighter. 
 
 An attractive feature of the Beta distribution is that if one has a prior Beta($\alpha$, $\beta$) over the probability of some event (e.g.  that a coin comes up heads), and then one observes a positive case, the Bayesian posterior distribution is also a Beta with with parameters $\alpha+1, \beta$. Thus in a sense if people start with uniform priors and build up knowledge on seeing outcomes, their posterior beliefs should be Beta distributions.
 
@@ -242,7 +242,7 @@ plot(c(0,1), c(0,1), type="l", col="grey", xlab=expression(paste(phi[d], " (Prob
      ylab=expression(paste(phi[b], " (Probability of observing  ", italic(K), " given b)")),
      main="Classification of tests")
 
-polygon(c(0,0,.5, 1/3, 0), c(.5, 1, 1, 2/3, .5), col = "grey", , border = FALSE)
+polygon(c(0,0,.5, 1/3, 0), c(.5, 1, 1, 2/3, .5), col = "grey", border = FALSE)
 polygon(c(0, 1/3, 1,  0), c(0,2/3,1,0), col = "lightgrey", border = FALSE)
 polygon(c(0,2/3,1, 0), c(0, 1/3, 1, 0), col = "grey", border = FALSE)
 polygon(c(.5, 2/3, 1,  1, .5), c(0,1/3,.5,0,0), col = "lightgrey", border = FALSE)
@@ -285,15 +285,15 @@ In Chapter \@ref(questions), we described queries of interest as queries over no
 
 Once queries are defined in terms of nodal types, the formation of beliefs, given data $W$, about queries follows immediately from application of Bayes rule. 
 
-Let $Q(\theta)$ define the value of the query in context $\theta$. The updated beliefs about the query are given by the distribution:
+Let $q(\theta)$ define the value of the query in context $\theta$. The updated beliefs about the query are given by the distribution:
 
-$$P(q | W) = \int_{\theta:Q(\theta) = q} P(\theta|W)d\theta =  \int_{\theta:Q(\theta) = q} \frac{P(W|\theta)P(\theta)}{\int_{\theta'}P(W|\theta')P(\theta')d\theta'}d\theta$$
+$$p(q' | W) = \int_{\theta:q(\theta) = q'} p(\theta|W)d\theta =  \int_{\theta:q(\theta) = q'} \frac{p(W|\theta)p(\theta)}{\int_{\theta'}p(W|\theta')p(\theta')d\theta'}d\theta$$
 
 This expression gathers together all the causal types (combinations of nodal types) that satisfy a query and assesses how likely these are, collectively, given the data.^[Learning about roots from observed data is sometimes termed *abduction*; see @pearl2009causality, p 206.] For an abstract representation of the relations between  assumptions, queries, data, and conclusions, see Figure 1 in @pearl2012causal.  
 
 
-Return now to Mr Smith's puzzle. We can think of the two "nodal types" here as the sexes of the two children, child $A$ and child $B$. The query here is $Q$: "Are both boys?" The statement "$Q=1$" is equivalent to the statement, $A$ is a boy \& $B$ is a boy. Thus it takes the value $q=1$ under just one causal type, when both nodes have been assigned to the value "boy." Statement $q=0$ is  the statement ("$A$ is a boy \& $B$ is a girl" or "$A$ is a girl \& $B$ is a boy" or "$A$ is a girl \& $B$ is a girl"). Thus $q=0$ in three contexts.  If we assume that each of the two children is equally likely to be a boy or a girl with independent probabilities, then  each of the four contexts is equally likely. 
- The  result can then be figured out as $P(Q=1) = \frac{1\times \frac{1}{4}}{1\times \frac{1}{4} + 1\times \frac{1}{4}+1\times \frac{1}{4}+0\times \frac{1}{4}} = \frac{1}{3}$. This answer requires summing  over only one causal type. $P(Q=0)$ is of course the complement of this, but using the Bayes formula one can see that it can be found by summing over the posterior probability of three causal types in which the statement $Q=0$ is true. 
+Return now to Mr Smith's puzzle. We can think of the two "nodal types" here as the sexes of the two children, child $A$ and child $B$. The query here is $q$: "Are both boys?" The statement "$q=1$" is equivalent to the statement, $A$ is a boy \& $B$ is a boy. Thus it takes the value $q=1$ under just one causal type, when both nodes have been assigned to the value "boy." Statement $q=0$ is  the statement ("$A$ is a boy \& $B$ is a girl" or "$A$ is a girl \& $B$ is a boy" or "$A$ is a girl \& $B$ is a girl"). Thus $q=0$ in three contexts.  If we assume that each of the two children is equally likely to be a boy or a girl with independent probabilities, then  each of the four contexts is equally likely. 
+ The  result can then be figured out as $p(q=1) = \frac{1\times \frac{1}{4}}{1\times \frac{1}{4} + 1\times \frac{1}{4}+1\times \frac{1}{4}+0\times \frac{1}{4}} = \frac{1}{3}$. This answer requires summing  over only one causal type. $p(q=0)$ is of course the complement of this, but using the Bayes formula one can see that it can be found by summing over the posterior probability of three causal types in which the statement $q=0$ is true. 
  
 We will often want to think about our causal queries being collections of states of the world---i.e., of causal types. Returning to our discussion of queries in Chapter \@ref(questions), suppose we start with the model $X \rightarrow M \rightarrow Y$, and our query is whether $X$ has a positive effect on $Y$. This is a query that is satisfied by four sets of causal types: those in which $X$ has a positive effect on $M$ and $M$ has a positive effect on $Y$, with $X$ being either 0 or 1; and those in which $X$ has a negative effect on $M$ and $M$ has a negative effect on $Y$, with $X$ being either 0 or 1. Our inferences on the query will thus involve gathering these different causal types, and their associated posterior probabilities, together.
 

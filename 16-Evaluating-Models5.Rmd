@@ -1,7 +1,7 @@
 # Evaluating models {#evaluation}
 
 :::: {.headerbox data-latex=""}
-Model based inference takes the model seriously. But deep down we know that all of these models are wrong, in myriad ways. We examine strategies for figuring out whether a model is likely doing more harm than good.
+We describe strategies for figuring out whether a model is likely doing more harm than good.
 ::::
 
 <br>
@@ -121,7 +121,7 @@ rbind(
   estimatr::lm_robust(Y~X, data = filter(data, M==1)) %>% tidy %>% filter(term == "X")) %>%
   mutate(M = 0:1) %>%
   select(M, estimate, std.error, p.value) %>% 
-  kable(digits = 3, caption =  "Regression coefficient on $X$ given $M=0$ and $M=1$")
+  kabble(digits = 3, caption =  "Regression coefficient on $X$ given $M=0$ and $M=1$")
 
 
 ```
@@ -275,7 +275,7 @@ df %>%
 
 <!-- df <- read_rds("saved/ch15_likelihoodsdf.rds")  -->
 
-<!-- kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another") -->
+<!-- kabble(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another") -->
 <!-- ``` -->
 
 <!-- Compare likelihoods of the data under different models -->
@@ -437,7 +437,7 @@ names(out2) <- c("No data", "M0", "M1")
 out2 <- arrange(out2,M0, M1)
 
 cbind(adverse2, out2) %>% data.frame() %>%
-  kable(
+  kabble(
     col.names = c("$\\lambda^Y_{10}$", "Prior", "$M=0$", "$M=1$"), digits = 3,
     caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^Y_{10}$")
 
@@ -560,7 +560,7 @@ rbind(
   select(Given, estimate, std.error, p.value) %>% 
   mutate(Correlation = c("P,I", "P,M", "P,I", "P,I")) %>%
   select(Correlation, everything()) %>%
-  kable(digits = 3, caption =  "Regression coefficients to assess conditional independence")
+  kabble(digits = 3, caption =  "Regression coefficients to assess conditional independence")
 
 
 ```
@@ -643,7 +643,7 @@ As we can see both visually and from the $p-$values, the model performs well her
 
 Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
-```{r loo_pimdplots, echo = FALSE, fig.cap = "C"}
+```{r loopimdplots1, echo = FALSE, fig.cap = "Leave one out likelihoods for restricted and unrestricted democracy and inequality models"}
 # Leave one out
 
 
@@ -675,13 +675,14 @@ data.frame(restricted = loo_pimd$case_likelihood %>% unlist,
 ```
 
 
-```{r pimdloocomp, echo = FALSE, caption = "LOO data predictions for three PIMD models"}
+```{r pimdloocomp, echo = FALSE, fig.cap = "LOO data predictions for three PIMD models"}
 
-list(`restricted model` = loo_pimd,  `unrestricted model` = loo_pimdnegmed,  `fully unrestricted model` =  loo_pimdnonmon ) %>% plot_loo()
+list(`restricted model` = loo_pimd,  `unrestricted model` = loo_pimdnegmed,  `fully unrestricted model` =  loo_pimdnonmon ) %>% 
+  plot_loo()
 
 ```
 
-Figures \@ref(fig:loo_pimdplots) shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure  \@ref(fig:loo_pimdloocomp), confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
+Figures \@ref(fig:loopimdplots1) shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure  \@ref(fig:pimdloocomp), confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes ($I, P, M$ and $D$).  In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.
 
 More formally, we calculate the LOO likelihood for each model as `r formatC(loo_pimd$loo_likelihood, format = "e", digits = 2)` for the model with monotonicity assumptions throughout, `r formatC(loo_pimdnegmed$loo_likelihood, format = "e", digits = 2)` for the model that relaxes the monotonicity assumption for $I \rightarrow M$, and `r formatC(loo_pimdnonmon$loo_likelihood, format = "e", digits = 2)` for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for $I \rightarrow M$).
 
@@ -761,7 +762,7 @@ q_01 <- select(q_01_1, Given) %>%
 q_01 %>%
   mutate(Example = c(" ", "Mexico (2000)", "Taiwan (1996)", 
                   "Albania (1991)", "Nicaragua (1984)")) %>%
-kable(caption = "Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).",
+kabble(caption = "Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).",
       digits = 3)
 
 
@@ -790,7 +791,7 @@ q_11 <- select(q_11_1, Given) %>%
     Unrestricted  = q_11_2$mean)
 q_11 %>%
   mutate(Example = c(" ", "Mongolia (1990)", "Paraguay (1989)", "Sierra Leone (1996)", "Malawi (1994)")) %>%
-  kable(caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).",
+  kabble(caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).",
       digits = 3)
 
 ```

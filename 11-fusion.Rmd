@@ -122,7 +122,7 @@ We see that the same thing is true for each of the other studies. In study 2, we
 
 frank <- read_rds("saved/10a_frankenstein.rds")
 
-kable(
+kabble(
   cbind(Study = c(1, NA, 2, NA, 3, NA),
         rbind(
     frank[[1]][,-c(1,3)],
@@ -138,7 +138,7 @@ Rows 3-4 highlight that the updating works through inferences on $Z$: we see tha
 
 
 ```{r frank4, echo = FALSE}
-kable(frank[[4]][1:4,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$", digits = 2)
+kabble(frank[[4]][1:4,-c(1,3)], caption = "Clue is informative after combining studies linking $K$ to $Z$ and $Z$ to $Y$", digits = 2)
 ```
 
 
@@ -192,7 +192,7 @@ hj_ggdag(model=model)
 
 ```{r, echo = FALSE, include = FALSE}
 P <- get_parameter_matrix(model)
-kable(P[,1:4])
+kabble(P[,1:4])
 ```
 
 
@@ -224,7 +224,7 @@ result <- query_model(
 write_rds(result, "saved/10a_fusionestimands.rds")
 }
 
-read_rds("saved/10a_fusionestimands.rds") %>% kable(caption = "Estimands in different sites", digits = 2)
+read_rds("saved/10a_fusionestimands.rds") %>% kabble(caption = "Estimands in different sites", digits = 2)
 
 ```
 
@@ -240,7 +240,7 @@ We begin by analyzing just the observational data (cases where $R=0$) and displa
 
 ```{r fusiondim, echo  = FALSE, warning = FALSE, message = FALSE}
 x <- estimatr::difference_in_means(Y~X, data = filter(data, R==0))
-kable(summary(x)[[1]], digits = 3, caption = "Inferences on the ATE from differences in means")
+kabble(summary(x)[[1]], digits = 3, caption = "Inferences on the ATE from differences in means")
 ```
 
 In contrast, when we use `CausalQueries` to update on the full causal model and use both the experimental and observational data, we get the much more accurate results shown in Table \@ref(tab:fusionCQ). Moving down the rows, we show here the estimate of the unconditional $ATE$, the estimate for the observational context ($R=0$), and the estimate for the experimental context ($R=1$). Unsurprisingly, the estimates are identical across all three settings since, in the model, $R$ is $d$-separated from $Y$ by $X$, which is observed. And, as we see, the posterior means are very close to the right answer of $0.2$.
@@ -258,7 +258,7 @@ result <- query_model(
     queries = list(ATE = "c(Y[X=1] - Y[X=0])"), 
     given = list(TRUE, "R==0", "R==1"),
     using = "posteriors")
-kable(result, caption = "Estimates on the ATE for observational ($R=0$) and experimental ($R=1$) set.")
+kabble(result, caption = "Estimates on the ATE for observational ($R=0$) and experimental ($R=1$) set.")
 ```
 
 
@@ -282,7 +282,7 @@ result <- query_model(
     queries = list(ATE = "c(Y[X=1] - Y[X=0])"), 
     given = list(TRUE, "R==0", "R==1"),
     using = "posteriors")
-kable(result)
+kabble(result)
 ```
 
 Since the model used both the experimental and the observational data, we might wonder from where the leverage derived: did the observational data improve our estimates of the average treatment effect, or do our inferences emerge strictly from the experimental data? In the appendix, we show results when we updating using experimental data only.
@@ -299,7 +299,7 @@ result2 <- query_model(
     given = list("R==1 & X==0", "R==1 & X==1", "R==0 & X==0", "R==0 & X==1"),
     using = "posteriors")
 
-kable(result2, caption = "Effects of $X$ conditional on $X$ for units that were randomly assigned or not.  Effects of $X$ do not depend on $X$ in the experimental group, but they do in the observational group becuase of seld selection. ")
+kabble(result2, caption = "Effects of $X$ conditional on $X$ for units that were randomly assigned or not.  Effects of $X$ do not depend on $X$ in the experimental group, but they do in the observational group becuase of seld selection. ")
 ```
 
 We can learn nothing about the observational $ATT$ or $ATC$ from the experimental data alone, where there $ATT$ and $ATC$ are the same quantity. And in the observational data alone, we are hobbled by confounding of unknown direction and size. What the mixed model and data, in effect, are able to do is (a) learn about the $ATE$ experimental data, (b) use inferences on the $ATE$ to separate true effects from confounding in the observational data and thus learn about the direction and size of the confounding in those data, and (c) estimate the treatment effect for the $X=0$ group and for the $X=1$ group, respectively, in the observational data *using* knowledge about confounding in these data. By mixing the experimental and observational data, we can learn about how the treatment has affected those units that, in the "real" world of the observational setting, selected into treatment *and* about how the treatment *would* affect those that selected into control. 
@@ -351,7 +351,7 @@ write_rds(appev2, "saved/10a_appev2.rds")
 }
 
 read_rds("saved/10a_appev2.rds")  %>% 
-  kable(caption = "Priors and true values (parameters) for three estimand: the frequency of $W$, the effect of $X$ on $Y$, and the effect conditional on $W=1$")
+  kabble(caption = "Priors and true values (parameters) for three estimand: the frequency of $W$, the effect of $X$ on $Y$, and the effect conditional on $W=1$")
 
 ```
 
@@ -387,7 +387,7 @@ if(do_diagnosis){
 
 q <- read_rds("saved/10a_transport.rds")
 
-kable(q, caption = "Extrapolation when two sites differ on $W$ and $W$ is observable in both contexts")
+kabble(q, caption = "Extrapolation when two sites differ on $W$ and $W$ is observable in both contexts")
 
 ```
 
@@ -423,7 +423,7 @@ if(do_diagnosis){
 
 q2 <- read_rds("saved/10a_transport2.rds")
 
-kable(q2, caption = "Extrapolation when two contexts differ on $W$ and $W$ is not observable in target context")
+kabble(q2, caption = "Extrapolation when two contexts differ on $W$ and $W$ is not observable in target context")
 
 ```
 
@@ -512,7 +512,7 @@ that treats each $b_j$ as a draw from distribution $N(\beta_j, se_j)$ (and, in t
 <!--     rbind( -->
 <!--     multilevel[[1]],  multilevel[[2]], -->
 <!--   multilevel[[3]],  -->
-<!--   multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2) -->
+<!--   multilevel[[5]]) %>% kabble(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2) -->
 <!-- ``` -->
 
 <!-- <!-- We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2.  -->
@@ -520,8 +520,8 @@ that treats each $b_j$ as a draw from distribution $N(\beta_j, se_j)$ (and, in t
 <!-- Further, we can use these same updated models to update specifically on the amount of heterogeneity across settings. We operationalize heterogeneity here as the share of units that *would* respond differently to $X$ if they were in a different setting. In Table XXXX, we compare our prior on this quantity to our posterior. Where we started out with flat priors --- allowing for a great deal of heterogeneity --- we see that the data bring these beliefs downward. This makes sense given that, under the true data-generating process, the effects in the two settings are only moderately different. Conversely, where we start with a very low prior on heterogeneity, the data lead us to believe there is *more* heterogeneity than we had initially believed (though, given the strength of the prior that we have used in this example, we can still see its formidable efect on the posterior). -->
 
 <!-- ```{r, echo = FALSE} -->
-<!--     multilevel[[4]] %>% kable(caption = "Interaction | Flat priors") -->
-<!--   multilevel[[6]] %>% kable(caption = "Interaction | Expected homogeneity") -->
+<!--     multilevel[[4]] %>% kabble(caption = "Interaction | Flat priors") -->
+<!--   multilevel[[6]] %>% kabble(caption = "Interaction | Expected homogeneity") -->
 
 <!-- ``` -->
 

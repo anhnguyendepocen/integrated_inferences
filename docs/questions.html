@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -258,7 +260,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
-<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing probative value from a graph</a></li>
 <li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
@@ -335,7 +337,7 @@ div.csl-indent {
 <li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
 <li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
@@ -415,7 +417,7 @@ div.csl-indent {
 <div id="questions" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Causal Queries</h1>
 <div class="headerbox">
-<p>Although a lot of empirical work focuses on identifying average causal effects, there is a rich array of other well defined causal questions that can be asked about how variables relate to each other causally. We describe major families of questions and illustrate how these can all be described as queries about the values of nodes in a causal model.</p>
+<p>We describe major families of causal queries and illustrate how these can all be described as queries about the values of nodes in a causal model.</p>
 </div>
 <p><br></p>
 <p>Although scholars share a broad common interest in causality there is tremendous heterogeneity in the kinds of causal questions that scholars ask. Consider the relationship between inequality and democratization. We might seek, for instance, to know inequality’s average impact on democratization across some set of cases. Alternatively, we might be interested in a particular case—say, Mongolia in 1995—and want to know whether inequality would have an effect <em>here</em>. That is a question about causal effects at the case level. Alternatively we might wonder whether the level of democracy in Mongolia in 1995 is <em>due</em> to the level of inequality in that case—this is quite a distinct question (in the same way that establishing that poison would make you sick does not imply that you are sick because of poison). Or we may be interested in <em>how</em> causal effects unfold, inquiring about the pathway or mechanism through which inequality affects democratization—a question we can also ask at two levels. We can ask whether inequality affected democratization in Mongolia through mobilization of the masses; or we can ask how commonly inequality affects democratization through mobilization across a broad set of cases. Pushing further we might ask a counterfactual question of the form: would inequality have produced democratization had mobilization been prevented from occurring.</p>
@@ -762,88 +764,179 @@ Q2. What is the probability that <span class="math inline">\(X\)</span> causes <
 <span id="cb2-10"><a href="questions.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">a1 =</span> CausalQueries<span class="sc">:::</span><span class="fu">map_query_to_causal_type</span>(model, q1)<span class="sc">$</span>types,</span>
 <span id="cb2-11"><a href="questions.html#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">a2 =</span> CausalQueries<span class="sc">:::</span><span class="fu">map_query_to_causal_type</span>(model, q2)<span class="sc">$</span>types,</span>
 <span id="cb2-12"><a href="questions.html#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">p  =</span> <span class="fu">get_type_prob</span>(model))</span></code></pre></div>
-<table>
-<caption><span id="tab:unnamed-chunk-4">Table 4.1: </span>Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-4">Table 4.1: </span>Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="left">a1</th>
-<th align="left">a2</th>
-<th align="right">p</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+a1
+</th>
+<th style="text-align:left;">
+a2
+</th>
+<th style="text-align:right;">
+p
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X1.M00.Y00</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M00.Y00
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1.M01.Y00</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M01.Y00
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1.M11.Y00</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M11.Y00
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1.M00.Y01</td>
-<td align="left">FALSE</td>
-<td align="left">FALSE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M00.Y01
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1.M01.Y01</td>
-<td align="left">TRUE</td>
-<td align="left">TRUE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M01.Y01
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1.M11.Y01</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M11.Y01
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1.M00.Y11</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M00.Y11
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1.M01.Y11</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M01.Y11
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1.M11.Y11</td>
-<td align="left">FALSE</td>
-<td align="left">TRUE</td>
-<td align="right">0.1111</td>
+<tr>
+<td style="text-align:left;">
+X1.M11.Y11
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:right;">
+0.111
+</td>
 </tr>
 </tbody>
 </table>
 <p>The answer to the overall queries are then (1) the expected value of (the answers to) <span class="math inline">\(q_1\)</span> and weights <span class="math inline">\(p\)</span>and (2) the expected value of (the answers to) <span class="math inline">\(q_1\)</span> given <span class="math inline">\(q_0\)</span> and weights <span class="math inline">\(p\)</span>:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="questions.html#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">POS =</span> <span class="fu">weighted.mean</span>(a1, p),</span>
 <span id="cb3-2"><a href="questions.html#cb3-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">POC =</span> <span class="fu">weighted.mean</span>(a1[a2], p[a2]))</span></code></pre></div>
-<table>
-<caption><span id="tab:ch4pospoc">Table 4.2: </span>Calculated answers to two queries.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:ch4pospoc">Table 4.2: </span>Calculated answers to two queries.
+</caption>
 <thead>
-<tr class="header">
-<th align="right">POS</th>
-<th align="right">POC</th>
+<tr>
+<th style="text-align:right;">
+POS
+</th>
+<th style="text-align:right;">
+POC
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">0.1111</td>
-<td align="right">0.2</td>
+<tr>
+<td style="text-align:right;">
+0.111
+</td>
+<td style="text-align:right;">
+0.2
+</td>
 </tr>
 </tbody>
 </table>

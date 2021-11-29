@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -258,7 +260,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
-<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing probative value from a graph</a></li>
 <li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
@@ -335,7 +337,7 @@ div.csl-indent {
 <li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
 <li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
@@ -678,183 +680,456 @@ Table <a href="pt.html#tab:ambigmatrixmed">7.2</a> shows a portion of the ambigu
 <!-- Our priors here derive from a set of parameter values, much like in the previous example, in which the $X$ types are equally common (0.5 each); a positive effect of $X$ on $M$ is twice as common (0.4) as the other $M$ types (all set to 0.2); and a positive effect of $M$ on $Y$ is twice as common (0.4) as all other $Y$ types (all at 0.2). We can then easily see why we thus get priors on some causal types are higher than those on others: for instance, the two causal types with priors of 0.08 both have two positive effects (at the $X \rightarrow Y$ and $M \rightarrow Y$ stages) while the causal types with priors of 0.02 include no positive effects at either stage. -->
 <!-- ```{r ambigmatrix, echo = FALSE} -->
 <!-- ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = draw_type_prob(XY, using = "parameters"))) -->
-<!-- kable(ambXY_with_priors), caption = "Ambiguity matrix for X -> Y model. Rows are causal types, columns are data types. Last column shows possible priors over rows.") -->
+<!-- kabble(ambXY_with_priors), caption = "Ambiguity matrix for X -> Y model. Rows are causal types, columns are data types. Last column shows possible priors over rows.") -->
 <!-- ``` -->
 <!-- For an $X \rightarrow Y$ model: -->
-<table>
-<caption><span id="tab:ambigmatrixmed">Table 7.2: </span>Excerpt from the Ambiguity matrix for a chain model. Rows are causal types, columns are data types. Last column shows possible priors over rows.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:ambigmatrixmed">Table 7.2: </span>Excerpt from the Ambiguity matrix for a chain model. Rows are causal types, columns are data types. Last column shows possible priors over rows.
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">X0M0Y0</th>
-<th align="right">X1M0Y0</th>
-<th align="right">X0M1Y0</th>
-<th align="right">X1M1Y0</th>
-<th align="right">X0M0Y1</th>
-<th align="right">X1M0Y1</th>
-<th align="right">prior</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+X0M0Y0
+</th>
+<th style="text-align:right;">
+X1M0Y0
+</th>
+<th style="text-align:right;">
+X0M1Y0
+</th>
+<th style="text-align:right;">
+X1M1Y0
+</th>
+<th style="text-align:right;">
+X0M0Y1
+</th>
+<th style="text-align:right;">
+X1M0Y1
+</th>
+<th style="text-align:right;">
+prior
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X0M00Y00</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X0M00Y00
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M00Y00</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X1M00Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M10Y00</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X0M10Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M10Y00</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X1M10Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M01Y00</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.04</td>
+<tr>
+<td style="text-align:left;">
+X0M01Y00
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M01Y00</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.04</td>
+<tr>
+<td style="text-align:left;">
+X1M01Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M11Y00</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X0M11Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M11Y00</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X1M11Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M00Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X0M00Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M00Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X1M00Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M10Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X0M10Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M10Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X1M10Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M01Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0.04</td>
+<tr>
+<td style="text-align:left;">
+X0M01Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M01Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.04</td>
+<tr>
+<td style="text-align:left;">
+X1M01Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M11Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X0M11Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M11Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+X1M11Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
 </tbody>
 </table>
@@ -909,7 +1184,7 @@ Table <a href="pt.html#tab:ambigmatrixmed">7.2</a> shows a portion of the ambigu
 <!--     select(type, X1Y1, prior) %>% -->
 <!--     filter(X1Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable() -->
+<!--    kabble() -->
 <!-- ``` -->
 <p>We now walk through how this work for the more complex <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model, and the ambiguity matrix in Table <a href="pt.html#tab:ambigmatrixmed">7.2</a>. If we observe the data <span class="math inline">\(X=1, M=0, Y=0\)</span>, for instance, this exercise would yield the updated ambiguity matrix in Table <a href="pt.html#tab:ambigmedupdate">7.4</a>. Here we have eliminated all rows (causal types) with a <span class="math inline">\(0\)</span> in the relevant data-type column (<span class="math inline">\(X1M0Y0\)</span>) and formed the posteriors by scaling up the priors in the retained rows.</p>
 <table>
@@ -962,44 +1237,93 @@ Table <a href="pt.html#tab:ambigmatrixmed">7.2</a> shows a portion of the ambigu
 </tbody>
 </table>
 <p>A notable feature of the logic of single-case process tracing is that the relative probabilities on the retained causal types never change. If we start out believing that causal type <span class="math inline">\(A\)</span> is twice as likely as causal type <span class="math inline">\(B\)</span>, and both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are retained once we see the data, then <span class="math inline">\(A\)</span> will be twice as likely as <span class="math inline">\(B\)</span> in our posteriors. All updating occurs by <em>eliminating</em> causal types from consideration and zeroing in on those that remain.</p>
-<table>
+<table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="left">type</th>
-<th align="right">X1M0Y0</th>
-<th align="right">prior</th>
-<th align="right">posterior</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+type
+</th>
+<th style="text-align:right;">
+X1M0Y0
+</th>
+<th style="text-align:right;">
+prior
+</th>
+<th style="text-align:right;">
+posterior
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X1M00Y00</td>
-<td align="left">X1M00Y00</td>
-<td align="right">1</td>
-<td align="right">0.02</td>
-<td align="right">0.1667</td>
+<tr>
+<td style="text-align:left;">
+X1M00Y00
+</td>
+<td style="text-align:left;">
+X1M00Y00
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.167
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M10Y00</td>
-<td align="left">X1M10Y00</td>
-<td align="right">1</td>
-<td align="right">0.02</td>
-<td align="right">0.1667</td>
+<tr>
+<td style="text-align:left;">
+X1M10Y00
+</td>
+<td style="text-align:left;">
+X1M10Y00
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.167
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1M00Y01</td>
-<td align="left">X1M00Y01</td>
-<td align="right">1</td>
-<td align="right">0.04</td>
-<td align="right">0.3333</td>
+<tr>
+<td style="text-align:left;">
+X1M00Y01
+</td>
+<td style="text-align:left;">
+X1M00Y01
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.333
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M10Y01</td>
-<td align="left">X1M10Y01</td>
-<td align="right">1</td>
-<td align="right">0.04</td>
-<td align="right">0.3333</td>
+<tr>
+<td style="text-align:left;">
+X1M10Y01
+</td>
+<td style="text-align:left;">
+X1M10Y01
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.333
+</td>
 </tr>
 </tbody>
 </table>
@@ -1009,7 +1333,7 @@ Table <a href="pt.html#tab:ambigmatrixmed">7.2</a> shows a portion of the ambigu
 <!--     select(type, X1M1Y1, prior) %>% -->
 <!--     filter(X1M1Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable(digits = 2) -->
+<!--    kabble(digits = 2) -->
 <!-- ``` -->
 <div id="partial-data" class="section level4" number="7.1.4.1">
 <h4><span class="header-section-number">7.1.4.1</span> Partial data</h4>
@@ -1104,7 +1428,7 @@ Table <a href="pt.html#tab:ambigmatrixmed">7.2</a> shows a portion of the ambigu
 <!--     select(type, X1M0Y1, X1M1Y1, prior) %>%  -->
 <!--     filter(X1M1Y1 ==1 | X1M0Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable(digits = 2) -->
+<!--    kabble(digits = 2) -->
 <!-- ``` -->
 <p><strong>Updating on queries.</strong> We now have a posterior probability for each causal type for the case at hand. The causal question we are interested in answering, our query, may not be about causal types <em>per se.</em> It is about a query that can be expressed as a <em>combination</em> of causal types, as described in Chapter <a href="questions.html#questions">4</a>.</p>
 <p>For instance, suppose we are working with the model <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>; and that our question is, “Did <span class="math inline">\(X=1\)</span> cause <span class="math inline">\(Y=1\)</span>?” This question is asking both:</p>
@@ -1263,7 +1587,7 @@ Table <a href="pt.html#tab:ambigmatrixmed">7.2</a> shows a portion of the ambigu
 <!--     select(type, X1M0Y1, X1M1Y1, prior) %>% -->
 <!--     filter(X1M0Y1 ==1 | X1M1Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable() -->
+<!--    kabble() -->
 <!-- ``` -->
 <p>For more complex models and queries, it can be more difficult to eyeball the corresponding causal types. In practice, therefore, we use the <code>get_query_types</code> function in the <code>CausalQueries</code> package to do this for us.</p>
 <!-- For example, supposer we want to know whether $X$ has some causal effect on $Y$ in our simple mediation model. The query, "$X$ haa a causal effect on $Y$" maps onto a relatively large, though still easily calculated, collection of types. Using `gbiqq`'s get_types function, we would define our query as a search for all causal types in which $Y$'s potential outcome when $X=1$ is different from $Y$'s potential outcome when $X=0$. The function then reports back all causal types meeting this condition: -->
@@ -1291,13 +1615,47 @@ query_model(model = XMY,
               using = "parameters")
 ```
 
-
-|Query |Given              |Using      |Case.estimand |   mean|
-|:-----|:------------------|:----------|:-------------|------:|
-|PC    |-                  |parameters |FALSE         | 0.2000|
-|PC    |X==1 & Y==1        |parameters |FALSE         | 0.3846|
-|PC    |X==1 & Y==1 & M==0 |parameters |FALSE         | 0.2500|
-|PC    |X==1 & Y==1 & M==1 |parameters |FALSE         | 0.4444|
+<table class="table" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Query </th>
+   <th style="text-align:left;"> Given </th>
+   <th style="text-align:left;"> Using </th>
+   <th style="text-align:left;"> Case.estimand </th>
+   <th style="text-align:right;"> mean </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> PC </td>
+   <td style="text-align:left;"> - </td>
+   <td style="text-align:left;"> parameters </td>
+   <td style="text-align:left;"> FALSE </td>
+   <td style="text-align:right;"> 0.200 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> PC </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 </td>
+   <td style="text-align:left;"> parameters </td>
+   <td style="text-align:left;"> FALSE </td>
+   <td style="text-align:right;"> 0.385 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> PC </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 &amp; M==0 </td>
+   <td style="text-align:left;"> parameters </td>
+   <td style="text-align:left;"> FALSE </td>
+   <td style="text-align:right;"> 0.250 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> PC </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 &amp; M==1 </td>
+   <td style="text-align:left;"> parameters </td>
+   <td style="text-align:left;"> FALSE </td>
+   <td style="text-align:right;"> 0.444 </td>
+  </tr>
+</tbody>
+</table>
 
 ::::
 -->
@@ -1327,8 +1685,8 @@ Figure 7.2: The probability of observing <span class="math inline">\(K\)</span> 
 </p>
 </div>
 </div>
-<div id="assessing-the-possibility-of-probative-value-from-a-graph" class="section level2" number="7.3">
-<h2><span class="header-section-number">7.3</span> Assessing the possibility of probative value from a graph</h2>
+<div id="assessing-probative-value-from-a-graph" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Assessing probative value from a graph</h2>
 <!-- Rules for inferring information about one variable from another are th stuff of graphoids  [@pearl1985graphoids] see also [@geiger1987non] and [@pearl1987logic]...  -->
 <p>As we have argued, causal queries can be expressed as collections of combinations of nodal types (i.e., as collections of causal types) in a causal model. A nodal type is itself represented as an unobservable node in a model — as a <span class="math inline">\(\theta^j\)</span> pointing into node <span class="math inline">\(j\)</span>. Thus, causal inference in this framework is <em>the use of observable nodes on a causal graph to assess the value of one or more unobserved nodes on a causal graph.</em> Placing our queries on the graph together with the observable nodes has the important advantage of allowing us to graphically identify the possibilities for learning about these queries: that is, to say which observable nodes are potentially informative about a given query.</p>
 <!-- Case-level causal effects and causal paths can be defined in terms of response-type nodes; average effects and notable causes in terms of population-level parameter nodes (e.g., $\pi$ or $\lambda$ terms); and questions about actual causes in terms of exogenous conditions that yield particular endogenous values (conditioning on which makes some variable a counterfactual cause).  -->
@@ -1387,7 +1745,7 @@ Figure 7.3: A simple causal setup in which the effect of <span class="math inlin
 <p>Finally, what if we observe <span class="math inline">\(X\)</span> first and are considering whether to seek information about <span class="math inline">\(Y\)</span>? Would doing so be informative? <span class="math inline">\(X\)</span> does not <span class="math inline">\(d-\)</span>separate <span class="math inline">\(Q\)</span> from <span class="math inline">\(Y\)</span>; thus, observing <span class="math inline">\(Y\)</span> will be informative about <span class="math inline">\(Q\)</span>. In fact, observing <span class="math inline">\(Y\)</span> if we have already seen <span class="math inline">\(X\)</span> is <em>more</em> informative than observing <span class="math inline">\(Y\)</span> alone. The reasoning follows the logic of collision discussed just above. If we observe <span class="math inline">\(Y\)</span> having already seen <span class="math inline">\(X\)</span>, not only do we reap the information about <span class="math inline">\(Q\)</span> provided by <span class="math inline">\(Y\)</span>’s correlation with <span class="math inline">\(Q\)</span>; we simultaneously open up the path between <span class="math inline">\(X\)</span> and <span class="math inline">\(Q\)</span>, learning additionally from the conditional dependence between <span class="math inline">\(X\)</span> and <span class="math inline">\(Q\)</span> given <span class="math inline">\(Y\)</span>.</p>
 <p>We put Proposition 1 to work in a slightly more complex set of models in Figure . Here we investigate the informativeness of a clue that is neither <span class="math inline">\(X\)</span> nor <span class="math inline">\(Y\)</span>. Each graph in Figure  has four variables: <span class="math inline">\(X\)</span>; <span class="math inline">\(Y\)</span>; a possible clue, <span class="math inline">\(K\)</span>; and a node, <span class="math inline">\(Q\)</span>, representing the query (which we might also naturally think of as <span class="math inline">\(\theta^Y\)</span>). We draw all 34 possible graphs with variables <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, <span class="math inline">\(K\)</span>, and <span class="math inline">\(Q\)</span> for causal models in which (a) all variables are connected to at least one other variable, (b) <span class="math inline">\(X\)</span> causes <span class="math inline">\(Y\)</span> either directly or indirectly, and (c) <span class="math inline">\(Q\)</span> is a direct cause of <span class="math inline">\(Y\)</span> but is not caused by any other variable in the model and is thus exogenous. The title of each panel reports <span class="math inline">\(K\)</span>’s conditional informativeness using principles of <span class="math inline">\(d\)</span>-separation: it tells us when <span class="math inline">\(K\)</span> is possibly informative about <span class="math inline">\(Q\)</span> depending on whether <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, both or none are observed.<a href="#fn60" class="footnote-ref" id="fnref60"><sup>60</sup></a></p>
 <!-- Above footnote: do we want to say "faithful" rather than stable, as we do earlier? -->
-<div class="figure"><span style="display:block;" id="fig:34graphs"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:34graphs"></span>
 <img src="ii_files/figure-html/34graphs-1.png" alt="All connected directed acyclic graphs over $X,Y,K,Q$, in which $Q$ is an exogenous variable that directly causes $Y$, and $X$ is a direct or indirect cause of $Y$. The title of each graph indicates the conditions under which $K$ can be informative about (i.e., is not $d$-separated from) $Q$, given the prior observation of $X$, $Y$, both, or neither (...)." width="1056" />
 <p class="caption">
 Figure 7.4: All connected directed acyclic graphs over <span class="math inline">\(X,Y,K,Q\)</span>, in which <span class="math inline">\(Q\)</span> is an exogenous variable that directly causes <span class="math inline">\(Y\)</span>, and <span class="math inline">\(X\)</span> is a direct or indirect cause of <span class="math inline">\(Y\)</span>. The title of each graph indicates the conditions under which <span class="math inline">\(K\)</span> can be informative about (i.e., is not <span class="math inline">\(d\)</span>-separated from) <span class="math inline">\(Q\)</span>, given the prior observation of <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, both, or neither (…).

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 13 Case selection for mixed methods inference | Integrated Inferences</title>
+  <title>Chapter 13 Case selection | Integrated Inferences</title>
   <meta name="description" content="Bayesian causal models for integrated inferences." />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 13 Case selection for mixed methods inference | Integrated Inferences" />
+  <meta property="og:title" content="Chapter 13 Case selection | Integrated Inferences" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://macartan.github.io/integrated_inferences/" />
   <meta property="og:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="macartan/integrated_inferences" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 13 Case selection for mixed methods inference | Integrated Inferences" />
+  <meta name="twitter:title" content="Chapter 13 Case selection | Integrated Inferences" />
   
   <meta name="twitter:description" content="Bayesian causal models for integrated inferences." />
   <meta name="twitter:image" content="https://macartan.github.io/integrated_inferences//images/plot.png" />
@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -258,7 +260,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
-<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing probative value from a graph</a></li>
 <li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
@@ -335,7 +337,7 @@ div.csl-indent {
 <li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
 <li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
@@ -413,7 +415,7 @@ div.csl-indent {
 
             <section class="normal" id="section-">
 <div id="caseselection" class="section level1" number="13">
-<h1><span class="header-section-number">Chapter 13</span> Case selection for mixed methods inference</h1>
+<h1><span class="header-section-number">Chapter 13</span> Case selection</h1>
 <div class="headerbox">
 <p>With a causal model in hand we can assess in advance what conclusions we will draw from different observations. We apply the logic the problem of case-selection: given a set of cases on which we already have <span class="math inline">\(X,Y\)</span> data, which cases will it be most advantageous to choose for more in-depth investigation? We show the optimal case-selection strategy depends jointly on the model we start with and the causal question we seek to answer.</p>
 </div>
@@ -507,29 +509,49 @@ p(\kappa = \kappa^L|D) &amp;=&amp;  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kapp
 <h2><span class="header-section-number">13.3</span> Specific case walk through</h2>
 <p>We introduce a flexible model-based approach to comparing the prospective learning from alternative case-selection strategies. To help explore the intuition behind this strategy, we start by walking through a simplified setup.</p>
 <p>Consider a situation in which our model is <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. Suppose, further, that we restrict the nodal types such that <span class="math inline">\(X\)</span> cannot have a negative effect on <span class="math inline">\(M\)</span>, and <span class="math inline">\(M\)</span> cannot have a negative effect on <span class="math inline">\(Y\)</span>, with flat priors over all remaining nodal types. Imagine then that we begin by collecting only <span class="math inline">\(X,Y\)</span> data on six cases and obtain the following data pattern:</p>
-<table>
+<table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr class="header">
-<th align="left">event</th>
-<th align="right">count</th>
+<tr>
+<th style="text-align:left;">
+event
+</th>
+<th style="text-align:right;">
+count
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X0Y0</td>
-<td align="right">2</td>
+<tr>
+<td style="text-align:left;">
+X0Y0
+</td>
+<td style="text-align:right;">
+2
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y0</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+X1Y0
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0Y1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+X0Y1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y1</td>
-<td align="right">2</td>
+<tr>
+<td style="text-align:left;">
+X1Y1
+</td>
+<td style="text-align:right;">
+2
+</td>
 </tr>
 </tbody>
 </table>
@@ -544,258 +566,662 @@ p(\kappa = \kappa^L|D) &amp;=&amp;  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kapp
 <p>The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally <em>likely</em> to emerge. We represent the data probabilities (calculated by CQTools) near the bottom of the table. How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure <span class="math inline">\(X,Y\)</span> data. Note, for instance, that data pattern <span class="math inline">\(A3\)</span> is much more likely to emerge than the other data patterns possible under Strategy <span class="math inline">\(A\)</span>. This is for two reasons. One is that <span class="math inline">\(A3\)</span> involves <span class="math inline">\(M\)</span> covarying with <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, a pattern consistent with <span class="math inline">\(X\)</span> having an effect on <span class="math inline">\(Y\)</span> – since, in this model, <span class="math inline">\(X\)</span> can only affect <span class="math inline">\(Y\)</span> if it affects <span class="math inline">\(M\)</span> and if <span class="math inline">\(M\)</span> effects <span class="math inline">\(Y\)</span>. Data patterns <span class="math inline">\(A1\)</span> and <span class="math inline">\(A4\)</span> have <span class="math inline">\(M\)</span> constant between the two cases, even as <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> vary; this is a pattern inconsistent with <span class="math inline">\(X\)</span> having an effect on <span class="math inline">\(Y\)</span>. <span class="math inline">\(A3\)</span>, then, is more likely than <span class="math inline">\(A1\)</span> or <span class="math inline">\(A4\)</span> because the restrictions on the model plus the evidence from the <span class="math inline">\(X,Y\)</span> data make us believe that <span class="math inline">\(X\)</span> <em>does</em> have an average effect on <span class="math inline">\(Y\)</span>. Second, we believe <span class="math inline">\(A3\)</span> is more probable than <span class="math inline">\(A2\)</span> because of the model’s restrictions: the model allows positive effects of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> and of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span> (a way of generating <span class="math inline">\(A3\)</span>), but rules out negative intermediate effects (a way of generating <span class="math inline">\(A2\)</span>).</p>
 <p>Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table <a href="caseselection.html#tab:chselillustration">13.1</a>, we can see the mean of the posterior distribution (for the <span class="math inline">\(ATE\)</span> of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>) under each data pattern. What is of particular interest in assessing case-selection strategies is the <em>variance</em> of the posterior distribution, which represents our <em>uncertainty</em>. This posterior variance on the <span class="math inline">\(ATE\)</span>, for each data pattern, is represented in the table’s final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the <em>expected</em> reduction in posterior variance.</p>
 <!-- FLAG: Need to redo Table to conform to text: 2 strategies only. -->
-<table>
-<caption><span id="tab:chselillustration">Table 13.1: </span>Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:chselillustration">Table 13.1: </span>Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.
+</caption>
 <thead>
-<tr class="header">
-<th align="left">event</th>
-<th align="left">A1</th>
-<th align="left">A2</th>
-<th align="left">A3</th>
-<th align="left">A4</th>
-<th align="left">B1</th>
-<th align="left">B2</th>
-<th align="left">B3</th>
-<th align="left">B4</th>
-<th align="left">C1</th>
-<th align="left">C2</th>
-<th align="left">C3</th>
+<tr>
+<th style="text-align:left;">
+event
+</th>
+<th style="text-align:left;">
+A1
+</th>
+<th style="text-align:left;">
+A2
+</th>
+<th style="text-align:left;">
+A3
+</th>
+<th style="text-align:left;">
+A4
+</th>
+<th style="text-align:left;">
+B1
+</th>
+<th style="text-align:left;">
+B2
+</th>
+<th style="text-align:left;">
+B3
+</th>
+<th style="text-align:left;">
+B4
+</th>
+<th style="text-align:left;">
+C1
+</th>
+<th style="text-align:left;">
+C2
+</th>
+<th style="text-align:left;">
+C3
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X0M0Y0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X0M0Y0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X0M0Y1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X0M0Y1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0M1Y0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X0M1Y0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X0M1Y1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X0M1Y1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0Y0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
+<tr>
+<td style="text-align:left;">
+X0Y0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
 </tr>
-<tr class="even">
-<td align="left">X0Y1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left;">
+X0Y1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1M0Y0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X1M0Y0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M0Y1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">2</td>
-<td align="left">1</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X1M0Y1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1M1Y0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X1M1Y0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1M1Y1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">2</td>
+<tr>
+<td style="text-align:left;">
+X1M1Y1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X1Y0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left;">
+X1Y0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">2</td>
-<td align="left">0</td>
-<td align="left">0</td>
-<td align="left">0</td>
+<tr>
+<td style="text-align:left;">
+X1Y1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Probability</td>
-<td align="left">0.171</td>
-<td align="left">0.03</td>
-<td align="left">0.625</td>
-<td align="left">0.174</td>
-<td align="left">0.27</td>
-<td align="left">0.231</td>
-<td align="left">0.23</td>
-<td align="left">0.268</td>
-<td align="left">0.09</td>
-<td align="left">0.242</td>
-<td align="left">0.668</td>
+<tr>
+<td style="text-align:left;">
+Probability
+</td>
+<td style="text-align:left;">
+0.171
+</td>
+<td style="text-align:left;">
+0.03
+</td>
+<td style="text-align:left;">
+0.625
+</td>
+<td style="text-align:left;">
+0.174
+</td>
+<td style="text-align:left;">
+0.27
+</td>
+<td style="text-align:left;">
+0.231
+</td>
+<td style="text-align:left;">
+0.23
+</td>
+<td style="text-align:left;">
+0.268
+</td>
+<td style="text-align:left;">
+0.09
+</td>
+<td style="text-align:left;">
+0.242
+</td>
+<td style="text-align:left;">
+0.668
+</td>
 </tr>
-<tr class="even">
-<td align="left">Posterior mean</td>
-<td align="left">0.078</td>
-<td align="left">0.041</td>
-<td align="left">0.171</td>
-<td align="left">0.078</td>
-<td align="left">0.128</td>
-<td align="left">0.141</td>
-<td align="left">0.143</td>
-<td align="left">0.131</td>
-<td align="left">0.046</td>
-<td align="left">0.089</td>
-<td align="left">0.161</td>
+<tr>
+<td style="text-align:left;">
+Posterior mean
+</td>
+<td style="text-align:left;">
+0.078
+</td>
+<td style="text-align:left;">
+0.041
+</td>
+<td style="text-align:left;">
+0.171
+</td>
+<td style="text-align:left;">
+0.078
+</td>
+<td style="text-align:left;">
+0.128
+</td>
+<td style="text-align:left;">
+0.141
+</td>
+<td style="text-align:left;">
+0.143
+</td>
+<td style="text-align:left;">
+0.131
+</td>
+<td style="text-align:left;">
+0.046
+</td>
+<td style="text-align:left;">
+0.089
+</td>
+<td style="text-align:left;">
+0.161
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Posterior variance</td>
-<td align="left">0.006</td>
-<td align="left">0.002</td>
-<td align="left">0.029</td>
-<td align="left">0.006</td>
-<td align="left">0.016</td>
-<td align="left">0.02</td>
-<td align="left">0.02</td>
-<td align="left">0.017</td>
-<td align="left">0.002</td>
-<td align="left">0.008</td>
-<td align="left">0.026</td>
+<tr>
+<td style="text-align:left;">
+Posterior variance
+</td>
+<td style="text-align:left;">
+0.006
+</td>
+<td style="text-align:left;">
+0.002
+</td>
+<td style="text-align:left;">
+0.029
+</td>
+<td style="text-align:left;">
+0.006
+</td>
+<td style="text-align:left;">
+0.016
+</td>
+<td style="text-align:left;">
+0.02
+</td>
+<td style="text-align:left;">
+0.02
+</td>
+<td style="text-align:left;">
+0.017
+</td>
+<td style="text-align:left;">
+0.002
+</td>
+<td style="text-align:left;">
+0.008
+</td>
+<td style="text-align:left;">
+0.026
+</td>
 </tr>
 </tbody>
 </table>
 <p>From the probability of each data type (given the model and the <span class="math inline">\(X,Y\)</span> data seen so far) and the posterior variance given each data realization, the implied <em>expected</em> variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table <a href="caseselection.html#tab:exppostvar">13.2</a>:</p>
-<table>
-<caption><span id="tab:exppostvar">Table 13.2: </span>Expected posterio variances</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:exppostvar">Table 13.2: </span>Expected posterio variances
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Strategy</th>
-<th align="right">Variance</th>
+<tr>
+<th style="text-align:left;">
+Strategy
+</th>
+<th style="text-align:right;">
+Variance
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Online</td>
-<td align="right">0.015</td>
+<tr>
+<td style="text-align:left;">
+Online
+</td>
+<td style="text-align:right;">
+0.015
+</td>
 </tr>
-<tr class="even">
-<td align="left">Offline</td>
-<td align="right">0.017</td>
+<tr>
+<td style="text-align:left;">
+Offline
+</td>
+<td style="text-align:right;">
+0.017
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X=1, Y=1</td>
-<td align="right">0.015</td>
+<tr>
+<td style="text-align:left;">
+X=1, Y=1
+</td>
+<td style="text-align:right;">
+0.015
+</td>
 </tr>
 </tbody>
 </table>
@@ -878,13 +1304,13 @@ p(\kappa = \kappa^L|D) &amp;=&amp;  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kapp
 <p>The two figures take two different approaches to representing the value of alternative strategies. In Figure <a href="caseselection.html#fig:caseselectionest">13.1</a>, we examine the informativeness of strategies by showing how much our inferences depend on what we observe within the cases. Generally, a larger spread across points (for a given model-query-strategy combination) represents a greater opportunity for learning from the data. However, as expected learning is also a function of how likely each data realization is, we represent the probability of each potential inference via shading of the points. In Figure <a href="caseselection.html#fig:caseselectionvar">13.2</a> we directly plot expected learning, operationalized as the expected reduction in posterior variance.</p>
 <p>In the remainder of this section, we walk through the results and suggest, often tentatively, interpretations of some of the more striking patterns. We caution that reasoning one’s way through expected learning for different model-query-strategy combinations, given a particular pattern in the prior data, can be tricky — hence, our recommendation that researchers simulate their way to research-design guidance, rather than relying on intuition.</p>
 <!-- These figuresare close connected of course, with a higher dispersion of estimates in Figure \@ref(fig:caseselectionest) implying a greater reduction in variance in Figure \@ref(fig:caseselectionvar). -->
-<div class="figure"><span style="display:block;" id="fig:caseselectionest"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:caseselectionest"></span>
 <img src="ii_files/figure-html/caseselectionest-1.png" alt="Inferences given observations" width="960" />
 <p class="caption">
 Figure 13.1: Inferences given observations
 </p>
 </div>
-<div class="figure"><span style="display:block;" id="fig:caseselectionvar"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:caseselectionvar"></span>
 <img src="ii_files/figure-html/caseselectionvar-1.png" alt="Reduction in variance on ATE and PC given strategies" width="960" />
 <p class="caption">
 Figure 13.2: Reduction in variance on ATE and PC given strategies

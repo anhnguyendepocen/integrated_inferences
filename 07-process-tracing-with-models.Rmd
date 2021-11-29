@@ -303,7 +303,7 @@ ambiguityXMY  <- get_ambiguities_matrix(XMY)
 
 <!-- ```{r ambigmatrix, echo = FALSE} -->
 <!-- ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = draw_type_prob(XY, using = "parameters"))) -->
-<!-- kable(ambXY_with_priors), caption = "Ambiguity matrix for X -> Y model. Rows are causal types, columns are data types. Last column shows possible priors over rows.") -->
+<!-- kabble(ambXY_with_priors), caption = "Ambiguity matrix for X -> Y model. Rows are causal types, columns are data types. Last column shows possible priors over rows.") -->
 <!-- ``` -->
 
 
@@ -318,7 +318,7 @@ ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = get_type_prob(XY)))
 
 ambXMY_with_priors <- data.frame(cbind(ambiguityXMY, prior = get_type_prob(XMY)))
 
-kable(ambXMY_with_priors[1:16, c(1:6, 9)], caption = "Excerpt from the Ambiguity matrix for a chain model. Rows are causal types, columns are data types. Last column shows possible priors over rows.", booktabs = TRUE)
+kabble(ambXMY_with_priors[1:16, c(1:6, 9)], caption = "Excerpt from the Ambiguity matrix for a chain model. Rows are causal types, columns are data types. Last column shows possible priors over rows.", booktabs = TRUE)
 
 # View(x)
 ```
@@ -347,7 +347,7 @@ Table: (\#tab:ambigupdate). Ambiguities in an $X \rightarrow Y$ model after obse
 <!--     select(type, X1Y1, prior) %>% -->
 <!--     filter(X1Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable() -->
+<!--    kabble() -->
 <!-- ``` -->
 
 We now walk through how this work for the more complex  $X \rightarrow M \rightarrow Y$ model, and the ambiguity matrix in Table \@ref(tab:ambigmatrixmed). If we observe the data $X=1, M=0, Y=0$, for instance, this exercise would yield the updated ambiguity matrix in Table \@ref(tab:ambigmedupdate). Here we have eliminated all rows (causal types) with a $0$ in the relevant data-type column ($X1M0Y0$) and formed the posteriors by scaling up the priors in the retained rows. 
@@ -370,7 +370,7 @@ ambXMY_with_priors%>%
     select(type, X1M0Y0, prior) %>%
     filter(X1M0Y0 ==1)%>%
    mutate(posterior = prior/sum(prior)) %>%
-   kable()
+   kabble()
 ```
 
 
@@ -381,7 +381,7 @@ ambXMY_with_priors%>%
 <!--     select(type, X1M1Y1, prior) %>% -->
 <!--     filter(X1M1Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable(digits = 2) -->
+<!--    kabble(digits = 2) -->
 <!-- ``` -->
 
 #### Partial data
@@ -409,7 +409,7 @@ ambXMY_with_priors%>%
     select(type, X1M0Y0, X1M1Y0, prior) %>%
     filter(X1M0Y0 ==1 | X1M1Y0 ==1)%>%
    mutate(posterior = prior/sum(prior)) %>%
-   kable()
+   kabble()
 ```
 
 
@@ -419,7 +419,7 @@ ambXMY_with_priors%>%
 <!--     select(type, X1M0Y1, X1M1Y1, prior) %>%  -->
 <!--     filter(X1M1Y1 ==1 | X1M0Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable(digits = 2) -->
+<!--    kabble(digits = 2) -->
 <!-- ``` -->
 
 **Updating on queries.**  We now have a posterior probability for each causal type for the case at hand. The causal question we are interested in answering, our query, may not be about causal types *per se.* It is about a query  that can be expressed as a *combination* of causal types, as described in Chapter \@ref(questions). 
@@ -457,7 +457,7 @@ ambXMY_with_priors%>%
     select(type, X1M1Y1, prior) %>%
     filter(X1M1Y1 ==1)%>%
    mutate(posterior = prior/sum(prior)) %>%
-   kable()
+   kabble()
 ```
 
 
@@ -493,7 +493,7 @@ Table: (\#tab:ambigmedupdatepartial2). An updated version of the ambiguity matri
 <!--     select(type, X1M0Y1, X1M1Y1, prior) %>% -->
 <!--     filter(X1M0Y1 ==1 | X1M1Y1 ==1)%>% -->
 <!--    mutate(posterior = prior/sum(prior)) %>% -->
-<!--    kable() -->
+<!--    kabble() -->
 <!-- ``` -->
 
 
@@ -543,7 +543,7 @@ make_model("X -> M -> Y") %>%
          query = list(PC = "Y[X=1] > Y[X=0]"), 
          given = list(TRUE, "X==1 & Y==1", "X==1 & Y==1 & M==0", "X==1 & Y==1 & M==1"),
          using = "parameters") %>%
-      kable()
+      kabble()
 
 ```
 
@@ -626,7 +626,7 @@ text(.1,.25, expression(phi[d]))
 
 ```
 
-## Assessing the possibility of probative value from a graph
+## Assessing probative value from a graph
 
 <!-- Rules for inferring information about one variable from another are th stuff of graphoids  [@pearl1985graphoids] see also [@geiger1987non] and [@pearl1987logic]...  -->
 
