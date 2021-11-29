@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -258,7 +260,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
-<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing probative value from a graph</a></li>
 <li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
@@ -335,7 +337,7 @@ div.csl-indent {
 <li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
 <li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
@@ -415,7 +417,7 @@ div.csl-indent {
 <div id="evaluation" class="section level1" number="16">
 <h1><span class="header-section-number">Chapter 16</span> Evaluating models</h1>
 <div class="headerbox">
-<p>Model based inference takes the model seriously. But deep down we know that all of these models are wrong, in myriad ways. We examine strategies for figuring out whether a model is likely doing more harm than good.</p>
+<p>We describe strategies for figuring out whether a model is likely doing more harm than good.</p>
 </div>
 <p><br></p>
 <p>Throughout this book we have maintained the conceit that you believe your model. But it is also obvious that even the most non-parametric-seeming models depend on substantive assumptions and that these are almost certainly wrong. The question then is not how much you believe your model (or whether you really believe what you say you believe) but whether your model is useful is some sense. How can we evaluate the usefulness of our models?</p>
@@ -447,28 +449,54 @@ Figure 16.1: A restricted model yields a credibility interval that does not cont
 <p>Is it?</p>
 <p>One way to check is to assess the covariance of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> given <span class="math inline">\(M\)</span> in the data. Specifically, we regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> for each value of <span class="math inline">\(M\)</span>, once for <span class="math inline">\(M=1\)</span> and again for <span class="math inline">\(M=0\)</span>; a correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> at either value of <span class="math inline">\(M\)</span> would be problematic for the conditional independence assumption embedded in the stronger model.</p>
 <p>Note that this form of diagnostic test is a classical one in the frequentist sense: we start by hypothesizing that our model is correct and then ask whether the data were unlikely given the model.</p>
-<table>
-<caption><span id="tab:unnamed-chunk-42">Table 16.1: </span>Regression coefficient on <span class="math inline">\(X\)</span> given <span class="math inline">\(M=0\)</span> and <span class="math inline">\(M=1\)</span></caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-42">Table 16.1: </span>Regression coefficient on <span class="math inline">\(X\)</span> given <span class="math inline">\(M=0\)</span> and <span class="math inline">\(M=1\)</span>
+</caption>
 <thead>
-<tr class="header">
-<th align="right">M</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">p.value</th>
+<tr>
+<th style="text-align:right;">
+M
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+std.error
+</th>
+<th style="text-align:right;">
+p.value
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right">0.262</td>
-<td align="right">0.097</td>
-<td align="right">0.008</td>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.262
+</td>
+<td style="text-align:right;">
+0.097
+</td>
+<td style="text-align:right;">
+0.008
+</td>
 </tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">0.280</td>
-<td align="right">0.095</td>
-<td align="right">0.004</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.280
+</td>
+<td style="text-align:right;">
+0.095
+</td>
+<td style="text-align:right;">
+0.004
+</td>
 </tr>
 </tbody>
 </table>
@@ -523,7 +551,7 @@ Figure 16.1: A restricted model yields a credibility interval that does not cont
 <!-- write_rds(df, "saved/ch15_likelihoodsdf.rds")  -->
 <!-- } -->
 <!-- df <- read_rds("saved/ch15_likelihoodsdf.rds")  -->
-<!-- kable(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another") -->
+<!-- kabble(df, col.names = "Bayes factors", digits = 2, caption = "Posterior odds: the relative likelihood of one model over another") -->
 <!-- ``` -->
 <!-- Compare likelihoods of the data under different models -->
 <!-- Check look package for rstan -->
@@ -581,52 +609,110 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <p>We answer the question by looking at posterior beliefs for a range of possible values for the relevant parameter, <span class="math inline">\(\lambda^Y_{10}\)</span>. In Table <a href="evaluation.html#tab:ch15ranges">16.2</a>, we examine a range of values for <span class="math inline">\(\lambda^Y_{10}\)</span>, from 0 to 0.25 (full parity with other types). For each parameter value, we first show the resulting prior belief about the probability that <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span>. We can see that, before we observe <span class="math inline">\(M\)</span>, we think that a positive <span class="math inline">\(X \rightarrow Y\)</span> effect is more likely as a negative <span class="math inline">\(M \rightarrow Y\)</span> effect is more likely. This stands to reason since a negative second-stage effect is one possible process in which a positive <span class="math inline">\(X \rightarrow Y\)</span> effect might occur. And higher values for <span class="math inline">\(\lambda^Y_{10}\)</span> come disproportionately at the expense of types under which <span class="math inline">\(X\)</span> cannot affect <span class="math inline">\(Y\)</span>.<a href="#fn78" class="footnote-ref" id="fnref78"><sup>78</sup></a></p>
 <p>In the next two columns, we show the posterior belief we arrive at when we observe <span class="math inline">\(M=0\)</span> and then <span class="math inline">\(M=1\)</span>, for each <span class="math inline">\(\lambda^Y_{10}\)</span> assumption. Looking at the last column first, we see that our inference from <span class="math inline">\(M=1\)</span> does <em>not</em> depend at all on our beliefs about adverse <span class="math inline">\(M \rightarrow Y\)</span> effects. The reason is that, if we see <span class="math inline">\(M=1\)</span>, we already know that <span class="math inline">\(M\)</span> did not have a negative effect on <span class="math inline">\(Y\)</span>, given that we also know <span class="math inline">\(Y=1\)</span>. Our beliefs are purely a function of the probability that there are positive effects at both stages as compared to the probability of other causal types that could yield <span class="math inline">\(X=M=Y=1\)</span>, a comparison unaffected by the probability of a negative <span class="math inline">\(M \rightarrow Y\)</span> effect.</p>
 <p>Our inferences when <span class="math inline">\(M=0\)</span>, on the other hand, do depend on <span class="math inline">\(\lambda^Y_{10}\)</span>: when we see <span class="math inline">\(M=0\)</span>, our belief about a positive <span class="math inline">\(X \rightarrow Y\)</span> effect depends on the likelihood of <em>negative</em> effects at both stages. We see, then, that the likelier we think negative effects are at the second stage, the higher our posterior confidence in a positive <span class="math inline">\(X \rightarrow Y\)</span> effect when we see <span class="math inline">\(M=0\)</span>.</p>
-<table>
-<caption><span id="tab:ch15ranges">Table 16.2: </span>Inferences on the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> upon seeing <span class="math inline">\(M=0\)</span> or <span class="math inline">\(M=1\)</span> for a range of possible values of <span class="math inline">\(\lambda^Y_{10}\)</span></caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:ch15ranges">Table 16.2: </span>Inferences on the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> upon seeing <span class="math inline">\(M=0\)</span> or <span class="math inline">\(M=1\)</span> for a range of possible values of <span class="math inline">\(\lambda^Y_{10}\)</span>
+</caption>
 <thead>
-<tr class="header">
-<th align="right"><span class="math inline">\(\lambda^Y_{10}\)</span></th>
-<th align="right">Prior</th>
-<th align="right"><span class="math inline">\(M=0\)</span></th>
-<th align="right"><span class="math inline">\(M=1\)</span></th>
+<tr>
+<th style="text-align:right;">
+<span class="math inline">\(\lambda^Y_{10}\)</span>
+</th>
+<th style="text-align:right;">
+Prior
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(M=0\)</span>
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(M=1\)</span>
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">0.00</td>
-<td align="right">0.167</td>
-<td align="right">0.000</td>
-<td align="right">0.25</td>
+<tr>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.167
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+0.25
+</td>
 </tr>
-<tr class="even">
-<td align="right">0.05</td>
-<td align="right">0.183</td>
-<td align="right">0.068</td>
-<td align="right">0.25</td>
+<tr>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.183
+</td>
+<td style="text-align:right;">
+0.068
+</td>
+<td style="text-align:right;">
+0.25
+</td>
 </tr>
-<tr class="odd">
-<td align="right">0.10</td>
-<td align="right">0.200</td>
-<td align="right">0.125</td>
-<td align="right">0.25</td>
+<tr>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+0.200
+</td>
+<td style="text-align:right;">
+0.125
+</td>
+<td style="text-align:right;">
+0.25
+</td>
 </tr>
-<tr class="even">
-<td align="right">0.15</td>
-<td align="right">0.217</td>
-<td align="right">0.173</td>
-<td align="right">0.25</td>
+<tr>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+0.217
+</td>
+<td style="text-align:right;">
+0.173
+</td>
+<td style="text-align:right;">
+0.25
+</td>
 </tr>
-<tr class="odd">
-<td align="right">0.20</td>
-<td align="right">0.233</td>
-<td align="right">0.214</td>
-<td align="right">0.25</td>
+<tr>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:right;">
+0.233
+</td>
+<td style="text-align:right;">
+0.214
+</td>
+<td style="text-align:right;">
+0.25
+</td>
 </tr>
-<tr class="even">
-<td align="right">0.25</td>
-<td align="right">0.250</td>
-<td align="right">0.250</td>
-<td align="right">0.25</td>
+<tr>
+<td style="text-align:right;">
+0.25
+</td>
+<td style="text-align:right;">
+0.250
+</td>
+<td style="text-align:right;">
+0.250
+</td>
+<td style="text-align:right;">
+0.25
+</td>
 </tr>
 </tbody>
 </table>
@@ -651,48 +737,102 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 </ul>
 <p>We check the model’s assumptions in relation to conditional independencies through a set of simple regression models, displayed in Table <a href="evaluation.html#tab:ch15cipimd">16.3</a>. In the first two rows, we examine the simple correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> and between <span class="math inline">\(P\)</span> and <span class="math inline">\(M\)</span>, respectively. We can see from the estimates in the first row that the data pattern is consistent with our assumption of unconditional independence of <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>. However, we also see that there <em>is</em> an unconditional correlation between <span class="math inline">\(I\)</span> and <span class="math inline">\(M\)</span>, something that is excluded by our model.</p>
 <!-- MH: Realize we actually have a big iussue here: we only have M,P data in cases with D = 1 so we are in fact condtiioining on D and so we do *not* expect independence  -->
-<table>
-<caption><span id="tab:ch15cipimd">Table 16.3: </span>Regression coefficients to assess conditional independence</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:ch15cipimd">Table 16.3: </span>Regression coefficients to assess conditional independence
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Correlation</th>
-<th align="left">Given</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">p.value</th>
+<tr>
+<th style="text-align:left;">
+Correlation
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+std.error
+</th>
+<th style="text-align:right;">
+p.value
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">P,I</td>
-<td align="left">-</td>
-<td align="right">0.000</td>
-<td align="right">0.114</td>
-<td align="right">1.000</td>
+<tr>
+<td style="text-align:left;">
+P,I
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+0.114
+</td>
+<td style="text-align:right;">
+1.000
+</td>
 </tr>
-<tr class="even">
-<td align="left">P,M</td>
-<td align="left">-</td>
-<td align="right">0.291</td>
-<td align="right">0.131</td>
-<td align="right">0.029</td>
+<tr>
+<td style="text-align:left;">
+P,M
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.291
+</td>
+<td style="text-align:right;">
+0.131
+</td>
+<td style="text-align:right;">
+0.029
+</td>
 </tr>
-<tr class="odd">
-<td align="left">P,I</td>
-<td align="left">M = 0</td>
-<td align="right">-0.220</td>
-<td align="right">0.111</td>
-<td align="right">0.053</td>
+<tr>
+<td style="text-align:left;">
+P,I
+</td>
+<td style="text-align:left;">
+M = 0
+</td>
+<td style="text-align:right;">
+-0.220
+</td>
+<td style="text-align:right;">
+0.111
+</td>
+<td style="text-align:right;">
+0.053
+</td>
 </tr>
-<tr class="even">
-<td align="left">P,I</td>
-<td align="left">M = 1</td>
-<td align="right">0.467</td>
-<td align="right">0.260</td>
-<td align="right">0.098</td>
+<tr>
+<td style="text-align:left;">
+P,I
+</td>
+<td style="text-align:left;">
+M = 1
+</td>
+<td style="text-align:right;">
+0.467
+</td>
+<td style="text-align:right;">
+0.260
+</td>
+<td style="text-align:right;">
+0.098
+</td>
 </tr>
 </tbody>
-</table>
+</table></li>
+</ul></li>
+</ul>
 <p>We can dig a little deeper, however. The model <em>also</em> implies that <span class="math inline">\(P\)</span> should be independent of <span class="math inline">\(I\)</span> given <span class="math inline">\(M\)</span> — since <span class="math inline">\(D\)</span> blocks all paths between <span class="math inline">\(P\)</span> and either <span class="math inline">\(I\)</span> or <span class="math inline">\(M\)</span>. We test these assumptions in rows 3 and 4 of the table, wgere we examine the conditional independence of <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> given <span class="math inline">\(M=0\)</span> and given <span class="math inline">\(M=1\)</span>. Here the evidence is also troubling for our model, as we see a relatively strong negative correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> when <span class="math inline">\(M=0\)</span>, and positive correlation when <span class="math inline">\(M=1\)</span>.</p>
 <p>While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization the product of inequality and pressure jointly.<a href="#fn80" class="footnote-ref" id="fnref80"><sup>80</sup></a> A model with an arrow running from <span class="math inline">\(P\)</span> to <span class="math inline">\(M\)</span> would make the model consistent with the unconditional correlation between these two variables, the conditional correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> given <span class="math inline">\(M\)</span> (since <span class="math inline">\(M\)</span> would now be a collider for <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>), as well as the unconditional independence of <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>. A possible way forward — which we do not pursue here — would be to now amend the model and evaluate the revised model against an independent set of data.</p>
 <!-- Substantively, in states with high inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization. -->
@@ -708,113 +848,216 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <h3><span class="header-section-number">16.2.3</span> LOO validation</h3>
 <p>Turning to “leave one out” model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of <span class="math inline">\(M\)</span> in <span class="math inline">\(I\)</span>. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:loopimdplots1"></span>
-<img src="ii_files/figure-html/loopimdplots1-1.png" alt="C" width="672" />
+<img src="ii_files/figure-html/loopimdplots1-1.png" alt="Leave one out likelihoods for restricted and unrestricted democracy and inequality models" width="672" />
 <p class="caption">
-Figure 16.5: C
+Figure 16.5: Leave one out likelihoods for restricted and unrestricted democracy and inequality models
 </p>
 </div>
-<p><img src="ii_files/figure-html/pimdloocomp-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Figures <a href="evaluation.html#fig:loopimdplots1">16.5</a> shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure <a href="#fig:pimdloocomp"><strong>??</strong></a>, confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes (<span class="math inline">\(I, P, M\)</span> and <span class="math inline">\(D\)</span>). In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:pimdloocomp"></span>
+<img src="ii_files/figure-html/pimdloocomp-1.png" alt="LOO data predictions for three PIMD models" width="672" />
+<p class="caption">
+Figure 16.6: LOO data predictions for three PIMD models
+</p>
+</div>
+<p>Figures <a href="evaluation.html#fig:loopimdplots1">16.5</a> shows that in fact the likelihoods of the most restricted and least restricted model are not very different from each other. Both models are able to re-create the data structure reasonably well. Figure <a href="evaluation.html#fig:pimdloocomp">16.6</a>, confirms this, showing the relationship, for each model, of the likelihood of each data type against the number of cases of that data type in the data. A data type is here defined as a possible combination of realized values on all nodes (<span class="math inline">\(I, P, M\)</span> and <span class="math inline">\(D\)</span>). In each plot, the diagonal line represents equality between the proportion of expected cases under the model and the proportion of actual cases. Just eyeballing the relationships, it appears as though the two stronger models might be performing better than the fully unrestricted model.</p>
 <p>More formally, we calculate the LOO likelihood for each model as 1.02e-73 for the model with monotonicity assumptions throughout, 1.98e-74 for the model that relaxes the monotonicity assumption for <span class="math inline">\(I \rightarrow M\)</span>, and 7.06e-74 for the model with no monotonicity assumptions at all. In other words, we see that the most restricted model (with all montonicity assumptions) performs best, by about an order of magnitude, followed by the completely unrestricted model (no restrictions and flat priors), and then the moderately restricted one (removing the monotonicity restriction just for <span class="math inline">\(I \rightarrow M\)</span>).</p>
 </div>
 <div id="sensitivity-to-priors" class="section level3" number="16.2.4">
 <h3><span class="header-section-number">16.2.4</span> Sensitivity to priors</h3>
 <p>In our base model we assume a set of monotonicity relations among nodes. How much do conclusions depend on these restrictions? We answer the question by comparing our conclusion with these restrictions to what we would conclude without this assumption. As above, we compare the fully restricted model (<span class="math inline">\(M1\)</span>) to a model that is unrestricted at <span class="math inline">\(M\)</span> (<span class="math inline">\(M2\)</span>) and a model that is fully unrestricted (<span class="math inline">\(M3\)</span>).</p>
-<p>We first show results for population inference from a mixed methods analysis. As seen in Figure <a href="evaluation.html#fig:ch16pimdgraphs">16.6</a>, our inferences regarding the overall effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span> are not very sensitive to the monotonicity assumption at <span class="math inline">\(M\)</span>. However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around <span class="math inline">\(-0.25\)</span> to <span class="math inline">\(0\)</span> when we remove all restrictions. Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with <span class="math inline">\(I=0, D=1\)</span> we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of <span class="math inline">\(M=0\)</span>.</p>
+<p>We first show results for population inference from a mixed methods analysis. As seen in Figure <a href="evaluation.html#fig:ch16pimdgraphs">16.7</a>, our inferences regarding the overall effect of <span class="math inline">\(I\)</span> on <span class="math inline">\(D\)</span> are not very sensitive to the monotonicity assumption at <span class="math inline">\(M\)</span>. However, they are extremely sensitive to the other monotonicity assumptions made in the model: as we can see, the effect goes from around <span class="math inline">\(-0.25\)</span> to <span class="math inline">\(0\)</span> when we remove all restrictions. Our conditional inferences about the probability of negative causation are not sensitive to these assumptions, however. In particular, in cases with <span class="math inline">\(I=0, D=1\)</span> we are about equally likely to think that democratization was due to low inequality given any of the models. When we see that in fact there was no mobilization, our attribution increases in the restricted model but decreases in the unrestricted model. In the fully unrestricted model our inferences are not affected at all by observation of <span class="math inline">\(M=0\)</span>.</p>
 <!-- FLAG: AJ: Check intuition here! -->
 <p>In the non-monotonic model we entertain the possibility that low inequality mattered not just directly but also, perhaps, by inducing protests. However, when you observe no protests, you rule out this possible pathway. In the monotonic model you do not think that democratization could have been produced by low inequality via demonstrations—but nevertheless entertain the possibility of mobilization that is <em>not</em> due to inequality, which could nevertheless be the cause of democratization. In this case, observing no mobilization removes a rival, cause of democratization, not a second channel.</p>
 <p>In all, we judge the conditional inferences as very sensitive to the monotonicity assumptions we put in place.</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:ch16pimdgraphs"></span>
 <img src="ii_files/figure-html/ch16pimdgraphs-1.png" alt="ATE of I on D." width="672" />
 <p class="caption">
-Figure 16.6: ATE of I on D.
+Figure 16.7: ATE of I on D.
 </p>
 </div>
 <p>We now consider case-level analysis. For this setup, we compare our restricted model to one in which we allow for negative effects of <span class="math inline">\(I\)</span> on <span class="math inline">\(M\)</span>, but consider them to be <em>unlikely</em> rather than impossible (with null and positive effects somewhat likely). We refer to these priors as “quantitative priors” in the sense that they place a numerical value on beliefs rather than a logical restriction. Specifically, we set prior probabilities on the elements of <span class="math inline">\(\theta^M\)</span> as: <span class="math inline">\(p(\theta^M=\theta^M_{10})=0.1\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{00})=0.3\)</span>, <span class="math inline">\(p(\theta^M=\theta^M_{11})=0.3\)</span>, and <span class="math inline">\(p(\theta^M=\theta^M_{01})=0.3\)</span>. This is in comparison to the 0, 1/3,1/3,1/3 distribution implied by the restricted model.</p>
 <p>In Tables <a href="evaluation.html#tab:HK8cases1quant">16.4</a> and <a href="evaluation.html#tab:HK8cases2quant">16.5</a>, we simply call these our restricted and unrestricted models and compare findings for a set of cases with different data realizations.</p>
-<table>
-<caption><span id="tab:HK8cases1quant">Table 16.4: </span>Four cases with low inequality and democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on <span class="math inline">\(M\)</span> or <span class="math inline">\(P\)</span>. Data from Haggard and Kaufman (2012).</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:HK8cases1quant">Table 16.4: </span>Four cases with low inequality and democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for 4 cases given information on <span class="math inline">\(M\)</span> or <span class="math inline">\(P\)</span>. Data from Haggard and Kaufman (2012).
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Given</th>
-<th align="right">Restricted</th>
-<th align="right">Unrestricted</th>
-<th align="left">Example</th>
+<tr>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:right;">
+Restricted
+</th>
+<th style="text-align:right;">
+Unrestricted
+</th>
+<th style="text-align:left;">
+Example
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">I == 0 &amp; D == 1</td>
-<td align="right">0.438</td>
-<td align="right">0.484</td>
-<td align="left"></td>
+<tr>
+<td style="text-align:left;">
+I == 0 &amp; D == 1
+</td>
+<td style="text-align:right;">
+0.438
+</td>
+<td style="text-align:right;">
+0.484
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">I == 0 &amp; D == 1 &amp; M == 0 &amp; P == 0</td>
-<td align="right">0.667</td>
-<td align="right">0.667</td>
-<td align="left">Mexico (2000)</td>
+<tr>
+<td style="text-align:left;">
+I == 0 &amp; D == 1 &amp; M == 0 &amp; P == 0
+</td>
+<td style="text-align:right;">
+0.667
+</td>
+<td style="text-align:right;">
+0.667
+</td>
+<td style="text-align:left;">
+Mexico (2000)
+</td>
 </tr>
-<tr class="odd">
-<td align="left">I == 0 &amp; D == 1 &amp; M == 0 &amp; P == 1</td>
-<td align="right">0.393</td>
-<td align="right">0.393</td>
-<td align="left">Taiwan (1996)</td>
+<tr>
+<td style="text-align:left;">
+I == 0 &amp; D == 1 &amp; M == 0 &amp; P == 1
+</td>
+<td style="text-align:right;">
+0.393
+</td>
+<td style="text-align:right;">
+0.393
+</td>
+<td style="text-align:left;">
+Taiwan (1996)
+</td>
 </tr>
-<tr class="even">
-<td align="left">I == 0 &amp; D == 1 &amp; M == 1 &amp; P == 0</td>
-<td align="right">0.571</td>
-<td align="right">0.661</td>
-<td align="left">Albania (1991)</td>
+<tr>
+<td style="text-align:left;">
+I == 0 &amp; D == 1 &amp; M == 1 &amp; P == 0
+</td>
+<td style="text-align:right;">
+0.571
+</td>
+<td style="text-align:right;">
+0.661
+</td>
+<td style="text-align:left;">
+Albania (1991)
+</td>
 </tr>
-<tr class="odd">
-<td align="left">I == 0 &amp; D == 1 &amp; M == 1 &amp; P == 1</td>
-<td align="right">0.263</td>
-<td align="right">0.368</td>
-<td align="left">Nicaragua (1984)</td>
+<tr>
+<td style="text-align:left;">
+I == 0 &amp; D == 1 &amp; M == 1 &amp; P == 1
+</td>
+<td style="text-align:right;">
+0.263
+</td>
+<td style="text-align:right;">
+0.368
+</td>
+<td style="text-align:left;">
+Nicaragua (1984)
+</td>
 </tr>
 </tbody>
 </table>
-<table>
-<caption><span id="tab:HK8cases2quant">Table 16.5: </span>Four cases with high inequality and democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on <span class="math inline">\(M\)</span> or <span class="math inline">\(P\)</span>. Data from Haggard and Kaufman (2012).</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:HK8cases2quant">Table 16.5: </span>Four cases with high inequality and democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on <span class="math inline">\(M\)</span> or <span class="math inline">\(P\)</span>. Data from Haggard and Kaufman (2012).
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Given</th>
-<th align="right">Restricted</th>
-<th align="right">Unrestricted</th>
-<th align="left">Example</th>
+<tr>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:right;">
+Restricted
+</th>
+<th style="text-align:right;">
+Unrestricted
+</th>
+<th style="text-align:left;">
+Example
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">I == 1 &amp; D == 1</td>
-<td align="right">0.128</td>
-<td align="right">0.122</td>
-<td align="left"></td>
+<tr>
+<td style="text-align:left;">
+I == 1 &amp; D == 1
+</td>
+<td style="text-align:right;">
+0.128
+</td>
+<td style="text-align:right;">
+0.122
+</td>
+<td style="text-align:left;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">I == 1 &amp; D == 1 &amp; M == 0 &amp; P == 0</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="left">Mongolia (1990)</td>
+<tr>
+<td style="text-align:left;">
+I == 1 &amp; D == 1 &amp; M == 0 &amp; P == 0
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:left;">
+Mongolia (1990)
+</td>
 </tr>
-<tr class="odd">
-<td align="left">I == 1 &amp; D == 1 &amp; M == 0 &amp; P == 1</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="left">Paraguay (1989)</td>
+<tr>
+<td style="text-align:left;">
+I == 1 &amp; D == 1 &amp; M == 0 &amp; P == 1
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:left;">
+Paraguay (1989)
+</td>
 </tr>
-<tr class="even">
-<td align="left">I == 1 &amp; D == 1 &amp; M == 1 &amp; P == 0</td>
-<td align="right">0.250</td>
-<td align="right">0.250</td>
-<td align="left">Sierra Leone (1996)</td>
+<tr>
+<td style="text-align:left;">
+I == 1 &amp; D == 1 &amp; M == 1 &amp; P == 0
+</td>
+<td style="text-align:right;">
+0.250
+</td>
+<td style="text-align:right;">
+0.250
+</td>
+<td style="text-align:left;">
+Sierra Leone (1996)
+</td>
 </tr>
-<tr class="odd">
-<td align="left">I == 1 &amp; D == 1 &amp; M == 1 &amp; P == 1</td>
-<td align="right">0.107</td>
-<td align="right">0.107</td>
-<td align="left">Malawi (1994)</td>
+<tr>
+<td style="text-align:left;">
+I == 1 &amp; D == 1 &amp; M == 1 &amp; P == 1
+</td>
+<td style="text-align:right;">
+0.107
+</td>
+<td style="text-align:right;">
+0.107
+</td>
+<td style="text-align:left;">
+Malawi (1994)
+</td>
 </tr>
 </tbody>
 </table>

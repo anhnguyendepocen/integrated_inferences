@@ -88,7 +88,7 @@ Taking this step, the procedure we now use in the mixed methods works as follows
 5. **Priors**. In the process tracing setup, we treat $\lambda$ as given: we do not seek to learn about $\lambda$, and uncertainty over $\lambda$ plays no role. When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). Recall that the parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
 
 
-```{r dag3d,  fig.width = 4, fig.width = 8, out.width = "95%", echo = FALSE, fig.cap = "Types, parameters, and priors"}
+```{r dag3d,  fig.width = 4, fig.height = 8, out.width = "100%", echo = FALSE, fig.cap = "Types, parameters, and priors"}
 source("data/parameters.R")
 dag_3d(add_M = TRUE, func = TRUE)
 ```
@@ -149,13 +149,13 @@ In practice we do this all using matrix operations.
 ```{r ambigmatrixmix, echo = FALSE, include = TRUE}
 XY <- make_model("X -> Y") %>% set_parameters(c(.4, .6, .3, .2, .2, .3))
 ambiguityXY  <- get_ambiguities_matrix(XY)
-kable(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.")
+kabble(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.")
 ```
 
 ```{r parammmatrixmix, echo = FALSE, include = TRUE}
 paramXY <- get_parameter_matrix(XY) 
 paramXY_with_params <-cbind(paramXY, '$\\lambda$' = XY$parameters_df$param_value)
-kable(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.")
+kabble(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.")
 ```
 
 
@@ -186,7 +186,7 @@ if(do_diagnosis)
 make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/posterior_chain.rds")
 
 read_rds("saved/posterior_chain.rds")$posterior_distribution %>%
-head() %>% kable(digits = 2, caption = "An illustration of a posterior distribution for a $X \\rightarrow M \\rightarrow Y$ model. Each row is a draw from $p(\\lambda|d))$. SUch a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.")
+head() %>% kabble(digits = 2, caption = "An illustration of a posterior distribution for a $X \\rightarrow M \\rightarrow Y$ model. Each row is a draw from $p(\\lambda|d))$. SUch a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.")
 
 ```
 
@@ -232,7 +232,7 @@ chainillustration <- read_rds("saved/08_chain_illustration.rds") %>%
   pivot_wider(names_from = Query, values_from = c(mean))%>% select(-"PC_M0", -"PC_M1")
 
 chainillustration %>% mutate(Data = c("No data", "2 cases X, Y data only", "2 cases, X, M, Y data", "10 cases: X, Y data only", "10 cases: X, M, Y data")) %>%
-  kable(digits = 2, caption = "Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show $\\tau_{ij}$---average effects of $i$ on $j$; the last column shows the probability of causation: the probability that $X$ caused $Y$ in a $X=Y=1$ case.", col.names = c("Data", "a", "b", "c", "d", "$\\tau_{XM}$", "$\\tau_{MY}$", "$\\tau_{XY}$", "PC"))
+  kabble(digits = 2, caption = "Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show $\\tau_{ij}$---average effects of $i$ on $j$; the last column shows the probability of causation: the probability that $X$ caused $Y$ in a $X=Y=1$ case.", col.names = c("Data", "a", "b", "c", "d", "$\\tau_{XM}$", "$\\tau_{MY}$", "$\\tau_{XY}$", "PC"))
   
 ```
 
@@ -439,7 +439,7 @@ if(do_diagnosis)
   write_rds("saved/casepop.rds")
 
   read_rds("saved/casepop.rds") %>%
-  kable(digits = 3, caption = "The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect")
+  kabble(digits = 3, caption = "The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect")
 ```
 
 ::::
@@ -462,7 +462,7 @@ $$\Pr(\mathcal{D}|\theta) =
 
 The generalization is straightforward. Say that a strategy is a set of nodes on which data is gathered on $n_s$ units. For example data may be gathered through three strategies:  $n_1$ units for which data is gathered on nodes $V_1$ only, $n_2$ units for which data is gathered on nodes $V_2$ only, and $n_3$ units for which data is gathered on nodes $V_3$ only. The observed number of units for each data type under each data strategy is $m_s$ and the event probabilities are $w_s$. The likelihood is: 
 
-$$L = \prod_s \text{multinomial}(m_s|n_s, w_s)$$
+$$L = \prod_s \text{Multinom}(m_s|n_s, w_s)$$
 <!-- Illustration -->
 
 
@@ -589,7 +589,7 @@ data <-
 ```
 
 ```{r, echo = FALSE}
-data %>% slice(1,  50, 70, 100) %>% kable(caption = "Data from non binary model (selection of rows)")
+data %>% slice(1,  50, 70, 100) %>% kabble(caption = "Data from non binary model (selection of rows)")
 ```
 
 Updating and querying is done in the usual way:
@@ -633,7 +633,7 @@ query <-
 
 read_rds("saved/ordinal_query.rds")  %>%
   select(Q, Using, 'True value', mean, sd) %>% 
-  kable(digits = 2, caption = "Posteriors on potential outcomes for non binary model")
+  kabble(digits = 2, caption = "Posteriors on potential outcomes for non binary model")
 
 ```
 
@@ -724,7 +724,7 @@ list(
 Qs <-   read_rds("saved/measurement_error.rds")
 
 Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of units", "Data on true Y")) %>% select(Data, Using, mean, sd) %>% 
-  kable(caption = "Inferences on effects on true Y given measurement error (true ATE = .6)", digits = 2)
+  kabble(caption = "Inferences on effects on true Y given measurement error (true ATE = .6)", digits = 2)
 
 ```
 
@@ -760,7 +760,7 @@ update_model(model,
 
 read_rds("saved/measurement_error_2.rds") %>% mutate(Data = "Two noisy measures") %>% 
   select(Data, Using, mean, sd)  %>% 
-  kable(caption = "Inferences on effects on true Y given two noisy measures  (true ATE = .6)", digits = 2)
+  kabble(caption = "Inferences on effects on true Y given two noisy measures  (true ATE = .6)", digits = 2)
 
 ```
 
@@ -852,7 +852,7 @@ if(do_diagnosis)
   query_model(spillover_queries, using = "posteriors") %>% 
   write_rds("saved/spillovers_query.rds")
 
-read_rds("saved/spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% kable(caption = "Spillover queries", digits = 2, booktabs = TRUE)
+read_rds("saved/spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% kabble(caption = "Spillover queries", digits = 2, booktabs = TRUE)
 
 ```
 
@@ -908,10 +908,10 @@ Q <- "(Y1[X1=1] - Y1[X1=0])/2 + (Y2[X2=1] - Y2[X2=0])/2"
 
 rbind(
   query_model(read_rds("saved/model_clustered.rds"), Q, using = "posteriors"),
-  query_model(read_rds("saved/model_unclustered.rds"), Q, , using = "posteriors")) %>%
+  query_model(read_rds("saved/model_unclustered.rds"), Q, using = "posteriors")) %>%
   mutate(Data = c("2 obs from each of 2 clusters", "1 obs from each of 4 clusters"), Query = "Average effect") %>% 
   select(Data, mean, sd) %>% 
-  kable(digits = 3, caption = "Data from many pairs is more informative than the same data from fewer pairs.")
+  kabble(digits = 3, caption = "Data from many pairs is more informative than the same data from fewer pairs.")
 
 ```
 

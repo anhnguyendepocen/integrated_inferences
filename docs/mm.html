@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -258,7 +260,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
-<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing probative value from a graph</a></li>
 <li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
@@ -335,7 +337,7 @@ div.csl-indent {
 <li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
 <li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
@@ -446,86 +448,173 @@ div.csl-indent {
 <p>In the first pair of rows, we show the results of analyses in which we have simulated data from the whole model, then updated using the Study 1 observations. We give here the posterior mean on the probability of causation for an <span class="math inline">\(X=Y=1\)</span> case, conditional on each possible value that <span class="math inline">\(K\)</span> might take on. As we can see, our beliefs about the estimand remain unaffected by <span class="math inline">\(K\)</span>’s value, meaning that it contains no information about <span class="math inline">\(X\)</span>’s effect in the case.</p>
 <!-- FLAG: AJ: When we say data on K is not available in S1, do we mean we haven't used K to *update* the model? But we are then simulating what would we would infer if we *did* collect $K$ for a case in S1? This is my read of the code. Or have I misread? Are we imagining a situation in which we simply don't have K at all, so by definition can't learn from K? I've written the text below on the first assumption, so will need changing if that's wrong. -->
 <p>We see that the same thing is true for each of the other studies. In study 2, we have not used <span class="math inline">\(K\)</span> to update the model, and so have not learned anything form the data about <span class="math inline">\(K\)</span>’s relationship to the other variables. Thus, we have no foundation on which to ground probative value fo <span class="math inline">\(K\)</span>. In study 3, we understand the <span class="math inline">\(Z,K\)</span> relationship well, but know nothing quantitatively about how <span class="math inline">\(Z\)</span> and <span class="math inline">\(X\)</span> relate to <span class="math inline">\(Y\)</span>. Thus, we have learned nothing from Study 3 about what observing <span class="math inline">\(K\)</span> might tell us about the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>.</p>
-<table>
-<caption><span id="tab:frank1">Table 11.1: </span>The clue <span class="math inline">\(K\)</span> uninformative in all three studies</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:frank1">Table 11.1: </span>The clue <span class="math inline">\(K\)</span> uninformative in all three studies
+</caption>
 <thead>
-<tr class="header">
-<th align="right">Study</th>
-<th align="left">Given</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:right;">
+Study
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 1</td>
-<td align="right">0.652</td>
-<td align="right">0.107</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 1
+</td>
+<td style="text-align:right;">
+0.652
+</td>
+<td style="text-align:right;">
+0.107
+</td>
 </tr>
-<tr class="even">
-<td align="right"></td>
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 0</td>
-<td align="right">0.640</td>
-<td align="right">0.108</td>
+<tr>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 0
+</td>
+<td style="text-align:right;">
+0.640
+</td>
+<td style="text-align:right;">
+0.108
+</td>
 </tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 1</td>
-<td align="right">0.645</td>
-<td align="right">0.138</td>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 1
+</td>
+<td style="text-align:right;">
+0.645
+</td>
+<td style="text-align:right;">
+0.138
+</td>
 </tr>
-<tr class="even">
-<td align="right"></td>
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 0</td>
-<td align="right">0.645</td>
-<td align="right">0.137</td>
+<tr>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 0
+</td>
+<td style="text-align:right;">
+0.645
+</td>
+<td style="text-align:right;">
+0.137
+</td>
 </tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 1</td>
-<td align="right">0.499</td>
-<td align="right">0.150</td>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 1
+</td>
+<td style="text-align:right;">
+0.499
+</td>
+<td style="text-align:right;">
+0.150
+</td>
 </tr>
-<tr class="even">
-<td align="right"></td>
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 0</td>
-<td align="right">0.499</td>
-<td align="right">0.134</td>
+<tr>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 0
+</td>
+<td style="text-align:right;">
+0.499
+</td>
+<td style="text-align:right;">
+0.134
+</td>
 </tr>
 </tbody>
 </table>
 <p>We can do much better, however, if we combine the data and update <em>jointly</em> across all model paramaters. The results are shown in Table <a href="mm.html#tab:frank4">11.2</a>. Updating simultaneously across the studies allows us, in a sense, to bridge across inferences. In particular, inferences from Study 2 make <span class="math inline">\(Z\)</span> informative about <span class="math inline">\(Y\)</span>’s potential outcomes under different values of <span class="math inline">\(X\)</span>. Meanwhile, inferences from the data in Study 3 allow us to use information on <span class="math inline">\(K\)</span> to update on values for <span class="math inline">\(Z\)</span>. As we now see in rows 1 and 2, having updated the model in an integrated fashion, <span class="math inline">\(K\)</span> now <em>is</em> informative about the probability of causation, with our posterior mean on this query changing substantially depending on the value of <span class="math inline">\(K\)</span> that we observe in a case.</p>
 <p>Rows 3-4 highlight that the updating works through inferences on <span class="math inline">\(Z\)</span>: we see that if <span class="math inline">\(Z\)</span> is already known (we show this for <span class="math inline">\(Z=1\)</span>, but it holds for <span class="math inline">\(Z=0\)</span> as well), then there are no additional gains from knowledge of <span class="math inline">\(K\)</span>.</p>
-<table>
-<caption><span id="tab:frank4">Table 11.2: </span>Clue is informative after combining studies linking <span class="math inline">\(K\)</span> to <span class="math inline">\(Z\)</span> and <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span></caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:frank4">Table 11.2: </span>Clue is informative after combining studies linking <span class="math inline">\(K\)</span> to <span class="math inline">\(Z\)</span> and <span class="math inline">\(Z\)</span> to <span class="math inline">\(Y\)</span>
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Given</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 1</td>
-<td align="right">0.79</td>
-<td align="right">0.08</td>
+<tr>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 1
+</td>
+<td style="text-align:right;">
+0.79
+</td>
+<td style="text-align:right;">
+0.08
+</td>
 </tr>
-<tr class="even">
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 0</td>
-<td align="right">0.62</td>
-<td align="right">0.12</td>
+<tr>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 0
+</td>
+<td style="text-align:right;">
+0.62
+</td>
+<td style="text-align:right;">
+0.12
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 1 &amp; Z == 1</td>
-<td align="right">0.84</td>
-<td align="right">0.08</td>
+<tr>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 1 &amp; Z == 1
+</td>
+<td style="text-align:right;">
+0.84
+</td>
+<td style="text-align:right;">
+0.08
+</td>
 </tr>
-<tr class="even">
-<td align="left">X == 1 &amp; Y == 1 &amp; K == 0 &amp; Z == 1</td>
-<td align="right">0.84</td>
-<td align="right">0.08</td>
+<tr>
+<td style="text-align:left;">
+X == 1 &amp; Y == 1 &amp; K == 0 &amp; Z == 1
+</td>
+<td style="text-align:right;">
+0.84
+</td>
+<td style="text-align:right;">
+0.08
+</td>
 </tr>
 </tbody>
 </table>
@@ -557,179 +646,396 @@ Figure 11.1: A model that nests an observational and an experimental study. The 
 <p>When we use the model to analyze the data, we will start with flat priors on the causal types.</p>
 <p>The implied true values for the estimands of interest, and our priors on those estimands, are displayed in Table <a href="mm.html#tab:fusionestimands">11.3</a>.</p>
 <!-- AJ: I think the talk of parameters and priors is less intuitive than it could be in a table and passage like this, though I realize it maps onto CQ argument names. By "parameters" we mean *true* values in the simulation, right? Can we convert to "truth" in the "Using" column? Truth vs. priors seems nicely intuitive. -->
-<table>
-<caption><span id="tab:fusionestimands">Table 11.3: </span>Estimands in different sites</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:fusionestimands">Table 11.3: </span>Estimands in different sites
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Given</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">-</td>
-<td align="left">parameters</td>
-<td align="right">0.2</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.2
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">-</td>
-<td align="left">priors</td>
-<td align="right">0.0</td>
-<td align="right">0.26</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+0.26
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">R==0</td>
-<td align="left">parameters</td>
-<td align="right">0.2</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.2
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">R==0</td>
-<td align="left">priors</td>
-<td align="right">0.0</td>
-<td align="right">0.26</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==0
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+0.26
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">R==1</td>
-<td align="left">parameters</td>
-<td align="right">0.2</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.2
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">R==1</td>
-<td align="left">priors</td>
-<td align="right">0.0</td>
-<td align="right">0.26</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==1
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+0.26
+</td>
 </tr>
 </tbody>
-</table>
+</table></li>
+</ul></li>
+</ul>
 <p>Now, we generate data from the model, using the posited “true” parameter values, and then update the model using these data.</p>
 <p>We begin by analyzing just the observational data (cases where <span class="math inline">\(R=0\)</span>) and display the results in Table <a href="mm.html#tab:fusiondim">11.4</a>. Recall that the true average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is <span class="math inline">\(0.2\)</span>. Naive analysis of the observational data, taking a simple difference in means between the <span class="math inline">\(X=0\)</span> and <span class="math inline">\(X=1\)</span> cases, yields a strongly upwardly biased estimate of that effect, of 0.0806.</p>
-<table>
-<caption><span id="tab:fusiondim">Table 11.4: </span>Inferences on the ATE from differences in means</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:fusiondim">Table 11.4: </span>Inferences on the ATE from differences in means
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">Estimate</th>
-<th align="right">Std. Error</th>
-<th align="right">t value</th>
-<th align="right">Pr(&gt;|t|)</th>
-<th align="right">CI Lower</th>
-<th align="right">CI Upper</th>
-<th align="right">DF</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+Std. Error
+</th>
+<th style="text-align:right;">
+t value
+</th>
+<th style="text-align:right;">
+Pr(&gt;|t|)
+</th>
+<th style="text-align:right;">
+CI Lower
+</th>
+<th style="text-align:right;">
+CI Upper
+</th>
+<th style="text-align:right;">
+DF
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X</td>
-<td align="right">0.831</td>
-<td align="right">0.027</td>
-<td align="right">30.37</td>
-<td align="right">0</td>
-<td align="right">0.777</td>
-<td align="right">0.885</td>
-<td align="right">188</td>
+<tr>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:right;">
+0.831
+</td>
+<td style="text-align:right;">
+0.027
+</td>
+<td style="text-align:right;">
+30.37
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.777
+</td>
+<td style="text-align:right;">
+0.885
+</td>
+<td style="text-align:right;">
+188
+</td>
 </tr>
 </tbody>
 </table>
 <p>In contrast, when we use <code>CausalQueries</code> to update on the full causal model and use both the experimental and observational data, we get the much more accurate results shown in Table <a href="mm.html#tab:fusionCQ">11.5</a>. Moving down the rows, we show here the estimate of the unconditional <span class="math inline">\(ATE\)</span>, the estimate for the observational context (<span class="math inline">\(R=0\)</span>), and the estimate for the experimental context (<span class="math inline">\(R=1\)</span>). Unsurprisingly, the estimates are identical across all three settings since, in the model, <span class="math inline">\(R\)</span> is <span class="math inline">\(d\)</span>-separated from <span class="math inline">\(Y\)</span> by <span class="math inline">\(X\)</span>, which is observed. And, as we see, the posterior means are very close to the right answer of <span class="math inline">\(0.2\)</span>.</p>
-<table>
-<caption><span id="tab:fusionCQ">Table 11.5: </span>Estimates on the ATE for observational (<span class="math inline">\(R=0\)</span>) and experimental (<span class="math inline">\(R=1\)</span>) set.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:fusionCQ">Table 11.5: </span>Estimates on the ATE for observational (<span class="math inline">\(R=0\)</span>) and experimental (<span class="math inline">\(R=1\)</span>) set.
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Given</th>
-<th align="left">Using</th>
-<th align="left">Case.estimand</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:left;">
+Case.estimand
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">-</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">0.2028</td>
-<td align="right">0.0305</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.203
+</td>
+<td style="text-align:right;">
+0.031
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">R==0</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">0.2028</td>
-<td align="right">0.0305</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.203
+</td>
+<td style="text-align:right;">
+0.031
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">R==1</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">0.2028</td>
-<td align="right">0.0305</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.203
+</td>
+<td style="text-align:right;">
+0.031
+</td>
 </tr>
 </tbody>
-</table>
+</table></li>
+</ul>
 <p>Since the model used both the experimental and the observational data, we might wonder from where the leverage derived: did the observational data improve our estimates of the average treatment effect, or do our inferences emerge strictly from the experimental data? In the appendix, we show results when we updating using experimental data only.
 Comparing the two sets of results, we find there that we do indeed get a tightening of posterior variance and a more accurate result when we use both the observational and experimental data, but the experimental data alone are quite powerful, as we should expect for an estimate of the <span class="math inline">\(ATE\)</span>. The observational data do not add a great deal to an <span class="math inline">\(ATE\)</span> estimate, and the gains from observational data would be smaller still (and the experimental results even more accurate) if the experimental sample were larger.</p>
 <!-- FLAG: Need to create above table in appendix -->
 <p>However, what we can learn about uniquely from this model and the combined observational and experimental data is <em>heterogeneity</em> in effects between those that are in treatment and those that are in control <em>in the observational</em> setting. In Table <a href="mm.html#tab:combexpobsattatc">11.6</a>, we display the results of <span class="math inline">\(ATT\)</span> and <span class="math inline">\(ATC\)</span> queries of the updated model. In the first two rows, we see that, in the experimental setting, the average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is the same on both the treated and control groups, exactly as we would expect under random assignment. In the third row, we see the estimate of <span class="math inline">\(X\)</span>’s average effect for those assigned “by nature” to the control group in the observational setting, extracting a result close to the “true” value of <span class="math inline">\(-0.2\)</span>. The final row shows our estimate of the treatment effect for those who are selected into treatment in the observational setting, again getting close to the answer implied by the underlying data-generating process (<span class="math inline">\(0.6\)</span>).</p>
-<table>
-<caption><span id="tab:combexpobsattatc">Table 11.6: </span>Effects of <span class="math inline">\(X\)</span> conditional on <span class="math inline">\(X\)</span> for units that were randomly assigned or not. Effects of <span class="math inline">\(X\)</span> do not depend on <span class="math inline">\(X\)</span> in the experimental group, but they do in the observational group becuase of seld selection.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:combexpobsattatc">Table 11.6: </span>Effects of <span class="math inline">\(X\)</span> conditional on <span class="math inline">\(X\)</span> for units that were randomly assigned or not. Effects of <span class="math inline">\(X\)</span> do not depend on <span class="math inline">\(X\)</span> in the experimental group, but they do in the observational group becuase of seld selection.
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Given</th>
-<th align="left">Using</th>
-<th align="left">Case.estimand</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:left;">
+Case.estimand
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">R==1 &amp; X==0</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">0.2028</td>
-<td align="right">0.0305</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==1 &amp; X==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.203
+</td>
+<td style="text-align:right;">
+0.031
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">R==1 &amp; X==1</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">0.2028</td>
-<td align="right">0.0305</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==1 &amp; X==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.203
+</td>
+<td style="text-align:right;">
+0.031
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">R==0 &amp; X==0</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">-0.1831</td>
-<td align="right">0.0267</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==0 &amp; X==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+-0.183
+</td>
+<td style="text-align:right;">
+0.027
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">R==0 &amp; X==1</td>
-<td align="left">posteriors</td>
-<td align="left">FALSE</td>
-<td align="right">0.5932</td>
-<td align="right">0.0478</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+R==0 &amp; X==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:right;">
+0.593
+</td>
+<td style="text-align:right;">
+0.048
+</td>
 </tr>
 </tbody>
 </table>
@@ -752,101 +1058,227 @@ In a similar vein, these estimates can aid causal explanation. Seeing the positi
 Figure 11.2: Extrapolation when confounders have different distributions across cases.
 </p>
 </div>
-<table>
-<caption><span id="tab:appev2">Table 11.7: </span>Priors and true values (parameters) for three estimand: the frequency of <span class="math inline">\(W\)</span>, the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, and the effect conditional on <span class="math inline">\(W=1\)</span></caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:appev2">Table 11.7: </span>Priors and true values (parameters) for three estimand: the frequency of <span class="math inline">\(W\)</span>, the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, and the effect conditional on <span class="math inline">\(W=1\)</span>
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Given</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Incidence</td>
-<td align="left">Case==0</td>
-<td align="left">priors</td>
-<td align="right">0.334</td>
-<td align="right">0.237</td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.334
+</td>
+<td style="text-align:right;">
+0.237
+</td>
 </tr>
-<tr class="even">
-<td align="left">Incidence</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.333</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.333
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Incidence</td>
-<td align="left">Case==1</td>
-<td align="left">priors</td>
-<td align="right">0.666</td>
-<td align="right">0.238</td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.666
+</td>
+<td style="text-align:right;">
+0.238
+</td>
 </tr>
-<tr class="even">
-<td align="left">Incidence</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.667</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.667
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">Case==0</td>
-<td align="left">priors</td>
-<td align="right">0.002</td>
-<td align="right">0.140</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+<td style="text-align:right;">
+0.140
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.333</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.333
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">Case==1</td>
-<td align="left">priors</td>
-<td align="right">0.003</td>
-<td align="right">0.142</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.003
+</td>
+<td style="text-align:right;">
+0.142
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.573</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.573
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">CATE</td>
-<td align="left">Case==0</td>
-<td align="left">priors</td>
-<td align="right">0.002</td>
-<td align="right">0.174</td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+<td style="text-align:right;">
+0.174
+</td>
 </tr>
-<tr class="even">
-<td align="left">CATE</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.812</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.812
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">CATE</td>
-<td align="left">Case==1</td>
-<td align="left">priors</td>
-<td align="right">0.002</td>
-<td align="right">0.174</td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+priors
+</td>
+<td style="text-align:right;">
+0.002
+</td>
+<td style="text-align:right;">
+0.174
+</td>
 </tr>
-<tr class="even">
-<td align="left">CATE</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.812</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.812
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
 </tbody>
 </table>
@@ -854,101 +1286,227 @@ Figure 11.2: Extrapolation when confounders have different distributions across 
 <p>We show priors and true values for the estimands (drawn from the parameters) in Table <a href="mm.html#tab:appev2">11.7</a>. We see that the incidence of <span class="math inline">\(W=1\)</span> is higher in Context 1 than in Context 0, both in our priors and in the “truth” posited by the assigned parameter values. The “true” <span class="math inline">\(ATE\)</span> of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> is also higher in Context 1, though this is not reflected in our priors. The average treatment effect conditional on <span class="math inline">\(W\)</span> is the same in both contexts, whether we work from priors or assigned parameter values, as it must be given the model. That is, in this model the <span class="math inline">\(ATE\)</span> varies conditional on <span class="math inline">\(W\)</span> — and it varies conditional <em>only</em> on <span class="math inline">\(W\)</span>.</p>
 <!-- incidence in as well as the ATE of $X$ on $Y$ is larger in case 1 than in case 0 (in parameters, though not in priors). However the effect of $X$ on $Y$ conditional on $W$ is the same in both places.  -->
 <p>We now update the model using data from one context and then see if we can transport those findings to the other context. Specifically, we update using data on <span class="math inline">\(X, Y,\)</span> and <span class="math inline">\(W\)</span> from Context 0. We then use the updated beliefs to draw inferences about Context 1, using data <em>only</em> on <span class="math inline">\(W\)</span> from Context 1. In Table <a href="mm.html#tab:appev3">11.8</a>, we show our posteriors on the queries of interest as compared to the truth, given the parameter values.</p>
-<table>
-<caption><span id="tab:appev3">Table 11.8: </span>Extrapolation when two sites differ on <span class="math inline">\(W\)</span> and <span class="math inline">\(W\)</span> is observable in both contexts</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:appev3">Table 11.8: </span>Extrapolation when two sites differ on <span class="math inline">\(W\)</span> and <span class="math inline">\(W\)</span> is observable in both contexts
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Given</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Incidence</td>
-<td align="left">Case==0</td>
-<td align="left">posteriors</td>
-<td align="right">0.336</td>
-<td align="right">0.007</td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.336
+</td>
+<td style="text-align:right;">
+0.007
+</td>
 </tr>
-<tr class="even">
-<td align="left">Incidence</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.333</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.333
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Incidence</td>
-<td align="left">Case==1</td>
-<td align="left">posteriors</td>
-<td align="right">0.661</td>
-<td align="right">0.007</td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.661
+</td>
+<td style="text-align:right;">
+0.007
+</td>
 </tr>
-<tr class="even">
-<td align="left">Incidence</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.667</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.667
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">Case==0</td>
-<td align="left">posteriors</td>
-<td align="right">0.340</td>
-<td align="right">0.011</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.340
+</td>
+<td style="text-align:right;">
+0.011
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.333</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.333
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">Case==1</td>
-<td align="left">posteriors</td>
-<td align="right">0.570</td>
-<td align="right">0.009</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.570
+</td>
+<td style="text-align:right;">
+0.009
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.573</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.573
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">CATE</td>
-<td align="left">Case==0</td>
-<td align="left">posteriors</td>
-<td align="right">0.810</td>
-<td align="right">0.009</td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.810
+</td>
+<td style="text-align:right;">
+0.009
+</td>
 </tr>
-<tr class="even">
-<td align="left">CATE</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.812</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.812
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">CATE</td>
-<td align="left">Case==1</td>
-<td align="left">posteriors</td>
-<td align="right">0.810</td>
-<td align="right">0.009</td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.810
+</td>
+<td style="text-align:right;">
+0.009
+</td>
 </tr>
-<tr class="even">
-<td align="left">CATE</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.812</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.812
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
 </tbody>
 </table>
@@ -957,101 +1515,227 @@ Figure 11.2: Extrapolation when confounders have different distributions across 
 <p>We can also see, in Table <a href="mm.html#tab:appev4">11.9</a>, what would have happened if we had attempted to make the extrapolation to Context 1 without data on <span class="math inline">\(W\)</span> in that context. We would get the wrong answer for Context 1, though we would also report greater posterior variance. The higher posterior variance here captures the fact that we know things could be different in Context 1, but we don’t know in what way they are different.</p>
 <!-- AJ: This last set of results seems wrong. The estimates using posteriors seem again to be very close to those using parameters, and variances are not higher than in previous table. Seems we're still using info on W in code below?  -->
 <!-- Note that we get the CATE right since in the model this is assumed to be the same across cases. -->
-<table>
-<caption><span id="tab:appev4">Table 11.9: </span>Extrapolation when two contexts differ on <span class="math inline">\(W\)</span> and <span class="math inline">\(W\)</span> is not observable in target context</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:appev4">Table 11.9: </span>Extrapolation when two contexts differ on <span class="math inline">\(W\)</span> and <span class="math inline">\(W\)</span> is not observable in target context
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Given</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Given
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Incidence</td>
-<td align="left">Case==0</td>
-<td align="left">posteriors</td>
-<td align="right">0.329</td>
-<td align="right">0.007</td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.329
+</td>
+<td style="text-align:right;">
+0.007
+</td>
 </tr>
-<tr class="even">
-<td align="left">Incidence</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.333</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.333
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Incidence</td>
-<td align="left">Case==1</td>
-<td align="left">posteriors</td>
-<td align="right">0.675</td>
-<td align="right">0.007</td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.675
+</td>
+<td style="text-align:right;">
+0.007
+</td>
 </tr>
-<tr class="even">
-<td align="left">Incidence</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.667</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+Incidence
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.667
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">Case==0</td>
-<td align="left">posteriors</td>
-<td align="right">0.319</td>
-<td align="right">0.011</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.319
+</td>
+<td style="text-align:right;">
+0.011
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.333</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.333
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">ATE</td>
-<td align="left">Case==1</td>
-<td align="left">posteriors</td>
-<td align="right">0.572</td>
-<td align="right">0.009</td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.572
+</td>
+<td style="text-align:right;">
+0.009
+</td>
 </tr>
-<tr class="even">
-<td align="left">ATE</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.573</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+ATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.573
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">CATE</td>
-<td align="left">Case==0</td>
-<td align="left">posteriors</td>
-<td align="right">0.811</td>
-<td align="right">0.009</td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.811
+</td>
+<td style="text-align:right;">
+0.009
+</td>
 </tr>
-<tr class="even">
-<td align="left">CATE</td>
-<td align="left">Case==0</td>
-<td align="left">parameters</td>
-<td align="right">0.812</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==0
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.812
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">CATE</td>
-<td align="left">Case==1</td>
-<td align="left">posteriors</td>
-<td align="right">0.811</td>
-<td align="right">0.009</td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.811
+</td>
+<td style="text-align:right;">
+0.009
+</td>
 </tr>
-<tr class="even">
-<td align="left">CATE</td>
-<td align="left">Case==1</td>
-<td align="left">parameters</td>
-<td align="right">0.812</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+CATE
+</td>
+<td style="text-align:left;">
+Case==1
+</td>
+<td style="text-align:left;">
+parameters
+</td>
+<td style="text-align:right;">
+0.812
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
 </tbody>
 </table>
@@ -1109,13 +1793,13 @@ that treats each <span class="math inline">\(b_j\)</span> as a draw from distrib
 <!--     rbind( -->
 <!--     multilevel[[1]],  multilevel[[2]], -->
 <!--   multilevel[[3]],  -->
-<!--   multilevel[[5]]) %>% kable(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2) -->
+<!--   multilevel[[5]]) %>% kabble(caption = "Inferences from separate analyses and from integrated analysis (meta analysis) given (a) flat priors and (b) expectation of similar effects across studies", digits =2) -->
 <!-- ``` -->
 <!-- <!-- We see in both cases a drop in our estimates for effects in Setting 1 in both cases, relative to the single study case. Where weak heterogeneity is assumed we also see a rise in estimates for Setting 2.  -->
 <!-- Further, we can use these same updated models to update specifically on the amount of heterogeneity across settings. We operationalize heterogeneity here as the share of units that *would* respond differently to $X$ if they were in a different setting. In Table XXXX, we compare our prior on this quantity to our posterior. Where we started out with flat priors --- allowing for a great deal of heterogeneity --- we see that the data bring these beliefs downward. This makes sense given that, under the true data-generating process, the effects in the two settings are only moderately different. Conversely, where we start with a very low prior on heterogeneity, the data lead us to believe there is *more* heterogeneity than we had initially believed (though, given the strength of the prior that we have used in this example, we can still see its formidable efect on the posterior). -->
 <!-- ```{r, echo = FALSE} -->
-<!--     multilevel[[4]] %>% kable(caption = "Interaction | Flat priors") -->
-<!--   multilevel[[6]] %>% kable(caption = "Interaction | Expected homogeneity") -->
+<!--     multilevel[[4]] %>% kabble(caption = "Interaction | Flat priors") -->
+<!--   multilevel[[6]] %>% kabble(caption = "Interaction | Expected homogeneity") -->
 <!-- ``` -->
 <!-- ```{r, include = FALSE} -->
 <!-- # Approach 2 -->

@@ -53,6 +53,7 @@ pacman::p_load(
   # StanHeaders,
   rstan,
 # rstanarm,
+  kableExtra,
   knitr,
 # expm,
 # plotrix,
@@ -79,6 +80,26 @@ rstan_options(auto_write = TRUE)
 do_diagnosis = FALSE
 
 knitr::opts_chunk$set(fig.align = "center")
+
+kabble <- function(x, ...) {
+
+  a <- list(...)
+
+  a$x <- x
+
+  argnames <- names(a)
+
+  if(!("digits" %in% argnames)) a$digits <- 3
+  if(!("booktabs" %in% argnames)) a$booktabs <- TRUE
+  # print(a)
+  X <- do.call(kable, a)
+  latex_options = c("striped",
+                    ifelse(ncol(a)>7, "scale_down", NULL))
+  kable_styling(X, latex_options = latex_options)
+
+}
+
+# kabble(data.frame(pi = pi))
 
 #######
 
@@ -381,8 +402,8 @@ file_find_replace <- function(filepath, pattern, replacement) {
 }
 my_rmd_scripts <- list.files(pattern = "(Rmd)$")
 
-# for (r_script in my_rmd_scripts ) {
-#   file_find_replace(r_script,
-#                     "plot_dag",
-#                     "plot")
-# }
+ # for (r_script in my_rmd_scripts ) {
+ #   file_find_replace(r_script,
+ #                     "kable",
+ #                     "kabble")
+ # }

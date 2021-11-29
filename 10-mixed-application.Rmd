@@ -69,7 +69,7 @@ data <- CausalQueries::democracy_data
 #  mutate(I2 = I2*1) %>% select(country, P2, I2, M2, D2) %>%
 #  rename(P = P2, I = I2, M= M2, D = D2)
 
-kable(head(data), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)", booktabs = TRUE)
+kabble(head(data), caption = "Data (snapshot) derived from Haggard and Kaufman (2012)", booktabs = TRUE)
 
 ```
 
@@ -78,7 +78,7 @@ Note that this is not a rectangular dataset in that Haggard and Kaufman's collec
 The raw correlations between variables is shown in Table \@ref(tab:pimdcorr). Some correlations are missing because, as mentioned, data on some variables were only gathered conditional on the values of others. For those quantities where we do see correlations, they are not especially strong. There is, in particular, a weak overall relationship between inequality and democratization --- though, of course, this is consistent with inequality having heterogeneous effects across the sample. The strongest correlation in the data is between $P$ and $M$, which are assumed to be uncorrelated in the model, though this correlation is also quite weak.   
 
 ```{r pimdcorr, echo = FALSE, warning  = FALSE, message = FALSE}
-kable(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3,
+kabble(cor(data[,-1], use = "pairwise.complete.obs"), digits = 3,
       caption = "Pairwise correlated in the democracy-inequality (PIMD) data. P = Pressure, I = Inequality, M = Mobilization, D = Democratization")
 ```
 
@@ -151,7 +151,7 @@ I0D1_Cases <- cases_table(
   case_names  = c("Mexico (2000)", "Taiwan (1996)", 
                   "Albania (1991)", "Nicaragua (1984)"))
 
-kable(I0D1_Cases, digits = 3, caption = "Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for four cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.")
+kabble(I0D1_Cases, digits = 3, caption = "Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for four cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.")
 
 ```
 
@@ -167,7 +167,7 @@ I1D1_Cases <- cases_table(
     given = "D==1 & I==1"), 
   case_names  = c("Mongolia (1990)", "Paraguay (1989)", "Sierra Leone (1996)", "Malawi (1994)"))
 
-kable(I1D1_Cases, caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).  Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.r")
+kabble(I1D1_Cases, caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).  Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.r")
 
 ```
 
@@ -186,7 +186,7 @@ I0D0 <- conditional_inferences(model,
                             query = "D[I=1] > D[I=0]", 
                             given = "D==0 & I==0")
 
-kable(dplyr::select(I0D0, P,M, posterior),digits = 3, caption = "No inequality and No democratization: Was no inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
+kabble(dplyr::select(I0D0, P,M, posterior),digits = 3, caption = "No inequality and No democratization: Was no inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
 ```
 
 ```{r Tapp102, echo = FALSE}
@@ -196,7 +196,7 @@ I1D0 <- conditional_inferences(model,
                             query = "D[I=1] < D[I=0]", 
                             given = "D==0 & I==1")
 
-kable(dplyr::select(I1D0, P,M, posterior), digits = 3, caption = "Inequality and No democratization: Was inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
+kabble(dplyr::select(I1D0, P,M, posterior), digits = 3, caption = "Inequality and No democratization: Was inequality a cause of no democratization? Analyses here use priors assuming only monotonic effects.")
 ```
 
 
@@ -244,7 +244,7 @@ write_rds(pimd_queries_2, "saved/09_pimdqueries_2c.rds")
 
 pimd_queries_2 <- read_rds("saved/09_pimdqueries_2c.rds")
 
-pimd_queries_2 %>% select(Given, mean) %>% kable(digits = 2, caption = "Probability that inequality increases chances of democratization given:")
+pimd_queries_2 %>% select(Given, mean) %>% kabble(digits = 2, caption = "Probability that inequality increases chances of democratization given:")
 
 ```
 

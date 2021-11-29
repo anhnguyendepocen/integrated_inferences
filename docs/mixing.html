@@ -52,6 +52,8 @@
 
 <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections/anchor-sections.js"></script>
+<script src="libs/kePrint/kePrint.js"></script>
+<link href="libs/lightable/lightable.css" rel="stylesheet" />
 
 
 <style type="text/css">
@@ -258,7 +260,7 @@ div.csl-indent {
 <li class="chapter" data-level="7.1.4" data-path="pt.html"><a href="pt.html#updating-on-types-given-the-data."><i class="fa fa-check"></i><b>7.1.4</b> Updating on types given the data.</a></li>
 </ul></li>
 <li class="chapter" data-level="7.2" data-path="pt.html"><a href="pt.html#mapping-from-models-to-classic-qualitative-tests"><i class="fa fa-check"></i><b>7.2</b> Mapping from models to classic qualitative tests</a></li>
-<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-the-possibility-of-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing the possibility of probative value from a graph</a></li>
+<li class="chapter" data-level="7.3" data-path="pt.html"><a href="pt.html#assessing-probative-value-from-a-graph"><i class="fa fa-check"></i><b>7.3</b> Assessing probative value from a graph</a></li>
 <li class="chapter" data-level="7.4" data-path="pt.html"><a href="pt.html#principles-of-learning"><i class="fa fa-check"></i><b>7.4</b> Principles of learning</a>
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="pt.html"><a href="pt.html#a-dag-alone-does-not-guarantee-probative-value-for-a-single-case"><i class="fa fa-check"></i><b>7.4.1</b> A DAG alone does not guarantee probative value for a single case</a></li>
@@ -335,7 +337,7 @@ div.csl-indent {
 <li class="chapter" data-level="12.2" data-path="clue.html"><a href="clue.html#dynamic-strategies"><i class="fa fa-check"></i><b>12.2</b> Dynamic Strategies</a></li>
 <li class="chapter" data-level="12.3" data-path="clue.html"><a href="clue.html#conclusion"><i class="fa fa-check"></i><b>12.3</b> Conclusion</a></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection for mixed methods inference</a>
+<li class="chapter" data-level="13" data-path="caseselection.html"><a href="caseselection.html"><i class="fa fa-check"></i><b>13</b> Case selection</a>
 <ul>
 <li class="chapter" data-level="13.1" data-path="caseselection.html"><a href="caseselection.html#case-selection-strategies"><i class="fa fa-check"></i><b>13.1</b> Case selection strategies</a></li>
 <li class="chapter" data-level="13.2" data-path="caseselection.html"><a href="caseselection.html#no-general-rules"><i class="fa fa-check"></i><b>13.2</b> No general rules</a></li>
@@ -508,7 +510,7 @@ div.csl-indent {
 <li><p><strong>Priors</strong>. In the process tracing setup, we treat <span class="math inline">\(\lambda\)</span> as given: we do not seek to learn about <span class="math inline">\(\lambda\)</span>, and uncertainty over <span class="math inline">\(\lambda\)</span> plays no role. When we get to observe data on multiple cases, however, we have the opportunity to learn <em>both</em> about the cases at hand <em>and</em> about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the <span class="math inline">\(\lambda\)</span>’s) to be drawn from a prior <em>distribution</em> — a distribution that expresses our uncertainty and over which we can update once we see the data. While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter <a href="bayeschapter.html#bayeschapter">5</a>. Recall that the parameters of a Dirichlet distribution (the <span class="math inline">\(\alpha\)</span>’s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty.</p></li>
 </ol>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:dag3d"></span>
-<img src="ii_files/figure-html/dag3d-1.png" alt="Types, parameters, and priors" width="95%" />
+<img src="ii_files/figure-html/dag3d-1.png" alt="Types, parameters, and priors" width="100%" />
 <p class="caption">
 Figure 9.1: Types, parameters, and priors
 </p>
@@ -551,164 +553,396 @@ In a model without unobserved confounding, we set our beliefs about nodal type s
 <p>In practice, calculating the full <span class="math inline">\(\mathbf w\)</span> vector is made easier by the construction of a “parameter matrix” and an “ambiguity matrix,” just as for process tracing, that tells us which causal types are consistent with a particular data type.</p>
 <p>We use Tables <a href="mixing.html#tab:ambigmatrixmix">9.2</a> and <a href="mixing.html#tab:parammmatrixmix">9.3</a> to illustrate how to calculate the event probability for each data type for a given parameter vector <span class="math inline">\(\lambda\)</span>. Starting with data type <span class="math inline">\(X=0, Y=0\)</span> (first column of the ambiguity matrix), we see that the consistent causal types are (<span class="math inline">\(\theta^X_0, \theta^Y_{00}\)</span>) and (<span class="math inline">\(\theta^X_0, \theta^Y_{01}\)</span>), in rows 1 and 4. We then turn to columns 1 and 4 of the parameter matrix to read off the probability of each of these causal types—in each case given by the probability of the nodal types that it is formed out of. This gives <span class="math inline">\(.4 \times .3\)</span> and <span class="math inline">\(.4\times .2\)</span> giving a total probability of <span class="math inline">\(0.2\)</span> for the <span class="math inline">\(X=0, Y=0\)</span> event. All four event probabilities, for the four data types, are then calculated in the same way.</p>
 <p>In practice we do this all using matrix operations.</p>
-<table>
-<caption><span id="tab:ambigmatrixmix">Table 9.2: </span>An ambiguity matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding). Rows are causal types, columns are data types.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:ambigmatrixmix">Table 9.2: </span>An ambiguity matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding). Rows are causal types, columns are data types.
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">X0Y0</th>
-<th align="right">X1Y0</th>
-<th align="right">X0Y1</th>
-<th align="right">X1Y1</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+X0Y0
+</th>
+<th style="text-align:right;">
+X1Y0
+</th>
+<th style="text-align:right;">
+X0Y1
+</th>
+<th style="text-align:right;">
+X1Y1
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X0Y00</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:left;">
+X0Y00
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y00</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:left;">
+X1Y00
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0Y10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:left;">
+X0Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y10</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:left;">
+X1Y10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0Y01</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:left;">
+X0Y01
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y01</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+X1Y01
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">X0Y11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:left;">
+X0Y11
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="left">X1Y11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+X1Y11
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>
-<table>
-<caption><span id="tab:parammmatrixmix">Table 9.3: </span>A parameter matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding), indicating a single draw of <span class="math inline">\(\lambda\)</span> values from the prior distribution.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:parammmatrixmix">Table 9.3: </span>A parameter matrix for a simple <span class="math inline">\(X \rightarrow Y\)</span> model (with no unobserved confounding), indicating a single draw of <span class="math inline">\(\lambda\)</span> values from the prior distribution.
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">X0.Y00</th>
-<th align="right">X1.Y00</th>
-<th align="right">X0.Y10</th>
-<th align="right">X1.Y10</th>
-<th align="right">X0.Y01</th>
-<th align="right">X1.Y01</th>
-<th align="right">X0.Y11</th>
-<th align="right">X1.Y11</th>
-<th align="right"><span class="math inline">\(\lambda\)</span></th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+X0.Y00
+</th>
+<th style="text-align:right;">
+X1.Y00
+</th>
+<th style="text-align:right;">
+X0.Y10
+</th>
+<th style="text-align:right;">
+X1.Y10
+</th>
+<th style="text-align:right;">
+X0.Y01
+</th>
+<th style="text-align:right;">
+X1.Y01
+</th>
+<th style="text-align:right;">
+X0.Y11
+</th>
+<th style="text-align:right;">
+X1.Y11
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(\lambda\)</span>
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">X.0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0.4</td>
+<tr>
+<td style="text-align:left;">
+X.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.4
+</td>
 </tr>
-<tr class="even">
-<td align="left">X.1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">0.6</td>
+<tr>
+<td style="text-align:left;">
+X.1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.6
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Y.00</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.3</td>
+<tr>
+<td style="text-align:left;">
+Y.00
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.3
+</td>
 </tr>
-<tr class="even">
-<td align="left">Y.10</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.2</td>
+<tr>
+<td style="text-align:left;">
+Y.10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.2
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Y.01</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.2</td>
+<tr>
+<td style="text-align:left;">
+Y.01
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.2
+</td>
 </tr>
-<tr class="even">
-<td align="left">Y.11</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.3</td>
+<tr>
+<td style="text-align:left;">
+Y.11
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.3
+</td>
 </tr>
 </tbody>
 </table>
@@ -727,94 +961,236 @@ In other words, the likelihood of observing a particular data pattern given <spa
 </ol>
 <p><span class="math display">\[p(\lambda | d) = \frac{p(d | \lambda)p(\lambda)}{\int_{\lambda&#39;}{p(d | \lambda&#39;)p(\lambda&#39;)}}\]</span>
 In the <code>CausalQueries</code> package this updating is implemented in <code>stan</code>, and the result of the updating is a dataframe that contains a collection of draws from the posterior distribution for <span class="math inline">\(\lambda\)</span>. Table <a href="mixing.html#tab:posteriortable">9.4</a> illustrates what such a dataframe might look like for an <span class="math inline">\(X\rightarrow M \rightarrow Y\)</span> model. Each row represents a single draw from <span class="math inline">\(p(\lambda|d)\)</span>. The 10 columns represent shares for each of the 10 nodal types in the model, under each <span class="math inline">\(\lambda\)</span> draw.</p>
-<table>
-<caption><span id="tab:posteriortable">Table 9.4: </span>An illustration of a posterior distribution for a <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model. Each row is a draw from <span class="math inline">\(p(\lambda|d))\)</span>. SUch a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:posteriortable">Table 9.4: </span>An illustration of a posterior distribution for a <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model. Each row is a draw from <span class="math inline">\(p(\lambda|d))\)</span>. SUch a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.
+</caption>
 <thead>
-<tr class="header">
-<th align="right">X.0</th>
-<th align="right">X.1</th>
-<th align="right">M.00</th>
-<th align="right">M.10</th>
-<th align="right">M.01</th>
-<th align="right">M.11</th>
-<th align="right">Y.00</th>
-<th align="right">Y.10</th>
-<th align="right">Y.01</th>
-<th align="right">Y.11</th>
+<tr>
+<th style="text-align:right;">
+X.0
+</th>
+<th style="text-align:right;">
+X.1
+</th>
+<th style="text-align:right;">
+M.00
+</th>
+<th style="text-align:right;">
+M.10
+</th>
+<th style="text-align:right;">
+M.01
+</th>
+<th style="text-align:right;">
+M.11
+</th>
+<th style="text-align:right;">
+Y.00
+</th>
+<th style="text-align:right;">
+Y.10
+</th>
+<th style="text-align:right;">
+Y.01
+</th>
+<th style="text-align:right;">
+Y.11
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">0.47</td>
-<td align="right">0.53</td>
-<td align="right">0.21</td>
-<td align="right">0.07</td>
-<td align="right">0.17</td>
-<td align="right">0.55</td>
-<td align="right">0.20</td>
-<td align="right">0.23</td>
-<td align="right">0.15</td>
-<td align="right">0.41</td>
+<tr>
+<td style="text-align:right;">
+0.47
+</td>
+<td style="text-align:right;">
+0.53
+</td>
+<td style="text-align:right;">
+0.21
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.17
+</td>
+<td style="text-align:right;">
+0.55
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+0.41
+</td>
 </tr>
-<tr class="even">
-<td align="right">0.68</td>
-<td align="right">0.32</td>
-<td align="right">0.02</td>
-<td align="right">0.41</td>
-<td align="right">0.38</td>
-<td align="right">0.19</td>
-<td align="right">0.12</td>
-<td align="right">0.20</td>
-<td align="right">0.07</td>
-<td align="right">0.61</td>
+<tr>
+<td style="text-align:right;">
+0.68
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+<td style="text-align:right;">
+0.19
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.61
+</td>
 </tr>
-<tr class="odd">
-<td align="right">0.33</td>
-<td align="right">0.67</td>
-<td align="right">0.16</td>
-<td align="right">0.45</td>
-<td align="right">0.27</td>
-<td align="right">0.12</td>
-<td align="right">0.08</td>
-<td align="right">0.02</td>
-<td align="right">0.81</td>
-<td align="right">0.09</td>
+<tr>
+<td style="text-align:right;">
+0.33
+</td>
+<td style="text-align:right;">
+0.67
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+<td style="text-align:right;">
+0.27
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.81
+</td>
+<td style="text-align:right;">
+0.09
+</td>
 </tr>
-<tr class="even">
-<td align="right">0.68</td>
-<td align="right">0.32</td>
-<td align="right">0.15</td>
-<td align="right">0.10</td>
-<td align="right">0.70</td>
-<td align="right">0.05</td>
-<td align="right">0.03</td>
-<td align="right">0.07</td>
-<td align="right">0.00</td>
-<td align="right">0.90</td>
+<tr>
+<td style="text-align:right;">
+0.68
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.90
+</td>
 </tr>
-<tr class="odd">
-<td align="right">0.17</td>
-<td align="right">0.83</td>
-<td align="right">0.02</td>
-<td align="right">0.11</td>
-<td align="right">0.64</td>
-<td align="right">0.22</td>
-<td align="right">0.44</td>
-<td align="right">0.06</td>
-<td align="right">0.30</td>
-<td align="right">0.20</td>
+<tr>
+<td style="text-align:right;">
+0.17
+</td>
+<td style="text-align:right;">
+0.83
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+0.64
+</td>
+<td style="text-align:right;">
+0.22
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.20
+</td>
 </tr>
-<tr class="even">
-<td align="right">0.83</td>
-<td align="right">0.17</td>
-<td align="right">0.16</td>
-<td align="right">0.08</td>
-<td align="right">0.02</td>
-<td align="right">0.73</td>
-<td align="right">0.49</td>
-<td align="right">0.28</td>
-<td align="right">0.12</td>
-<td align="right">0.11</td>
+<tr>
+<td style="text-align:right;">
+0.83
+</td>
+<td style="text-align:right;">
+0.17
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+<td style="text-align:right;">
+0.28
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.11
+</td>
 </tr>
 </tbody>
 </table>
@@ -823,76 +1199,186 @@ In the <code>CausalQueries</code> package this updating is implemented in <code>
 </ol>
 <p>Once we have generated a posterior distribution for <span class="math inline">\(\lambda\)</span>, we can then query that distribution. The simplest queries relate to values of <span class="math inline">\(\lambda\)</span>. For instance, if we are interested in the probability that <span class="math inline">\(M\)</span> has a positive effect on <span class="math inline">\(Y\)</span>, given an updated <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model, we want to know about the distribution of <span class="math inline">\(\lambda^M_{01}\)</span>. This distribution can be read directly from column 9 (<span class="math inline">\(Y01\)</span>) of Table <a href="mixing.html#tab:posteriortable">9.4</a>. More complex queries can all be described as summaries of combinations of these columns. For instance, the query, “What is the average effect of <span class="math inline">\(M\)</span> on <span class="math inline">\(Y\)</span>” is a question about the distribution of <span class="math inline">\(\lambda^M_{01} - \lambda^M_{10}\)</span>, which is given by the difference between columns 9 and 8 of the table. Still more complex queries may require keeping some nodes constant while varying others, yet all of these can be calculated as summaries of the combinations of columns of the posterior distribution, following the rules described in Chapter <a href="questions.html#questions">4</a>.</p>
 <p>Table <a href="mixing.html#tab:chainillustration">9.5</a> shows examples of a full mapping from data to posteriors. We begin with a simple chain model of the form <span class="math inline">\(X\rightarrow M \rightarrow Y\)</span> with flat priors over nodal types and report inferences on a set of queries (columns) for difference data types (rows).</p>
-<table>
-<caption><span id="tab:chainillustration">Table 9.5: </span>Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show <span class="math inline">\(\tau_{ij}\)</span>—average effects of <span class="math inline">\(i\)</span> on <span class="math inline">\(j\)</span>; the last column shows the probability of causation: the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> in a <span class="math inline">\(X=Y=1\)</span> case.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:chainillustration">Table 9.5: </span>Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show <span class="math inline">\(\tau_{ij}\)</span>—average effects of <span class="math inline">\(i\)</span> on <span class="math inline">\(j\)</span>; the last column shows the probability of causation: the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> in a <span class="math inline">\(X=Y=1\)</span> case.
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Data</th>
-<th align="right">a</th>
-<th align="right">b</th>
-<th align="right">c</th>
-<th align="right">d</th>
-<th align="right"><span class="math inline">\(\tau_{XM}\)</span></th>
-<th align="right"><span class="math inline">\(\tau_{MY}\)</span></th>
-<th align="right"><span class="math inline">\(\tau_{XY}\)</span></th>
-<th align="right">PC</th>
+<tr>
+<th style="text-align:left;">
+Data
+</th>
+<th style="text-align:right;">
+a
+</th>
+<th style="text-align:right;">
+b
+</th>
+<th style="text-align:right;">
+c
+</th>
+<th style="text-align:right;">
+d
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(\tau_{XM}\)</span>
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(\tau_{MY}\)</span>
+</th>
+<th style="text-align:right;">
+<span class="math inline">\(\tau_{XY}\)</span>
+</th>
+<th style="text-align:right;">
+PC
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">No data</td>
-<td align="right">0.13</td>
-<td align="right">0.13</td>
-<td align="right">0.37</td>
-<td align="right">0.38</td>
-<td align="right">0.00</td>
-<td align="right">-0.01</td>
-<td align="right">0.00</td>
-<td align="right">0.27</td>
+<tr>
+<td style="text-align:left;">
+No data
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+-0.01
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.27
+</td>
 </tr>
-<tr class="even">
-<td align="left">2 cases X, Y data only</td>
-<td align="right">0.12</td>
-<td align="right">0.14</td>
-<td align="right">0.37</td>
-<td align="right">0.37</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.02</td>
-<td align="right">0.29</td>
+<tr>
+<td style="text-align:left;">
+2 cases X, Y data only
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.29
+</td>
 </tr>
-<tr class="odd">
-<td align="left">2 cases, X, M, Y data</td>
-<td align="right">0.12</td>
-<td align="right">0.16</td>
-<td align="right">0.36</td>
-<td align="right">0.36</td>
-<td align="right">0.20</td>
-<td align="right">0.20</td>
-<td align="right">0.04</td>
-<td align="right">0.32</td>
+<tr>
+<td style="text-align:left;">
+2 cases, X, M, Y data
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.36
+</td>
+<td style="text-align:right;">
+0.36
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.32
+</td>
 </tr>
-<tr class="even">
-<td align="left">10 cases: X, Y data only</td>
-<td align="right">0.11</td>
-<td align="right">0.27</td>
-<td align="right">0.31</td>
-<td align="right">0.31</td>
-<td align="right">0.00</td>
-<td align="right">0.00</td>
-<td align="right">0.17</td>
-<td align="right">0.45</td>
+<tr>
+<td style="text-align:left;">
+10 cases: X, Y data only
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+0.27
+</td>
+<td style="text-align:right;">
+0.31
+</td>
+<td style="text-align:right;">
+0.31
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.17
+</td>
+<td style="text-align:right;">
+0.45
+</td>
 </tr>
-<tr class="odd">
-<td align="left">10 cases: X, M, Y data</td>
-<td align="right">0.09</td>
-<td align="right">0.44</td>
-<td align="right">0.23</td>
-<td align="right">0.23</td>
-<td align="right">0.59</td>
-<td align="right">0.59</td>
-<td align="right">0.35</td>
-<td align="right">0.66</td>
+<tr>
+<td style="text-align:left;">
+10 cases: X, M, Y data
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.66
+</td>
 </tr>
 </tbody>
 </table>
@@ -1049,15 +1535,53 @@ The example below shows a case where these differ and illustrates two ways in wh
              expand_grid = TRUE)
 ```
 
-
-Table: (\#tab:unnamed-chunk-10)The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect
-
-|Query |Given       |Using      |Case.estimand |  mean|    sd|
-|:-----|:-----------|:----------|:-------------|-----:|-----:|
-|Q 1   |X==1 & Y==1 |priors     |FALSE         | 0.412| 0.347|
-|Q 1   |X==1 & Y==1 |posteriors |FALSE         | 0.335| 0.329|
-|Q 1   |X==1 & Y==1 |priors     |TRUE          | 0.332|      |
-|Q 1   |X==1 & Y==1 |posteriors |TRUE          | 0.264|      |
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>(\#tab:unnamed-chunk-10)The same answers are found using the prior distribution and setting `case_estimand` to `TRUE`, and using the posterior distribution but setting `case.estimand` to `FALSE`. Other answers are incorrect</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Query </th>
+   <th style="text-align:left;"> Given </th>
+   <th style="text-align:left;"> Using </th>
+   <th style="text-align:left;"> Case.estimand </th>
+   <th style="text-align:right;"> mean </th>
+   <th style="text-align:right;"> sd </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Q 1 </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 </td>
+   <td style="text-align:left;"> priors </td>
+   <td style="text-align:left;"> FALSE </td>
+   <td style="text-align:right;"> 0.412 </td>
+   <td style="text-align:right;"> 0.347 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Q 1 </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 </td>
+   <td style="text-align:left;"> posteriors </td>
+   <td style="text-align:left;"> FALSE </td>
+   <td style="text-align:right;"> 0.335 </td>
+   <td style="text-align:right;"> 0.329 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Q 1 </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 </td>
+   <td style="text-align:left;"> priors </td>
+   <td style="text-align:left;"> TRUE </td>
+   <td style="text-align:right;"> 0.332 </td>
+   <td style="text-align:right;">  </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Q 1 </td>
+   <td style="text-align:left;"> X==1 &amp; Y==1 </td>
+   <td style="text-align:left;"> posteriors </td>
+   <td style="text-align:left;"> TRUE </td>
+   <td style="text-align:right;"> 0.264 </td>
+   <td style="text-align:right;">  </td>
+  </tr>
+</tbody>
+</table>
 
 ::::
 `
@@ -1074,7 +1598,7 @@ Table: (\#tab:unnamed-chunk-10)The same answers are found using the prior distri
 <p><span class="math display">\[\Pr(\mathcal{D}|\theta) = 
   \text{Multinom}\left(n_{XY*}|n-k, w_{XY*}\right) \times \text{Multinom}\left(n_{XYM}|k, w_{XYM}\right)\]</span></p>
 <p>The generalization is straightforward. Say that a strategy is a set of nodes on which data is gathered on <span class="math inline">\(n_s\)</span> units. For example data may be gathered through three strategies: <span class="math inline">\(n_1\)</span> units for which data is gathered on nodes <span class="math inline">\(V_1\)</span> only, <span class="math inline">\(n_2\)</span> units for which data is gathered on nodes <span class="math inline">\(V_2\)</span> only, and <span class="math inline">\(n_3\)</span> units for which data is gathered on nodes <span class="math inline">\(V_3\)</span> only. The observed number of units for each data type under each data strategy is <span class="math inline">\(m_s\)</span> and the event probabilities are <span class="math inline">\(w_s\)</span>. The likelihood is:</p>
-<p><span class="math display">\[L = \prod_s \text{multinomial}(m_s|n_s, w_s)\]</span>
+<p><span class="math display">\[L = \prod_s \text{Multinom}(m_s|n_s, w_s)\]</span>
 <!-- Illustration --></p>
 </div>
 <div id="considerations" class="section level2" number="9.4">
@@ -1118,93 +1642,207 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <p>In the illustration below with two 4-level variables, we generate data (<span class="math inline">\(N=100\)</span>) from a non-monotonic process with the following potential outcomes: <span class="math inline">\(Y(0)=0, Y(1)=1, Y(2)=3, Y(3) = 2\)</span>. We then update and report on posteriors on potential outcomes.</p>
 <!-- We make use of a couple of helper functions to simplify working with conversions from statements on integers to statements on the binary representation of the integers. -->
 <p>Data from this model looks like this:</p>
-<table>
-<caption><span id="tab:unnamed-chunk-14">Table 9.6: </span>Data from non binary model (selection of rows)</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-14">Table 9.6: </span>Data from non binary model (selection of rows)
+</caption>
 <thead>
-<tr class="header">
-<th align="right">X1</th>
-<th align="right">X2</th>
-<th align="right">Y1</th>
-<th align="right">Y2</th>
-<th align="right">X</th>
-<th align="right">Y</th>
+<tr>
+<th style="text-align:right;">
+X1
+</th>
+<th style="text-align:right;">
+X2
+</th>
+<th style="text-align:right;">
+Y1
+</th>
+<th style="text-align:right;">
+Y2
+</th>
+<th style="text-align:right;">
+X
+</th>
+<th style="text-align:right;">
+Y
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">3</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
 </tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">3</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+3
+</td>
 </tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-<td align="right">3</td>
-<td align="right">2</td>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
 </tr>
 </tbody>
 </table>
 <p>Updating and querying is done in the usual way:</p>
-<table>
-<caption><span id="tab:unnamed-chunk-16">Table 9.7: </span>Posteriors on potential outcomes for non binary model</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-16">Table 9.7: </span>Posteriors on potential outcomes for non binary model
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Q</th>
-<th align="left">Using</th>
-<th align="right">True value</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Q
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+True value
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Y(0)</td>
-<td align="left">posteriors</td>
-<td align="right">0</td>
-<td align="right">0.37</td>
-<td align="right">0.08</td>
+<tr>
+<td style="text-align:left;">
+Y(0)
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.08
+</td>
 </tr>
-<tr class="even">
-<td align="left">Y(1)</td>
-<td align="left">posteriors</td>
-<td align="right">1</td>
-<td align="right">0.98</td>
-<td align="right">0.07</td>
+<tr>
+<td style="text-align:left;">
+Y(1)
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.98
+</td>
+<td style="text-align:right;">
+0.07
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Y(2)</td>
-<td align="left">posteriors</td>
-<td align="right">3</td>
-<td align="right">2.60</td>
-<td align="right">0.09</td>
+<tr>
+<td style="text-align:left;">
+Y(2)
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2.60
+</td>
+<td style="text-align:right;">
+0.09
+</td>
 </tr>
-<tr class="even">
-<td align="left">Y(3)</td>
-<td align="left">posteriors</td>
-<td align="right">2</td>
-<td align="right">2.02</td>
-<td align="right">0.07</td>
+<tr>
+<td style="text-align:left;">
+Y(3)
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+2.02
+</td>
+<td style="text-align:right;">
+0.07
+</td>
 </tr>
 </tbody>
 </table>
@@ -1234,34 +1872,68 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <p>In this setup, with a large amount of data, we would arrive at a differences-in-means estimate of the effect of <span class="math inline">\(X\)</span> on <em>measured</em> <span class="math inline">\(Y\)</span> of about 0.42. Importantly, this would be the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y_{\text{measured}}\)</span> — not the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> — but if we were not thinking about the possibility of measurement error, we would likely conflate the two, arriving at an estimate far from the true value.</p>
 <p>We can improve on this “naive” estimate in a number of ways using a causal model, as shown in Table <a href="mixing.html#tab:measurmenterror">9.8</a>. First, we can do much better simply by undertaking the estimation within a causal model framework, even if we simply make use of the exact same data. We write down the following simple model <span class="math inline">\(X \rightarrow Y \rightarrow Y_\text{measured}\)</span>, and we build in a monotonicity restriction that disallows negative effects of <span class="math inline">\(Y\)</span> on <span class="math inline">\(Y_{\text{measured}}\)</span>. As we can see from the first row in Table <a href="mixing.html#tab:measurmenterror">9.8</a>, our mean estimate of the <span class="math inline">\(ATE\)</span> moves much closer to the true value of 0.6.</p>
 <p>Second, we can add data by gathering measures of “true” <span class="math inline">\(Y\)</span> for 20% of our sample. As we can see from the second row in the table, this investment in additional data does not change our posterior mean much but yields a dramatic increase in precision. In fact, as we can see by comparison to the third row, partial data on “true” <span class="math inline">\(Y\)</span> yields an estimate that is almost the same and almost as precise as the one we would arrive it with data on “true” <span class="math inline">\(Y\)</span> for <em>all</em> cases.</p>
-<table>
-<caption><span id="tab:measurmenterror">Table 9.8: </span>Inferences on effects on true Y given measurement error (true ATE = .6)</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:measurmenterror">Table 9.8: </span>Inferences on effects on true Y given measurement error (true ATE = .6)
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Data</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Data
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Data on Y measured only</td>
-<td align="left">posteriors</td>
-<td align="right">0.64</td>
-<td align="right">0.09</td>
+<tr>
+<td style="text-align:left;">
+Data on Y measured only
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.64
+</td>
+<td style="text-align:right;">
+0.09
+</td>
 </tr>
-<tr class="even">
-<td align="left">Data on true Y for 20% of units</td>
-<td align="left">posteriors</td>
-<td align="right">0.63</td>
-<td align="right">0.03</td>
+<tr>
+<td style="text-align:left;">
+Data on true Y for 20% of units
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.63
+</td>
+<td style="text-align:right;">
+0.03
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Data on true Y</td>
-<td align="left">posteriors</td>
-<td align="right">0.61</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+Data on true Y
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
 </tbody>
 </table>
@@ -1272,22 +1944,40 @@ Figure 9.3: ATE is identified, PC is not identified but has informative bounds
 <!-- The probability of different types of measurement error can be included among the set of parameters of interest, with likelihood functions adjusted accordingly. Suppose, for instance, that with probability $\epsilon$ a $Y=0$ case is recorded as a $Y=1$ case (and vice versa). Then the event probability of observing an $X=1$,$Y=1$ case, for example, is $\epsilon \lambda_a \pi_a + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_c \pi_c + (1-\epsilon) \lambda_d \pi_d$. %If instead there were measurement error on $X$ but not on $Y$, then the event probability would be: $\epsilon \lambda_a (1-\pi_a) + (1-\epsilon) \lambda_b \pi_b + \epsilon \lambda_d (1-\pi_d) + (1-\epsilon) \lambda_d \pi_d$.  -->
 <!-- Similar expressions can be derived for measurement error on $X$ or $K$. Specifying the problem in this way allows us both to take account of measurement error and learn about it. -->
 <p>An alternative strategy might involve gathering multiple measures of <span class="math inline">\(Y\)</span>, each with their own independent source of error. Consider the model, <span class="math inline">\(X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}\)</span>. Assume again a true <span class="math inline">\(ATE\)</span> of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of 0.6, that <span class="math inline">\(Y\)</span> has an average effect of 0.7 on both <span class="math inline">\(Y_\text{measured[1]}\)</span> and <span class="math inline">\(Y_\text{measured[2]}\)</span>, and no negative effects of true <span class="math inline">\(Y\)</span> on the measures.<a href="#fn65" class="footnote-ref" id="fnref65"><sup>65</sup></a> In this setup, updating on the true <span class="math inline">\(Y\)</span> can be thought of as a Bayesian version of “triangulation,” or factor analysis. The results in Table <a href="mixing.html#tab:measurementerror2">9.9</a> are based the same data as in the previous example but now augmented with the second noisy measure for <span class="math inline">\(Y\)</span>.</p>
-<table>
-<caption><span id="tab:measurementerror2">Table 9.9: </span>Inferences on effects on true Y given two noisy measures (true ATE = .6)</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:measurementerror2">Table 9.9: </span>Inferences on effects on true Y given two noisy measures (true ATE = .6)
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Data</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Data
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Two noisy measures</td>
-<td align="left">posteriors</td>
-<td align="right">0.61</td>
-<td align="right">0.02</td>
+<tr>
+<td style="text-align:left;">
+Two noisy measures
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+<td style="text-align:right;">
+0.02
+</td>
 </tr>
 </tbody>
 </table>
@@ -1314,40 +2004,82 @@ Figure 9.4: Model with spillovers: the treatment status of two units each affect
 <p>Obviously, more complex setups are possible. We can also model the process in a way that allows for more learning (pooling) across units. In the present model, learning about effects for Unit 1 in a pair tells us nothing about effects for Unit 2 in a pair because they are set up to have completely independent nodal types. We could instead treat all units as drawn from the same population. We could represent this, for instance, in a graph with just one <span class="math inline">\(Y\)</span> and two treatment nodes pointing into it, one for the unit’s own treatment status and one for its neighbor’s treatment status.</p>
 <!-- AJ: Can we substitute some other word for "cluster" above to avoid confusion with the concept of clusters as we discuss them in the next subsection? -->
 <!-- The dataset will now be structured such that the "unit" of analysis is the *cluster*. WAIT, I AM NOT SURE THIS IS RIGHT. CAN'T WE HAVE THE UNITS BE VILLAGES, WITH THE COLUMNS IN THE DATASET BEING X1, X2, X3, Y_i FOR ALL VILLAGES? -->
-<table>
-<caption><span id="tab:unnamed-chunk-20">Table 9.10: </span>Spillover queries</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-20">Table 9.10: </span>Spillover queries
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Query</th>
-<th align="left">Using</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Query
+</th>
+<th style="text-align:left;">
+Using
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">only_self_treated</td>
-<td align="left">posteriors</td>
-<td align="right">0.37</td>
-<td align="right">0.05</td>
+<tr>
+<td style="text-align:left;">
+only_self_treated
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.05
+</td>
 </tr>
-<tr class="even">
-<td align="left">only_other_treated</td>
-<td align="left">posteriors</td>
-<td align="right">0.00</td>
-<td align="right">0.04</td>
+<tr>
+<td style="text-align:left;">
+only_other_treated
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.04
+</td>
 </tr>
-<tr class="odd">
-<td align="left">one_treated</td>
-<td align="left">posteriors</td>
-<td align="right">0.19</td>
-<td align="right">0.04</td>
+<tr>
+<td style="text-align:left;">
+one_treated
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.19
+</td>
+<td style="text-align:right;">
+0.04
+</td>
 </tr>
-<tr class="even">
-<td align="left">both_treated</td>
-<td align="left">posteriors</td>
-<td align="right">0.75</td>
-<td align="right">0.05</td>
+<tr>
+<td style="text-align:left;">
+both_treated
+</td>
+<td style="text-align:left;">
+posteriors
+</td>
+<td style="text-align:right;">
+0.75
+</td>
+<td style="text-align:right;">
+0.05
+</td>
 </tr>
 </tbody>
 </table>
@@ -1369,25 +2101,45 @@ Figure 9.4: Model with spillovers: the treatment status of two units each affect
 In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.</p>
 <!-- AJ: Is the true ATE here just from flat priors? So 0? -->
 <!-- AJ: Needs a final paragraph speaking to the results. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR. -->
-<table>
-<caption><span id="tab:cluster">Table 9.11: </span>Data from many pairs is more informative than the same data from fewer pairs.</caption>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:cluster">Table 9.11: </span>Data from many pairs is more informative than the same data from fewer pairs.
+</caption>
 <thead>
-<tr class="header">
-<th align="left">Data</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
+<tr>
+<th style="text-align:left;">
+Data
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">2 obs from each of 2 clusters</td>
-<td align="right">0.018</td>
-<td align="right">0.094</td>
+<tr>
+<td style="text-align:left;">
+2 obs from each of 2 clusters
+</td>
+<td style="text-align:right;">
+0.018
+</td>
+<td style="text-align:right;">
+0.094
+</td>
 </tr>
-<tr class="even">
-<td align="left">1 obs from each of 4 clusters</td>
-<td align="right">0.020</td>
-<td align="right">0.095</td>
+<tr>
+<td style="text-align:left;">
+1 obs from each of 4 clusters
+</td>
+<td style="text-align:right;">
+0.020
+</td>
+<td style="text-align:right;">
+0.095
+</td>
 </tr>
 </tbody>
 </table>

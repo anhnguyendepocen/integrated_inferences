@@ -147,7 +147,7 @@ possible_inferences <-
   group_by(strategy) %>% mutate(prob = prob/sum(prob))
 
 
-kable(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns, with observations on some or all nodes.", row.names = FALSE, digits = 3)
+kabble(possible_inferences[possible_inferences$prob >0, ], caption="Inferences given different data patterns, with observations on some or all nodes.", row.names = FALSE, digits = 3)
 ```
 
 Figures \@ref(fig:showstrats5xxa)  and \@ref(fig:showstrats5xxb) show the same information in graphs.
@@ -192,7 +192,7 @@ dfl <- t(learning) %>% data.frame() %>%
   mutate(prior_estimand= round(as.numeric(prior_estimand), 3),
          prior_var = round(as.numeric(prior_var), 3),
          E_post_var = round(as.numeric(E_post_var), 3))
-kable(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), caption = "Expected learning from different clue selection strategies. Each strategy is a group of nodes on which within case data is gathered. ")
+kabble(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), caption = "Expected learning from different clue selection strategies. Each strategy is a group of nodes on which within case data is gathered. ")
 ```
   
 
@@ -284,7 +284,7 @@ dfl <- t(learning) %>% data.frame() %>%
   mutate(prior_estimand= round(as.numeric(prior_estimand), 3),
          prior_var = round(as.numeric(prior_var), 3),
          E_post_var = round(as.numeric(E_post_var), 3))
-kable(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), caption = "Expected posterior variance from different clue selection strategies (less restricted model).")
+kabble(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), caption = "Expected posterior variance from different clue selection strategies (less restricted model).")
 
 ```
 
@@ -351,7 +351,7 @@ dfl <- t(learning) %>% data.frame() %>%
          prior_var = round(as.numeric(prior_var), 3),
          E_post_var = round(as.numeric(E_post_var), 3))
 
-kable(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), , caption = "Expected posterior variance from different clue selection strategies. (Stonger priors on S=1)")
+kabble(dfl, col.names = c("Strategy", "Given", "Prior belief", "Prior Uncertainty", "Expected Posterior Uncertainty"), caption = "Expected posterior variance from different clue selection strategies. (Stonger priors on S=1)")
 ```
 
 We see the results of this new set of diagnoses, with informative priors on $S$'s nodal types, in Table \@ref(tab:scxrylearning3). Comparing with Table \@ref(tab:scxrylearning), a number of features stand out. First is the much lower *prior* variance under the new model: having a strong prior belief about $S$'s value gives us stronger prior beliefs about whether $X$ could have caused $Y$ since such an effect *depends* on $S$'s value. A second striking difference is that searching for $S$ is expected to be much less informative in this model. The reason is simple: we now have a strong prior belief about what we are likely to find when we search for $S$. We *could* be surprised, but we should not *expect* to be. In the original model, in contrast, we were maximally uncertain about $S$'s value---believing it had a 0.5 chance of being 1---and so there was much more to be gained by looking. 
@@ -385,7 +385,7 @@ Now, let us assume that we have already observed high inequality and the outcome
 inferences_pimd <-
   conditional_inferences(pimd, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
 
-kable(inferences_pimd, caption = "Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3, row.names = FALSE)
+kabble(inferences_pimd, caption = "Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3, row.names = FALSE)
 
 ```
 
@@ -413,7 +413,7 @@ ELpimd1 <- read_rds("saved/11_ELpimd1.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = " Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
+kabble(cbind(strategy = x_strategy, ELpimd1[,-1]), caption = " Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different clue seeking  stratgies for cases in which we have observed high inequality and democratization.", digits = 3)
 
 ```
 
@@ -424,7 +424,7 @@ We turn next to considering those cases with low inequality that democratized, a
 inferences2_pimd <-
   conditional_inferences(pimd, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
 
-kable(inferences2_pimd, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3, row.names = FALSE)
+kabble(inferences2_pimd, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3, row.names = FALSE)
 
 ```
 
@@ -445,7 +445,7 @@ ELpimd2 <- read_rds("saved/11_ELpimd2.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3, row.names = FALSE)
+kabble(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 3, row.names = FALSE)
 
 ```
 
@@ -477,7 +477,7 @@ kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "Prior estimand, pri
 <!-- inferences_pimdcon <- -->
 <!--   conditional_inferences(pimd_confound, query = "D[I=1] > D[I=0]", given = "I==1 & D==1") -->
 
-<!-- kable(inferences_pimdcon, caption = "\\label{possible_outcomespimd_i1con} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterioron the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3) -->
+<!-- kabble(inferences_pimdcon, caption = "\\label{possible_outcomespimd_i1con} Table shows possible data patterns for P and M given I = 1 and D = 1, and assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterioron the query (does $I$ have a positive effect on $D$) given that data realization.", digits = 3) -->
 
 <!-- ``` -->
 <!-- In Table \@ref(pimdlearn_i1d1con), we see the expected learning results for the $I=1, D=1$ cases, given a model with confounding, which we can compare to the comparable results in Table \@ref(pimdlearn_i1d1), for the model without confounding. Differences are modest. We are in general somewhat less uncertain in the model with confounding, regardless of strategy, which likely is an artifact of the fact that our posterior means are closer to $0$. Likewise, the scope for uncertainty-reduction is lower in the new model. In addition, however, it looks like the difference in expected learning between observing $P$ and observing $M$ is slightly smaller in the model with confounding. -->
@@ -494,7 +494,7 @@ kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "Prior estimand, pri
 
 <!-- x_strategy <- c("None", "P", "M", "P and M") -->
 
-<!-- kable(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3) -->
+<!-- kabble(cbind(strategy = x_strategy, ELpimdconfound1[,-1]), caption = "\\label{pimdlearn_i1d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 3) -->
 
 <!-- ``` -->
 
@@ -504,7 +504,7 @@ kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "Prior estimand, pri
 <!-- inferences2_pimdcon <- -->
 <!--   conditional_inferences(pimd_confound, query = "D[I=1] < D[I=0]", given = "I==0 & D==1") -->
 
-<!-- kable(inferences2_pimdcon, caption = "\\label{possible_outcomespimd_i0con} Table shows possible data patterns for P and M given I = 0 and D = 1, assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3) -->
+<!-- kabble(inferences2_pimdcon, caption = "\\label{possible_outcomespimd_i0con} Table shows possible data patterns for P and M given I = 0 and D = 1, assuming confounding, together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a negative effect on $D$) given that data realization.", digits = 3) -->
 
 <!-- ``` -->
 
@@ -521,7 +521,7 @@ kable(cbind(strategy = x_strategy, ELpimd2[,-1]), caption = "Prior estimand, pri
 
 <!-- x_strategy <- c("None", "P", "M", "P and M") -->
 
-<!-- kable(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3) -->
+<!-- kabble(cbind(strategy = x_strategy, ELpimdconfound2[,-1]), caption = "\\label{pimdlearn_i0d1con}Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a negative effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed low inequality and democratization, with confounding.", digits = 3) -->
 
 <!-- ``` -->
 
@@ -559,7 +559,7 @@ set_parameters(type = "prior_mean")
 inferences_pimdconf <-
   conditional_inferences(pimd_confound2, query = "D[I=1] > D[I=0]", given = "I==1 & D==1")
 
-kable(inferences_pimdconf, caption = "Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization, with confounding involving $P$.", digits = 4, row.names = FALSE)
+kabble(inferences_pimdconf, caption = "Table shows possible data patterns for P and M given I = 1 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior on the query (does $I$ have a positive effect on $D$) given that data realization, with confounding involving $P$.", digits = 4, row.names = FALSE)
 
 ```
 
@@ -573,7 +573,7 @@ ELpimdconfound4 <-
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimdconfound4[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 4)
+kabble(cbind(strategy = x_strategy, ELpimdconfound4[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does $I$ have a positive effect on $D$?) given different  clue seeking  stratgies for cases in which we have observed high inequality and democratization, with confounding.", digits = 4)
 ```
 
 We display the inferences we *would* draw from different clue strategies and data realizations in Table \@ref(tab:possibleoutcomespimdconf); and we show the resulting diagnoses of clue strategies, for the situation in which we have already observed $I=1$ and $D=1$, in Table \@ref(tab:pimdlearni1d1con). As we can see from the latter table, the presence of a confound involving $P$ reduces this clue's relative expected contribution to learning, making it now *less* informative in expectation than $M$. 
@@ -610,7 +610,7 @@ So how informative overall is $M$ as compared to $P$? In the model allowing nega
 inferences_priors_effect <-
   conditional_inferences(pimd_priors, query = "D[I=1] < D[I=0]", given = "I==0 & D==1")
 
-kable(inferences_priors_effect, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?", digits = 3, row.names = FALSE)
+kabble(inferences_priors_effect, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the query: does I have a negative effect on D?", digits = 3, row.names = FALSE)
 
 ```
 
@@ -628,7 +628,7 @@ write_rds("saved/ch12_ELpimd_priors_effect")
 ELpimd_priors_effect <- read_rds("saved/ch12_ELpimd_priors_effect")
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4, row.names = FALSE)
+kabble(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4, row.names = FALSE)
 ```
 
 Now, let's see how things look when we are interested not in $I$'s causal effect on $D$, but in whether it had an effect via particular pathway. Specifically, given $I=0$ and $D=1$, did $I$ have a negative effect on $D$ that was mediated by $M$? Following our discussion of mediation in Chapter \@ref(questions), we define the query as asking whether the following are true:
@@ -649,7 +649,7 @@ inferences_pimdpath <-
                      (D[M=M[I=0]] > D[M=M[I=1]]) & 
                      (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", given = "I==0 & D==1")
 
-kable(inferences_pimdpath, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?", digits = 3, row.names = FALSE)
+kabble(inferences_pimdpath, caption = "Table shows possible data patterns for P and M given I = 0 and D = 1 together with the probability of observing each data realization given data is sought on a variable and the posterior given that data realization for the pathway query: does I have a negative effect on D that is mediated by M?", digits = 3, row.names = FALSE)
 
 ```
 
@@ -675,7 +675,7 @@ ELpimd_path <- read_rds("saved/ch12_ELpimd_path.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 
-kable(cbind(strategy = x_strategy, ELpimd_path[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
+kabble(cbind(strategy = x_strategy, ELpimd_path[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4)
 ```
 
 <!-- Now, what if we already know that $I$ has a negative effect on $D$ and we want to know via which pathway that effect operates---the direct or the indirect?  -->
