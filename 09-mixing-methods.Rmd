@@ -740,14 +740,14 @@ Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of uni
 An alternative strategy might involve gathering multiple measures of $Y$, each with their own independent source of error. Consider the model, $X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}$. Assume again a true $ATE$ of $X$ on $Y$ of 0.6, that $Y$ has an average effect of 0.7 on both $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$, and no negative effects of true $Y$ on the measures.^[Importantly, this model assumes nodal types for $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$ are independent of one another (no unobserved confounding), implying independent sources of measurement error in this setup.] In this setup, updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The results in Table \@ref(tab:measurementerror2) are based the same data as in the previous example but now augmented with the second noisy measure for $Y$. 
 
 
-```{r, cache = TRUE, echo = FALSE}
+```{r,  echo = FALSE}
 model <- make_model("X -> Y -> Yobs1; Y -> Yobs2") %>%
   set_restrictions(decreasing("Y", "Yobs1")) %>%
   set_restrictions(decreasing("Y", "Yobs2")) %>%
   set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1, .1, .8, .1))
 ```
 
-```{r measurementerror2, cache = TRUE,echo = FALSE}
+```{r measurementerror2, echo = FALSE}
 set.seed(1)
 data <- make_data(model, n = 2000) 
 
@@ -779,7 +779,7 @@ We now simulate data that allow for spillovers. Specifically, while independentl
 We simulate 100 observations from this data-generating process and then update a model (with flat priors over all nodal types).
 
 
-```{r spilloverx, cache = TRUE, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes.", include = FALSE}
+```{r spilloverx, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes.", include = FALSE}
 hj_ggdag(x = c(0, 0, 0, 1, 1, 1),
        y = c(3, 2, 1, 3, 2, 1),
        names = c(expression(paste(X[1])), expression(paste(X[2])), expression(paste(X[3])), expression(paste(Y[1])), expression(paste(Y[2])), expression(paste(Y[3]))),
@@ -794,7 +794,7 @@ hj_ggdag(x = c(0, 0, 0, 1, 1, 1),
 <!-- AJ: Fig above isn't displaying. -->
 
 
-```{r, cache = TRUE,  echo = FALSE}
+```{r,   echo = FALSE}
 model <- make_model("X1 -> Y1 <- X2 -> Y2 <- X1")
 
 spillover_queries <- list(
@@ -815,7 +815,7 @@ spillover_queries <- list(
         (Y2[X1=1, X2=1] - Y2[X1=0, X2=0]))/2")
 ```
 
-```{r spillover, cache = TRUE, echo = FALSE, fig.cap = "Model with spillovers: the treatment status of two units each affect the outcomes for both.", out.width = "50%"}
+```{r spillover, echo = FALSE, fig.cap = "Model with spillovers: the treatment status of two units each affect the outcomes for both.", out.width = "50%"}
 
 hj_ggdag(model=model)
 
@@ -874,7 +874,7 @@ We can also represent some forms of clustering, understood as the presence of an
 
 Let us imagine we are looking at the effects of an anti corruption campaign. In some settings we expect this campaign to be effective; in other settings the campaign backfires and has adverse effects. Units vary in whether there are positive or negative effects, but units within the same *cluster* respond similarly. For instance, units in the same village or region.  We can represent this situation via the following structural model:
 
-```{r, cache = TRUE, echo = FALSE}
+```{r,  echo = FALSE}
 # If W = 1 then X causes Y
 # If W = 0 then X causes not Y
 model <- make_model("X1 -> Y1 <- W -> Y2 <- X2") %>%
@@ -902,7 +902,7 @@ In Table \@ref(tab:cluster), we show results from updating on data on four units
 <!-- AJ: Needs a final paragraph speaking to the results. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR. -->
 
 
-```{r cluster, cache = TRUE, echo = FALSE}
+```{r cluster, echo = FALSE}
 data_1 <- data.frame(X1 = c(0,1), Y1 = c(0,0), X2 = c(1,0), Y2 = c(1,1))
 data_2 <- data.frame(
   X1 = c(0, 1, NA, NA), Y1 = c(0,0, NA, NA),

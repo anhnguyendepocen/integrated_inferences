@@ -333,10 +333,10 @@ As a simple example imagine we have an $X\rightarrow Y$ model with equal prior w
 Before we see any data on the case at hand, then, we believe (based on our beliefs about the population to which the case belongs) that there is a 1/8 probability that the case is one in which $X$ is assigned to $1$ and has a positive effect on $Y$; and 1/8 probability that it's a case in which $X$ gets assigned to $1$ and has no effect on $Y$  (and so $Y$ is $1$ regardless of $X$). Seeing the $X=1, Y=1$ data, we now believe that there is a 1/2 probability that the case is of the former type, and a 1/2 probability that it is of the latter type. Had our prior beliefs on types been different from each other, the posterior beliefs would have scaled up accordingly.
 
 |  **Data types** $\rightarrow$ | X1Y1 | Priors | Posteriors |
-|:-----------------------------:|:----:|:----------------------:|:--------------------------:|
-| **Causal types** $\downarrow$ |      |                        |                            |
-|   $\theta^X_1,\theta^Y_{01}$  |   1  |           1/8          |          1/2            |
-|   $\theta^X_1,\theta^Y_{11}$  |   1  |           1/8          |          1/2            |
+|:-----------------------------:|:----:|:------:|:----------:|
+| **Causal types** $\downarrow$ |      |        |            |
+|   $\theta^X_1,\theta^Y_{01}$  |   1  |  1/8   |  1/2       |
+|   $\theta^X_1,\theta^Y_{11}$  |   1  |  1/8   |  1/2       |
 Table: (\#tab:ambigupdate). Ambiguities in an $X \rightarrow Y$ model after observing $X=1, Y=1$ in a case.
 
 
@@ -353,13 +353,13 @@ Table: (\#tab:ambigupdate). Ambiguities in an $X \rightarrow Y$ model after obse
 We now walk through how this work for the more complex  $X \rightarrow M \rightarrow Y$ model, and the ambiguity matrix in Table \@ref(tab:ambigmatrixmed). If we observe the data $X=1, M=0, Y=0$, for instance, this exercise would yield the updated ambiguity matrix in Table \@ref(tab:ambigmedupdate). Here we have eliminated all rows (causal types) with a $0$ in the relevant data-type column ($X1M0Y0$) and formed the posteriors by scaling up the priors in the retained rows. 
 
 
-|       **Data types** $\rightarrow$      | X1M0Y0 | Priors | Posteriors |
-|:---------------------------------------:|:------:|:----------------------:|:--------------------------:|
-|      **Causal types** $\downarrow$      |        |                        |                            |
-| $\theta^X_1,\theta^M_{00},\theta^Y_{00}$ |    1   |          0.02          |          0.1667            |
-| $\theta^X_1,\theta^M_{10},\theta^Y_{00}$ |    1   |          0.02          |          0.1667            |
-| $\theta^X_1,\theta^M_{00},\theta^Y_{01}$ |    1   |          0.04          |          0.3333            |
-| $\theta^X_1,\theta^M_{10},\theta^Y_{01}$ |    1   |          0.04          |          0.3333            |
+|       **Data types** $\rightarrow$        | X1M0Y0 | Priors | Posteriors |
+|:-----------------------------------------:|:------:|:------:|:----------:|
+|      **Causal types** $\downarrow$        |        |        |            |
+| $\theta^X_1,\theta^M_{00},\theta^Y_{00}$  |    1   |  0.02  |  0.1667    |
+| $\theta^X_1,\theta^M_{10},\theta^Y_{00}$  |    1   |  0.02  |  0.1667    |
+| $\theta^X_1,\theta^M_{00},\theta^Y_{01}$  |    1   |  0.04  |  0.3333    |
+| $\theta^X_1,\theta^M_{10},\theta^Y_{01}$  |    1   |  0.04  |  0.3333    |
 Table: (\#tab:ambigmedupdate). An updated version of the ambiguity matrix in Table \@ref(tab:ambigmatrixmed), after observing $X=1, M=0, Y=0$ in a case.
 
 A notable feature of the logic of single-case process tracing is that the relative probabilities on the retained causal types never change. If we start out believing that causal type $A$ is twice as likely as causal type $B$, and both $A$ and $B$ are retained once we see the data, then $A$ will be twice as likely as $B$ in our posteriors. All updating occurs by *eliminating* causal types from consideration and zeroing in on those that remain.
@@ -462,7 +462,7 @@ ambXMY_with_priors%>%
 
 
 |       **Data types** $\rightarrow$      | X1M1Y1 | Priors | Posteriors |
-|:---------------------------------------:|:------:|:----------------------:|:--------------------------:|
+|:---------------------------------------:|:------:|:------:|:----------:|
 |      **Causal types** $\downarrow$      |        |                        |                            |
 | $\theta^X_1,\theta^M_{01},\theta^Y_{01}$ |    1   |          0.08          |          0.4444            |
 | $\theta^X_1,\theta^M_{11},\theta^Y_{01}$ |    1   |          0.04          |          0.2222            |
@@ -473,7 +473,7 @@ Table: (\#tab:ambigmedupdate2). An updated version of the ambiguity matrix in Ta
 
 
 |       **Data types** $\rightarrow$      | X1M0Y0 | X1M1Y0 | Priors | Posteriors |
-|:---------------------------------------:|:------:|:------:|:----------------------:|:--------------------------:|
+|:---------------------------------------:|:------:|:------:|:------:|:----------:|
 |      **Causal types** $\downarrow$      |        |        |                        |                            |
 | $\theta^X_1,\theta^M_{00},\theta^Y_{10}$ |    1   |    0   |          0.02          |           0.0769           |
 | $\theta^X_1,\theta^M_{10},\theta^Y_{10}$ |    1   |    0   |          0.02          |           0.0769           |
