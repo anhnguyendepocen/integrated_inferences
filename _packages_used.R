@@ -93,8 +93,7 @@ kabble <- function(x, ...) {
   if(!("booktabs" %in% argnames)) a$booktabs <- TRUE
   # print(a)
   X <- do.call(kable, a)
-  latex_options = c("striped",
-                    ifelse(ncol(a)>7, "scale_down", NULL))
+  latex_options = c("striped")
   kable_styling(X, latex_options = latex_options)
 
 }
@@ -372,6 +371,7 @@ hj_ggdag <- function(x = NULL,
       geom_dag_edges()
 
   } else {
+    # Labels centered on nodes
     p +
       geom_dag_text_repel(aes_string(label = 'label'),
                           show.legend = FALSE,
@@ -383,6 +383,8 @@ hj_ggdag <- function(x = NULL,
       ) + geom_dag_edges()
   }
 }
+
+####
 
 perm_bb <- function(v) {
   sapply(1:length(v), function(x) {

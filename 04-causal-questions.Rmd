@@ -93,7 +93,7 @@ In this model, then, the query, "What is $X$'s causal effect in this case?" simp
 Two natural variants of this question are, "What is the expected effect of $X$ on $Y$?" and "What is the probability that $X$ matters for $Y$? Answering the question requires estimating the probability that $X$ has a positive effect minus the probability that it has a negative effect: $\Pr(\theta^Y = \theta^Y_{01}) - \Pr(\theta^Y = \theta^Y_{10})$. Answering the second involves assessing $\Pr(\theta^Y = \theta^Y_{01} \text{ OR } \theta^Y = \theta^Y_{10})$.
 
 We can conceptualize this same question even if the  model involves more complex relations between $X$ and $Y$. The question itself does not depend on the model having a particular form.  For instance, consider a mediation model of the form $X\rightarrow M \rightarrow Y$. In this model, a positive effect of $X$ on $Y$ can emerge either from a chain of positive effects of $X$ on $M$ and of $M$ on $Y$ or from a chain of negative effects, while a negative effect of $X$ on $Y$ can emerge from a chain of opposite-signed effects. Thus, answering the question means estimating:
-$$\Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{01})  \text{ OR }  (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{10}))   - \Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{10})  \text{ OR }  (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{01}))$$
+$$\Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{01})  \text{ OR }  (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{10}))   - \\\Pr((\theta^M = \theta^M_{01} \& \theta^Y = \theta^Y_{10})  \text{ OR }  (\theta^M = \theta^M_{10} \& \theta^Y = \theta^Y_{01}))$$
 
 *Answering* the  question now requires guesses about nodal types for $M$ and for $Y$, not just nodal types for $Y$. Thus the question remains the same, and answerable, under different models, but the answer to the question might involve summaries of the values of different nodes. 
 
@@ -544,12 +544,12 @@ We demonstrate how queries are calculated using the `CausalQueries` package for 
 
 We then ask two questions:
 
-Q1. What is the probability that $X$ causes $Y$? ("POS")
-Q2. What is the probability that $X$ causes $Y$ in cases in which $X=1$ and $Y=1$? ("POC")
+* Q1. What is the probability that $X$ causes $Y$? ("POS")
+* Q2. What is the probability that $X$ causes $Y$ in cases in which $X=1$ and $Y=1$? ("POC")
 
 To answer these two queries we define simple query $q_1$ which assesses whether $X$ causes $Y$ for each $\theta$ and a second simple query $q_2$ which assesses whether $X=1$ and $Y=1$ for each $\theta$. In this example the first simple query involves some `do` operations, the second does not. 
 
-The answers to these two simple queries are shown in the table below, where each row corresponds to a causal type.
+Code to answer these two simple queries is shown below and the output is shown in Table \@ref(tab:ch4q1q2) (one row for each causal type).
 
 ```{r}
 model <- make_model("X -> M -> Y") %>%
@@ -567,11 +567,11 @@ df <- data.frame(
 ```
 
 
-```{r, echo = FALSE}
+```{r ch4q1q2, echo = FALSE}
 kabble(df, caption = "Set of causal types in the model that satisfy q1 and q2 along with the probability of the type.", booktabs = TRUE)
 ```
 
-The answer to the overall queries are then (1) the expected value of (the answers to) $q_1$ and weights $p$and  (2) the expected value of (the answers to) $q_1$ given $q_0$ and weights $p$:
+The answer to the overall queries are then (1) the expected value of (the answers to) $q_1$ and weights $p$and  (2) the expected value of (the answers to) $q_1$ given $q_0$ and weights $p$. See Table \@ref(tab:ch4pospoc).
 
 ```{r, eval = FALSE}
 df %>% summarize(POS = weighted.mean(a1, p),
