@@ -68,6 +68,7 @@ pacman::p_load(
  # Programming and default package options:
 
 library(CQtools)
+library(gtools)
 
 options(mc.cores = parallel::detectCores())
 

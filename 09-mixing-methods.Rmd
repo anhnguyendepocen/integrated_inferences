@@ -155,7 +155,7 @@ kabble(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow 
 ```{r parammmatrixmix, echo = FALSE, include = TRUE}
 paramXY <- get_parameter_matrix(XY) 
 paramXY_with_params <-cbind(paramXY, '$\\lambda$' = XY$parameters_df$param_value)
-kabble(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.") %>%  kable_styling(latex_options = "scale_down")
+kabble(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.", format = 'pandoc') %>%  kable_styling(latex_options = "scale_down")
 ```
 
 
@@ -232,7 +232,7 @@ chainillustration <- read_rds("saved/08_chain_illustration.rds") %>%
   pivot_wider(names_from = Query, values_from = c(mean))%>% select(-"PC_M0", -"PC_M1")
 
 chainillustration %>% mutate(Data = c("No data", "2 cases X, Y data only", "2 cases, X, M, Y data", "10 cases: X, Y data only", "10 cases: X, M, Y data")) %>%
-  kabble(digits = 2, caption = "Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show $\\tau_{ij}$---average effects of $i$ on $j$; the last column shows the probability of causation: the probability that $X$ caused $Y$ in a $X=Y=1$ case.", col.names = c("Data", "a", "b", "c", "d", "$\\tau_{XM}$", "$\\tau_{MY}$", "$\\tau_{XY}$", "PC")) %>%  kable_styling(latex_options = "scale_down")
+  kabble(digits = 2, caption = "Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show $\\tau_{ij}$---average effects of $i$ on $j$; the last column shows the probability of causation: the probability that $X$ caused $Y$ in a $X=Y=1$ case.", col.names = c("Data", "a", "b", "c", "d", "$\\tau_{XM}$", "$\\tau_{MY}$", "$\\tau_{XY}$", "PC"),format = 'pandoc') %>%  kable_styling(latex_options = "scale_down")
   
 ```
 
@@ -605,7 +605,7 @@ make_model("X1 -> Y1 <- X2;  X1 -> Y2 <- X2; X1 <-> X2; Y1 <-> Y2") %>%
 ```{r, echo = FALSE}
 if(do_diagnosis) 
 model_flexible <- make_model("X1 -> Y1 <- X2;  X1 -> Y2 <- X2; X1 <-> X2; Y1 <-> Y2") %>%
-  write_rds(model_flexible, "saved/nonbinary_flexible.rds")
+  write_rds("saved/nonbinary_flexible.rds")
 
 full_model <- read_rds("saved/nonbinary_flexible.rds")
 
