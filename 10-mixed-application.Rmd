@@ -19,9 +19,9 @@ We extend the analysis of Chapter \@ref(ptapp) using a model that lets us update
 
 ## A trained model
 
-Whereas in Chapter \@ref(ptapp) we took the model as given and sought to draw inferences individual cases given data on those cases, the model now becomes an object that we both learn from and learn about. In essence we use the data on many cases to update our beliefs about the general model and then use this "trained" model to make inferences about cases. 
+In Chapter \@ref(ptapp) we took the model as given and sought to draw inferences individual cases given data on those cases. In this chapter the model  becomes an object that we both learn from and learn about. In essence, we use the data on many cases to update our beliefs about the general model and then use this "trained" model to make inferences about cases. 
 
-Instead of positing a belief over the nodal types for a given case, $\theta$, we now need to posit a belief over the *distribution* of nodal types---that is, over $\lambda$. For instance, whereas in the simple process-tracing model we *specified* the shares of nodal types for $M$, we now specify a *distribution* over the nodal type shares, using a Dirichlet distribution to ensure that the shares across types are always constrained to add up to 1. We do the same, of course, for all nodes. Because we set a prior distribution over nodal types (rather than fixed proportions), we can now update on these population-level distributions as the model confronts data. 
+Instead of positing a belief over the nodal types for a given case, $\theta$, we now need to posit a belief over the *distribution* of nodal types---that is, over $\lambda$. Whereas in the simple process-tracing model we *specified* the shares of nodal types for $M$ (for instance), we now specify a prior *distribution* over the nodal type shares. ,  We do the same, of course, for all nodes. Because we set a prior distribution over nodal types (rather than fixed proportions), we can now update on these population-level distributions as the model confronts data. 
 
 The same applies to beliefs about confounding. Recall that we allow for unobserved confounding by allowing $\lambda$ to include beliefs about the *joint* distributions of nodal types, and we set priors on these joint distributions as well. In the application below, we focus on potential confounding in the relationship between inequality and mobilization: the possibility that inequality may be more or less likely in places where inequality would induce mobilization. Here we do not express informed prior beliefs about the direction or magnitude of such confounding; we set up the parameter matrix to allow for the possibility of confounding and set a flat prior over its direction and magnitude. We can, in turn, learn about confounding from the data.
 
@@ -151,7 +151,7 @@ I0D1_Cases <- cases_table(
   case_names  = c("Mexico (2000)", "Taiwan (1996)", 
                   "Albania (1991)", "Nicaragua (1984)"))
 
-kabble(I0D1_Cases, digits = 3, caption = "Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for four cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.")
+kabble(I0D1_Cases, digits = 3, caption = "Four cases with low inequality and  democratization. Question of interest: Was low inequality a cause of democracy? Table shows posterior beliefs for different data for four cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012). Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.")  %>%  kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -167,7 +167,7 @@ I1D1_Cases <- cases_table(
     given = "D==1 & I==1"), 
   case_names  = c("Mongolia (1990)", "Paraguay (1989)", "Sierra Leone (1996)", "Malawi (1994)"))
 
-kabble(I1D1_Cases, caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).  Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.r")
+kabble(I1D1_Cases, caption = "Four cases with high inequality and  democratization. Question of interest: Was high inequality a cause of democratization? Table shows posterior beliefs for different data for 4 cases given information on $M$ or $P$. Data from Haggard and Kaufman (2012).  Analyses here use a model with assumptions on monotonic effects but magnitudes of effects updated from data.r")  %>%  kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -176,6 +176,9 @@ kabble(I1D1_Cases, caption = "Four cases with high inequality and  democratizati
 
 As before we can also ask questions about causes that have not democratized -- even though we have no additional data about these cases in particular.
 
+We see answers in Tables \@ref(tab:Tapp101) and \@ref(tab:Tapp102). Among cases with low inequality, we infer that low inequality was a cause of non democratization especially if we *do* see external pressure but we do *not* see mobilization. If we do see mobilization we do not attribute  the failure to democratize to the low inequality---greater inequality would not have made a difference via mobilization since populations were mobilized already. Among cases with high inequality and no democratization we think that the inequality was preventing the democratization especially in cases where we see mobilization and pressure---factors that would otherwise have favored democratization. 
+
+Overall the patterns are very similar here to what we saw in Chapter \@ref(ptapp), though slightly stronger in the case of low inequality and slightly stronger in the case of higher inequality.  
 
 ```{r Tapp101, echo = FALSE,  cache = FALSE, message = FALSE, warning = FALSE} 
 
@@ -327,7 +330,7 @@ We also see that the absence of mobilization tells us for certain that democrati
 
 Turning now to the cases in which democratization did not occur, Figure \@ref(fig:mixedhist2) asks for what proportion of cases overall inequality has a negative effect on democratization; for what proportion of $I=1, D=0$ cases inequality prevented democratization; and this latter query conditional on different clue realizations. 
 
-```{r pimdnegqueries, include = FALSE, warning = FALSE}
+```{r pimdnegqueries, include = FALSE, warning = FALSE, message = FALSE}
 
 if(do_diagnosis){
   

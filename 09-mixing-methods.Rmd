@@ -88,7 +88,7 @@ Taking this step, the procedure we now use in the mixed methods works as follows
 5. **Priors**. In the process tracing setup, we treat $\lambda$ as given: we do not seek to learn about $\lambda$, and uncertainty over $\lambda$ plays no role. When we get to observe data on multiple cases, however, we have the opportunity to learn *both* about the cases at hand *and* about the population. Moreover, our level of uncertainty about population-level parameters will shape our inferences. We thus want our parameters (the $\lambda$'s) to be drawn from a prior *distribution* --- a distribution that expresses our uncertainty and over which we can update once we see the data. While different distributions may be appropriate to the task in general, uncertainty over proportions (of cases, events, etc.) falling into a set of discrete categories is usefully described by a Dirichlet distribution, as discussed in Chapter \@ref(bayeschapter). Recall that the parameters of a Dirichlet distribution (the $\alpha$'s) can be thought of as conveying both the relative expected proportions in each category and our degree of uncertainty. 
 
 
-```{r dag3d,  fig.width = 4, fig.height = 8, out.width = "100%", echo = FALSE, fig.cap = "Types, parameters, and priors"}
+```{r dag3d,  fig.width = 7, fig.height = 7, out.width = "100%", echo = FALSE, fig.cap = "Types, parameters, and priors"}
 source("data/parameters.R")
 dag_3d(add_M = TRUE, func = TRUE)
 ```
@@ -149,13 +149,13 @@ In practice we do this all using matrix operations.
 ```{r ambigmatrixmix, echo = FALSE, include = TRUE}
 XY <- make_model("X -> Y") %>% set_parameters(c(.4, .6, .3, .2, .2, .3))
 ambiguityXY  <- get_ambiguities_matrix(XY)
-kabble(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.")
+kabble(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.") 
 ```
 
 ```{r parammmatrixmix, echo = FALSE, include = TRUE}
 paramXY <- get_parameter_matrix(XY) 
 paramXY_with_params <-cbind(paramXY, '$\\lambda$' = XY$parameters_df$param_value)
-kabble(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.")
+kabble(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.") %>%  kable_styling(latex_options = "scale_down")
 ```
 
 
@@ -232,7 +232,7 @@ chainillustration <- read_rds("saved/08_chain_illustration.rds") %>%
   pivot_wider(names_from = Query, values_from = c(mean))%>% select(-"PC_M0", -"PC_M1")
 
 chainillustration %>% mutate(Data = c("No data", "2 cases X, Y data only", "2 cases, X, M, Y data", "10 cases: X, Y data only", "10 cases: X, M, Y data")) %>%
-  kabble(digits = 2, caption = "Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show $\\tau_{ij}$---average effects of $i$ on $j$; the last column shows the probability of causation: the probability that $X$ caused $Y$ in a $X=Y=1$ case.", col.names = c("Data", "a", "b", "c", "d", "$\\tau_{XM}$", "$\\tau_{MY}$", "$\\tau_{XY}$", "PC"))
+  kabble(digits = 2, caption = "Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show $\\tau_{ij}$---average effects of $i$ on $j$; the last column shows the probability of causation: the probability that $X$ caused $Y$ in a $X=Y=1$ case.", col.names = c("Data", "a", "b", "c", "d", "$\\tau_{XM}$", "$\\tau_{MY}$", "$\\tau_{XY}$", "PC")) %>%  kable_styling(latex_options = "scale_down")
   
 ```
 
@@ -263,7 +263,7 @@ When there is unobserved confounding, we need parameter sets that allow for a jo
 In the figure below we represent this confounding by indicating parameters values $\lambda_{MY}$ that determine the joint distribution over $\theta_M$ and $\theta_Y$.
 
 
-```{r dag3d2,  fig.width = 4, fig.width = 8, out.width = "95%", echo = FALSE, fig.cap = "Types, parameters, and priors, with confounding"}
+```{r dag3d2,  fig.width = 7, fig.height = 7, out.width = "95%", echo = FALSE, fig.cap = "Types, parameters, and priors, with confounding"}
 dag_3d(add_M = TRUE, func = FALSE, confounding = TRUE)
 ```
 
@@ -740,14 +740,14 @@ Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of uni
 An alternative strategy might involve gathering multiple measures of $Y$, each with their own independent source of error. Consider the model, $X \rightarrow Y \rightarrow Y_\text{measured[1]}; Y \rightarrow Y_\text{measured[2]}$. Assume again a true $ATE$ of $X$ on $Y$ of 0.6, that $Y$ has an average effect of 0.7 on both $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$, and no negative effects of true $Y$ on the measures.^[Importantly, this model assumes nodal types for $Y_\text{measured[1]}$ and $Y_\text{measured[2]}$ are independent of one another (no unobserved confounding), implying independent sources of measurement error in this setup.] In this setup, updating on the true $Y$ can be thought of as a Bayesian version of "triangulation", or factor analysis. The results in Table \@ref(tab:measurementerror2) are based the same data as in the previous example but now augmented with the second noisy measure for $Y$. 
 
 
-```{r, cache = TRUE, echo = FALSE}
+```{r,  echo = FALSE}
 model <- make_model("X -> Y -> Yobs1; Y -> Yobs2") %>%
   set_restrictions(decreasing("Y", "Yobs1")) %>%
   set_restrictions(decreasing("Y", "Yobs2")) %>%
   set_parameters(parameters = c(.5, .5, .1, .1, .7, .1, .1, .8, .1, .1, .8, .1))
 ```
 
-```{r measurementerror2, cache = TRUE,echo = FALSE}
+```{r measurementerror2, echo = FALSE}
 set.seed(1)
 data <- make_data(model, n = 2000) 
 
@@ -779,7 +779,7 @@ We now simulate data that allow for spillovers. Specifically, while independentl
 We simulate 100 observations from this data-generating process and then update a model (with flat priors over all nodal types).
 
 
-```{r spilloverx, cache = TRUE, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes.", include = FALSE}
+```{r spilloverx, echo = FALSE, fig.width = 8, fig.height = 4,  fig.align="center", out.width='.5\\textwidth', fig.cap = "A causal model allowing for spillovers across 3 units, in which each unit's treatment status can affect other units' outcomes.", include = FALSE}
 hj_ggdag(x = c(0, 0, 0, 1, 1, 1),
        y = c(3, 2, 1, 3, 2, 1),
        names = c(expression(paste(X[1])), expression(paste(X[2])), expression(paste(X[3])), expression(paste(Y[1])), expression(paste(Y[2])), expression(paste(Y[3]))),
@@ -794,7 +794,7 @@ hj_ggdag(x = c(0, 0, 0, 1, 1, 1),
 <!-- AJ: Fig above isn't displaying. -->
 
 
-```{r, cache = TRUE,  echo = FALSE}
+```{r,   echo = FALSE}
 model <- make_model("X1 -> Y1 <- X2 -> Y2 <- X1")
 
 spillover_queries <- list(
@@ -815,7 +815,7 @@ spillover_queries <- list(
         (Y2[X1=1, X2=1] - Y2[X1=0, X2=0]))/2")
 ```
 
-```{r spillover, cache = TRUE, echo = FALSE, fig.cap = "Model with spillovers: the treatment status of two units each affect the outcomes for both.", out.width = "50%"}
+```{r spillover, echo = FALSE, fig.cap = "Model with spillovers: the treatment status of two units each affect the outcomes for both.", out.width = "50%"}
 
 hj_ggdag(model=model)
 
@@ -865,36 +865,48 @@ read_rds("saved/spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% ka
 
 ### Clustering
 
-We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units. For instance, we might be interested in the effects of training on individuals' employment prospects, while recognizing that individuals living in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe. 
+We can also represent some forms of clustering, understood as the presence of an exogenous but unobserved factor that influences outcomes for some subgroup of units.
+<!-- For instance, we might be interested in the effects of training on individuals' employment prospects, while recognizing that individuals living in the same neighborhood will be affected by common neighborhood-level features that we cannot directly observe.  -->
 
-We can capture some forms of clustering by placing the cluster-level factor on the graph.^[In this illustration the two units in each pair are treated as separate nodes rather than as repeated instances of realizations of the same node. Implicitly then the effect for one unit type (men, say) can be quite independent of the effect of another type (women, say). Indeed, here they are linked only through the unobserved variable $W$.] Let us imagine that we are studying the effect of providing public health insurance coverage on health outcomes for individuals in two-adult households that have a single earner. Our units of analysis are individuals, but these units are clustered into pairs within households.
+<!-- We can capture some forms of clustering by placing the cluster-level factor on the graph.   -->
 
-We can represent this situation via the following structural model:
+<!-- Let us imagine that we are studying the effect of providing public health insurance coverage on health outcomes for individuals in two-adult households that have a single earner. Our units of analysis are individuals, but these units are clustered into pairs within households. -->
 
-```{r, cache = TRUE, echo = FALSE}
+Let us imagine we are looking at the effects of an anti corruption campaign. In some settings we expect this campaign to be effective; in other settings the campaign backfires and has adverse effects. Units vary in whether there are positive or negative effects, but units within the same *cluster* respond similarly. For instance, units in the same village or region.  We can represent this situation via the following structural model:
+
+```{r,  echo = FALSE}
+# If W = 1 then X causes Y
+# If W = 0 then X causes not Y
 model <- make_model("X1 -> Y1 <- W -> Y2 <- X2") %>%
-  set_restrictions("(Y1[X1=1, W=0] != Y1[X1=0, W=0])")  %>%
-  set_restrictions("(Y2[X2=1, W=0] != Y2[X2=0, W=0])")  
+  set_restrictions("(Y1[X1=1, W=0] < Y1[X1=0, W=0])", keep = TRUE)  %>%
+  set_restrictions("(Y2[X2=1, W=0] < Y2[X2=0, W=0])", keep = TRUE) %>%
+  set_restrictions("(Y1[X1=1, W=1] > Y1[X1=0, W=1])", keep = TRUE)  %>%
+  set_restrictions("(Y2[X2=1, W=1] > Y2[X2=0, W=1])", keep = TRUE) 
+
 
 hj_ggdag(model=model)
 ```
 
-Let Unit 1 be the adult in paid employment and Unit 2 the adult not in paid employment, with $X_i$ indicating the provision of public health insurance to Unit $i$ and $W$ representing an unobserved household-level factor that moderates causal effects for both units. We restrict the model such that, more specifically, $W$ shuts off effects of health insurance for both individuals. By representing earners and non-earners separately on the graph, we allow for different effects of health insurance for these two different kinds of individuals. By representing the cluster-level factor, $W$, on the graph, we also allow for *learning* across types of units: seeing effects (or non-effects) for one kind of unit allows us to update on $W$'s value, which in turn provides information about effects for the other type of unit.
+The graph represents the treatment conditions and the behavior of two officials, both of whom are affected by the same cluster level variable ($W$) but who might be exposed to different treatments. By representing this cluster-level factor, $W$, on the graph, we  allow for *learning* across types of units: seeing effects (or non-effects) for one kind of unit allows us to update on $W$'s value, which in turn provides information about effects for the other type of unit.
 
-One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? In Table \@ref(tab:cluster), we show results from two different data-collection strategies. In one instance, we observe both Unit 1 and Unit 2 in two clusters. In the other instance, we observe only Unit 1 in two clusters and only Unit 2 in two clusters. 
+<!-- MH: I have done a more extreme analysis that is out of synch with this examplennow; now there are either positive or negative effects -->
+
+One question we can ask with this setup is: would we learn more from concentrating our observations within a smaller number of clusters or spreading them out across clusters? 
+
+In Table \@ref(tab:cluster), we show results from updating on data on four units, with one unit in each of the four $X/Y$ cells. The difference however is that in one case we imagine the four cases come from four different clusters, and so we learn about the distribution of $W$ from four clusters. In the other case we imagine the data is drawn from just two clusters (one cluster has the two on diagonal cases, the other has the two off diagonal cases). In this case we learn about $W$ from only two clusters.  The result is greater confidence in the distribution of $W$, and so greater confidence in our beliefs about causal effects, in the case in which we have data from four clusters.
+
 <!-- Both sets of data are drawn from a process in which the true treatment effect is XXXXXX.  -->
-In both situations, we calculate the same estimand, the average treatment effect, defined as the effect of providing health insurance, averaged across the two unit types.
 
 <!-- AJ: Is the true ATE here just from flat priors? So 0? -->
 
 <!-- AJ: Needs a final paragraph speaking to the results. WHY DO WE THINK THE SECOND STRATEGY IS BETTER? SEEM VERY SIMILAR. -->
 
 
-```{r cluster, cache = TRUE, echo = FALSE}
-data_1 <- data.frame(X1 = 0:1, Y1 = 0:1, X2 = 0:1, Y2 = c(1,1))
+```{r cluster, echo = FALSE}
+data_1 <- data.frame(X1 = c(0,1), Y1 = c(0,0), X2 = c(1,0), Y2 = c(1,1))
 data_2 <- data.frame(
-  X1 = c(0, 1, NA, NA), Y1 = c(0,1, NA, NA),
-  X2 = c(NA, NA, 0, 1), Y2 = c(NA, NA, 1, 1))
+  X1 = c(0, 1, NA, NA), Y1 = c(0,0, NA, NA),
+  X2 = c(NA, NA, 1, 0), Y2 = c(NA, NA, 1, 1))
 
 if(do_diagnosis)
 update_model(model, data_1 , keep_transformed = TRUE) %>% 

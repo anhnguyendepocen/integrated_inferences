@@ -230,7 +230,7 @@ Equally importantly, however, *the mapping from causal types to data types is no
 
 In the `CausalQueries` package we use an *ambiguity matrix* to summarize the  mapping between causal types and data types. There is a row for each causal type and a column for each data type and an entry of 1 indicates that the causal type generates the data type. Each row has a single 1 but each column can have many 1s---an indicator of the ambguity we have regarding causal types when we observe data types. 
 
-|  **Data types** $\rightarrow$ | X0Y0 | X1Y0 | X0Y1 | X1Y1 | Priors on causal types |
+|  **Data types** $\rightarrow$ | X0Y0 | X1Y0 | X0Y1 | X1Y1 | Priors |
 |:-----------------------------:|:----:|:----:|:----:|:----:|:----------------------:|
 | **Causal types** $\downarrow$ |      |      |      |      |                        |
 |   $\theta^X_0,\theta^Y_{00}$  |   1  |   0  |   0  |   0  |           0.1          |
@@ -247,7 +247,7 @@ Table: (\#tab:ambigmatrix). An ambiguity matrix, mapping from data types to caus
 
 As models get more complex, the numbers of causal and data types multiply, though generally the number of causal types increases faster than the number of data types. For a simple mediation model ($X \rightarrow M \rightarrow Y$) there are $2^3 = 8$ data types---possible combinations of values for $X,M,Y$ but $2\times 4 \times 4$ causal types. 
 
-<!-- |       **Data types** $\rightarrow$      | X0M0Y0 | X1M0Y0 | X0M1Y0 | X1M1Y0 | X0M0Y1 | X1M0Y1 | X0M1Y1 | X1M1Y1 | Priors on causal types | -->
+<!-- |       **Data types** $\rightarrow$      | X0M0Y0 | X1M0Y0 | X0M1Y0 | X1M1Y0 | X0M0Y1 | X1M0Y1 | X0M1Y1 | X1M1Y1 | Priors | -->
 <!-- |:---------------------------------------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:----------------------:| -->
 <!-- |      **Causal types** $\downarrow$      |        |        |        |        |        |        |        |        |                        | -->
 <!-- | $\theta^X_0,\theta^M_{00},\theta^Y_{00}$ |    1   |    0   |    0   |    0   |    0   |    0   |    0   |    0   |          0.02          | -->
@@ -318,7 +318,7 @@ ambXY_with_priors <- data.frame(cbind(ambiguityXY, prior = get_type_prob(XY)))
 
 ambXMY_with_priors <- data.frame(cbind(ambiguityXMY, prior = get_type_prob(XMY)))
 
-kabble(ambXMY_with_priors[1:16, c(1:6, 9)], caption = "Excerpt from the Ambiguity matrix for a chain model. Rows are causal types, columns are data types. Last column shows possible priors over rows.", booktabs = TRUE)
+kabble(ambXMY_with_priors[1:16, c(1:6, 9)], caption = "Excerpt from the ambiguity matrix for a chain model. Rows are causal types, columns are data types. Last column shows possible priors over rows.", booktabs = TRUE) %>%  kable_styling(latex_options = "scale_down")
 
 # View(x)
 ```
@@ -332,11 +332,11 @@ As a simple example imagine we have an $X\rightarrow Y$ model with equal prior w
 
 Before we see any data on the case at hand, then, we believe (based on our beliefs about the population to which the case belongs) that there is a 1/8 probability that the case is one in which $X$ is assigned to $1$ and has a positive effect on $Y$; and 1/8 probability that it's a case in which $X$ gets assigned to $1$ and has no effect on $Y$  (and so $Y$ is $1$ regardless of $X$). Seeing the $X=1, Y=1$ data, we now believe that there is a 1/2 probability that the case is of the former type, and a 1/2 probability that it is of the latter type. Had our prior beliefs on types been different from each other, the posterior beliefs would have scaled up accordingly.
 
-|  **Data types** $\rightarrow$ | X1Y1 | Priors on causal types | Posteriors on causal types |
-|:-----------------------------:|:----:|:----------------------:|:--------------------------:|
-| **Causal types** $\downarrow$ |      |                        |                            |
-|   $\theta^X_1,\theta^Y_{01}$  |   1  |           1/8          |          1/2            |
-|   $\theta^X_1,\theta^Y_{11}$  |   1  |           1/8          |          1/2            |
+|  **Data types** $\rightarrow$ | X1Y1 | Priors | Posteriors |
+|:-----------------------------:|:----:|:------:|:----------:|
+| **Causal types** $\downarrow$ |      |        |            |
+|   $\theta^X_1,\theta^Y_{01}$  |   1  |  1/8   |  1/2       |
+|   $\theta^X_1,\theta^Y_{11}$  |   1  |  1/8   |  1/2       |
 Table: (\#tab:ambigupdate). Ambiguities in an $X \rightarrow Y$ model after observing $X=1, Y=1$ in a case.
 
 
@@ -353,13 +353,13 @@ Table: (\#tab:ambigupdate). Ambiguities in an $X \rightarrow Y$ model after obse
 We now walk through how this work for the more complex  $X \rightarrow M \rightarrow Y$ model, and the ambiguity matrix in Table \@ref(tab:ambigmatrixmed). If we observe the data $X=1, M=0, Y=0$, for instance, this exercise would yield the updated ambiguity matrix in Table \@ref(tab:ambigmedupdate). Here we have eliminated all rows (causal types) with a $0$ in the relevant data-type column ($X1M0Y0$) and formed the posteriors by scaling up the priors in the retained rows. 
 
 
-|       **Data types** $\rightarrow$      | X1M0Y0 | Priors on causal types | Posteriors on causal types |
-|:---------------------------------------:|:------:|:----------------------:|:--------------------------:|
-|      **Causal types** $\downarrow$      |        |                        |                            |
-| $\theta^X_1,\theta^M_{00},\theta^Y_{00}$ |    1   |          0.02          |          0.1667            |
-| $\theta^X_1,\theta^M_{10},\theta^Y_{00}$ |    1   |          0.02          |          0.1667            |
-| $\theta^X_1,\theta^M_{00},\theta^Y_{01}$ |    1   |          0.04          |          0.3333            |
-| $\theta^X_1,\theta^M_{10},\theta^Y_{01}$ |    1   |          0.04          |          0.3333            |
+|       **Data types** $\rightarrow$        | X1M0Y0 | Priors | Posteriors |
+|:-----------------------------------------:|:------:|:------:|:----------:|
+|      **Causal types** $\downarrow$        |        |        |            |
+| $\theta^X_1,\theta^M_{00},\theta^Y_{00}$  |    1   |  0.02  |  0.1667    |
+| $\theta^X_1,\theta^M_{10},\theta^Y_{00}$  |    1   |  0.02  |  0.1667    |
+| $\theta^X_1,\theta^M_{00},\theta^Y_{01}$  |    1   |  0.04  |  0.3333    |
+| $\theta^X_1,\theta^M_{10},\theta^Y_{01}$  |    1   |  0.04  |  0.3333    |
 Table: (\#tab:ambigmedupdate). An updated version of the ambiguity matrix in Table \@ref(tab:ambigmatrixmed), after observing $X=1, M=0, Y=0$ in a case.
 
 A notable feature of the logic of single-case process tracing is that the relative probabilities on the retained causal types never change. If we start out believing that causal type $A$ is twice as likely as causal type $B$, and both $A$ and $B$ are retained once we see the data, then $A$ will be twice as likely as $B$ in our posteriors. All updating occurs by *eliminating* causal types from consideration and zeroing in on those that remain.
@@ -389,8 +389,8 @@ ambXMY_with_priors%>%
 A similar logic applies if partial data are observed: that is, if we do not collect data for all nodes in the model. The one difference is that, now, rather than reducing to one column we entertain the possibility of any data *type* consistent with the *observed data*. In general, more than one data type will be consistent with partial data. For instance, suppose that we observe $X=1, Y=0$ but do not observe $M$'s value. These are data that are consistent with both the data type $X1M0Y0$ and the data type $X1M1Y0$ (since the unobserved $M$ could be either $0$ or $1$). We thus retain both of these data-type columns as well as all causal types consistent with *either* of these data types. This gives the updated ambiguity matrix in Table \@ref(tab:ambigmedupdatepartial). We note that, with these partial data, we are not able to update as strongly. For instance, for the causal type $\theta^X_1,\theta^M_{00},\theta^Y_{00}$, instead of updating to a posterior probability of 0.1667, we update to a posterior of only 0.0833 -- because there is a larger set of causal types with which these partial data are consistent.
 
 
-|       **Data types** $\rightarrow$      | X1M0Y0 | X1M1Y0 | Priors on causal types | Posteriors on causal types |
-|:---------------------------------------:|:------:|:------:|:----------------------:|:--------------------------:|
+|       **Data types** $\rightarrow$      | X1M0Y0 | X1M1Y0 | Priors  | Posteriors |
+|:---------------------------------------:|:------:|:------:|:-------:|:----------:|
 |      **Causal types** $\downarrow$      |        |        |                        |                            |
 | $\theta^X_1,\theta^M_{00},\theta^Y_{00}$ |    1   |    0   |          0.02          |           0.0833           |
 | $\theta^X_1,\theta^M_{10},\theta^Y_{00}$ |    1   |    0   |          0.02          |           0.0833           |
@@ -461,8 +461,8 @@ ambXMY_with_priors%>%
 ```
 
 
-|       **Data types** $\rightarrow$      | X1M1Y1 | Priors on causal types | Posteriors on causal types |
-|:---------------------------------------:|:------:|:----------------------:|:--------------------------:|
+|       **Data types** $\rightarrow$      | X1M1Y1 | Priors | Posteriors |
+|:---------------------------------------:|:------:|:------:|:----------:|
 |      **Causal types** $\downarrow$      |        |                        |                            |
 | $\theta^X_1,\theta^M_{01},\theta^Y_{01}$ |    1   |          0.08          |          0.4444            |
 | $\theta^X_1,\theta^M_{11},\theta^Y_{01}$ |    1   |          0.04          |          0.2222            |
@@ -472,8 +472,8 @@ Table: (\#tab:ambigmedupdate2). An updated version of the ambiguity matrix in Ta
 
 
 
-|       **Data types** $\rightarrow$      | X1M0Y0 | X1M1Y0 | Priors on causal types | Posteriors on causal types |
-|:---------------------------------------:|:------:|:------:|:----------------------:|:--------------------------:|
+|       **Data types** $\rightarrow$      | X1M0Y0 | X1M1Y0 | Priors | Posteriors |
+|:---------------------------------------:|:------:|:------:|:------:|:----------:|
 |      **Causal types** $\downarrow$      |        |        |                        |                            |
 | $\theta^X_1,\theta^M_{00},\theta^Y_{10}$ |    1   |    0   |          0.02          |           0.0769           |
 | $\theta^X_1,\theta^M_{10},\theta^Y_{10}$ |    1   |    0   |          0.02          |           0.0769           |
