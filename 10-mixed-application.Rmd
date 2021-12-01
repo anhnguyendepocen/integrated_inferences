@@ -92,10 +92,10 @@ With data and model in hand, we can now update our model to get posteriors on th
 ```{r ch9updatePIMD, include = FALSE}
 if(do_diagnosis){
   model <- update_model(model, data)
-  write_rds(model, "saved/PIMD_updated_2.rds")
+  write_rds(model, "saved/10_PIMD_updated_2.rds")
   }
 
-model <- read_rds("saved/PIMD_updated_2.rds")
+model <- read_rds("saved/10_PIMD_updated_2.rds")
 
 ```
 
@@ -242,10 +242,10 @@ pimd_queries_2 <-
               "D==1 & I==1 & M==1 & P==0")
 )
 
-write_rds(pimd_queries_2, "saved/09_pimdqueries_2c.rds")
+write_rds(pimd_queries_2, "saved/10_pimdqueries_2c.rds")
 }
 
-pimd_queries_2 <- read_rds("saved/09_pimdqueries_2c.rds")
+pimd_queries_2 <- read_rds("saved/10_pimdqueries_2c.rds")
 
 pimd_queries_2 %>% select(Given, mean) %>% kabble(digits = 2, caption = "Probability that inequality increases chances of democratization given:")
 
@@ -304,11 +304,11 @@ pimd_queries <- list(
   )
 )
 
-write_rds(pimd_queries, "saved/09_qimdqueries_2.rds")
+write_rds(pimd_queries, "saved/10_qimdqueries_2.rds")
 }
 
 
-pimd_queries <- read_rds("saved/09_qimdqueries_2.rds")
+pimd_queries <- read_rds("saved/10_qimdqueries_2.rds")
 
 ```
 
@@ -371,14 +371,14 @@ PC5neg = query_distribution(
                    query = "D[I=0] > D[I=1]",
                    given = "D==0 & I==1 & M==0 & P==0"))
 
-write_rds(pimdneg_queries, "saved/09_pimdnegqueries.rds")
+write_rds(pimdneg_queries, "saved/10_pimdnegqueries.rds")
 }
 
 ```
 
 ```{r mixedhist2, echo =FALSE, fig.cap = "Posteriors on Causes of Democratization", warning = FALSE, message=FALSE}
 
-read_rds("saved/09_pimdnegqueries.rds") %>%
+read_rds("saved/10_pimdnegqueries.rds") %>%
   
   lapply(function(a) data.frame(p = as.vector(a))) %>%
   bind_rows(.id = "Q") %>%
@@ -447,10 +447,10 @@ prevent_posteriors = query_model(
                    queries =  list("D[I=0] > D[I=1]"),
                    given = givens01))
 
-write_rds(ch09_queryresults, "saved/ch09_queryresultsqueries.rds")
+write_rds(ch09_queryresults, "saved/10_queryresultsqueries.rds")
 }
 
-ch09_queryresults_queries <- read_rds("saved/ch09_queryresultsqueries.rds")
+ch09_queryresults_queries <- read_rds("saved/10_queryresultsqueries.rds")
 
 Given_labels <- c(
 `Nothing` = "-",

@@ -101,7 +101,7 @@ result2 <- query_model(updated2, queries = "Y[X=0] == 0", given = subs, using = 
 result3 <- query_model(updated3, queries = "Y[X=0] == 0", given = subs, using = "posteriors")
 result4 <- query_model(updated_all, queries = "Y[X=0] == 0", given = subs2, using = "posteriors")
 
-write_rds(list(result1, result2, result3, result4), "saved/10a_frankenstein.rds")
+write_rds(list(result1, result2, result3, result4), "saved/11_frankenstein.rds")
 }
 
 ```
@@ -120,7 +120,7 @@ We see that the same thing is true for each of the other studies. In study 2, we
 
 ```{r frank1, echo = FALSE}
 
-frank <- read_rds("saved/10a_frankenstein.rds")
+frank <- read_rds("saved/11_frankenstein.rds")
 
 kabble(
   cbind(Study = c(1, NA, 2, NA, 3, NA),
@@ -221,10 +221,10 @@ result <- query_model(
     given = list(TRUE, "R==0", "R==1"),
     using = c("parameters", "priors"), 
     expand_grid = TRUE)
-write_rds(result, "saved/10a_fusionestimands.rds")
+write_rds(result, "saved/11_fusionestimands.rds")
 }
 
-read_rds("saved/10a_fusionestimands.rds") %>% kabble(caption = "Estimands in different sites", digits = 2)
+read_rds("saved/11_fusionestimands.rds") %>% kabble(caption = "Estimands in different sites", digits = 2)
 
 ```
 
@@ -247,9 +247,9 @@ In contrast, when we use `CausalQueries` to update on the full causal model and 
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(update_model(model, data), "saved/10a_exp_obs.rds")
+  write_rds(update_model(model, data), "saved/11_exp_obs.rds")
   }
-updated <- read_rds("saved/10a_exp_obs.rds")
+updated <- read_rds("saved/11_exp_obs.rds")
 ```
 
 ```{r fusionCQ, echo = FALSE}
@@ -271,9 +271,9 @@ updated_no_O <- update_model(model, dplyr::filter(data, R==1))
 
 ```{r, message = FALSE, warning = FALSE, include = FALSE}
 if(do_diagnosis){
-  write_rds(update_model(model, dplyr::filter(data, R==1)), "saved/10a_exp_obs_2.rds")
+  write_rds(update_model(model, dplyr::filter(data, R==1)), "saved/11_exp_obs_2.rds")
   }
-updated_no_O <- read_rds("saved/10a_exp_obs_2.rds")
+updated_no_O <- read_rds("saved/11_exp_obs_2.rds")
 ```
 
 ```{r appcombexpopp8, echo = FALSE, include = FALSE}
@@ -347,10 +347,10 @@ appev2 <-
                            CATE = "Y[X=1, W=1] - Y[X=0, W=1]"),
             given = c("Context==0", "Context==1"),
             using = c("priors", "parameters"), expand_grid = TRUE) 
-write_rds(appev2, "saved/10a_appev2.rds")
+write_rds(appev2, "saved/11_appev2.rds")
 }
 
-read_rds("saved/10a_appev2.rds")  %>% 
+read_rds("saved/11_appev2.rds")  %>% 
   kabble(caption = "Priors and true values (parameters) for three estimand: the frequency of $W$, the effect of $X$ on $Y$, and the effect conditional on $W=1$")
 
 ```
@@ -382,10 +382,10 @@ if(do_diagnosis){
                            CATE = "Y[X=1, W=1] - Y[X=0, W=1]"),
             given = c("Context==0", "Context==1"),
             using = c("posteriors", "parameters"), expand_grid = TRUE),
-            "saved/10a_transport.rds")
+            "saved/11_transport.rds")
 }
 
-q <- read_rds("saved/10a_transport.rds")
+q <- read_rds("saved/11_transport.rds")
 
 kabble(q, caption = "Extrapolation when two sites differ on $W$ and $W$ is observable in both contexts")
 
@@ -418,10 +418,10 @@ if(do_diagnosis){
                            CATE = "Y[X=1, W=1] - Y[X=0, W=1]"),
             given = c("Context==0", "Context==1"),
             using = c("posteriors", "parameters"), expand_grid = TRUE),
-            "saved/10a_transport2.rds")
+            "saved/11_transport2.rds")
 }
 
-q2 <- read_rds("saved/10a_transport2.rds")
+q2 <- read_rds("saved/11_transport2.rds")
 
 kabble(q2, caption = "Extrapolation when two contexts differ on $W$ and $W$ is not observable in target context")
 
@@ -620,12 +620,12 @@ if(do_diagnosis){
                        parameters = c(lambda_X[j,], lambda_Y[j,])) %>%
              collapse_data(model))
   
-  write_rds(list(lambda_X=lambda_X, lambda_Y=lambda_Y, data = data_events), "saved/10a_truth.rds")
+  write_rds(list(lambda_X=lambda_X, lambda_Y=lambda_Y, data = data_events), "saved/11_truth.rds")
   
   }
 
 # Load
-truth <- read_rds("saved/10a_truth.rds")
+truth <- read_rds("saved/11_truth.rds")
 data_events <- truth$data
 data_events
 
@@ -649,16 +649,16 @@ data_multilevel$n_studies <- ncol(data_multilevel$Y)
 
 if(do_diagnosis)
   rstan::stan(file = "multilevel_dirichlet.stan",  data = data_multilevel, iter = 12000) %>%
-  write_rds("saved/10a_meta_pooled.rds")
+  write_rds("saved/11_meta_pooled.rds")
 
 if(do_diagnosis)
   lapply(1:length(data_events), function(s)
     update_model(model, data = data_events[[s]], 
                  data_type = "compact", iter = 4000)$posterior_distribution) %>%
-  write_rds("saved/10a_meta_unpooled.rds")
+  write_rds("saved/11_meta_unpooled.rds")
 
-pooled   <-  read_rds("saved/10a_meta_pooled.rds")
-unpooled <-  read_rds("saved/10a_meta_unpooled.rds")
+pooled   <-  read_rds("saved/11_meta_pooled.rds")
+unpooled <-  read_rds("saved/11_meta_unpooled.rds")
 ```
 
 

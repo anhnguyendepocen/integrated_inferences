@@ -118,7 +118,7 @@ if(do_diagnosis)
   conditional_inferences(model, 
                          query = list(COE = "(Y[X=1] > Y[X=0])"), 
                          given = "Y==0") %>%
-  write_rds("saved/ch12_condinf1.rds")
+  write_rds("saved/12_condinf1.rds")
 
 
 ```
@@ -134,7 +134,7 @@ The figures show   all combinations of possible realized values for all availabl
 # colnames(possible_inferences)[1:2] <- c("Prior var", "Var given W")
 
 possible_inferences <- 
-  read_rds("saved/ch12_condinf1.rds") %>% # gather("node", "var", -posterior, -prob) %>% 
+  read_rds("saved/12_condinf1.rds") %>% # gather("node", "var", -posterior, -prob) %>% 
   mutate_at(c("S", "X", "C", "R"), function(x) ifelse(is.na(x), "?", x)) %>%
   mutate(
     strategy = paste0(ifelse(S!="?", "S", ""),
@@ -250,9 +250,9 @@ if(do_diagnosis)
   conditional_inferences(model, 
                          query = list(COE = "(Y[X=1] > Y[X=0])"), 
                          given = "Y==0") %>%
-  write_rds("saved/ch12_cond_inf2.rds")
+  write_rds("saved/12_condinf2.rds")
 
-possible_inferences <- read_rds("saved/ch12_cond_inf2.rds")
+possible_inferences <- read_rds("saved/12_condinf2.rds")
 ```
 
 
@@ -272,9 +272,9 @@ if(do_diagnosis)
                     given = "Y==0", 
                     parameters = NULL)
   }) %>%
-  write_rds("saved/ch12_learning2.rds")
+  write_rds("saved/12_learning2.rds")
 
-learning <- read_rds("saved/ch12_learning2.rds")
+learning <- read_rds("saved/12_learning2.rds")
 ```
 
 
@@ -372,9 +372,9 @@ make_model("I -> M -> D <- P; I -> D") %>% #Specify the DAG
          set_restrictions(c( 
            "(M[I=1] < M[I=0])", 
            "(D[I=1] > D[I=0]) | (D[M=1] < D[M=0]) | (D[P=1] < D[P=0])"))  %>% #Exclude a set of negative-effect and positive-effect nodal types.
-write_rds("saved/ch12_pimd.rds")
+write_rds("saved/12_pimd.rds")
 
-pimd <- read_rds("saved/ch12_pimd.rds")
+pimd <- read_rds("saved/12_pimd.rds")
 
 ```
 
@@ -406,10 +406,10 @@ expected_learning(pimd, query = "D[I=0] == 0", strategy = NULL,       given = "I
 expected_learning(pimd, query = "D[I=0] == 0", strategy = "P",        given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = "M",        given = "I==1 & D==1"),
 expected_learning(pimd, query = "D[I=0] == 0", strategy = c("P","M"), given = "I==1 & D==1"))
-write_rds(ELpimd1, "saved/11_ELpimd1.rds")
+write_rds(ELpimd1, "saved/12_ELpimd1.rds")
 }
 
-ELpimd1 <- read_rds("saved/11_ELpimd1.rds")
+ELpimd1 <- read_rds("saved/12_ELpimd1.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 
@@ -621,11 +621,11 @@ if(do_diagnosis)
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "P",        given = "I==0 & D==1"),
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = "M",        given = "I==0 & D==1"),
     expected_learning(pimd_priors, query = "D[I=1] < D[I=0]", strategy = c("P","M"), given = "I==0 & D==1")) %>%
-write_rds("saved/ch12_ELpimd_priors_effect")
+write_rds("saved/12_ELpimd_priors_effect")
 
 # write_rds(ELpimd_priors_effect, "saved/ch12_ELpimd_priors_effect")
 
-ELpimd_priors_effect <- read_rds("saved/ch12_ELpimd_priors_effect")
+ELpimd_priors_effect <- read_rds("saved/12_ELpimd_priors_effect")
 x_strategy <- c("None", "P", "M", "P and M")
 
 kabble(cbind(strategy = x_strategy, ELpimd_priors_effect[,-1]), caption = "Prior estimand, prior variances and expected posterior variances for the query (does I have a negative effect on D that is mediated by M?) given different  clue-seeking  stratgies for cases in which we have observed low inequality and democratization.", digits = 4, row.names = FALSE)
@@ -667,11 +667,11 @@ if(do_diagnosis)
                      (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = "M",        given = "I==0 & D==1"),
     expected_learning(pimd_priors, query = "(M[I=1] < M[I=0]) & 
                      (D[M=M[I=0]] > D[M=M[I=1]]) & 
-                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = c("P","M"), given = "I==0 & D==1")) %>% write_rds("saved/ch12_ELpimd_path.rds")
+                     (D[I=1, M=M[I=1]] == D[I=0, M=M[I=1]])", strategy = c("P","M"), given = "I==0 & D==1")) %>% write_rds("saved/12_ELpimd_path.rds")
 
 # write_rds(ELpimd_path, "saved/ch12_ELpimd_path.rds")
 
-ELpimd_path <- read_rds("saved/ch12_ELpimd_path.rds")
+ELpimd_path <- read_rds("saved/12_ELpimd_path.rds")
 
 x_strategy <- c("None", "P", "M", "P and M")
 
@@ -746,10 +746,10 @@ results <-
     given = "Y==0",
     prices = c(1, 1.4, 2.5, .5, .7))
 
-    write_rds(results, "saved/ch11_tradeoffs.rds")
+    write_rds(results, "saved/12_tradeoffs.rds")
   }
 
-results <- read_rds("saved/ch11_tradeoffs.rds")
+results <- read_rds("saved/12_tradeoffs.rds")
 
 
 # Plot results
@@ -823,10 +823,10 @@ results_pimd_tradeoff <-
     query = "(D[I=1] != D[I=0])", 
     prices = c(1, 1.5, 1, 1))
 
-    write_rds(results_pimd_tradeoff, "saved/ch11_tradeoffs_pimd.rds")
+    write_rds(results_pimd_tradeoff, "saved/12_tradeoffs_pimd.rds")
   }
 
-results_pimd_tradeoff <- read_rds("saved/ch11_tradeoffs_pimd.rds")
+results_pimd_tradeoff <- read_rds("saved/12_tradeoffs_pimd.rds")
 
 
 results_pimd_tradeoff <- 
@@ -888,10 +888,10 @@ results_pimd_tradeoff_confound <-
     query = "(D[I=1] != D[I=0])", 
     prices = c(1, 1.5, 1, 1))
 
-    write_rds(results_pimd_tradeoff_confound, "saved/ch11_tradeoffs_pimd_confound.rds")
+    write_rds(results_pimd_tradeoff_confound, "saved/12_tradeoffs_pimd_confound.rds")
   }
 
-results_pimd_tradeoff_confound <- read_rds("saved/ch11_tradeoffs_pimd_confound.rds")
+results_pimd_tradeoff_confound <- read_rds("saved/12_tradeoffs_pimd_confound.rds")
 
 
 results_pimd_tradeoff_confound <- 

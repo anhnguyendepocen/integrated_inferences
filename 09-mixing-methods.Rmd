@@ -183,9 +183,9 @@ In the `CausalQueries` package this updating is implemented in `stan`, and the r
 
 ```{r posteriortable, echo = FALSE}
 if(do_diagnosis)
-make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/posterior_chain.rds")
+make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/09_posterior_chain.rds")
 
-read_rds("saved/posterior_chain.rds")$posterior_distribution %>%
+read_rds("saved/09_posterior_chain.rds")$posterior_distribution %>%
 head() %>% kabble(digits = 2, caption = "An illustration of a posterior distribution for a $X \\rightarrow M \\rightarrow Y$ model. Each row is a draw from $p(\\lambda|d))$. SUch a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.")
 
 ```
@@ -225,9 +225,9 @@ chain_illustration <-
                           PC_M1 = "Y[X=1] > Y[X=0]"),
                      given = c(rep(TRUE, 7), "X==1 & Y==1", "X==1 & Y==1 & M==0",  "X==1 & Y==1 & M==1"),
                      using = "posteriors")) %>%
-  write_rds("saved/08_chain_illustration.rds")
+  write_rds("saved/09_chain_illustration.rds")
 
-chainillustration <- read_rds("saved/08_chain_illustration.rds") %>%
+chainillustration <- read_rds("saved/09_chain_illustration.rds") %>%
  bind_rows(.id = "Data") %>% select(-Using, - Given, - Case.estimand, - sd) %>%
   pivot_wider(names_from = Query, values_from = c(mean))%>% select(-"PC_M0", -"PC_M1")
 
@@ -496,6 +496,11 @@ Let us assume a "true" set of parameters, unknown to the researcher, such that $
 
 ```{r, echo = FALSE} 
 if(do_diagnosis){
+model <- make_model("X -> Y")
+model <- set_parameters(model, node = "Y", parameters = c(.2, .1, .6, .1))
+data <- make_data(model, n = 10000)
+updated <- update_model(model, data)
+
 ATE_dist <- query_distribution(
                    model = updated, 
                    using = "posteriors",
@@ -507,11 +512,11 @@ PC_dist <- query_distribution(
                    query = "Y[X=1] > Y[X=0]",
                    given = "X==1 & Y==1"
                    )
-write_rds(ATE_dist, "saved/appendix_ATE_dist.rds")
-write_rds(PC_dist, "saved/appendix_PC_dist.rds")
+write_rds(ATE_dist, "saved/09_ATE_dist.rds")
+write_rds(PC_dist, "saved/09_PC_dist.rds")
 }
-ATE_dist <- read_rds("saved/appendix_ATE_dist.rds")
-PC_dist  <- read_rds("saved/appendix_PC_dist.rds")
+ATE_dist <- read_rds("saved/09_ATE_dist.rds")
+PC_dist  <- read_rds("saved/09_PC_dist.rds")
 ```
 
 ```{r PChist, echo = FALSE, fig.cap = "ATE is identified, PC is not identified but has informative bounds"}
@@ -605,9 +610,9 @@ make_model("X1 -> Y1 <- X2;  X1 -> Y2 <- X2; X1 <-> X2; Y1 <-> Y2") %>%
 ```{r, echo = FALSE}
 if(do_diagnosis) 
 model_flexible <- make_model("X1 -> Y1 <- X2;  X1 -> Y2 <- X2; X1 <-> X2; Y1 <-> Y2") %>%
-  write_rds("saved/nonbinary_flexible.rds")
+  write_rds("saved/09_nonbinary_flexible.rds")
 
-full_model <- read_rds("saved/nonbinary_flexible.rds")
+full_model <- read_rds("saved/09_nonbinary_flexible.rds")
 
 full_model <- full_model %>%
   set_parameters(node = "Y1", label = "0101", parameters = 1) %>%
@@ -618,20 +623,20 @@ data <- make_data(full_model, 100, using = "parameters") %>%
 
 if(do_diagnosis) 
   update_model(model, data, keep_transformed = TRUE, chains = 4, iter = 4000) %>%
-  write_rds("saved/ordinal.rds")
+  write_rds("saved/09_ordinal.rds")
 
 if(do_diagnosis) 
 query <- 
   
-  read_rds("saved/ordinal.rds") %>%
+  read_rds("saved/09_ordinal.rds") %>%
   
   query_model(list(Y_x(0), Y_x(1), Y_x(2), Y_x(3)),
              using = "posteriors") %>% 
   mutate(Q = c("Y(0)", "Y(1)", "Y(2)", "Y(3)"),
          'True value' = c(0,1,3,2)) %>%
-  write_rds("saved/ordinal_query.rds")
+  write_rds("saved/09_ordinal_query.rds")
 
-read_rds("saved/ordinal_query.rds")  %>%
+read_rds("saved/09_ordinal_query.rds")  %>%
   select(Q, Using, 'True value', mean, sd) %>% 
   kabble(digits = 2, caption = "Posteriors on potential outcomes for non binary model")
 
@@ -719,9 +724,9 @@ list(
   all_Y =  update_model(model, data) %>%
     query_model(te("X", "Y"), using = "posteriors")) %>%
   bind_rows(.id = "Data") %>%
-  write_rds("saved/measurement_error.rds")
+  write_rds("saved/09_measurement_error.rds")
 
-Qs <-   read_rds("saved/measurement_error.rds")
+Qs <-   read_rds("saved/09_measurement_error.rds")
 
 Qs %>% mutate(Data = c("Data on Y measured only", "Data on true Y for 20% of units", "Data on true Y")) %>% select(Data, Using, mean, sd) %>% 
   kabble(caption = "Inferences on effects on true Y given measurement error (true ATE = .6)", digits = 2)
@@ -756,9 +761,9 @@ update_model(model,
              data = 
                data %>% select(X, Yobs1, Yobs2)) %>%
     query_model(te("X", "Y"), using = "posteriors") %>%
-  write_rds("saved/measurement_error_2.rds")
+  write_rds("saved/09_measurement_error_2.rds")
 
-read_rds("saved/measurement_error_2.rds") %>% mutate(Data = "Two noisy measures") %>% 
+read_rds("saved/09_measurement_error_2.rds") %>% mutate(Data = "Two noisy measures") %>% 
   select(Data, Using, mean, sd)  %>% 
   kabble(caption = "Inferences on effects on true Y given two noisy measures  (true ATE = .6)", digits = 2)
 
@@ -844,15 +849,15 @@ data <- fabricatr::fabricate(N = 100,
                   Y2 = X1*X2)
 if(do_diagnosis)
 update_model(model, data, keep_transformed = TRUE) %>% 
-  write_rds("saved/spillovers.rds")
+  write_rds("saved/09_spillovers.rds")
 
 
 if(do_diagnosis)
-  read_rds("saved/spillovers.rds")  %>% 
+  read_rds("saved/09_spillovers.rds")  %>% 
   query_model(spillover_queries, using = "posteriors") %>% 
-  write_rds("saved/spillovers_query.rds")
+  write_rds("saved/09_spillovers_query.rds")
 
-read_rds("saved/spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% kabble(caption = "Spillover queries", digits = 2, booktabs = TRUE)
+read_rds("saved/09_spillovers_query.rds") %>% select(-Given, -Case.estimand) %>% kabble(caption = "Spillover queries", digits = 2, booktabs = TRUE)
 
 ```
 
@@ -910,17 +915,17 @@ data_2 <- data.frame(
 
 if(do_diagnosis)
 update_model(model, data_1 , keep_transformed = TRUE) %>% 
-  write_rds("saved/model_clustered.rds")
+  write_rds("saved/09_model_clustered.rds")
 
 if(do_diagnosis)
 update_model(model, data_2, keep_transformed = TRUE) %>%
-  write_rds("saved/model_unclustered.rds")
+  write_rds("saved/09_model_unclustered.rds")
 
 Q <- "(Y1[X1=1] - Y1[X1=0])/2 + (Y2[X2=1] - Y2[X2=0])/2"
 
 rbind(
-  query_model(read_rds("saved/model_clustered.rds"), Q, using = "posteriors"),
-  query_model(read_rds("saved/model_unclustered.rds"), Q, using = "posteriors")) %>%
+  query_model(read_rds("saved/09_model_clustered.rds"), Q, using = "posteriors"),
+  query_model(read_rds("saved/09_model_unclustered.rds"), Q, using = "posteriors")) %>%
   mutate(Data = c("2 obs from each of 2 clusters", "1 obs from each of 4 clusters"), Query = "Average effect") %>% 
   select(Data, mean, sd) %>% 
   kabble(digits = 3, caption = "Data from many pairs is more informative than the same data from fewer pairs.")
