@@ -427,8 +427,8 @@ div.csl-indent {
 <p>Imagine a situation in which researchers believe that the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> runs entirely through <span class="math inline">\(M\)</span>, positing a model of the form <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>. Imagine, however, that the true causal process is one in which <span class="math inline">\(X\)</span> affects <span class="math inline">\(Y\)</span> <em>directly</em>; <span class="math inline">\(X\)</span> has no effect on <span class="math inline">\(M\)</span>, so that there is no indirect effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>; and <span class="math inline">\(M\)</span> never has a negative effect on <span class="math inline">\(Y\)</span>.</p>
 <p>The problem with the posited model, then, is that it represents overly strong beliefs about independence relations: it does not allow for a direct effect that is in fact operating.</p>
 <!-- AJ: "Restrictedness" seems a bit off here insofar as the "unrestricted" model is also restricted in essentially assuming no operative $X -> M$ arrow, as well as no negative direct effects.  -->
-<p>We are perfectly able to update using this too-strong <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model and the data — but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a “true” model with direct effects only and an average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of <span class="math inline">\(1/3\)</span>.<a href="#fn74" class="footnote-ref" id="fnref74"><sup>74</sup></a> In the left panel of Figure <a href="evaluation.html#fig:badmodels15">16.1</a>, we show the estimated average treatment effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> when using these data to update the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model.</p>
-<p>In the righthand panel of the figure, we show the inferences using the same data but a model that makes weaker assumptions by allowing for direct effects: a <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span> model. With both models, we start with flat priors over nodal types.<a href="#fn75" class="footnote-ref" id="fnref75"><sup>75</sup></a></p>
+<p>We are perfectly able to update using this too-strong <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model and the data — but the updated model can produce wildly inaccurate causal inferences. We show this using set of 200 observations simulated from a “true” model with direct effects only and an average effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> of <span class="math inline">\(1/3\)</span>.<a href="#fn77" class="footnote-ref" id="fnref77"><sup>77</sup></a> In the left panel of Figure <a href="evaluation.html#fig:badmodels15">16.1</a>, we show the estimated average treatment effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> when using these data to update the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model.</p>
+<p>In the righthand panel of the figure, we show the inferences using the same data but a model that makes weaker assumptions by allowing for direct effects: a <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span> model. With both models, we start with flat priors over nodal types.<a href="#fn78" class="footnote-ref" id="fnref78"><sup>78</sup></a></p>
 <p>We represent the true average effect with the vertical line in each graph.</p>
 <p>As we can see, the weaker (i.e., more permissive) model performs OK: the true effect falls well within the posterior predictive distribution on the ATE. However, the stronger model, which excludes direct effects, generates a posterior predictive distribution that essentially excludes the right answer. So, if we go into the analysis with the stronger model, we have a problem.</p>
 <p>But will we notice?</p>
@@ -500,7 +500,7 @@ p.value
 </tr>
 </tbody>
 </table>
-<p>We report the regression coefficients on <span class="math inline">\(X\)</span> in the table below. It is immediately apparent that we have a problem. At both values of <span class="math inline">\(M\)</span>, there is a strong correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, evidence of a violation of the Markov condition implied by the stronger model.<a href="#fn76" class="footnote-ref" id="fnref76"><sup>76</sup></a></p>
+<p>We report the regression coefficients on <span class="math inline">\(X\)</span> in the table below. It is immediately apparent that we have a problem. At both values of <span class="math inline">\(M\)</span>, there is a strong correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, evidence of a violation of the Markov condition implied by the stronger model.<a href="#fn79" class="footnote-ref" id="fnref79"><sup>79</sup></a></p>
 <p>Identifying the full set of conditional independence assumptions in a causal model can be difficult. There are however well developed algorithms for identifying what sets, if any, you need to conditional on to ensure conditional Independence between two nodes given a DAG. <code>R</code> users can quickly access such results using the <code>impliedConditionalIndependencies</code> function in dagitty package.</p>
 <!-- AJ: I do not follow the sentence starting with "Intuitively" in the above. -->
 <!-- ROUGH TEXT: -->
@@ -522,7 +522,7 @@ p.value
 <p>A third approach asks whether features of the data you observe are in some sense unusual given your model, or more unusual given your model than another model. For instance, if one model assumed no adverse effects of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> and no confounding, then a strong negative correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> would be unusual, even for the model updated with this data; and this negative correlation would <em>more</em> unusual for this model than for a model that allowed for adverse effects.</p>
 <p>In fact, this approach is quite classical: we are looking to see whether we should “reject” our model in light of inconistent data.</p>
 <!-- AJ: But it can also be done in a comparative sense as we do below, right? Which is then not about "rejection", right? I've actually adjusted the text two paragraphs up to make the idea of comparison more prominent. This works?-->
-<p>An approach for doing this using simulated data from the posterior predictive distribution is described in <span class="citation"><a href="#ref-gabry2019visualization" role="doc-biblioref">Gabry et al.</a> (<a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>)</span>.<a href="#fn77" class="footnote-ref" id="fnref77"><sup>77</sup></a></p>
+<p>An approach for doing this using simulated data from the posterior predictive distribution is described in <span class="citation"><a href="#ref-gabry2019visualization" role="doc-biblioref">Gabry et al.</a> (<a href="#ref-gabry2019visualization" role="doc-biblioref">2019</a>)</span>.<a href="#fn80" class="footnote-ref" id="fnref80"><sup>80</sup></a></p>
 <p>We consider two test statistics, comparing our stronger to our weaker model. First, we look just at the distribution of the outcome <span class="math inline">\(Y\)</span> to see how the actual distribution in the data compares to the predicteddistribution from the updated model. Second, we look at the actual correlation between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and see how this compares to the predicted distribution. In both cases we calculate a two sided <span class="math inline">\(p\)</span>-value by assessing and doubling the share of the mass of the predictive posterior distribution that lies on the more extreme side of the observed data. If the observed data were at the mean of the predicive distribution, then we would have a <span class="math inline">\(p\)</span>-value of 1. If it were at the 95th percentile we would have a <span class="math inline">\(p\)</span>-value of 0.10. (We note that in this straightforward calculation we assess the probability of the data given the same model that generated the data; approaches could also be used that seek out-of-sample estimates of the probability of observing the observed data.)</p>
 <!-- AJ: Last sentence confuses me. Aren't we using data only from unrestricted_model? -->
 <p>For the first test, we see that the predicted distribution of the outcome <span class="math inline">\(Y\)</span> is similar for both updated models; and the actual mean outcome is within the distribution of predicted mean outcomes. The <span class="math inline">\(p\)</span>-values for the stronger (0.11) and weaker models (0.14) suggest that the observed mean <span class="math inline">\(Y\)</span> values are about equally likely for both models.</p>
@@ -606,113 +606,55 @@ the likelihood of 1.04e-124 under the weaker model. Thus, the weaker model repre
 <p>To illustrate using a process tracing example, consider a situation in which we are unsure about posited parameter values: that is, about the probability of particular effects at particular nodes. It is likely to be the case in many research situations that we are considerably uncertain about how to quantify intuitive or theoretically informed beliefs about the relative likelihood of different effects.</p>
 <p>Suppose, for instance, that we begin with an <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model. And suppose, further, that we believe that it is unlikely that <span class="math inline">\(M\)</span> has an adverse effect on <span class="math inline">\(Y\)</span>. But we are not sure <em>how</em> unlikely that adverse effect is. (We assume all other modal types are equally likely.) Finally, say that we want to use the observation of <span class="math inline">\(M\)</span> to draw an inference about whether <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span> in an <span class="math inline">\(X=Y=1\)</span> case.</p>
 <p>How much does our inference on <span class="math inline">\(X\)</span>’s effect on <span class="math inline">\(Y\)</span>—when we see <span class="math inline">\(M=0\)</span> or <span class="math inline">\(M=1\)</span>—depend on this second stage assumption about the probability of a negative <span class="math inline">\(M \rightarrow Y\)</span> effect?</p>
-<p>We answer the question by looking at posterior beliefs for a range of possible values for the relevant parameter, <span class="math inline">\(\lambda^Y_{10}\)</span>. In Table <a href="evaluation.html#tab:ch15ranges">16.2</a>, we examine a range of values for <span class="math inline">\(\lambda^Y_{10}\)</span>, from 0 to 0.25 (full parity with other types). For each parameter value, we first show the resulting prior belief about the probability that <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span>. We can see that, before we observe <span class="math inline">\(M\)</span>, we think that a positive <span class="math inline">\(X \rightarrow Y\)</span> effect is more likely as a negative <span class="math inline">\(M \rightarrow Y\)</span> effect is more likely. This stands to reason since a negative second-stage effect is one possible process in which a positive <span class="math inline">\(X \rightarrow Y\)</span> effect might occur. And higher values for <span class="math inline">\(\lambda^Y_{10}\)</span> come disproportionately at the expense of types under which <span class="math inline">\(X\)</span> cannot affect <span class="math inline">\(Y\)</span>.<a href="#fn78" class="footnote-ref" id="fnref78"><sup>78</sup></a></p>
+<p>We answer the question by looking at posterior beliefs for a range of possible values for the relevant parameter, <span class="math inline">\(\lambda^Y_{10}\)</span>. In Table <a href="evaluation.html#tab:ch15ranges">16.2</a>, we examine a range of values for <span class="math inline">\(\lambda^Y_{10}\)</span>, from 0 to 0.25 (full parity with other types). For each parameter value, we first show the resulting prior belief about the probability that <span class="math inline">\(X=1\)</span> caused <span class="math inline">\(Y=1\)</span>. We can see that, before we observe <span class="math inline">\(M\)</span>, we think that a positive <span class="math inline">\(X \rightarrow Y\)</span> effect is more likely as a negative <span class="math inline">\(M \rightarrow Y\)</span> effect is more likely. This stands to reason since a negative second-stage effect is one possible process in which a positive <span class="math inline">\(X \rightarrow Y\)</span> effect might occur. And higher values for <span class="math inline">\(\lambda^Y_{10}\)</span> come disproportionately at the expense of types under which <span class="math inline">\(X\)</span> cannot affect <span class="math inline">\(Y\)</span>.<a href="#fn81" class="footnote-ref" id="fnref81"><sup>81</sup></a></p>
 <p>In the next two columns, we show the posterior belief we arrive at when we observe <span class="math inline">\(M=0\)</span> and then <span class="math inline">\(M=1\)</span>, for each <span class="math inline">\(\lambda^Y_{10}\)</span> assumption. Looking at the last column first, we see that our inference from <span class="math inline">\(M=1\)</span> does <em>not</em> depend at all on our beliefs about adverse <span class="math inline">\(M \rightarrow Y\)</span> effects. The reason is that, if we see <span class="math inline">\(M=1\)</span>, we already know that <span class="math inline">\(M\)</span> did not have a negative effect on <span class="math inline">\(Y\)</span>, given that we also know <span class="math inline">\(Y=1\)</span>. Our beliefs are purely a function of the probability that there are positive effects at both stages as compared to the probability of other causal types that could yield <span class="math inline">\(X=M=Y=1\)</span>, a comparison unaffected by the probability of a negative <span class="math inline">\(M \rightarrow Y\)</span> effect.</p>
 <p>Our inferences when <span class="math inline">\(M=0\)</span>, on the other hand, do depend on <span class="math inline">\(\lambda^Y_{10}\)</span>: when we see <span class="math inline">\(M=0\)</span>, our belief about a positive <span class="math inline">\(X \rightarrow Y\)</span> effect depends on the likelihood of <em>negative</em> effects at both stages. We see, then, that the likelier we think negative effects are at the second stage, the higher our posterior confidence in a positive <span class="math inline">\(X \rightarrow Y\)</span> effect when we see <span class="math inline">\(M=0\)</span>.</p>
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<caption>
-<span id="tab:ch15ranges">Table 16.2: </span>Inferences on the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> upon seeing <span class="math inline">\(M=0\)</span> or <span class="math inline">\(M=1\)</span> for a range of possible values of <span class="math inline">\(\lambda^Y_{10}\)</span>
-</caption>
+<table>
+<caption><span id="tab:ch15ranges">Table 16.2: </span>Inferences on the probability that <span class="math inline">\(X\)</span> caused <span class="math inline">\(Y\)</span> upon seeing <span class="math inline">\(M=0\)</span> or <span class="math inline">\(M=1\)</span> for a range of possible values of <span class="math inline">\(\lambda^Y_{10}\)</span></caption>
 <thead>
-<tr>
-<th style="text-align:right;">
-<span class="math inline">\(\lambda^Y_{10}\)</span>
-</th>
-<th style="text-align:right;">
-Prior
-</th>
-<th style="text-align:right;">
-<span class="math inline">\(M=0\)</span>
-</th>
-<th style="text-align:right;">
-<span class="math inline">\(M=1\)</span>
-</th>
+<tr class="header">
+<th align="right"><span class="math inline">\(\lambda^Y_{10}\)</span></th>
+<th align="right">Prior</th>
+<th align="right"><span class="math inline">\(M=0\)</span></th>
+<th align="right"><span class="math inline">\(M=1\)</span></th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:right;">
-0.00
-</td>
-<td style="text-align:right;">
-0.167
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-<td style="text-align:right;">
-0.25
-</td>
+<tr class="odd">
+<td align="right">0.00</td>
+<td align="right">0.167</td>
+<td align="right">0.000</td>
+<td align="right">0.25</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-0.05
-</td>
-<td style="text-align:right;">
-0.183
-</td>
-<td style="text-align:right;">
-0.068
-</td>
-<td style="text-align:right;">
-0.25
-</td>
+<tr class="even">
+<td align="right">0.05</td>
+<td align="right">0.183</td>
+<td align="right">0.068</td>
+<td align="right">0.25</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-0.10
-</td>
-<td style="text-align:right;">
-0.200
-</td>
-<td style="text-align:right;">
-0.125
-</td>
-<td style="text-align:right;">
-0.25
-</td>
+<tr class="odd">
+<td align="right">0.10</td>
+<td align="right">0.200</td>
+<td align="right">0.125</td>
+<td align="right">0.25</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-0.15
-</td>
-<td style="text-align:right;">
-0.217
-</td>
-<td style="text-align:right;">
-0.173
-</td>
-<td style="text-align:right;">
-0.25
-</td>
+<tr class="even">
+<td align="right">0.15</td>
+<td align="right">0.217</td>
+<td align="right">0.173</td>
+<td align="right">0.25</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-0.20
-</td>
-<td style="text-align:right;">
-0.233
-</td>
-<td style="text-align:right;">
-0.214
-</td>
-<td style="text-align:right;">
-0.25
-</td>
+<tr class="odd">
+<td align="right">0.20</td>
+<td align="right">0.233</td>
+<td align="right">0.214</td>
+<td align="right">0.25</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-0.25
-</td>
-<td style="text-align:right;">
-0.250
-</td>
-<td style="text-align:right;">
-0.250
-</td>
-<td style="text-align:right;">
-0.25
-</td>
+<tr class="even">
+<td align="right">0.25</td>
+<td align="right">0.250</td>
+<td align="right">0.250</td>
+<td align="right">0.25</td>
 </tr>
 </tbody>
 </table>
@@ -728,7 +670,7 @@ Prior
 <div id="check-assumptions-of-conditional-independence" class="section level3" number="16.2.1">
 <h3><span class="header-section-number">16.2.1</span> Check assumptions of conditional independence</h3>
 <p>Our model presupposes that <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> are independent and that <span class="math inline">\(P\)</span> and <span class="math inline">\(M\)</span> are independent. Note that the model is consistent with the possibility that, conditional on <span class="math inline">\(D\)</span>, there is a correlation betwen <span class="math inline">\(M\)</span> and <span class="math inline">\(P\)</span> or between <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>, as <span class="math inline">\(D\)</span> acts as a collider for these pairs of nodes.</p>
-<p>To test these assumptions, we in fact need to depart from the dataset drawn from <span class="citation"><a href="#ref-haggard2012distributive" role="doc-biblioref">Haggard, Kaufman, and Teo</a> (<a href="#ref-haggard2012distributive" role="doc-biblioref">2012</a>)</span> because these authors only examined cases in which <span class="math inline">\(D=1\)</span>, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on <span class="math inline">\(D\)</span> or conditional on <span class="math inline">\(D=0\)</span>. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000<a href="#fn79" class="footnote-ref" id="fnref79"><sup>79</sup></a>:</p>
+<p>To test these assumptions, we in fact need to depart from the dataset drawn from <span class="citation"><a href="#ref-haggard2012distributive" role="doc-biblioref">Haggard, Kaufman, and Teo</a> (<a href="#ref-haggard2012distributive" role="doc-biblioref">2012</a>)</span> because these authors only examined cases in which <span class="math inline">\(D=1\)</span>, those that democratized. Thus, we cannot use these data to assess the relationships not conditional on <span class="math inline">\(D\)</span> or conditional on <span class="math inline">\(D=0\)</span>. We generate observations on all four nodes for a broader set of cases by pulling together measures from the following sources, with the aim of modeling democratization that occurred between 1990 and 2000<a href="#fn82" class="footnote-ref" id="fnref82"><sup>82</sup></a>:</p>
 <ul>
 <li><p><strong>Inequality</strong>: We measure inequality, <span class="math inline">\(I\)</span>, using the Gini estimates from the University of Texas Inequality Project (<span class="citation"><a href="#ref-galbraith2019inequality" role="doc-biblioref">Galbraith</a> (<a href="#ref-galbraith2019inequality" role="doc-biblioref">2016</a>)</span>). As we want to measure inequality at the beginning of the period, we take the Gini measure for each country that is closest in time to the year 1989. We then dichotomize the variable using the median value for the period as a cutoff.</p></li>
 <li><p><strong>Mobilization</strong>: We measure <span class="math inline">\(M\)</span> using the Mass Mobilization Protest Data from <span class="citation"><a href="#ref-clark2016mobilization" role="doc-biblioref">Clark and Regan</a> (<a href="#ref-clark2016mobilization" role="doc-biblioref">2016</a>)</span>. To capture the kinds of mobilization on which redistributive theories of democratization focus, we restrict our focus to protests in the demand categories “land farm issue,” “labor wage dispute,” “price increases, tax policy,” and “political behavior, process.” We also include only those gatherings with a size of at least 1000 protesters. We code a country case as <span class="math inline">\(M=1\)</span> if and only if, during the 1990s, it experienced at least one protest that meets both the demand-type and size criteria.</p></li>
@@ -834,7 +776,7 @@ M = 1
 </ul></li>
 </ul>
 <p>We can dig a little deeper, however. The model <em>also</em> implies that <span class="math inline">\(P\)</span> should be independent of <span class="math inline">\(I\)</span> given <span class="math inline">\(M\)</span> — since <span class="math inline">\(D\)</span> blocks all paths between <span class="math inline">\(P\)</span> and either <span class="math inline">\(I\)</span> or <span class="math inline">\(M\)</span>. We test these assumptions in rows 3 and 4 of the table, wgere we examine the conditional independence of <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> given <span class="math inline">\(M=0\)</span> and given <span class="math inline">\(M=1\)</span>. Here the evidence is also troubling for our model, as we see a relatively strong negative correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> when <span class="math inline">\(M=0\)</span>, and positive correlation when <span class="math inline">\(M=1\)</span>.</p>
-<p>While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization the product of inequality and pressure jointly.<a href="#fn80" class="footnote-ref" id="fnref80"><sup>80</sup></a> A model with an arrow running from <span class="math inline">\(P\)</span> to <span class="math inline">\(M\)</span> would make the model consistent with the unconditional correlation between these two variables, the conditional correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> given <span class="math inline">\(M\)</span> (since <span class="math inline">\(M\)</span> would now be a collider for <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>), as well as the unconditional independence of <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>. A possible way forward — which we do not pursue here — would be to now amend the model and evaluate the revised model against an independent set of data.</p>
+<p>While we cannot identify the correct model from this data pattern, one possible explanation could be that pressure has a direct effect on mobilization, making mobilization the product of inequality and pressure jointly.<a href="#fn83" class="footnote-ref" id="fnref83"><sup>83</sup></a> A model with an arrow running from <span class="math inline">\(P\)</span> to <span class="math inline">\(M\)</span> would make the model consistent with the unconditional correlation between these two variables, the conditional correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(I\)</span> given <span class="math inline">\(M\)</span> (since <span class="math inline">\(M\)</span> would now be a collider for <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>), as well as the unconditional independence of <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span>. A possible way forward — which we do not pursue here — would be to now amend the model and evaluate the revised model against an independent set of data.</p>
 <!-- Substantively, in states with high inequality, mobilization is more common in cases without international pressure ($P=0$) (arising in 0 of 13 cases) than in cases that experience pressure arising in just 1 of 5 cases. Again, our model may be missing a direct link from pressure to mobilization, which would generate the possibility that inequality and pressure interactively affect mobilization. -->
 <!-- Unclear what the case numbers above are referring to. For instance, I see 13 cases with I=0, P=0. But what's the 0?-->
 <!-- I am thinking we should now bring in models that relax the assumptions that appear not to hold in the CI analysis. For instance, introduce an arrow from $P$ to $M$. -->
@@ -1092,14 +1034,14 @@ Parsons, Simon. 2001. <em>Qualitative Methods for Reasoning Under Uncertainty</e
 </div>
 <div class="footnotes">
 <hr />
-<ol start="74">
-<li id="fn74"><p>Specifically, the data-generating model is <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span>, with no effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> and thus no indirect effect, and no negative effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, and an otherwise flat parameter space.<a href="evaluation.html#fnref74" class="footnote-back">↩︎</a></p></li>
-<li id="fn75"><p>Note that the “true” model here involves restrictions on nodal types (no <span class="math inline">\(X \rightarrow M\)</span> effects and no negative <span class="math inline">\(X \rightarrow Y\)</span> effects) while the analysis models are both unrestricted.<a href="evaluation.html#fnref75" class="footnote-back">↩︎</a></p></li>
-<li id="fn76"><p>In applying the Markov condition, we also need to take into account any unobserved confounding. For instance, suppose that there was an unobserved confounder of the relationship between <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span> in the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model. Then we would <em>not</em> expect <span class="math inline">\(Y\)</span> to be independent of <span class="math inline">\(X\)</span> conditional on <span class="math inline">\(M\)</span>. Intuitively, the data pattern we described could be consistent with such a model in which on average <span class="math inline">\(X\)</span> does not cause <span class="math inline">\(M\)</span> but still <em>in those cases in which <span class="math inline">\(X=M\)</span></em> we have <span class="math inline">\(Y=X\)</span>. Another way to think about this is that <span class="math inline">\(M\)</span> now acts as a collider between <span class="math inline">\(X\)</span> and another unobserved cause of <span class="math inline">\(Y\)</span>; so conditioning on <span class="math inline">\(M\)</span> introduces a correlation between <span class="math inline">\(X\)</span> and this unobserved cause, and thus between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.<a href="evaluation.html#fnref76" class="footnote-back">↩︎</a></p></li>
-<li id="fn77"><p>Tools in the <code>bayesplot</code> package can be used to show how typical the data we observe is for different models<a href="evaluation.html#fnref77" class="footnote-back">↩︎</a></p></li>
-<li id="fn78"><p>Increasing weight on <span class="math inline">\(\lambda^Y_{10}\)</span> is drawn equally from <span class="math inline">\(\lambda^Y_{00}\)</span>, <span class="math inline">\(\lambda^Y_{11}\)</span>, and <span class="math inline">\(\lambda^Y_{10}\)</span>, with the first two of these three representing null effects.<a href="evaluation.html#fnref78" class="footnote-back">↩︎</a></p></li>
-<li id="fn79"><p>The data that we use to measure mobilization, from <span class="citation"><a href="#ref-clark2016mobilization" role="doc-biblioref">Clark and Regan</a> (<a href="#ref-clark2016mobilization" role="doc-biblioref">2016</a>)</span>, covers only the 1990s.<a href="evaluation.html#fnref79" class="footnote-back">↩︎</a></p></li>
-<li id="fn80"><p>There is, in fact, also a strong positive interaction between <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span> in a linear model of <span class="math inline">\(M\)</span>.<a href="evaluation.html#fnref80" class="footnote-back">↩︎</a></p></li>
+<ol start="77">
+<li id="fn77"><p>Specifically, the data-generating model is <span class="math inline">\(X \rightarrow M \rightarrow Y \leftarrow X\)</span>, with no effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(M\)</span> and thus no indirect effect, and no negative effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>, and an otherwise flat parameter space.<a href="evaluation.html#fnref77" class="footnote-back">↩︎</a></p></li>
+<li id="fn78"><p>Note that the “true” model here involves restrictions on nodal types (no <span class="math inline">\(X \rightarrow M\)</span> effects and no negative <span class="math inline">\(X \rightarrow Y\)</span> effects) while the analysis models are both unrestricted.<a href="evaluation.html#fnref78" class="footnote-back">↩︎</a></p></li>
+<li id="fn79"><p>In applying the Markov condition, we also need to take into account any unobserved confounding. For instance, suppose that there was an unobserved confounder of the relationship between <span class="math inline">\(M\)</span> and <span class="math inline">\(Y\)</span> in the <span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> model. Then we would <em>not</em> expect <span class="math inline">\(Y\)</span> to be independent of <span class="math inline">\(X\)</span> conditional on <span class="math inline">\(M\)</span>. Intuitively, the data pattern we described could be consistent with such a model in which on average <span class="math inline">\(X\)</span> does not cause <span class="math inline">\(M\)</span> but still <em>in those cases in which <span class="math inline">\(X=M\)</span></em> we have <span class="math inline">\(Y=X\)</span>. Another way to think about this is that <span class="math inline">\(M\)</span> now acts as a collider between <span class="math inline">\(X\)</span> and another unobserved cause of <span class="math inline">\(Y\)</span>; so conditioning on <span class="math inline">\(M\)</span> introduces a correlation between <span class="math inline">\(X\)</span> and this unobserved cause, and thus between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.<a href="evaluation.html#fnref79" class="footnote-back">↩︎</a></p></li>
+<li id="fn80"><p>Tools in the <code>bayesplot</code> package can be used to show how typical the data we observe is for different models<a href="evaluation.html#fnref80" class="footnote-back">↩︎</a></p></li>
+<li id="fn81"><p>Increasing weight on <span class="math inline">\(\lambda^Y_{10}\)</span> is drawn equally from <span class="math inline">\(\lambda^Y_{00}\)</span>, <span class="math inline">\(\lambda^Y_{11}\)</span>, and <span class="math inline">\(\lambda^Y_{10}\)</span>, with the first two of these three representing null effects.<a href="evaluation.html#fnref81" class="footnote-back">↩︎</a></p></li>
+<li id="fn82"><p>The data that we use to measure mobilization, from <span class="citation"><a href="#ref-clark2016mobilization" role="doc-biblioref">Clark and Regan</a> (<a href="#ref-clark2016mobilization" role="doc-biblioref">2016</a>)</span>, covers only the 1990s.<a href="evaluation.html#fnref82" class="footnote-back">↩︎</a></p></li>
+<li id="fn83"><p>There is, in fact, also a strong positive interaction between <span class="math inline">\(I\)</span> and <span class="math inline">\(P\)</span> in a linear model of <span class="math inline">\(M\)</span>.<a href="evaluation.html#fnref83" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
             </section>

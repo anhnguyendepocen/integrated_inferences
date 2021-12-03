@@ -57,25 +57,25 @@ if(do_diagnosis){
       ) 
  
  data <- simulate_data(unrestricted_model, using = "parameters", n = n) 
-     write_rds(data, "saved/ch15_data.rds") 
+     write_rds(data, "saved/16_data.rds") 
   
  XMYdata <- simulate_data(restricted_model, using = "parameters", n = n) 
-     write_rds(data, "saved/ch15_XMYdata.rds") 
+     write_rds(data, "saved/16_XMYdata.rds") 
   
  restricted_model %>%
    update_model(data, keep_fit = TRUE) %>%
-   write_rds("saved/ch15_restricted_model.rds") 
+   write_rds("saved/16_restricted_model.rds") 
 
  unrestricted_model %>%
    update_model(data, keep_fit = TRUE) %>%
-   write_rds("saved/ch15_unrestricted_model.rds") 
+   write_rds("saved/16_unrestricted_model.rds") 
 
 }
 
-data               <-   read_rds("saved/ch15_data.rds") 
-XMYdata            <-   read_rds("saved/ch15_XMYdata.rds") 
-restricted_model   <-   read_rds("saved/ch15_restricted_model.rds") 
-unrestricted_model <-   read_rds("saved/ch15_unrestricted_model.rds") 
+data               <-   read_rds("saved/16_data.rds") 
+XMYdata            <-   read_rds("saved/16_XMYdata.rds") 
+restricted_model   <-   read_rds("saved/16_restricted_model.rds") 
+unrestricted_model <-   read_rds("saved/16_unrestricted_model.rds") 
 
 if(do_diagnosis){
   
@@ -83,10 +83,10 @@ if(do_diagnosis){
   ateXY2 <- query_distribution(unrestricted_model, "Y[X=1] - Y[X=0]", using = "posteriors")
 
  write_rds(data.frame(restricted_ate = ateXY1, unrestricted_ate = ateXY2),
-           "saved/ch15_ates.rds")
+           "saved/16_ates.rds")
 }
 
-ates <- read_rds("saved/ch15_ates.rds") 
+ates <- read_rds("saved/16_ates.rds") 
 
 ```
 
@@ -199,19 +199,19 @@ if(do_diagnosis){
  t(replicate(sims, {
    dd <- make_data(restricted_model, n = n, param_type = "posterior_draw")
    c(Y=mean(dd$Y), C = cor(dd$Y, dd$X))})) %>%  data.frame %>%
-  write_rds("saved/ch15_replicates_restricted.rds") 
+  write_rds("saved/16_replicates_restricted.rds") 
 
  t(replicate(sims, {
    dd <- make_data(unrestricted_model, n = n, param_type = "posterior_draw")
    c(Y=mean(dd$Y), C = cor(dd$Y, dd$X))})) %>% data.frame %>%
-  write_rds("saved/ch15_replicates_unrestricted.rds") 
+  write_rds("saved/16_replicates_unrestricted.rds") 
   
   }
 
 df <- 
   list(
-    Stronger = read_rds("saved/ch15_replicates_restricted.rds"),
-    Weaker =    read_rds("saved/ch15_replicates_unrestricted.rds")) %>%
+    Stronger = read_rds("saved/16_replicates_restricted.rds"),
+    Weaker =    read_rds("saved/16_replicates_unrestricted.rds")) %>%
   bind_rows(.id = "Model") %>% gather("test", "Val", -Model) 
 
 
@@ -296,20 +296,20 @@ Often, the LOO approach is used to predict a particular outcome variable. In a `
 
 
 
-```{r loolik1, echo = FALSE, fig.cap = "LOO likelihoods for different models"}
+```{r loolik1, echo = FALSE, fig.cap = "LOO likelihoods for different models", message=FALSE, warning=FALSE}
 #Leave one out
 
 
 if(do_diagnosis){
   
-  get_loo_likelihood(data, restricted_model, 1000) %>% write_rds("saved/ch15_loo_restricted.rds")
+  get_loo_likelihood(data, restricted_model, 1000) %>% write_rds("saved/16_loo_restricted.rds")
     
-  get_loo_likelihood(data, unrestricted_model, 1000) %>% write_rds("saved/ch15_loo_unrestricted.rds")
+  get_loo_likelihood(data, unrestricted_model, 1000) %>% write_rds("saved/16_loo_unrestricted.rds")
 
 }
 
-loo_restricted   <- read_rds("saved/ch15_loo_restricted.rds") 
-loo_unrestricted <- read_rds("saved/ch15_loo_unrestricted.rds")  
+loo_restricted   <- read_rds("saved/16_loo_restricted.rds") 
+loo_unrestricted <- read_rds("saved/16_loo_unrestricted.rds")  
 
 data.frame(restricted = loo_restricted$case_likelihood %>% unlist,
            unrestricted = loo_unrestricted$case_likelihood %>% unlist,
@@ -368,14 +368,14 @@ We can also turn the tables and imagine that the *stronger* model represents the
 
 if(do_diagnosis){
   
-  get_loo_likelihood(XMYdata, restricted_model, 1000) %>% write_rds("saved/ch15_loo_restricted_2.rds")
+  get_loo_likelihood(XMYdata, restricted_model, 1000) %>% write_rds("saved/16_loo_restricted_2.rds")
     
-  get_loo_likelihood(XMYdata, unrestricted_model, 1000) %>% write_rds("saved/ch15_loo_unrestricted_2.rds")
+  get_loo_likelihood(XMYdata, unrestricted_model, 1000) %>% write_rds("saved/16_loo_unrestricted_2.rds")
 
 }
 
-loo_restricted_2   <- read_rds("saved/ch15_loo_restricted_2.rds") 
-loo_unrestricted_2 <- read_rds("saved/ch15_loo_unrestricted_2.rds")  
+loo_restricted_2   <- read_rds("saved/16_loo_restricted_2.rds") 
+loo_unrestricted_2 <- read_rds("saved/16_loo_unrestricted_2.rds")  
 
 
 list(restricted = loo_restricted_2, unrestricted  = loo_unrestricted_2) %>% plot_loo + 
@@ -411,7 +411,7 @@ In the next two columns, we show the posterior belief we arrive at when we obser
 Our inferences when $M=0$, on the other hand, do depend on $\lambda^Y_{10}$: when we see $M=0$, our belief about a positive $X \rightarrow Y$ effect depends on the likelihood of *negative* effects at both stages. We see, then, that the likelier we think negative effects are at the second stage, the higher our posterior confidence in a positive $X \rightarrow Y$ effect when we see $M=0$. 
 
 
-```{r ch15ranges, fig.cap = "Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1", echo = FALSE}
+```{r ch15ranges, fig.cap = "Possible inferences on `X caused Y` given observation of M=0 and M=1 given different possible models. The highest inference when M=0 is lower than the lowest inference when M=1", echo = FALSE, message=FALSE, warning=FALSE}
 
 model <- make_model("X -> M -> Y") %>%
     set_parameters(
@@ -439,7 +439,7 @@ out2 <- arrange(out2,M0, M1)
 cbind(adverse2, out2) %>% data.frame() %>%
   kabble(
     col.names = c("$\\lambda^Y_{10}$", "Prior", "$M=0$", "$M=1$"), digits = 3,
-    caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^Y_{10}$")
+    caption = "Inferences on the probability that $X$ caused $Y$ upon seeing $M=0$ or $M=1$ for a range of possible values of $\\lambda^Y_{10}$", format='pandoc')
 
 ```
 
@@ -459,7 +459,7 @@ We also note that in cases in which you cannot quantify uncertainty about parame
 <!-- ** FLAG: GENERATE A TABLE SHOWING HOW PIMD DOES ON 5 CRITERIA **  -->
 
 
-```{r pimdmodelsch15, echo = FALSE}
+```{r pimdmodelsch15, echo = FALSE, message=FALSE, warning=FALSE}
 
 pimd <- make_model("I -> M -> D <- P; I -> D") %>%
   
@@ -491,15 +491,15 @@ if(do_diagnosis){
   
 pimd %>%
    update_model(data, keep_fit = TRUE, iter = 8000) %>%
-   write_rds("saved/ch15_pimd_model.rds") 
+   write_rds("saved/16_pimd_model.rds") 
 
 pimd_negmed %>%
    update_model(data, keep_fit = TRUE, iter = 8000) %>%
-   write_rds("saved/ch15_pimd_negmed_model.rds") 
+   write_rds("saved/16_pimd_negmed_model.rds") 
 
 pimd_nonmon %>%
    update_model(data, keep_fit = TRUE, iter = 4000) %>%
-   write_rds("saved/ch15_pimd_nonmon_model.rds") 
+   write_rds("saved/16_pimd_nonmon_model.rds") 
 #unrestricted model saved here
 
 }
@@ -507,15 +507,15 @@ pimd_nonmon %>%
 if(do_diagnosis)
   pimd_nonmon %>% set_priors(distribution = "jeffreys") %>% 
    update_model(data_2, chains = 4, iter = 6000, keep_transformed = TRUE) %>%
-   write_rds("saved/ch15_pimd_nonmon_model_2.rds") 
+   write_rds("saved/16_pimd_nonmon_model_2.rds") 
 #unrestricted model saved here
 
 
-pimd <-   read_rds("saved/ch15_pimd_model.rds") 
-pimd_negmed <-   read_rds("saved/ch15_pimd_negmed_model.rds")
-pimd_nonmon <-   read_rds("saved/ch15_pimd_nonmon_model.rds")
+pimd <-   read_rds("saved/16_pimd_model.rds") 
+pimd_negmed <-   read_rds("saved/16_pimd_negmed_model.rds")
+pimd_nonmon <-   read_rds("saved/16_pimd_nonmon_model.rds")
 
-pimd_nonmon_2 <-   read_rds("saved/ch15_pimd_nonmon_model_2.rds")
+pimd_nonmon_2 <-   read_rds("saved/16_pimd_nonmon_model_2.rds")
 
 ```
 
@@ -595,13 +595,13 @@ if(do_diagnosis){
  t(replicate(sims, {
    pimd_sim <- make_data(pimd, n = n, param_type = "posterior_draw")
    c(D=mean(pimd_sim$D), C = cor(pimd_sim$I, pimd_sim$M))})) %>%  data.frame %>%
-  write_rds("saved/ch15_replicates_pimd.rds") 
+  write_rds("saved/16_replicates_pimd.rds") 
 
   
   }
 
 
-df <-  read_rds("saved/ch15_replicates_pimd.rds")  
+df <-  read_rds("saved/16_replicates_pimd.rds")  
 
 p_two_sided <- function(T, t, digits = 2){
    if(t <  mean(T, na.rm = TRUE)) return(round(2* mean(t > T, na.rm = TRUE), digits))
@@ -643,24 +643,24 @@ As we can see both visually and from the $p-$values, the model performs well her
 
 Turning to "leave one out" model assessment, we now consider comparing our base model to models that make weaker assumptions. In one alternative model, we drop the assumption of monotonicity of $M$ in $I$. We also test a maximally flexible model (given the DAG) in which we make no montonocity assumptions for any of the causal effects.
 
-```{r loopimdplots1, echo = FALSE, fig.cap = "Leave one out likelihoods for restricted and unrestricted democracy and inequality models"}
+```{r loopimdplots1, echo = FALSE, fig.cap = "Leave one out likelihoods for restricted and unrestricted democracy and inequality models",message=FALSE, warning=FALSE}
 # Leave one out
 
 
 
 if(do_diagnosis){
   
-  get_loo_likelihood(CausalQueries::democracy_data, pimd, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimd.rds")
+  get_loo_likelihood(CausalQueries::democracy_data, pimd, sims = 25, iter = 4000) %>% write_rds("saved/16_loo_pimd.rds")
     
-  get_loo_likelihood(CausalQueries::democracy_data, pimd_negmed, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimdnegmed.rds")
+  get_loo_likelihood(CausalQueries::democracy_data, pimd_negmed, sims = 25, iter = 4000) %>% write_rds("saved/16_loo_pimdnegmed.rds")
   
-  get_loo_likelihood(CausalQueries::democracy_data, pimd_nonmon, sims = 25, iter = 4000) %>% write_rds("saved/ch15_loo_pimdnonmon.rds")
+  get_loo_likelihood(CausalQueries::democracy_data, pimd_nonmon, sims = 25, iter = 4000) %>% write_rds("saved/16_loo_pimdnonmon.rds")
 
 }
 
-loo_pimd       <- read_rds("saved/ch15_loo_pimd.rds") 
-loo_pimdnegmed <- read_rds("saved/ch15_loo_pimdnegmed.rds")
-loo_pimdnonmon <- read_rds("saved/ch15_loo_pimdnonmon.rds")
+loo_pimd       <- read_rds("saved/16_loo_pimd.rds") 
+loo_pimdnegmed <- read_rds("saved/16_loo_pimdnegmed.rds")
+loo_pimdnonmon <- read_rds("saved/16_loo_pimdnonmon.rds")
 
 
 data.frame(restricted = loo_pimd$case_likelihood %>% unlist,
@@ -707,9 +707,9 @@ if(do_diagnosis)
     lapply(function(m) query_model(m, "D[I=1] - D[I=0]", using = "posteriors", 
                            given = c(TRUE, "I==0 & D==1", "I==1 & D==1", "I==0 & M==0 & D==1", "I==1 & M==0 & D==1"))) %>%
     bind_rows(.id = "model") %>%
-    write_rds("saved/ch15_ateID2.rds")
+    write_rds("saved/16_ateID2.rds")
 
-read_rds("saved/ch15_ateID2.rds")  %>% 
+read_rds("saved/16_ateID2.rds")  %>% 
   mutate(model = factor(model, c("pimd", "pimd_negmed", "pimd_nonmon"), 
                         c("M and D restricted", "D restricted", "Unrestricted"))) %>%
   ggplot(aes(mean, Given, color = model)) + theme_bw() + 

@@ -68,7 +68,7 @@ if(do_diagnosis){
 agnostic_XMY <- make_model("X->M->Y<-X; X<->M; X<->Y; M <->Y")%>%
   update_model(agnostic_data)
 
-write_rds(agnostic_XMY, "saved/ch14_agnostic.rds")
+write_rds(agnostic_XMY, "saved/15_agnostic.rds")
 
 
 agnostic_query <-  query_model(agnostic_XMY,
@@ -76,12 +76,12 @@ agnostic_query <-  query_model(agnostic_XMY,
               given = c(TRUE, "M==0", "M==1"),
               using = "posteriors")
 
-write_rds(agnostic_query, "saved/ch14_agnostic_query.rds")
+write_rds(agnostic_query, "saved/15_agnostic_query.rds")
 
 
 }
 
-agnostic_query <- read_rds("saved/ch14_agnostic_query.rds")
+agnostic_query <- read_rds("saved/15_agnostic_query.rds")
 
 agnostic_query %>% kabble(caption = "Conditional inferences from an update agnostic model given a true model in which $X$ causes $M$ and $M$ causes $Y$")
 ```
@@ -168,14 +168,14 @@ q2 <- query_model(model_2,
             using = c("priors", "posteriors"), 
             expand_grid = TRUE)
 
-write_rds(model_1, "saved/App_somethingnothing_model_1.rds")
-write_rds(model_2, "saved/App_somethingnothing_model_2.rds")
-write_rds(q1, "saved/App_somethingnothing1.rds")
-write_rds(q2, "saved/App_somethingnothing2.rds")
+write_rds(model_1, "saved/15_somethingnothing_model_1.rds")
+write_rds(model_2, "saved/15_somethingnothing_model_2.rds")
+write_rds(q1, "saved/15_somethingnothing1.rds")
+write_rds(q2, "saved/15_somethingnothing2.rds")
 }
 
-q1 <- read_rds("saved/App_somethingnothing1.rds")
-q2 <- read_rds("saved/App_somethingnothing2.rds")
+q1 <- read_rds("saved/15_somethingnothing1.rds")
+q2 <- read_rds("saved/15_somethingnothing2.rds")
 
 # q1 %>% arrange(Using) %>% kabble( 
 #       caption = "Can observation of large N data render mediator $M$ informative for case level inference? Observational data.")
@@ -194,7 +194,7 @@ tab %>% kabble(caption = "Can observation of large N data render mediator $M$ in
 We find that even with an auspicious monotonic data-generating process in which $M$ is a total mediator, $M$ gives no traction on causal inference under Model 1. In contrast, it gives considerable leverage under Model 2: $M$ is informative, especially if $M=0$ (in which case we downgrade confidence that $X$ caused $Y$), when $X$ is known to be randomized.
 
 ```{r appnana6, eval = FALSE, echo = FALSE}
-model1 <- read_rds("saved/App_somethingnothing_model_1.rds")
+model1 <- read_rds("saved/15_somethingnothing_model_1.rds")
 
 kabble(cbind(prior = get_parameters(model1, param_type = "flat"),
             posterior = get_parameters(model1, param_type = "posterior_mean")), digits = 2)
@@ -230,7 +230,7 @@ This example demonstrates that, with infinite data, it is in principle possible 
 
 Table \@ref(tab:tests15) shows how this logic generalizes to different types of tests. For each test we first show the data available to us (first 5 rows); we then show the inferences on whether $X=1$ causes $Y=1$ in cases where $X=1$ and $Y=1$ as a function of $K$.
 
-``` {r tests15, echo = FALSE}
+``` {r tests15, echo = FALSE,message=FALSE, warning = FALSE}
 
 bounds <- function(p0, p1){
   tau = p1 - p0
@@ -263,7 +263,8 @@ table <- data.frame(Value = c(
 ) 
 
 kabble(table, col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw in the wind"),
-             caption = "Known probabilities from a model with  $X \\rightarrow Y \\leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.", align=c("l", rep('c', 4)))   %>%  kable_styling(latex_options = "scale_down")
+             caption = "Known probabilities from a model with  $X \\rightarrow Y \\leftarrow K$  justifying classic test types for clue $K$ given $X=Y=1$.", align=c("l", rep('c', 4)),
+       format = 'pandoc')   %>%  kable_styling(latex_options = "scale_down")
 
 ```
 
@@ -339,10 +340,10 @@ smoking_gun     <- van_evera_data(c("0001", "0011"), .1) %>% van_evera_inference
 
 straw_in_wind   <- van_evera_data(c("0001", "0101", "0011"), .5) %>% van_evera_inference
 
-write_rds(list(doubly_decisive, hoop, smoking_gun, straw_in_wind), "saved/ch14_vanevera.rds")
+write_rds(list(doubly_decisive, hoop, smoking_gun, straw_in_wind), "saved/15_vanevera.rds")
 }
 
-tests <- read_rds("saved/ch14_vanevera.rds")
+tests <- read_rds("saved/15_vanevera.rds")
 
 
 teststable <- 
@@ -718,7 +719,7 @@ model4 <- make_model("X -> Y <-> Z -> W") %>%
 ```
 
 
-```{r disoveryplotsa, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "DAGs from three structural causal models.", fig.width = 8, fig.height = 5, results='hide',fig.keep='all', eval = TRUE, fig.align = "center", out.width = "80%"}
+```{r disoveryplotsa, echo = FALSE, message = FALSE, warning = FALSE, fig.cap = "DAGs from three structural causal models.", fig.width = 10, fig.height = 5, results='hide',fig.keep='all', eval = TRUE, fig.align = "center", out.width = "80%"}
 #par(mar = rep(3, 4))
 p1 <- hj_ggdag(model=model1, title="I")
 p2 <- hj_ggdag(model=model2, title="II")
