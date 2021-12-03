@@ -3272,22 +3272,6 @@ X1Y11 & 0 & 0 & 0 & 1\\
 \end{tabular}
 \end{table}
 
-\begin{verbatim}
-## Warning in kable_styling(X, latex_options =
-## latex_options): Please specify format in kable.
-## kableExtra can customize either HTML or LaTeX outputs.
-## See https://haozhu233.github.io/kableExtra/ for
-## details.
-\end{verbatim}
-
-\begin{verbatim}
-## Warning in kable_styling(., latex_options =
-## "scale_down"): Please specify format in kable.
-## kableExtra can customize either HTML or LaTeX outputs.
-## See https://haozhu233.github.io/kableExtra/ for
-## details.
-\end{verbatim}
-
 \begin{longtable}[]{@{}lrrrrrrrrr@{}}
 \caption{\label{tab:parammmatrixmix}A parameter matrix for a simple \(X \rightarrow Y\) model (with no unobserved confounding), indicating a single draw of \(\lambda\) values from the prior distribution.}\tabularnewline
 \toprule
@@ -3362,22 +3346,6 @@ X.0 & X.1 & M.00 & M.10 & M.01 & M.11 & Y.00 & Y.10 & Y.01 & Y.11\\
 Once we have generated a posterior distribution for \(\lambda\), we can then query that distribution. The simplest queries relate to values of \(\lambda\). For instance, if we are interested in the probability that \(M\) has a positive effect on \(Y\), given an updated \(X \rightarrow M \rightarrow Y\) model, we want to know about the distribution of \(\lambda^M_{01}\). This distribution can be read directly from column 9 (\(Y01\)) of Table \ref{tab:posteriortable}. More complex queries can all be described as summaries of combinations of these columns. For instance, the query, ``What is the average effect of \(M\) on \(Y\)'' is a question about the distribution of \(\lambda^M_{01} - \lambda^M_{10}\), which is given by the difference between columns 9 and 8 of the table. Still more complex queries may require keeping some nodes constant while varying others, yet all of these can be calculated as summaries of the combinations of columns of the posterior distribution, following the rules described in Chapter \ref{questions}.
 
 Table \ref{tab:chainillustration} shows examples of a full mapping from data to posteriors. We begin with a simple chain model of the form \(X\rightarrow M \rightarrow Y\) with flat priors over nodal types and report inferences on a set of queries (columns) for difference data types (rows).
-
-\begin{verbatim}
-## Warning in kable_styling(X, latex_options =
-## latex_options): Please specify format in kable.
-## kableExtra can customize either HTML or LaTeX outputs.
-## See https://haozhu233.github.io/kableExtra/ for
-## details.
-\end{verbatim}
-
-\begin{verbatim}
-## Warning in kable_styling(., latex_options =
-## "scale_down"): Please specify format in kable.
-## kableExtra can customize either HTML or LaTeX outputs.
-## See https://haozhu233.github.io/kableExtra/ for
-## details.
-\end{verbatim}
 
 \begin{longtable}[]{@{}lrrrrrrrr@{}}
 \caption{\label{tab:chainillustration}Inferences on a chain model given different amounts of data (all on the diagonal, with X=0, Y=0 or X=1, Y=1). Columns 1-4 are shares of a, b, c, d causal types (as described in Chapter 2); columns 5 - 8 show \(\tau_{ij}\)---average effects of \(i\) on \(j\); the last column shows the probability of causation: the probability that \(X\) caused \(Y\) in a \(X=Y=1\) case.}\tabularnewline
@@ -5088,10 +5056,10 @@ At the same time, not all \(X=1\) cases are equally informative. Should we choos
 
 Specifically, let \(\kappa\) denote \(\Pr(K=1)\). Suppose that we begin thinking it equally likely that \(\kappa=\kappa^H = .5\) and \(\kappa=\kappa^L=0\). Suppose, further, that the distribution of \(X\) is such that, for any randomly drawn case, \(\Pr(X=1) = .5\). We then observe one case with \(X=1, Y=1\) and another with \(X=1, Y=0\). From that information alone, we can update over \(\kappa\). Specifically, conditioning on \(X=1\), when we observe the data pattern, \(D\), in which \(Y=0\) in one case and \(Y=1\) in the other, the posterior on \(\kappa\) is:
 
-\begin{eqnarray}
+\begin{eqnarray*}
 p(\kappa = \kappa^L|D) &=&  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kappa^L)}\\
 &=&\frac{.5}{.5 + .25\times(2\times.5\times.5 + 2\times.9\times.1 + 2\times(.9\times.5 +.1\times.5))}
-\end{eqnarray}
+\end{eqnarray*}
 
 In summary, under the stipulated beliefs about the world, we can learn most about the population \(ATE\) by selecting an \(X=Y=1\) for study. We can also learn about the case-level effect in such a case as well as in an \(X=1, Y=0\) case. If we are interested in the case level estimand for any \(X=0\) case, then there are no gains from any case-selection strategy since we know \(K\)'s value based on \(X\) and \(Y\)'s value.
 
@@ -5141,8 +5109,10 @@ We introduce a flexible model-based approach to comparing the prospective learni
 Consider a situation in which our model is \(X \rightarrow M \rightarrow Y\). Suppose, further, that we restrict the nodal types such that \(X\) cannot have a negative effect on \(M\), and \(M\) cannot have a negative effect on \(Y\), with flat priors over all remaining nodal types. Imagine then that we begin by collecting only \(X,Y\) data on six cases and obtain the following data pattern:
 
 \begin{table}
+
+\caption{\label{tab:observed}Observed data}
 \centering
-\begin{tabular}{lr}
+\begin{tabular}[t]{lr}
 \toprule
 event & count\\
 \midrule
@@ -5154,7 +5124,7 @@ X1Y1 & 2\\
 \end{tabular}
 \end{table}
 
-These \(X,Y\) data already give us some information about the causal effect of \(X\) on \(Y\). Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by colelcting data on \(M\) for two of these cases. Which cases should we select? We are considering two strategies, each conditional on \(X\) and \(Y\) values:
+These \(X,Y\) data already give us some information about the causal effect of \(X\) on \(Y\). Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by collcting data on \(M\) for two of these cases. Which cases should we select? We consider three strategies, each conditional on \(X\) and \(Y\) values:
 
 \begin{itemize}
 \tightlist
@@ -5162,15 +5132,17 @@ These \(X,Y\) data already give us some information about the causal effect of \
   Strategy \(A\) chooses two cases on the regression line, one randomly drawn from the \(X=Y=0\) cell and one randomly drawn from the \(X=Y=1\) cell
 \item
   Strategy \(B\) chooses off the regression line, one randomly drawn from the \(X=1, Y=0\) cell and one randomly drawn from the \(X=0, Y=1\) cell
+\item
+  Strategy \(C\) chooses two cases both from the \(X=1, Y=1\)
 \end{itemize}
 
 How can we evaluate these strategies prospectively?
 
 We start by recognizing that different strategies yield different \emph{possible} data patterns. For instance, Strategy \(A\) (on the line) could possibly give us a data pattern that includes the observation \(X=0, M=0, Y=0\). Yet Strategy \(A\) cannot possibly yield a data pattern that includes the observation \(X=1, M=0, Y=0\) --- because it does not involve the inspection of \(M\) in an \(X=1, Y=0\) case --- whereas Strategy \(B\) (off the line) \emph{can} yield a pattern that includes this observation. And neither strategy can possibly yield a pattern that includes both \(X=1, M=0, Y=0\) and \(X=0, M=1, Y=0\).
 
-In Table \ref{tab:chselillustration}, we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy \(A\) or \(B\) labeled \(A1, A2\), etc. or \(B1, B2\), etc., respectively. As we can see, there are four possible data patterns from each, representing the 4 different combinations of \(M\) values we might find across the two cases selected for deeper investigation. In the comparison presented here, none of the possible data patterns overlap across strategies.
+In Table \ref{tab:chselillustration}, we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy \(A\) or \(B\) labeled \(A1, A2\), etc. or \(B1, B2\), etc., respectively. As we can see, there are four possible data patterns from strategies \(A\) and \(B\), representing the 4 different combinations of \(M\) values we might find across the two cases selected for deeper investigation. There are threee possible outcomes from strategy \(C\). In the comparison presented here, none of the possible data patterns overlap across strategies.
 
-The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally \emph{likely} to emerge. We represent the data probabilities (calculated by CQTools) near the bottom of the table. How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure \(X,Y\) data. Note, for instance, that data pattern \(A3\) is much more likely to emerge than the other data patterns possible under Strategy \(A\). This is for two reasons. One is that \(A3\) involves \(M\) covarying with \(X\) and \(Y\), a pattern consistent with \(X\) having an effect on \(Y\) -- since, in this model, \(X\) can only affect \(Y\) if it affects \(M\) and if \(M\) effects \(Y\). Data patterns \(A1\) and \(A4\) have \(M\) constant between the two cases, even as \(X\) and \(Y\) vary; this is a pattern inconsistent with \(X\) having an effect on \(Y\). \(A3\), then, is more likely than \(A1\) or \(A4\) because the restrictions on the model plus the evidence from the \(X,Y\) data make us believe that \(X\) \emph{does} have an average effect on \(Y\). Second, we believe \(A3\) is more probable than \(A2\) because of the model's restrictions: the model allows positive effects of \(X\) on \(M\) and of \(M\) on \(Y\) (a way of generating \(A3\)), but rules out negative intermediate effects (a way of generating \(A2\)).
+The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally \emph{likely} to emerge. We represent the data probabilities near the bottom of the table.\footnote{These are calculated using the \texttt{CQtools} package.} How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure \(X,Y\) data. Note, for instance, that data pattern \(A3\) is much more likely to emerge than the other data patterns possible under Strategy \(A\). This is for two reasons. One is that \(A3\) involves \(M\) covarying with \(X\) and \(Y\), a pattern consistent with \(X\) having an effect on \(Y\) -- since, in this model, \(X\) can only affect \(Y\) if it affects \(M\) and if \(M\) effects \(Y\). Data patterns \(A1\) and \(A4\) have \(M\) constant between the two cases, even as \(X\) and \(Y\) vary; this is a pattern inconsistent with \(X\) having an effect on \(Y\). \(A3\), then, is more likely than \(A1\) or \(A4\) because the restrictions on the model plus the evidence from the \(X,Y\) data make us believe that \(X\) \emph{does} have an average effect on \(Y\). Second, we believe \(A3\) is more probable than \(A2\) because of the model's restrictions: the model allows positive effects of \(X\) on \(M\) and of \(M\) on \(Y\) (a way of generating \(A3\)), but rules out negative intermediate effects (a way of generating \(A2\)).
 
 Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table \ref{tab:chselillustration}, we can see the mean of the posterior distribution (for the \(ATE\) of \(X\) on \(Y\)) under each data pattern. What is of particular interest in assessing case-selection strategies is the \emph{variance} of the posterior distribution, which represents our \emph{uncertainty}. This posterior variance on the \(ATE\), for each data pattern, is represented in the table's final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the \emph{expected} reduction in posterior variance.
 
@@ -5197,31 +5169,31 @@ X1M1Y1 & 0 & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 2\\
 \addlinespace
 \cellcolor{gray!6}{X1Y0} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{1}\\
 X1Y1 & 1 & 1 & 1 & 1 & 2 & 2 & 2 & 2 & 0 & 0 & 0\\
-\cellcolor{gray!6}{Probability} & \cellcolor{gray!6}{0.171} & \cellcolor{gray!6}{0.03} & \cellcolor{gray!6}{0.625} & \cellcolor{gray!6}{0.174} & \cellcolor{gray!6}{0.27} & \cellcolor{gray!6}{0.231} & \cellcolor{gray!6}{0.23} & \cellcolor{gray!6}{0.268} & \cellcolor{gray!6}{0.09} & \cellcolor{gray!6}{0.242} & \cellcolor{gray!6}{0.668}\\
-Posterior mean & 0.0768342284210053 & 0.0416272970404123 & 0.172204596444912 & 0.0768790541914787 & 0.131598152112103 & 0.141792396981009 & 0.143305695745567 & 0.12945204022737 & 0.0470073694652079 & 0.0903006824902989 & 0.15986245124429\\
-\cellcolor{gray!6}{Posterior variance} & \cellcolor{gray!6}{0.006} & \cellcolor{gray!6}{0.002} & \cellcolor{gray!6}{0.03} & \cellcolor{gray!6}{0.006} & \cellcolor{gray!6}{0.017} & \cellcolor{gray!6}{0.02} & \cellcolor{gray!6}{0.021} & \cellcolor{gray!6}{0.017} & \cellcolor{gray!6}{0.002} & \cellcolor{gray!6}{0.008} & \cellcolor{gray!6}{0.026}\\
+\cellcolor{gray!6}{Probability} & \cellcolor{gray!6}{0.165} & \cellcolor{gray!6}{0.029} & \cellcolor{gray!6}{0.632} & \cellcolor{gray!6}{0.174} & \cellcolor{gray!6}{0.262} & \cellcolor{gray!6}{0.234} & \cellcolor{gray!6}{0.234} & \cellcolor{gray!6}{0.271} & \cellcolor{gray!6}{0.076} & \cellcolor{gray!6}{0.235} & \cellcolor{gray!6}{0.688}\\
+Posterior mean & 0.078 & 0.041 & 0.171 & 0.079 & 0.129 & 0.142 & 0.142 & 0.129 & 0.047 & 0.09 & 0.163\\
+\cellcolor{gray!6}{Posterior variance} & \cellcolor{gray!6}{0.008} & \cellcolor{gray!6}{0.003} & \cellcolor{gray!6}{0.02} & \cellcolor{gray!6}{0.007} & \cellcolor{gray!6}{0.017} & \cellcolor{gray!6}{0.018} & \cellcolor{gray!6}{0.018} & \cellcolor{gray!6}{0.016} & \cellcolor{gray!6}{0.003} & \cellcolor{gray!6}{0.009} & \cellcolor{gray!6}{0.02}\\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-From the probability of each data type (given the model and the \(X,Y\) data seen so far) and the posterior variance given each data realization, the implied \emph{expected} variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table \ref{tab:exppostvar}:
+From the probability of each data type (given the model and the \(X,Y\) data seen so far) and the posterior variance given each data realization, the implied \emph{expected} variance is easily calculated as a weighted average. The expected posterior variances for our three strategies are summarized in Table \ref{tab:exppostvar}:
 
 \begin{table}
 
-\caption{\label{tab:exppostvar}Expected posterio variances}
+\caption{\label{tab:exppostvar}Expected posterior variances}
 \centering
 \begin{tabular}[t]{lr}
 \toprule
 Strategy & Variance\\
 \midrule
-\cellcolor{gray!6}{Online} & \cellcolor{gray!6}{0.015}\\
-Offline & 0.017\\
-\cellcolor{gray!6}{X=1, Y=1} & \cellcolor{gray!6}{0.015}\\
+\cellcolor{gray!6}{Offline} & \cellcolor{gray!6}{0.0172}\\
+Online & 0.0154\\
+\cellcolor{gray!6}{Two X=1, Y=1 cases} & \cellcolor{gray!6}{0.0160}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing our process-tracing efforts on the regression line than off the regression line. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below.
+In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing our process-tracing efforts on the regression line than off the regression line. We only do marginally better be spreading on the line than by concentrating on positive cases. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below.
 
 The key takeaway here are the core elements of our model-based approach to assessing case-selection strategies:
 
@@ -5241,7 +5213,7 @@ The key takeaway here are the core elements of our model-based approach to asses
 \hypertarget{simulation-results}{%
 \section{Simulation results}\label{simulation-results}}
 
-In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using \texttt{CausalQueries} together with \texttt{CQTools}.
+In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies.\footnote{We generate the results displayed here using \texttt{CausalQueries} together with \texttt{CQTools}.}
 
 In all scenarios examined here, we imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming throughout that we are considering gathering additional observations in cases for which we already have \emph{some} data. In other words, we are deciding which subset of the cases --- among those we have already gathered some data on --- we should investigate more \emph{deeply}. (This is distinct from the question of ``wide vs.~deep'', where we might decide to observe cases we have not yet seen at all.)
 
@@ -5261,9 +5233,9 @@ We proceed as follows:
 
 \textbf{Possible data}. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the \(X,Y\) patterns we have already observed plus some pattern of \(M\) observations.
 
-\textbf{Probability of the data}. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed. In practice, we do this in \texttt{CQtools} via simulation. Starting with the model together with our priors, we update our beliefs about \(\lambda\) based on the previously observed data. This posterior now represents our \emph{prior} for the purposes of the process tracing. In the analyses below, we use the already-observed \(X,Y\) correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of \(\lambda\) values.
+\textbf{Probability of the data}. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed.\footnote{In practice we do this using the \texttt{CQtools} package via simulation.} Starting with the model together with our priors, we update our beliefs about \(\lambda\) based on the previously observed data. This posterior now represents our \emph{prior} for the purposes of the process tracing. In the analyses below, we use the already-observed \(X,Y\) correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of \(\lambda\) values.
 
-Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each \(lambda\) draw the probability of each data possibility given that particular \(\lambda\) and the strategy. We then average across repeated \(\lambda\) draws. Since \(\lambda\)'s are being drawn from our prior, we are automatically weighting more heavily those \(\lambda\)'s that we believe to be most likely.
+Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each \(lambda\) draw the probability of each data possibility given that particular \(\lambda\) and the strategy. We then average across repeated \(\lambda\) draws.
 
 \textbf{Posterior on estimate given the data}. For each data possibility, we can then use \texttt{CQtools} to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies.
 
