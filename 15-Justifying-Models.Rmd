@@ -183,11 +183,8 @@ q2 <- read_rds("saved/15_somethingnothing2.rds")
 # kabble(q2 %>% arrange(Using), 
 #       caption = "Can observation of large N data render mediator $M$ informative for case level inference? X randomized.")
 
-tab <- data.frame(drop_sd(q1[c(2,4,6),], name = "M1") ,  drop_sd(q2[c(2,4,6),], name = "M1")[,4]) 
-for(j in 4:5){
-tab[c(2, 4, 6), j] <- paste0("(", tab[c(2, 4, 6), j], ")")}
-
-tab %>% kabble(caption = "Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Posterior SD in parentheses.", col.names = c("Query",	"Given",	"Using", "Model 1", "Model 2"), row.names = FALSE)
+list(`1` = q1, `2` = q2) %>% bind_rows(.id = "Model") %>% filter(Using == "posteriors") %>% 
+  select(Model, Given, mean, sd) %>% arrange(Given) %>% kabble(caption = "Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Posterior SD in parentheses.", row.names = FALSE)
 
 ```
 
@@ -345,6 +342,7 @@ write_rds(list(doubly_decisive, hoop, smoking_gun, straw_in_wind), "saved/15_van
 
 tests <- read_rds("saved/15_vanevera.rds")
 
+tests <- lapply(tests, function(d) select(d, - Case.estimand))
 
 teststable <- 
   cbind(drop_sd(tests[[1]]),  
@@ -354,6 +352,7 @@ teststable <-
       
       )
 for(j in 4:7){
+  teststable[,j] <- round(teststable[,j], 3)
 teststable[c(2, 4, 6), j] <- paste0("(", teststable[c(2, 4, 6), j], ")")}
 
   teststable %>% 
