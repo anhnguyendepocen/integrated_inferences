@@ -146,13 +146,13 @@ We use Tables  \@ref(tab:ambigmatrixmix) and \@ref(tab:parammmatrixmix)  to illu
 
 In practice we do this all using matrix operations. 
 
-```{r ambigmatrixmix, echo = FALSE, include = TRUE}
+```{r ambigmatrixmix, echo = FALSE, include = TRUE, warning = FALSE}
 XY <- make_model("X -> Y") %>% set_parameters(c(.4, .6, .3, .2, .2, .3))
 ambiguityXY  <- get_ambiguities_matrix(XY)
 kabble(ambiguityXY, caption = "An ambiguity matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding). Rows are causal types, columns are data types.") 
 ```
 
-```{r parammmatrixmix, echo = FALSE, include = TRUE}
+```{r parammmatrixmix, echo = FALSE, warning = FALSE, include = TRUE}
 paramXY <- get_parameter_matrix(XY) 
 paramXY_with_params <-cbind(paramXY, '$\\lambda$' = XY$parameters_df$param_value)
 kabble(paramXY_with_params, caption = "A parameter matrix for a simple $X \\rightarrow Y$ model (with no unobserved confounding), indicating a single draw of $\\lambda$ values from the prior distribution.", format = 'pandoc') %>%  kable_styling(latex_options = "scale_down")
@@ -181,7 +181,7 @@ In other words, the likelihood of observing a particular data pattern given $\la
 $$p(\lambda | d) = \frac{p(d | \lambda)p(\lambda)}{\int_{\lambda'}{p(d | \lambda')p(\lambda')}}$$
 In the `CausalQueries` package this updating is implemented in `stan`, and the result of the updating is a dataframe that contains a collection of draws from the posterior distribution for $\lambda$. Table \@ref(tab:posteriortable) illustrates what such a dataframe might look like for an $X\rightarrow M \rightarrow Y$ model. Each row represents a single draw from $p(\lambda|d)$. The 10 columns represent shares for each of the 10 nodal types in the model, under each $\lambda$ draw. 
 
-```{r posteriortable, echo = FALSE}
+```{r posteriortable, echo = FALSE, warning = FALSE}
 if(do_diagnosis)
 make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/09_posterior_chain.rds")
 
@@ -197,7 +197,7 @@ Once we have generated a posterior distribution for $\lambda$, we can then query
 
 Table \@ref(tab:chainillustration) shows examples of a full mapping from data to posteriors. We begin with a simple chain model of the form $X\rightarrow M \rightarrow Y$ with flat priors over nodal types and report inferences on a set of queries (columns) for difference data types (rows).
 
-```{r chainillustration, echo = FALSE }
+```{r chainillustration, echo = FALSE, warning = FALSE }
 model <- make_model("X->M->Y")
 
 datas <- list(

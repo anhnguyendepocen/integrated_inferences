@@ -100,10 +100,10 @@ At the same time, not all $X=1$ cases are equally informative. Should we choose 
 
 Specifically, let $\kappa$ denote $\Pr(K=1)$. Suppose that we begin thinking it equally likely that $\kappa=\kappa^H = .5$ and $\kappa=\kappa^L=0$. Suppose, further, that the distribution of $X$ is such that, for any randomly drawn case, $\Pr(X=1) = .5$. We then observe one case with $X=1, Y=1$ and another with $X=1, Y=0$. From that information alone, we can update over $\kappa$. Specifically, conditioning on $X=1$, when we observe the data pattern, $D$, in which $Y=0$ in one case and $Y=1$ in the other, the posterior on $\kappa$ is:
 
-\begin{eqnarray}
+\begin{eqnarray*}
 p(\kappa = \kappa^L|D) &=&  \frac{p(D|\kappa^H)}{p(D|\kappa^H)+p(D|\kappa^L)}\\
 &=&\frac{.5}{.5 + .25\times(2\times.5\times.5 + 2\times.9\times.1 + 2\times(.9\times.5 +.1\times.5))}
-\end{eqnarray}
+\end{eqnarray*}
 
 <!-- FLAG: Is the above expression not missing the prior? -->
 
@@ -155,7 +155,10 @@ We introduce a flexible model-based approach to comparing the prospective learni
 
 ```{r selectioncode, echo = FALSE}
 
+if(do_diagnosis){
+  
 # We define a model
+
 model <- make_model("X->M->Y")  %>%
  set_restrictions(c("(Y[M=1]<Y[M=0])", "(M[X=1]<M[X=0])")) %>%
  set_parameter_matrix() %>%
@@ -185,12 +188,32 @@ C_X1Y1_only <-
                      condition = c("X==1 & Y==1"), prefix = "C")
 names(C_X1Y1_only)[-c(1:2)] <- c("C1", "C2", "C3")
 
+df <- A_on_regression_line[,-2] %>% 
+  merge(B_off_regression_line[,-2], by = "event", all = TRUE) %>%
+  merge(C_X1Y1_only[,-2], by = "event", all = TRUE) %>%
+  dplyr:::mutate_if(is.numeric, ~replace(., is.na(.), 0))
+
+list(df = df, observed = observed) %>%
+  write_rds("saved/ch_13_walkkthrough.rds")
+
+list(Online = A_on_regression_line, 
+     Offline = B_off_regression_line, 
+     X1Y1= C_X1Y1_only) %>%
+ 	write_rds("saved/13_illustration_strategies.rds")
+  
+
+}
+
+ch_13_walkkthrough <- read_rds("saved/ch_13_walkkthrough.rds")
+# table(duplicated(t(df)))
+
+strategies <- read_rds("saved/13_illustration_strategies.rds")
 ```
 
 Consider a situation in which our model is $X \rightarrow M \rightarrow Y$. Suppose, further, that we restrict the nodal types such that $X$ cannot have a negative effect on $M$, and $M$ cannot have a negative effect on $Y$, with flat priors over all remaining nodal types. Imagine then that we begin by collecting only $X,Y$ data on six cases and obtain the following data pattern:
 
 ```{r observed, echo = FALSE}
-kabble(observed)
+kabble(ch_13_walkkthrough$observed, caption = "Observed data")
 ```
 
 These $X,Y$ data already give us some information about the causal effect of $X$ on $Y$. Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by colelcting data on $M$ for two of these cases. Which cases should we select? We are considering two strategies, each conditional on $X$ and $Y$ values:
@@ -211,15 +234,6 @@ Finally, each possible data realization will (if realized) generate (possible) u
 <!-- FLAG: Need to redo Table to conform to text: 2 strategies only. -->
 
 
-```{r dtypes, echo = FALSE}
-# Combine data types
-df <- A_on_regression_line[,-2] %>% 
-  merge(B_off_regression_line[,-2], by = "event", all = TRUE) %>%
-  merge(C_X1Y1_only[,-2], by = "event", all = TRUE) %>%
-  dplyr:::mutate_if(is.numeric, ~replace(., is.na(.), 0))
-
-# table(duplicated(t(df)))
-```
 
 
 ```{r illustration, echo = FALSE}
@@ -232,17 +246,17 @@ model <- make_model("X->M->Y")  %>%
  set_parameter_matrix() %>%
  set_parameters(type = "jeffreys")
   
- strategies <- 
-   list(A_on_regression_line, B_off_regression_line, C_X1Y1_only)
 
- 	write_rds(strategies, "saved/13_illustration_strategies.rds")
-  
- 
- estimates_dbs <- lapply(strategies, function(s) 
-    make_estimates_database(model, observed, possible_data = s, queries = "Y[X=1]-Y[X=0]")
-    )
-    
-	write_rds(estimates_dbs, "saved/13_illustration_estimates.rds")
+# Estimates for each strategy set 
+strategies %>% lapply(function(s) 
+    make_estimates_database(
+      model, 
+      observed, 
+      possible_data = s, 
+      queries = "Y[X=1]-Y[X=0]",
+      iter = 8000, chains = 4)
+    ) %>% 
+     write_rds("saved/13_illustration_estimates.rds")
 
 # The reference model is the original model updated with the XY data we've already seen.
  reference_model <- update_model(model, data)
@@ -253,7 +267,11 @@ model <- make_model("X->M->Y")  %>%
 #    average_data_probabilities(reference_model, s, using = "posteriors", sims = 3000)
 
    apply(reference_model$posterior_distribution, 1, function(pars) {
-  					make_data_probabilities(model = reference_model, pars = pars, possible_data = s, normalize = TRUE)
+  					make_data_probabilities(
+  					  model = reference_model, 
+  					  pars = pars, 
+  					  possible_data = s, 
+  					  normalize = TRUE)
   			})
    )
    
@@ -266,26 +284,37 @@ model <- make_model("X->M->Y")  %>%
   strategies      <- read_rds("saved/13_illustration_strategies.rds")
   estimates_db    <- read_rds("saved/13_illustration_estimates.rds")
   
-  digits <- 3
 
-  df <- rbind(df, 
-          c("Probability", round(unlist(probabilities),digits)),
-          c("Posterior mean",   (unlist(lapply(estimates_db, function(j)   unlist(unlist(lapply(j, function(k) k$mean))))))),
-          c("Posterior variance",   round(unlist(lapply(estimates_db, function(j)   unlist(unlist(lapply(j, function(k) k$mean^2))))), digits)))
 ```
 
-```{r chselillustration, echo = FALSE}  
-kabble(df, caption = "Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.", digits = 2)   %>%  kable_styling(latex_options = "scale_down")
+```{r chselillustration, echo = FALSE, warning = FALSE}  
+ch_13_walkkthrough$df %>%
+  rbind(
+    c("Probability", round(unlist(probabilities),3)),
+    c("Posterior mean", estimates_db %>% bind_rows() %>% pull(mean) %>% round(3)),
+    c("Posterior variance",   (estimates_db %>% bind_rows() %>% pull(sd))^2 %>% round(3))) %>%
+  kabble(caption = "Each column shows a possible distribution of data that can be generated from a given strategy. We calculate the probability of each data possibility, given the data seen so far, and the posterior variance associated with each one.")   %>%  kable_styling(latex_options = "scale_down")
 ```
 
  
 From the probability of each data type (given the model and the $X,Y$ data seen so far) and the posterior variance given each data realization, the implied *expected* variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table \@ref(tab:exppostvar):
 
 ```{r exppostvar, echo = FALSE}
-expected_posterior_var <- sapply(1:3, function(i) 
-  sum(probabilities[[i]]*unlist(lapply(estimates_db[[i]], function(x) x$sd^2)))
- )
-kabble(data.frame(Strategy = c("Online", "Offline", "X=1, Y=1"), Variance = expected_posterior_var), digits = 3, caption = "Expected posterio variances", booktabs = TRUE)
+
+
+lapply(estimates_db,  bind_rows) %>%  bind_rows(.id = "Strategy") %>%
+  mutate(variance = sd^2,
+  name = probabilities %>% lapply(names) %>% unlist,
+  probabilities = probabilities %>% unlist()
+)  %>% 
+  group_by(Strategy) %>% 
+  summarize(
+    Variance = sum(probabilities* variance)
+ ) %>% mutate(Strategy = factor(Strategy, 
+                                c("Online", "Offline", "X1Y1"),
+                                c("Online", "Offline", "X=1, Y=1"))) %>%
+kabble(digits = 4, caption = "Expected posterior variances")
+
 ```
 
 
