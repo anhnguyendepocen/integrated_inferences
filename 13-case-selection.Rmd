@@ -216,18 +216,19 @@ Consider a situation in which our model is $X \rightarrow M \rightarrow Y$. Supp
 kabble(ch_13_walkkthrough$observed, caption = "Observed data")
 ```
 
-These $X,Y$ data already give us some information about the causal effect of $X$ on $Y$. Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by colelcting data on $M$ for two of these cases. Which cases should we select? We are considering two strategies, each conditional on $X$ and $Y$ values:
+These $X,Y$ data already give us some information about the causal effect of $X$ on $Y$. Yet, we want to learn more by examining some subset of these cases more deeply -- and, specifically, by collcting data on $M$ for two of these cases. Which cases should we select? We  consider three strategies, each conditional on $X$ and $Y$ values:
 
 * Strategy $A$ chooses two cases on the regression line, one randomly drawn from the $X=Y=0$ cell and one randomly drawn from the $X=Y=1$ cell
 * Strategy $B$ chooses off the regression line, one randomly drawn from the $X=1, Y=0$ cell and one randomly drawn from the $X=0, Y=1$ cell
+* Strategy $C$ chooses two cases both from the $X=1, Y=1$
 
 How can we evaluate these strategies prospectively? 
 
 We start by recognizing that different strategies yield different *possible* data patterns. For instance, Strategy $A$ (on the line) could possibly give us a data pattern that includes the observation $X=0, M=0, Y=0$. Yet Strategy $A$ cannot possibly yield a data pattern that includes the observation $X=1, M=0, Y=0$ --- because it does not involve the inspection of $M$ in an $X=1, Y=0$ case --- whereas Strategy $B$ (off the line) *can* yield a pattern that includes this observation. And neither strategy can possibly yield a pattern that includes both $X=1, M=0, Y=0$ and $X=0, M=1, Y=0$. 
 
-In Table \@ref(tab:chselillustration), we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy $A$ or $B$ labeled $A1, A2$, etc. or $B1, B2$, etc., respectively. As we can see, there are four possible data patterns from each, representing the 4 different combinations of $M$ values we might find across the two cases selected for deeper investigation. In the comparison presented here, none of the possible data patterns overlap across strategies.
+In Table \@ref(tab:chselillustration), we represent the full set of possible data patterns that can arise from each strategy, with the possible data patterns for Strategy $A$ or $B$ labeled $A1, A2$, etc. or $B1, B2$, etc., respectively. As we can see, there are four possible data patterns from strategies $A$ and $B$, representing the 4 different combinations of $M$ values we might find across the two cases selected for deeper investigation. There are threee possible outcomes from strategy $C$. In the comparison presented here, none of the possible data patterns overlap across strategies. 
 
-The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally *likely* to emerge. We represent the data probabilities (calculated by CQTools) near the bottom of the table. How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure $X,Y$ data. Note, for instance, that data pattern $A3$ is much more likely to emerge than the other data patterns possible under Strategy $A$. This is for two reasons. One is that $A3$ involves $M$ covarying with $X$ and $Y$, a pattern consistent with $X$ having an effect on $Y$ -- since, in this model, $X$ can only affect $Y$ if it affects $M$ and if $M$ effects $Y$. Data patterns $A1$ and $A4$ have $M$ constant between the two cases, even as $X$ and $Y$ vary; this is a pattern inconsistent with $X$ having an effect on $Y$. $A3$, then, is more likely than $A1$ or $A4$ because the restrictions on the model plus the evidence from the $X,Y$ data make us believe that $X$ *does* have an average effect on $Y$. Second, we believe $A3$ is more probable than $A2$ because of the model's restrictions: the model allows positive effects of $X$ on $M$ and of $M$ on $Y$ (a way of generating $A3$), but rules out negative intermediate effects (a way of generating $A2$).
+The next step is to grapple with the fact that not all of the possible data realizations for a given strategy are equally *likely* to emerge. We represent the data probabilities near the bottom of the table.^[These are calculated using the `CQtools` package.] How likely a data pattern is to emerge will depend on the model, any restrictions or priors we have built into the model, and any updating of beliefs that arises from the pure $X,Y$ data. Note, for instance, that data pattern $A3$ is much more likely to emerge than the other data patterns possible under Strategy $A$. This is for two reasons. One is that $A3$ involves $M$ covarying with $X$ and $Y$, a pattern consistent with $X$ having an effect on $Y$ -- since, in this model, $X$ can only affect $Y$ if it affects $M$ and if $M$ effects $Y$. Data patterns $A1$ and $A4$ have $M$ constant between the two cases, even as $X$ and $Y$ vary; this is a pattern inconsistent with $X$ having an effect on $Y$. $A3$, then, is more likely than $A1$ or $A4$ because the restrictions on the model plus the evidence from the $X,Y$ data make us believe that $X$ *does* have an average effect on $Y$. Second, we believe $A3$ is more probable than $A2$ because of the model's restrictions: the model allows positive effects of $X$ on $M$ and of $M$ on $Y$ (a way of generating $A3$), but rules out negative intermediate effects (a way of generating $A2$).
 
 Finally, each possible data realization will (if realized) generate (possible) updating of our beliefs about the query of interest. In the second-to-last row of the Table \@ref(tab:chselillustration), we can see the mean of the posterior distribution (for the $ATE$ of $X$ on $Y$) under each data pattern. What is of particular interest in assessing case-selection strategies is the *variance* of the posterior distribution, which represents our *uncertainty*. This posterior variance on the $ATE$, for each data pattern, is represented in the table's final row. We can see that our level of posterior uncertainty varies across possible data realizations. We operationalize the expected learning under each case-selection strategy as the *expected* reduction in posterior variance. 
 
@@ -254,7 +255,7 @@ strategies %>% lapply(function(s)
       observed, 
       possible_data = s, 
       queries = "Y[X=1]-Y[X=0]",
-      iter = 8000, chains = 4)
+      iter = 9000, chains = 8)
     ) %>% 
      write_rds("saved/13_illustration_estimates.rds")
 
@@ -263,9 +264,12 @@ strategies %>% lapply(function(s)
  
 	write_rds(reference_model, "saved/13_reference_XMY_updated_model.rds")
 
- probabilities <- lapply(strategies, function(s) 
+ probabilities <- strategies %>% 
+   lapply(function(s) 
 #    average_data_probabilities(reference_model, s, using = "posteriors", sims = 3000)
 
+     # FLAG -- WOULD BE FASTER TO HAVE THIS
+     # RUN FROM TRANSFORMED_PARAMETERS INSTEAD OF PARAMETERS
    apply(reference_model$posterior_distribution, 1, function(pars) {
   					make_data_probabilities(
   					  model = reference_model, 
@@ -275,7 +279,8 @@ strategies %>% lapply(function(s)
   			})
    )
    
-	write_rds(probabilities, "saved/13_illustration_probabilities.rds")
+ probabilities %>% lapply(function(j) apply(j, 1, mean)) %>%
+	write_rds("saved/13_illustration_probabilities.rds")
 
 }
 
@@ -297,10 +302,9 @@ ch_13_walkkthrough$df %>%
 ```
 
  
-From the probability of each data type (given the model and the $X,Y$ data seen so far) and the posterior variance given each data realization, the implied *expected* variance is easily calculated as a weighted average. The expected posterior variances for our two strategies are summarized in Table \@ref(tab:exppostvar):
+From the probability of each data type (given the model and the $X,Y$ data seen so far) and the posterior variance given each data realization, the implied *expected* variance is easily calculated as a weighted average. The expected posterior variances for our three strategies are summarized in Table \@ref(tab:exppostvar):
 
 ```{r exppostvar, echo = FALSE}
-
 
 lapply(estimates_db,  bind_rows) %>%  bind_rows(.id = "Strategy") %>%
   mutate(variance = sd^2,
@@ -312,13 +316,13 @@ lapply(estimates_db,  bind_rows) %>%  bind_rows(.id = "Strategy") %>%
     Variance = sum(probabilities* variance)
  ) %>% mutate(Strategy = factor(Strategy, 
                                 c("Online", "Offline", "X1Y1"),
-                                c("Online", "Offline", "X=1, Y=1"))) %>%
+                                c("Online", "Offline", "Two X=1, Y=1 cases"))) %>%
 kabble(digits = 4, caption = "Expected posterior variances")
 
 ```
 
 
-In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing our process-tracing efforts on the regression line than off the regression line. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below. 
+In this example, we see that we would expect to be better off---in the sense of having less posterior uncertainty---by focusing our process-tracing efforts on the regression line than off the regression line. We only do marginally better be spreading on the line than by concentrating on positive cases. We save an account of the intuition underlying this result for the discussion of our more extensive set of simulations below. 
 
 The key takeaway here are the core elements of our model-based approach to assessing case-selection strategies:
 
@@ -468,7 +472,7 @@ conditional_inferences(updated, query = "Y[X=1]!=Y[X=0]", given = "!is.na(X) & !
 
 ## Simulation results
 
-In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies. We generate the results displayed here using `CausalQueries` together with `CQTools`.
+In this section, we generalize and more extensively illustrate the model-based approach by applying it to a wide range of models, queries, and case-selection strategies.^[We generate the results displayed here using `CausalQueries` together with `CQTools`.]
 
 In all scenarios examined here, we imagine a situation in which we have already observed some data (the values of some nodes from the causal model in some set of cases) and must now decide in which cases we should gather additional data. To simplify the setup, we will be assuming throughout that we are considering gathering additional observations in cases for which we already have *some* data. In other words, we are deciding which subset of the cases --- among those we have already gathered some data on --- we should investigate more *deeply*. (This is distinct from the question of "wide vs. deep", where we might decide to observe cases we have not yet seen at all.) 
 
@@ -488,9 +492,9 @@ We proceed as follows:
 
 **Possible data**. For each strategy, there are multiple possible sets of data that we could end up observing. In particular, the data we could end up with will be the $X,Y$ patterns we have already observed plus some pattern of $M$ observations. 
 
-**Probability of the data**. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed. In practice, we do this in `CQtools` via simulation. Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the previously observed data. This posterior now represents our *prior* for the purposes of the process tracing. In the analyses below, we use the already-observed $X,Y$ correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of $\lambda$ values. 
+**Probability of the data**. We then calculate a probability of each possible data realization, given the model (with any restrictions or priors) and any data that we have already observed.^[In practice we do this using the `CQtools` package via simulation.] Starting with the model together with our priors, we update our beliefs about $\lambda$ based on the previously observed data. This posterior now represents our *prior* for the purposes of the process tracing. In the analyses below, we use the already-observed $X,Y$ correlation to update our beliefs about causal-type share allocations in the population. We then use this posterior to draw a series of $\lambda$ values. 
 
-Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that particular $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. Since $\lambda$'s are being drawn from our prior, we are automatically weighting more heavily those $\lambda$'s that we believe to be most likely.
+Given that the ambiguity matrix gives us the mapping from causal types to data realizations, we can calculate for each $lambda$ draw the probability of each data possibility given that particular $\lambda$ and the strategy. We then average across repeated $\lambda$ draws. 
 
 **Posterior on estimate given the data**. For each data possibility, we can then use `CQtools` to ask what inference we would get from each data possibility, given whatever query we seek to answer, as well as the variance of that posterior. Examining the inferences from possible data-realizations, as we do below, can help us understand how the learning unfolds for different strategies. 
 
