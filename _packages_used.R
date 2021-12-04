@@ -26,6 +26,7 @@ library(dagitty)
 library(ggdag)
 library(repr)
 library(cowplot)
+library(plotrix)
 
 
   # (1) if CausalQueries gives error "Could not find tools necessary to compile a package.", please run:
