@@ -122,6 +122,8 @@ We see that the same thing is true for each of the other studies. In study 2, we
 
 frank <- read_rds("saved/11_frankenstein.rds")
 
+frank <- lapply(frank, function(d) select(d, - Case.estimand))
+
 kabble(
   cbind(Study = c(1, NA, 2, NA, 3, NA),
         rbind(
@@ -179,9 +181,13 @@ Note also that this model assumes the exclusion restriction that entering the ex
 
 
 ```{r copobsetup, message = FALSE, warning = FALSE, echo = FALSE}
-model <- make_model("R -> X -> Y; O -> X <- Z; O <-> Y") %>%
+if(do_diagnosis)
+  make_model("R -> X -> Y; O -> X <- Z; O <-> Y") %>%
   
-	set_restrictions("(X[R=1, Z=0]!=0) | (X[R=1, Z=1]!=1) | (X[R=0, O=0]!=0) | (X[R=0, O=1]!=1)")
+	set_restrictions("(X[R=1, Z=0]!=0) | (X[R=1, Z=1]!=1) | (X[R=0, O=0]!=0) | (X[R=0, O=1]!=1)") %>%
+  write_rds("saved/ch11_copobs.rds")
+
+model <-   read_rds("saved/ch11_copobs.rds")
 
 ```
 
@@ -224,7 +230,9 @@ result <- query_model(
 write_rds(result, "saved/11_fusionestimands.rds")
 }
 
-read_rds("saved/11_fusionestimands.rds") %>% kabble(caption = "Estimands in different sites", digits = 2)
+read_rds("saved/11_fusionestimands.rds") %>% 
+  select(-Case.estimand) %>% 
+  kabble(caption = "Estimands in different sites", digits = 2)
 
 ```
 
@@ -249,16 +257,18 @@ In contrast, when we use `CausalQueries` to update on the full causal model and 
 if(do_diagnosis){
   write_rds(update_model(model, data), "saved/11_exp_obs.rds")
   }
-updated <- read_rds("saved/11_exp_obs.rds")
 ```
 
 ```{r fusionCQ, echo = FALSE}
-result <- query_model(
+updated <- read_rds("saved/11_exp_obs.rds")
+query_model(
     updated, 
     queries = list(ATE = "c(Y[X=1] - Y[X=0])"), 
     given = list(TRUE, "R==0", "R==1"),
-    using = "posteriors")
-kabble(result, caption = "Estimates on the ATE for observational ($R=0$) and experimental ($R=1$) set.")
+    using = "posteriors") %>%
+    select(-Case.estimand) %>% 
+
+kabble(caption = "Estimates on the ATE for observational ($R=0$) and experimental ($R=1$) set.")
 ```
 
 
@@ -281,7 +291,8 @@ result <- query_model(
     updated_no_O, 
     queries = list(ATE = "c(Y[X=1] - Y[X=0])"), 
     given = list(TRUE, "R==0", "R==1"),
-    using = "posteriors")
+    using = "posteriors") %>%
+    select(-Case.estimand)
 kabble(result)
 ```
 
@@ -299,7 +310,9 @@ result2 <- query_model(
     given = list("R==1 & X==0", "R==1 & X==1", "R==0 & X==0", "R==0 & X==1"),
     using = "posteriors")
 
-kabble(result2, caption = "Effects of $X$ conditional on $X$ for units that were randomly assigned or not.  Effects of $X$ do not depend on $X$ in the experimental group, but they do in the observational group becuase of seld selection. ")
+result2 %>%
+    select(-Case.estimand) %>%
+kabble(caption = "Effects of $X$ conditional on $X$ for units that were randomly assigned or not.  Effects of $X$ do not depend on $X$ in the experimental group, but they do in the observational group becuase of seld selection. ")
 ```
 
 We can learn nothing about the observational $ATT$ or $ATC$ from the experimental data alone, where there $ATT$ and $ATC$ are the same quantity. And in the observational data alone, we are hobbled by confounding of unknown direction and size. What the mixed model and data, in effect, are able to do is (a) learn about the $ATE$ experimental data, (b) use inferences on the $ATE$ to separate true effects from confounding in the observational data and thus learn about the direction and size of the confounding in those data, and (c) estimate the treatment effect for the $X=0$ group and for the $X=1$ group, respectively, in the observational data *using* knowledge about confounding in these data. By mixing the experimental and observational data, we can learn about how the treatment has affected those units that, in the "real" world of the observational setting, selected into treatment *and* about how the treatment *would* affect those that selected into control. 
@@ -351,7 +364,8 @@ write_rds(appev2, "saved/11_appev2.rds")
 }
 
 read_rds("saved/11_appev2.rds")  %>% 
-  kabble(caption = "Priors and true values (parameters) for three estimand: the frequency of $W$, the effect of $X$ on $Y$, and the effect conditional on $W=1$")
+  select(-Case.estimand) %>%
+  kabble(caption = "Priors and true values (parameters) for three estimands: the frequency of $W$, the effect of $X$ on $Y$, and the effect conditional on $W=1$")
 
 ```
 
@@ -387,7 +401,9 @@ if(do_diagnosis){
 
 q <- read_rds("saved/11_transport.rds")
 
-kabble(q, caption = "Extrapolation when two sites differ on $W$ and $W$ is observable in both contexts")
+q %>%  select(-Case.estimand) %>%
+
+kabble(caption = "Extrapolation when two sites differ on $W$ and $W$ is observable in both contexts")
 
 ```
 
@@ -421,9 +437,8 @@ if(do_diagnosis){
             "saved/11_transport2.rds")
 }
 
-q2 <- read_rds("saved/11_transport2.rds")
-
-kabble(q2, caption = "Extrapolation when two contexts differ on $W$ and $W$ is not observable in target context")
+read_rds("saved/11_transport2.rds") %>%  select(-Case.estimand) %>%
+kabble(caption = "Extrapolation when two contexts differ on $W$ and $W$ is not observable in target context")
 
 ```
 
