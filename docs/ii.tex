@@ -1837,7 +1837,7 @@ Then we can calculate that the prior probability, \(p\), that \(X\) caused \(Y\)
 \Pr(j = b |K=1, X=Y=1)&=&\frac{1\times \frac13}{1 \times \frac13 + 0.5 \times \frac23}=0.5
 \end{eqnarray*}
 
-We thus shift our beliefs from a prior of \(\frac13\) to a posterior of \(\frac12\). In contrast had we \emph{not} observed the clue our posterior would have been 0.\footnote{We develop these ideas in more detail in Chapter @\ref(justifying).}
+We thus shift our beliefs from a prior of \(\frac13\) to a posterior of \(\frac12\). In contrast had we \emph{not} observed the clue our posterior would have been 0.\footnote{We develop these ideas in more detail in Chapter \ref{justifying}.}
 
 As should be clear from the above, the inferential leverage in process tracing comes from differences in the probability of observing \(K=1\) for different causal types. Thus, the logic described here generalizes Van Evera's familiar typology of tests by conceiving of the certainty and uniqueness of clues as lying along a continuum.
 
@@ -5593,30 +5593,20 @@ We work through inferences for two types of model in which \(X\) can have both i
 \caption{Two models. The model on the right might be justified if $X$ is known to be randomized.}\label{fig:unnamed-chunk-38}
 \end{figure}
 
-After updating we query the models to see how inferences depend on \(M\) like this:
+After updating we query the models to see how inferences depend on \(M\). The results are shown in Figure \ref{fig:ch15nino}.
 
-\begin{table}
+\begin{figure}
 
-\caption{\label{tab:unnamed-chunk-39}Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Posterior SD in parentheses.}
-\centering
-\begin{tabular}[t]{llrr}
-\toprule
-Model & Given & mean & sd\\
-\midrule
-\cellcolor{gray!6}{1} & \cellcolor{gray!6}{X==1 \& M==0 \& Y==1} & \cellcolor{gray!6}{0.498} & \cellcolor{gray!6}{0.141}\\
-2 & X==1 \& M==0 \& Y==1 & 0.527 & 0.165\\
-\cellcolor{gray!6}{1} & \cellcolor{gray!6}{X==1 \& M==1 \& Y==1} & \cellcolor{gray!6}{0.501} & \cellcolor{gray!6}{0.167}\\
-2 & X==1 \& M==1 \& Y==1 & 0.838 & 0.036\\
-\cellcolor{gray!6}{1} & \cellcolor{gray!6}{X==1 \& Y==1} & \cellcolor{gray!6}{0.501} & \cellcolor{gray!6}{0.158}\\
-\addlinespace
-2 & X==1 \& Y==1 & 0.821 & 0.033\\
-\bottomrule
-\end{tabular}
-\end{table}
+{\centering \includegraphics{ii_files/figure-latex/ch15nino-1} 
 
-We find that even with an auspicious monotonic data-generating process in which \(M\) is a total mediator, \(M\) gives no traction on causal inference under Model 1. In contrast, it gives considerable leverage under Model 2: \(M\) is informative, especially if \(M=0\) (in which case we downgrade confidence that \(X\) caused \(Y\)), when \(X\) is known to be randomized.
+}
 
-This example nicely illustrates the \citet{cartwright1994nature}'s idea of ``no causes in, no causes out.'' It also poses, we think, a challenge to any process-tracing exercise that aspires to than model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems \emph{even when in reality} causal structures are simple.
+\caption{Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Error bars show two posterior standard deviations.}\label{fig:ch15nino}
+\end{figure}
+
+We find that even with an auspicious monotonic data-generating process in which \(M\) is a total mediator, \(M\) gives no traction on causal inference under Model 1 --- our beliefs have wide variance and are essentially unresponsive to \(M\). In contrast, when \(X\) is known to be randomized, as in Model 2, we have tight posteriors and \(M\) gives considerable leverage. In this case \(M\) would be informative in the unlikely event that \(M=0\) (in which case we would downgrade confidence that \(X\) caused \(Y\)).
+
+This example nicely illustrates the \citet{cartwright1994nature}'s idea of ``no causes in, no causes out.'' It also poses, we think, a challenge to any process-tracing exercise that aspires to model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems \emph{even when in reality} causal structures are simple.
 
 \hypertarget{justifying-the-classic-process-tracing-tests}{%
 \subsection{Justifying the classic process-tracing tests}\label{justifying-the-classic-process-tracing-tests}}
@@ -5675,11 +5665,11 @@ Table \ref{tab:tests15} shows how this logic generalizes to different types of t
 
 Note that some entries in Table \ref{tab:tests15} appear as ranges. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. However, despite not being identified, bounds can be placed on causal quantities. For instance, for the hoop test, when \(K=1\) the bounds are \([.5,1]\). The reason that the probability of causation here can not be \emph{less} than 0.5, is that we can see from the data when \(X=1, X=0\) that \emph{at most} one third of cases can by cases for which \(Y=1\) regardless of \(X\) (\(\theta^Y_{11}\)) meaning that at \emph{least} half of cases that produce \(Y=1\) when \(X=1\) and \(K=1\) are cases for which \(Y=1\) \emph{because} \(X=1\). In these examples the fact that queries are not point identified with infinite data does not detract from the fact that \(K\) is informative in the ways associated with the different types of tests.
 
-So much for infinite data. Is it possible to form generate classic tests with finite data starting with flat priors? Using the procedures given in Chapter \ref{mixing} the results in Table \ref{tab:testsfinite} show that it is. For these results we imagine four different data generating \(X \rightarrow Y \leftarrow K\) models. The models vary in the amount of weight they accord to three different nodal types for \(Y\)---as well as in \(\lambda^K\). We then simulate 1000 observations from each model and next update an agnostic \(X \rightarrow Y \leftarrow K\) model.
+So much for infinite data. Is it possible to justify classic tests with inferences on finite data starting with flat priors? Using the procedures given in Chapter \ref{mixing} the results in Table \ref{tab:testsfinite} show that it is. For these results we imagine four different data generating \(X \rightarrow Y \leftarrow K\) models. The models vary in the amount of weight they accord to three different nodal types for \(Y\)---as well as in \(\lambda^K\). We then simulate 1000 observations from each model and next update an agnostic \(X \rightarrow Y \leftarrow K\) model.
 
 In particular, for the doubly decisive test we imagine a world in which all units have nodal type \(\theta^Y = \theta^Y_{0001}\), and so the presence of \(K\) is necessary and sufficient to render \(X\) causal for \(Y\). For hoop tests we imagine there are also \(\theta^Y_{0101}\) nodal types. That is, cases in which \(K\) matters but \(Y\) does not. Given these cases, observation of \(K=0\) guarantees that \(X\) does not matter, but observation of \(K=1\) does not guarantee that \(X\) does matter. To generate smoking gun tests we imagine a distribution over \(\theta^Y_{0001}\) and \(\theta^Y_{0011}\) types---in which \(X\) always matters when \(K=1\) but \emph{might} not matter when \(X=0\). For straw in the wind tests we imagine a distribution over all three types.
 
-In Table \ref{tab:testsfinite}, we show the inferences we would now draw from observing \(K=1\) versus \(K=0\) in a single case, based on updating a model that has no restrictions and flat priors over all nodal types. Each column---which we have labelled with the classic test names---represents our beliefs about \(K\)'s probative value as derived from a different simulated data pattern. Thus, for instance, in the ``hoop test'' column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing \(K=1\) in a case slightly boosts our confidence that \(X\) has a positive effect on \(Y\), while observing \(K=0\) dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing \(K=1\) in a case greatly boosts our confidence that \(X\) has a positive effect on \(Y\), while observing \(K=0\) slightly undermines our confidence in such an effect.
+In Table \ref{tab:testsfinite}, we show the inferences we would now draw from observing \(K=1\) versus \(K=0\) in a single case, based on updating a model that has no restrictions and flat priors over all nodal types. Each column---which we have labelled with the classic test names---represents our beliefs about \(K\)'s probative value as derived from data generated by the four models we described above. These indeed conform to expectations. In the ``hoop test'' column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing \(K=1\) in a case slightly boosts our confidence that \(X\) has a positive effect on \(Y\), while observing \(K=0\) dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing \(K=1\) in a case greatly boosts our confidence that \(X\) has a positive effect on \(Y\), while observing \(K=0\) slightly undermines our confidence in such an effect.
 
 We underline that we have here \emph{derived} the probative value of the clue from observed data and a model that was entirely agnostic about the clue's probative value (but which did assume \emph{some} priors on causal types). In particular, the model that we start with has no restrictions on \(Y\)'s nodal types, has flat beliefs over the distribution of \(K\), and imposes no assumption that \(K\) is informative for how \(Y\) responds to \(X\). It does, however, assume that \(X\) and \(K\) are exogenous, as might be the case if these were experimentally manipulated.
 
@@ -5797,7 +5787,7 @@ Note that this form of diagnostic test is a classical one in the frequentist sen
 
 \begin{table}
 
-\caption{\label{tab:unnamed-chunk-41}Regression coefficient on $X$ given $M=0$ and $M=1$}
+\caption{\label{tab:unnamed-chunk-40}Regression coefficient on $X$ given $M=0$ and $M=1$}
 \centering
 \begin{tabular}[t]{rrrr}
 \toprule
@@ -6079,15 +6069,15 @@ Overall the evaluation of the democracy and inequality model paints a mixed pict
 \hypertarget{conclusionchapter}{%
 \chapter{Final Words}\label{conclusionchapter}}
 
-The central idea of this book is that we can usefully learn about the world by combining new evidence with prior causal models to produce updated models of how the world works. When asking specific questions---such as whether this caused that or whether one or other channel is important---we look up answers in our updated model of causal processes rather than seeking to the question directly from data.
+This book builds off the simple idea that we can usefully learn about the world by combining new evidence with prior causal models to produce updated models of how the world works. We can update a given model with different types of data about different parts of a causal process, with, possibly, different types of data from different cases. When asking specific questions---such as whether this caused that or whether one or other channel is important---we look up answers in our updated model of causal processes rather than seeking to answer the question directly from data.
 
 This way of thinking about learning is very different to many standard approaches in the social sciences. It promises benefits, but it also comes with risks. We try to describe both in this closing chapter.
 
-The approach stands in particularly stark contrast to the design based approach to causal inference, which has gained prominence in recent years. Design based approaches have shown that it is possible to greatly diminish the role of background assumptions for some research questions and contexts. This is a remarkabble achievement that has put the testing of some hypotheses and estimation of some causal quantities on a firmer footing. It allows researchers to maintain agnostic positions and base their inferences more solidly on what they know to be true---such as how units were sampled and how treatments were assigned---and less on speculations about background data generating processes. Nothing here argues against these strengths.
+The approach stands in particularly stark contrast to the design based approach to causal inference, which has gained prominence in recent years. Advances in design based inferences show that it is possible to greatly diminish the role of background assumptions for some research questions and contexts. This is a remarkable achievement that has put the testing of some hypotheses and the estimation of some causal quantities on firm footing. It allows researchers to maintain agnostic positions and base their inferences more solidly on what they know to be true---such as how units were sampled and how treatments were assigned---and less on speculations about background data generating processes. Nothing here argues against these strengths.
 
-At the same time, there are limits to model-free social science that affect the kinds of questions we can ask and the conditions we need to be in place to able to generate an answer. Most simply we often don't understand the ``design'' very well: we cannot control the processes we want to study, or the quantities we care about cannot be identified with design based inferential tools.\\
+At the same time, there are limits to model-free social science that affect the kinds of questions we can ask and the conditions that need to be in place to able to generate an answer. Most simply, we often don't understand the ``design'' very well: we cannot control the processes we want to study, or the quantities we care about cannot be identified with design based inferential tools.\\
 
-Building on pioneering work by scholars in computer science, statistics, and philosophy, we have outlined a principled approach to mobilizing prior knowledge to learn from new data in situations where randomization is unavailable and to answer questions for which randomization is unhelpful. In this approach, causal models are \emph{guides} to research design, \emph{machines} for inference, and \emph{objects} of inquiry. As guides, the models yield expectations about the learning that can be derived from a given case or set of cases and from a given type of evidence, conditional on the question being asked. As inferential machines, models allow updating on that query once the data are in hand. Finally, when we confront a model with data, we learn about the parameters of the model itself, which can be used to answer a range of other causal questions and allowing cumulation of knowledge across studies. To complement the conceptual infrastructure, we have provided software tools that let researchers build, update, and query binary causal models.
+Drawing on pioneering work by scholars in computer science, statistics, and philosophy, we have outlined a principled approach to mobilizing prior knowledge to learn from new data in situations where randomization is unavailable and to answer questions for which randomization is unhelpful. In this approach, causal models are \emph{guides} to research design, \emph{machines} for inference, and \emph{objects} of inquiry. As guides, the models yield expectations about the learning that can be derived from a given case or set of cases and from a given type of evidence, conditional on the question being asked. As inferential machines, models allow updating on that query once the data are in hand. Finally, when we confront a model with data, we learn about the parameters of the model itself, which can be used to answer a range of other causal questions and allowing cumulation of knowledge across studies. To complement the conceptual infrastructure, we have provided software tools that let researchers build, update, and query binary causal models.
 
 \hypertarget{the-benefits}{%
 \section{The benefits}\label{the-benefits}}
@@ -6106,7 +6096,7 @@ Strategies centered on building, updating, and querying causal models come with 
 
 Yet organizing inquiry around a causal model allows for cumulation in a deeper sense as well. Compared with most prevailing approaches to observational inference---where the background model is typically left implicit or conveyed informally or incompletely---the approach ensures \emph{transparency} about the beliefs on which inferences rest. Explicitness about starting assumptions allows us to assess the degree of sensitivity of conclusions to our prior beliefs. Sensitivity analyses cannot, of course, tell us which beliefs are right. But they can tell us which assumptions are most in need of defending, pinpointing \emph{where more learning would be of greatest value.} Those features of our model about which we are most uncertain and that matter most to our conclusions --- be it the absence of an arrow, a restriction, a prior over nodal types, the absence of confounding --- represent the questions most in need of answers down the road.
 
-\textbf{A framework for learning about strategies.} As we showed in chapters \ref{clue} and \ref{caseselection} access to a model provides an explicit formulation of how and what inferences will be drawn from future data patterns provides a formal framework for justifying design decisions. Of course this feature is not unique to model based inference---one can certainly have a model that describes expectations over future data patterns and imagine what inferences you will make using design based inference or any other procedure.
+\textbf{A framework for learning about strategies.} As we showed in Chapters \ref{clue} and \ref{caseselection}, access to a model provides an explicit formulation of how and what inferences will be drawn from future data patterns provides a formal framework for justifying design decisions. Of course this feature is not unique to model based inference---one can certainly have a model that describes expectations over future data patterns and imagine what inferences you will make using design based inference or any other procedure.
 
 \textbf{Conceptual clarifications.} Finally, we have found, this framework has been useful for providing conceptual clarification for how to think about qualitative, quantitative, and mixed-method inference. Consider two.
 

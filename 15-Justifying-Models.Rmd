@@ -134,9 +134,9 @@ model_2 <-
 ```
 
 ```{r, echo = FALSE, fig.cap= "Two models. The model on the right might be justified if $X$ is known to be randomized."}
-p1 <- hj_ggdag(model=model_1)
+p1 <- hj_ggdag(model=model_1, x = c(0, .5, 1), y = c(.5,1,0))
 # title(main = list("X not known to be randomized", cex = .5))
-p2 <- hj_ggdag(model=model_2)
+p2 <- hj_ggdag(model=model_2, x = c(0, .6, 1), y = c(.6,1,0))
 
 plot_grid(plotlist = list(p1,p2),ncol=2)
 # title("X  known to be randomized")
@@ -144,11 +144,11 @@ plot_grid(plotlist = list(p1,p2),ncol=2)
 ```
 
 
-After updating we query the models to see how inferences depend on $M$ like this:
+After updating we query the models to see how inferences depend on $M$. The results are shown in Figure \@ref(fig:ch15nino).
 
 
 
-```{r, echo = FALSE}
+```{r ch15nino, echo = FALSE, fig.cap = "Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Error bars show two posterior standard deviations."}
 
 if(do_diagnosis){
 
@@ -183,12 +183,16 @@ q2 <- read_rds("saved/15_somethingnothing2.rds")
 # kabble(q2 %>% arrange(Using), 
 #       caption = "Can observation of large N data render mediator $M$ informative for case level inference? X randomized.")
 
-list(`1` = q1, `2` = q2) %>% bind_rows(.id = "Model") %>% filter(Using == "posteriors") %>% 
-  select(Model, Given, mean, sd) %>% arrange(Given) %>% kabble(caption = "Can observation of large N data render mediator $M$ informative for case level inference? Model 1: No knowledge of structure; Model 2: $X$ known to be randomized. Posterior SD in parentheses.", row.names = FALSE)
+pd <- position_dodge2(width = .2)
+
+list(`1: No assumptions` = q1, `2: X randomized` = q2) %>% bind_rows(.id = "Model") %>% filter(Using == "posteriors") %>% ggplot(aes(Given, mean, color = Model)) + geom_point(position = pd) +
+  geom_errorbar(aes(ymin = mean - 2*sd, ymax = mean + 2*sd, width = .2), position = pd) + coord_flip()
+
+
 
 ```
 
-We find that even with an auspicious monotonic data-generating process in which $M$ is a total mediator, $M$ gives no traction on causal inference under Model 1. In contrast, it gives considerable leverage under Model 2: $M$ is informative, especially if $M=0$ (in which case we downgrade confidence that $X$ caused $Y$), when $X$ is known to be randomized.
+We find that even with an auspicious monotonic data-generating process in which $M$ is a total mediator, $M$ gives no traction on causal inference under Model 1 --- our beliefs have wide variance and are essentially unresponsive to $M$. In contrast, when $X$ is known to be randomized, as in Model 2, we have tight posteriors and $M$ gives considerable leverage. In this case $M$ would be informative in the unlikely event that $M=0$ (in which case we would downgrade confidence that $X$ caused $Y$).
 
 ```{r appnana6, eval = FALSE, echo = FALSE}
 model1 <- read_rds("saved/15_somethingnothing_model_1.rds")
@@ -198,7 +202,7 @@ kabble(cbind(prior = get_parameters(model1, param_type = "flat"),
 ```
 
 
-This example nicely illustrates the @cartwright1994nature's idea of "no causes in, no causes out." It also poses, we think, a challenge to any process-tracing exercise that aspires to than model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems *even when in reality* causal structures are simple.
+This example nicely illustrates the @cartwright1994nature's idea of "no causes in, no causes out." It also poses, we think, a challenge to any process-tracing exercise that aspires to  model-independence: observational data alone is not sufficient to generate a justification for process-tracing inferences for 3-node problems *even when in reality* causal structures are simple.
 
 ### Justifying the classic process-tracing tests
 
@@ -289,13 +293,13 @@ kabble(table, col.names = c("", "Doubly decisive", "Hoop", "Smoking gun", "Straw
 
 Note that some entries in Table \@ref(tab:tests15)  appear as ranges. This reflects that fact that, unless we are at edge cases, the estimand here is not identified even with infinite experimental data. In practice, we expect never to be at these edges. However, despite not being identified, bounds can be placed on causal quantities. For instance, for the hoop test, when $K=1$ the bounds are $[.5,1]$. The reason that the probability of causation here can not be *less* than 0.5, is that we can see from the data when $X=1, X=0$ that *at most* one third of cases can by cases for which $Y=1$ regardless of $X$ ($\theta^Y_{11}$) meaning that at *least* half of cases that produce $Y=1$ when $X=1$ and $K=1$ are cases for which $Y=1$ *because* $X=1$. In these examples the fact that queries are not point identified with infinite data does not detract from the fact that $K$ is informative in the ways associated with the different types of tests. 
 
-So much for infinite data. Is it possible to form generate classic tests with finite data starting with flat priors?   Using the procedures given in Chapter \@ref(mixing) the results in Table \@ref(tab:testsfinite) show that it is. For these results we imagine four different data generating $X \rightarrow Y \leftarrow K$ models. The models vary in the amount of weight they accord to three different nodal types for $Y$---as well as in $\lambda^K$.   We then simulate 1000 observations from each model and next update an agnostic $X \rightarrow Y \leftarrow K$ model. 
+So much for infinite data. Is it possible to justify classic tests with inferences on finite data starting with flat priors?   Using the procedures given in Chapter \@ref(mixing) the results in Table \@ref(tab:testsfinite) show that it is. For these results we imagine four different data generating $X \rightarrow Y \leftarrow K$ models. The models vary in the amount of weight they accord to three different nodal types for $Y$---as well as in $\lambda^K$.   We then simulate 1000 observations from each model and next update an agnostic $X \rightarrow Y \leftarrow K$ model. 
 
 
 
 In particular, for the doubly decisive test we imagine a world in which all units have nodal type $\theta^Y = \theta^Y_{0001}$, and so the presence of $K$ is necessary and sufficient to render $X$ causal for $Y$. For hoop tests we imagine there are also $\theta^Y_{0101}$ nodal types. That is, cases in which $K$ matters but $Y$ does not. Given these cases, observation of $K=0$ guarantees that $X$ does not matter, but observation of $K=1$ does not guarantee that $X$ does matter. To generate smoking gun tests we imagine a distribution over $\theta^Y_{0001}$ and $\theta^Y_{0011}$ types---in which $X$ always matters when $K=1$ but *might* not matter when $X=0$. For straw in the wind tests we imagine a distribution over all three types.
 
-In Table \@ref(tab:testsfinite), we show the inferences we would now draw from observing $K=1$ versus $K=0$ in a single case, based on updating a model that has no restrictions and flat priors over all nodal types. Each column---which we have labelled with the classic test names---represents our beliefs about $K$'s probative value as derived from a different simulated data pattern. Thus, for instance, in the "hoop test" column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case slightly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case greatly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ slightly undermines our confidence in such an effect.
+In Table \@ref(tab:testsfinite), we show the inferences we would now draw from observing $K=1$ versus $K=0$ in a single case, based on updating a model that has no restrictions and flat priors over all nodal types. Each column---which we have labelled with the classic test names---represents our beliefs about $K$'s probative value as derived from data generated by the four models we described above. These indeed conform to expectations. In the "hoop test" column, we see that (having updated based on data from one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case slightly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ dramatically undermines our confidence in such an effect. In the smoking gun column, we see that (having updated based on data from another one of the four data-generating models) we have formed beliefs such that observing $K=1$ in a case greatly boosts our confidence that $X$ has a positive effect on $Y$, while observing $K=0$ slightly undermines our confidence in such an effect.
 
 We underline that we have here *derived* the probative value of the clue from observed data and a model that was entirely agnostic about the clue's probative value (but which did assume *some* priors on causal types). In particular, the model that we start with has no restrictions on $Y$'s nodal types, has flat beliefs over the distribution of $K$, and imposes no assumption that $K$ is informative for how $Y$ responds to $X$. It does, however, assume that $X$ and $K$ are exogenous, as might be the case if these were experimentally manipulated.
 
