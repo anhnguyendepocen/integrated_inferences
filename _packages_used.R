@@ -17,17 +17,6 @@
 # install.packages("remotes")
 # library(remotes)
 # remotes::install_github("macartan/CausalQueries")
-library(CausalQueries)
-library(tidyverse)
-library(ggh4x)
-library(Rgraphviz)
-library(latex2exp)
-library(dagitty)
-library(ggdag)
-library(repr)
-library(cowplot)
-library(plotrix)
-
 
   # (1) if CausalQueries gives error "Could not find tools necessary to compile a package.", please run:
     # devtools::has_devel()
@@ -60,16 +49,24 @@ pacman::p_load(
 # plotrix,
   reshape2,
   dagitty,
-  stargazer#,
+  stargazer,
 #  partitions
+  cowplot,
+  plotrix,
+  repr,
+  ggdag,
+  dagitty,
+  latex2exp,
+  Rgraphviz,
+  ggh4x,
+  tidyverse,
+  CausalQueries,
+  CQtools,
+  gtools
 )
-
 
 #####
  # Programming and default package options:
-
-library(CQtools)
-library(gtools)
 
 options(mc.cores = parallel::detectCores())
 
