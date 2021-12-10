@@ -45,7 +45,7 @@ Now, consider a causal estimand. In a single-case setup, we might ask whether $X
 
 While the estimand shifts, we can use the tools introduced for single-case process tracing in Chapters \@ref(pt) and \@ref(ptapp) to analyze this (superficially) multi-case study. To begin, our prior on the probability that $\tau=1$ is the prior that $X$ has a positive effect on $Y$ in both cases, that is, that $\theta^Y = (b,b)$: just 1 in 16. 
 
-Now, suppose that we observe that, for both units, $X=1$ and $Y=1$. This data pattern is consistent only with four possible $\theta$ vectors: $(b,b), (d,d), (b, d), (d,b)$. Moreover each of these four is equally likely to produce the data patter we see). So our belief that  $\tau=1$ now shifts from 1 in 16 to to 1 in 4. Next, suppose that we further observe the data pattern $\mathbf K = (1,1)$. The probability of this pattern for $\Theta$ vector $(b,b)$ ($\tau = 1$) is 1. And for the type vectors $(d,d), (b, d), (d,b)$, the probability of this $\mathbf K$ pattern is $.25, .5,$ and $.5$, respectively. Applying Bayes' rule, our updated belief that $\tau = 1$ is then $1/(1 + .25 + .5 + .5) = 4/9$. 
+Now, suppose that we observe that, for both units, $X=1$ and $Y=1$. This data pattern is consistent only with four possible $\theta$ vectors: $(b,b), (d,d), (b, d), (d,b)$. Moreover each of these four is equally likely to produce the data pattern we see. So our belief that  $\tau=1$ now shifts from 1 in 16 to to 1 in 4. Next, suppose that we further observe the data pattern $\mathbf K = (1,1)$. The probability of this pattern for $\Theta$ vector $(b,b)$ ($\tau = 1$) is 1. And for the type vectors $(d,d), (b, d), (d,b)$, the probability of this $\mathbf K$ pattern is $.25, .5,$ and $.5$, respectively. Applying Bayes' rule, our updated belief that $\tau = 1$ is then $1/(1 + .25 + .5 + .5) = 4/9$. 
 
 We can similarly figure out the posterior probability on any possible value of $\tau$ and so build up a full posterior distribution. And we can do so given any $\mathbf K$ pattern (i.e., $\mathbf K$ realization) across the cases. Thus, if we observe the data pattern $\mathbf K = (0,1)$, the probability of this pattern for type vector $(b,b)$ ($\tau = 1$)  is 0. For the type vectors $(d,d), (b, d), (d,b)$ it is $.25, 0, .5$, respectively.  Table \@ref(tab:ch9patterns) shows the posterior distribution over a set of discrete treatment effect values given different $K$ patterns observed.
 
@@ -186,7 +186,7 @@ if(do_diagnosis)
 make_model("X -> M -> Y") %>% update_model(data.frame(X = 0:1, Y = 0:1)) %>% write_rds("saved/09_posterior_chain.rds")
 
 read_rds("saved/09_posterior_chain.rds")$posterior_distribution %>%
-head() %>% kabble(digits = 2, caption = "An illustration of a posterior distribution for a $X \\rightarrow M \\rightarrow Y$ model. Each row is a draw from $p(\\lambda|d))$. SUch a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.")
+head() %>% kabble(digits = 2, caption = "An illustration of a posterior distribution for a $X \\rightarrow M \\rightarrow Y$ model. Each row is a draw from $p(\\lambda|d))$. Such a posterior would typically have thousands of rows and capture the full joint posterior distribution over all parameters.")
 
 ```
 
@@ -309,18 +309,15 @@ In the single multinomial view we have the probability of seeing data with $X=Y=
 
 But since $P(X=1, Y=1)P(M=0 | X=1, Y=1) = P(M=0 | X=1, Y=1)$ these two expressions are the same "up to a constant" and so the inferences we make will be the same under both views.
 
-Consider  now a third strategy in which rather than conditioning $X=Y=1$ to examine $M$, one of the two cases were chosen at random to observe $M$ and it just so happened to be be a case with $X=Y=1$. Or another strategy in which for each data point researchers randomly determined whether to gather data on $M$ or not. In all of these cases the probability of observing the data we do in fact observe has the same basic form, albeit with possibly different constants. 
+Consider  now a third strategy in which rather than conditioning $X=Y=1$ to examine $M$, one of the two cases were chosen at random to observe $M$ and it just so happened to be a case with $X=Y=1$. Or another strategy in which for each data point researchers randomly determined whether to gather data on $M$ or not. In all of these cases the probability of observing the data we do in fact observe has the same basic form, albeit with possibly different constants. 
 
 In other words, these details of sampling can be ignored.
 
 
 Other sampling procedures do have to be taken into account however, in particular, sampling---or more generally missingness---that is related to potential outcomes. As the simplest illustration consider a model in which $X \rightarrow Y$, but data is only recorded in cases in which $Y=1$. Then a naive implementation of our procedure would infer that $Y=1$ regardless of $X$ and so $X$ has no effect on $Y$. The problem here is that the likelihood is not taking account of the process through which cases enter our data. In this case the correct likelihood would make use of event probabilities of the form:
 
-
-
 $$x_d = \sum_{\theta \in \Theta(d)}p(\theta|\lambda)$$
-$$x_d = \sum_{\theta \in \Theta(d)}p(\theta|\lambda)$$
-Let $D^*$ denote the set of data types involving Y=1$. Then:
+Let $D^*$ denote the set of data types involving $Y=1$. Then:
 $$w_d =  \left\{ \begin{array}{cc}
 0 & \text{if } d\not\in D^* \\
 \frac{x_d}{\sum_{d'\in D^*}x_{d'}} & \text{otherwise} \end{array} \right.$$ 
@@ -382,7 +379,7 @@ Let $d^i$ denote the probability of observing data $X = x$ for a case (or set of
 
 Let $\tau^{|x}$ denote a query of interest---where the query is conditional in the sense that it relates to cases with data $x$. An example might be: what is the effect of $X$ on $Y$ in a case in which $M=1$ and $Y=1$. Let $q^i_j$ denote the probability that $\tau^{|x} = \tau_j^{|x}$ when $\lambda = \lambda^i$ for a case with data $X=x$.  Note $q^i_j$  can be written $z^i/d^i$ where $z^i_j = \Pr(\tau^{|x} = \tau^{|x}_j, X=x | \lambda^i)$. 
 
-To illustrate say in an $X\rightarrow Y$ model we were interested the effect of $X$ on $Y$ in a case with $X=1, Y=1$. Then $d^i = (\lambda^i)^X_1((\lambda^i)^Y_{01} + (\lambda^i)^Y_{11})$ is the probability of observing ($(X=1, Y=1)$. Then for query $\tau^{|x}_j = 1$ (did $X$ cause $Y$) we have  $z^i_j =  (\lambda^i)^X_1((\lambda^i)^Y_{01})$, and so the probability of this query for this case given $\lambda^i$ is: $q^i_j = \frac{(\lambda^i)^Y_{01}}{(\lambda^i)^Y_{01} + (\lambda^i)^Y_{11}}$
+To illustrate, say in an $X\rightarrow Y$ model we were interested in the effect of $X$ on $Y$ in a case with $X=1, Y=1$. Then $d^i = (\lambda^i)^X_1((\lambda^i)^Y_{01} + (\lambda^i)^Y_{11})$ is the probability of observing ($(X=1, Y=1)$. Then for query $\tau^{|x}_j = 1$ (did $X$ cause $Y$) we have  $z^i_j =  (\lambda^i)^X_1((\lambda^i)^Y_{01})$, and so the probability of this query for this case given $\lambda^i$ is: $q^i_j = \frac{(\lambda^i)^Y_{01}}{(\lambda^i)^Y_{01} + (\lambda^i)^Y_{11}}$
 
 The posterior on $\tau^{S^0}$ for the cases in $S^0$ that provide data $x$, is then:
 
@@ -452,7 +449,7 @@ As can be seen already from our discussion of sampling, we do not need data on a
 
 So, for instance, if we have an $X \rightarrow Y$ model but observe only $Y=1$, then we would retain both the $X=0, Y=1$ column and the $X=1, Y=1$ column. We then calculate the probability of this data type by summing causal-type probabilities for all causal types that can produce *either* $X=0, Y=1$ *or* $X=1, Y=1$.
 
-What if our data have been collected via a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data for a set of cases, and have additionally collected data on $M$ for a random subset of these. We can think of this mixed strategy as akin to conducting quantitative analysis on a large sample while conducting in-depth process tracing on part of the large-$N$ sample. We can then summarize our data in two vectors, an 8-element $n_{XYM}$ vector ($(n_{000},n_{001},\dots n_{111}$) for the cases with process-tracing ($M$) observations, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases on which we did not conduct process tracing. Likewise, we now have two sets of data probabilities: an 8-element vector for the set of cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. 
+What if our data have been collected via a mixture of search strategies? Suppose, for instance, that we have collected $X,Y$ data for a set of cases, and have additionally collected data on $M$ for a random subset of these. We can think of this mixed strategy as akin to conducting quantitative analysis on a large sample while conducting in-depth process tracing on part of the large-$N$ sample. We can then summarize our data in two vectors, an 8-element $n_{XYM}$ vector $(n_{000},n_{001},\dots n_{111})$ for the cases with process-tracing ($M$) observations, and a 4-element vector $n_{XY*} = (n_{00*},n_{10*},n_{01*},n_{11*}$ for the partial data on those cases on which we did not conduct process tracing. Likewise, we now have two sets of data probabilities: an 8-element vector for the set of cases with complete data, $w_{XYM}$, and a 4-element vector for those with partial data, $w_{XY*}$. 
 
 Let $n$ denote the total number of cases examined, and $k$ the number for which we have data on $M$. Assuming that each observed case represents an independent, random draw from the population, we can form the likelihood function as a *product* of multinomial distributions, one representing the complete-data (process-traced) cases and one representing those with only $X,Y$ data: 
 
@@ -559,7 +556,7 @@ While the setup used in this book involves only binary nodes, the approach readi
 
 To move to non-binary measurement, we need to be able to expand the nodal-type space to accommodate the richer range of possible relations between nodes that can take on more than two possible values. Suppose, for instance, that we want to operate with variables with 4 ordinal categories. In an $X \rightarrow Y$ model, $Y$'s nodal types have to accommodate 4 possible values that $X$ can take on, and 4 possible values that $Y$ can take on for any value of $X$. This yields $4^4 = 256$  nodal types for $Y$ and 1024 causal types (compared to just 8 in a binary setup). 
 
-The `CausalQueries` package, set up to work most naturally with binary nodes, can be used to represent non-binary data as well. The trick, as it were, is to express integers in base-2 and then represent the integer as a series of 0's and 1's on multiple nodes. In base-2 counting we would represent four integer values for $X$ (say, 0, 1, 2,3) using $00, 01, 10, 11$. If we use one binary node, $X_1$ to represent the first digit, and a second node $X_2$ to represent the second, we have enough information to capture the four values of $X$. The mapping then is: $X_1 = 0, X_2 = 0$ represents $X=0$; $X_1 = 0, X_2 = 1$ represents $X=1$;   $X_1 = 1, X_2 = 0$ represents $X=2$; and $X_1 = 1, X_2 = 1$ represents $X=3$. We construct $Y$ in the same way. We can then represent a simple $X \rightarrow Y$ relation as a model with two $X$ nodes each pointing into two $Y$ nodes: $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. To allow for the full range of nodal types we need to allow a joint distribution over $\theta^{X_1}$ and $\theta^{X_2}$ and over $\theta^{Y_1}$ and $\theta^{Y_2}$, which results in 3 degrees of freedom for $X$ and 255 for $Y$, as required.
+The `CausalQueries` package, set up to work most naturally with binary nodes, can be used to represent non-binary data as well. The trick, as it were, is to express integers in base-2 and then represent the integer as a series of 0's and 1's on multiple nodes. In base-2 counting we would represent four integer values for $X$ (say, 0, 1, 2, 3) using $00, 01, 10, 11$. If we use one binary node, $X_1$ to represent the first digit, and a second node $X_2$ to represent the second, we have enough information to capture the four values of $X$. The mapping then is: $X_1 = 0, X_2 = 0$ represents $X=0$; $X_1 = 0, X_2 = 1$ represents $X=1$;   $X_1 = 1, X_2 = 0$ represents $X=2$; and $X_1 = 1, X_2 = 1$ represents $X=3$. We construct $Y$ in the same way. We can then represent a simple $X \rightarrow Y$ relation as a model with two $X$ nodes each pointing into two $Y$ nodes: $Y_1 \leftarrow X_1 \rightarrow Y_2, Y_1 \leftarrow X_2 \rightarrow Y_2$. To allow for the full range of nodal types we need to allow a joint distribution over $\theta^{X_1}$ and $\theta^{X_2}$ and over $\theta^{Y_1}$ and $\theta^{Y_2}$, which results in 3 degrees of freedom for $X$ and 255 for $Y$, as required.
 
 In the illustration below with two 4-level variables, we generate data ($N=100$) from a non-monotonic process with the following potential outcomes: $Y(0)=0, Y(1)=1, Y(2)=3, Y(3) = 2$. We then update and report on posteriors on potential outcomes.
 
@@ -594,7 +591,7 @@ data <-
 ```
 
 ```{r, echo = FALSE}
-data %>% slice(1,  50, 70, 100) %>% kabble(caption = "Data from non binary model (selection of rows)")
+data %>% slice(1,  50, 70, 100) %>% kabble(caption = "Data from non binary model (selection of rows)") %>% kable_styling(latex_options = 'hold_position')
 ```
 
 Updating and querying is done in the usual way:
@@ -638,7 +635,8 @@ query <-
 
 read_rds("saved/09_ordinal_query.rds")  %>%
   select(Q, Using, 'True value', mean, sd) %>% 
-  kabble(digits = 2, caption = "Posteriors on potential outcomes for non binary model")
+  kabble(digits = 2, caption = "Posteriors on potential outcomes for non binary model") %>%
+  kable_styling(latex_options = 'HOLD_position')
 
 ```
 
@@ -777,7 +775,7 @@ The main point here is that measurement error matters for inference and can be t
 
 A common threat to causal inference is the possibility of spillovers: a given unit's outcome being affected by the treatment status of another (e.g., possibly neighboring) unit. We can readily set up a causal model to allow for estimation of various quantities related to spillovers. 
 
-Consider, for instance, the causal model represented in Figure \@ref(fig:spillover). We consider here groupings of pairs  of unit across which spillovers might occur. We might imagine, for instance, a geographically proximate villages separated from other groups such that spillovers might occur between neighoring villages, but can be ruled out across more distal villages. Here $X_i$ and $Y_i$ represent village $i$'s treatment status and outcome, respectively. The pattern of directed edges indicates that each village's outcome might be affected both by its own and by its neighbors' treatment status.
+Consider, for instance, the causal model represented in Figure \@ref(fig:spillover). We consider here groupings of pairs  of unit across which spillovers might occur. We might imagine, for instance, a geographically proximate villages separated from other groups such that spillovers might occur between neighboring villages, but can be ruled out across more distal villages. Here $X_i$ and $Y_i$ represent village $i$'s treatment status and outcome, respectively. The pattern of directed edges indicates that each village's outcome might be affected both by its own and by its neighbors' treatment status.
 
 We now simulate data that allow for spillovers. Specifically, while independently assigning $X_1$ and $X_2$ to treatment $50 \%$ of the time, we (a) set $Y_1$ equal to $X_1$, meaning that Unit 1 is affected only by its own treatment status and (b) set $Y_2$ equal to $X_1 \times X_2$, meaning that Unit 2 is equally affected by its own treatment status and that of its neighbor, such that $Y_2 = 1$ only if both Unit 2 and its neighbor are assigned to treatment. 
 
